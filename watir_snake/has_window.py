@@ -1,0 +1,2 @@
+class HasWindow(object):
+    pass

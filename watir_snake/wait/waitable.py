@@ -1,0 +1,2 @@
+class Waitable(object):
+    pass

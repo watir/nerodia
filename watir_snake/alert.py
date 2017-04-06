@@ -1,0 +1,2 @@
+class Alert(object):
+    pass
