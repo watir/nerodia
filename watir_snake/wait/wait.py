@@ -6,8 +6,6 @@ from ..elements.element import Element
 
 
 class Wait(object):
-    class TimeoutError(StandardError):
-        pass
 
     INTERVAL = 0.1
     timer = Timer()  # Access timer implementation in use
@@ -32,7 +30,7 @@ class Wait(object):
         result = cls._run_with_timer(timeout, interval, method, object)
         if result:
             return result
-        raise cls.TimeoutError(cls._message_for(timeout, message))
+        raise TimeoutError(cls._message_for(timeout, message))
 
     @classmethod
     def until_not(cls, method=None, timeout=None, message=None, interval=None, object=None):
@@ -143,3 +141,7 @@ class Waitable(object):
             return arg.present
 
         return self.wait_while(method=method, timeout=timeout, interval=interval)
+
+
+class TimeoutError(StandardError):
+    pass

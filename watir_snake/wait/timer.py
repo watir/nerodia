@@ -3,7 +3,7 @@ from time import time
 
 class Timer(object):
     def __init__(self, timeout=None):
-        self.end_time = self.current_time + timeout if timeout else None
+        self.end_time = time() + timeout if timeout else None
 
     def wait(self, method, timeout, object=None):
         """
