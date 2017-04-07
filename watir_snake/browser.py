@@ -1,12 +1,13 @@
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchWindowException
+from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 
 from after_hooks import AfterHooks
 from .container import Container
 from .cookies import Cookies
+from .exception import NoMatchingWindowFoundException, Error
 from .has_window import HasWindow
-from .wait.waitable import Waitable
+from .wait.wait import Waitable
 
 try:
     from urlparse import urlparse
@@ -56,9 +57,10 @@ class Browser(Container, HasWindow, Waitable):
     def __repr__(self):
         try:
             return '#<{}:0x{:x} url={!r} title={!r}>'.format(self.__class__.__name__,
-                                                             hash(self) * 2, self.url, self.title)
+                                                             self.__hash__() * 2, self.url,
+                                                             self.title)
         except:
-            return '#<{}:0x{:x} closed={}>'.format(self.__class__.__name__, hash(self) * 2,
+            return '#<{}:0x{:x} closed={}>'.format(self.__class__.__name__, self.__hash__() * 2,
                                                    self.closed)
 
     selector_string = __repr__
@@ -226,7 +228,7 @@ class Browser(Container, HasWindow, Waitable):
         try:
             # assert_exists  # TODO
             return True
-        except (NoSuchWindowException, StandardError):
+        except (NoMatchingWindowFoundException, Error):
             return False
 
     exists = exist
