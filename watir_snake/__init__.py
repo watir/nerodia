@@ -1,4 +1,6 @@
-from watip import locators
+import locators
+from elements.html_elements import HTMLElement
+
 #
 # Whether or not Watip should wait for an element to be found or present before taking an action.
 # Defaults to true.
@@ -14,7 +16,21 @@ default_timeout = 30
 
 #
 # Whether the locators should be used from a different namespace.
-# Defaults to watip.locators.
+# Defaults to watir_snake.locators.
 #
 
 locator_namespace = locators
+
+ttc = None
+
+
+@property
+def tag_to_class():
+    """
+    :rtype: dict
+    """
+    return ttc or {}
+
+
+def element_class_for(tag_name):
+    return tag_to_class[tag_name.to_sym] or HTMLElement

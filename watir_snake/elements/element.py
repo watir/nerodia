@@ -1,20 +1,30 @@
-from warnings import warn
+from importlib import import_module
 
-from selenium.common.exceptions import StaleElementReferenceException
+from re import search
+from re import sub
+from selenium.common.exceptions import StaleElementReferenceException, InvalidElementStateException
 from selenium.webdriver.common.action_chains import ActionChains
+from warnings import warn
 
 import watir_snake
 from watir_snake.browser import Browser
+from watir_snake.elements.text_field import TextField
+from ..atoms import Atoms
+from ..elements.button import Button
+from ..elements.checkbox import CheckBox
+from ..elements.file_field import FileField
 from ..elements.iframe import IFrame
+from ..elements.radio import Radio
 from ..exception import UnknownObjectException, UnknownFrameException, Error, \
     ObjectDisabledException, ObjectReadOnlyException
+from ..locators.element.selector_builder import SelectorBuilder
 from ..wait.timer import Timer
 from ..wait.wait import Wait
 from ..wait.wait import Waitable, TimeoutError
 
 
 # class Element(AttributeHelper, Container, EventuallyPresent, Waitable, Adjacent):
-class Element(Waitable):
+class Element(Atoms, Waitable):
     pass
 
     def __init__(self, query_scope, selector):
@@ -37,7 +47,7 @@ class Element(Waitable):
         :rtype: bool
         """
         try:
-            # self.assert_exists()  # TODO
+            self._assert_exists()
             return True
         except (UnknownObjectException, UnknownFrameException):
             return False
@@ -103,6 +113,7 @@ class Element(Waitable):
         from selenium.webdriver.common.keys import Keys
         browser.element(name='new_user_button').click(Keys.SHIFT, Keys.CONTROL)
         """
+
         def method():
             if modifiers:
                 action = ActionChains(self.driver)
@@ -114,6 +125,7 @@ class Element(Waitable):
                 action.perform()
             else:
                 self.element.click()
+
         self._element_call(method, self._wait_for_enabled)
         self.browser.after_hooks.run()
 
@@ -161,6 +173,8 @@ class Element(Waitable):
         Drag and drop this element on to another element instance
         Note that browser support may vary
 
+        :param other: element to drop on
+
         :Example: Drag an element onto another
 
         a = browser.div(id='draggable')
@@ -168,258 +182,232 @@ class Element(Waitable):
         a.drag_and_drop_on(b)
         """
         self._assert_is_element(other)
-        
+
         self._element_call(lambda _: ActionChains(self.driver).drag_and_drop(self.element, other.wd)
                            .perform(), self._wait_for_present)
-    #
-    # #
-    # # Drag and drop this element by the given offsets.
-    # # Note that browser support may vary.
-    # #
-    # # @example
-    # #   browser.div(id: "draggable").drag_and_drop_by 100, -200
-    # #
-    # # @param [Integer] right_by
-    # # @param [Integer] down_by
-    # #
-    #
-    # def drag_and_drop_by(right_by, down_by)
-    #   element_call(:wait_for_present) do
-    #     driver.action.
-    #            drag_and_drop_by(@element, right_by, down_by).
-    #            perform
-    #   end
-    # end
-    #
-    # #
-    # # Flashes (change background color far a moment) element.
-    # #
-    # # @example
-    # #   browser.text_field(name: "new_user_first_name").flash
-    # #
-    #
-    # def flash
-    #   background_color = style("backgroundColor")
-    #   element_color = driver.execute_script("arguments[0].style.backgroundColor", @element)
-    #
-    #   10.times do |n|
-    #     color = (n % 2 == 0) ? "red" : background_color
-    #     driver.execute_script("arguments[0].style.backgroundColor = '#{color}'", @element)
-    #   end
-    #
-    #   driver.execute_script("arguments[0].style.backgroundColor = arguments[1]", @element, element_color)
-    #
-    #   self
-    # end
-    #
-    # #
-    # # Returns value of the element.
-    # #
-    # # @return [String]
-    # #
-    #
-    # def value
-    #   attribute_value('value') || ''
-    # rescue Selenium::WebDriver::Error::InvalidElementStateError
-    #   ''
-    # end
-    #
-    # #
-    # # Returns given attribute value of element.
-    # #
-    # # @example
-    # #   browser.a(id: "link_2").attribute_value "title"
-    # #   #=> "link_title_2"
-    # #
-    # # @param [String] attribute_name
-    # # @return [String, nil]
-    # #
-    #
-    # def attribute_value(attribute_name)
-    #   element_call { @element.attribute attribute_name }
-    # end
-    #
-    # #
-    # # Returns outer (inner + element itself) HTML code of element.
-    # #
-    # # @example
-    # #   browser.div(id: 'foo').outer_html
-    # #   #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
-    # #
-    # # @return [String]
-    # #
-    #
-    # def outer_html
-    #   element_call { execute_atom(:getOuterHtml, @element) }.strip
-    # end
-    #
-    # alias_method :html, :outer_html
-    #
-    # #
-    # # Returns inner HTML code of element.
-    # #
-    # # @example
-    # #   browser.div(id: 'foo').inner_html
-    # #   #=> "<a href=\"#\">hello</a>"
-    # #
-    # # @return [String]
-    # #
-    #
-    # def inner_html
-    #   element_call { execute_atom(:getInnerHtml, @element) }.strip
-    # end
-    #
-    # #
-    # # Sends sequence of keystrokes to element.
-    # #
-    # # @example
-    # #   browser.text_field(name: "new_user_first_name").send_keys "Watir", :return
-    # #
-    # # @param [String, Symbol] *args
-    # #
-    #
-    # def send_keys(*args)
-    #   element_call(:wait_for_writable) { @element.send_keys(*args) }
-    # end
-    #
-    # #
-    # # Focuses element.
-    # # Note that Firefox queues focus events until the window actually has focus.
-    # #
-    # # @see http://code.google.com/p/selenium/issues/detail?id=157
-    # #
-    #
-    # def focus
-    #   element_call { driver.execute_script "return arguments[0].focus()", @element }
-    # end
-    #
-    # #
-    # # Returns true if this element is focused.
-    # #
-    # # @return [Boolean]
-    # #
-    #
-    # def focused?
-    #   element_call { @element == driver.switch_to.active_element }
-    # end
-    #
-    # #
-    # # Simulates JavaScript events on element.
-    # # Note that you may omit "on" from event name.
-    # #
-    # # @example
-    # #   browser.button(name: "new_user_button").fire_event :click
-    # #   browser.button(name: "new_user_button").fire_event "mousemove"
-    # #   browser.button(name: "new_user_button").fire_event "onmouseover"
-    # #
-    # # @param [String, Symbol] event_name
-    # #
-    #
-    # def fire_event(event_name)
-    #   event_name = event_name.to_s.sub(/^on/, '').downcase
-    #
-    #   element_call { execute_atom :fireEvent, @element, event_name }
-    # end
+
+    def drag_and_drop_by(self, xoffset, yoffset):
+        """
+        Drag and drop this element by the given offsets.
+        Note that browser support may vary.
+
+        :param xoffset: amount to move horizontally
+        :param yoffset: amount to move vertically
+
+        :Example: Drag an element onto another
+
+        browser.div(id='draggable').drag_and_drop_by(100, -200)
+        """
+        self._element_call(lambda _: ActionChains(self.driver).
+                           drag_and_drop_by_offset(self.element, xoffset, yoffset).perform(),
+                           self._wait_for_present)
+
+    def flash(self):
+        """
+        Flashes (change background color for a moment) element
+
+        :Example:
+
+        browser.text_field(name='new_user_first_name').flash()
+        """
+        background_color = self.style('backgroundColor')
+        element_color = self.driver.execute_script('arguments[0].style.backgroundColor',
+                                                   self.element)
+
+        for n in range(10):
+            color = 'red' if n % 2 == 0 else background_color
+            self.driver.execute_script("arguments[0].style.backgroundColor = "
+                                       "'{}'".format(color), self.element)
+
+        self.driver.execute_script('arguments[0].style.backgroundColor = arguments[1]',
+                                   self.element, element_color)
+
+        return self
+
+    @property
+    def value(self):
+        """
+        Returns value of the element
+        :rtype: str
+        """
+        try:
+            return self.attribute_value('value') or ''
+        except InvalidElementStateException:
+            return ''
+
+    def attribute_value(self, attribute_name):
+        """
+        Returns given attribute value of the element
+
+        :param attribute_name: attribute to retrieve
+        :type attribute_name: str
+        :rtype: str
+
+        :Example:
+
+        browser.a(id='link_2').attribute_value('title')  #=> 'link_title_2'
+        """
+        return self._element_call(lambda _: self.element.attribute(attribute_name))
+
+    @property
+    def outer_html(self):
+        """
+        Returns outer (inner + element itself) HTML code of element
+
+        :rtype: str
+
+        :Example:
+
+        browser.div(id='foo').outer_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
+        """
+        return self._element_call(lambda _: self._execute_atom('getOuterHtml',
+                                                               self.element)).strip()
+
+    html = outer_html
+
+    @property
+    def inner_html(self):
+        """
+        Returns inner HTML code of element
+
+        :rtype: str
+
+        :Example:
+
+        browser.div(id='foo').inner_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
+        """
+        return self._element_call(lambda _: self._execute_atom('getInnerHtml',
+                                                               self.element)).strip()
+
+    def send_keys(self, *args):
+        """
+        Sends sequence of keystrokes to the element
+        :param args: keystrokes to send
+
+        :Example:
+
+        browser.text_field(name='new_user_first_name').send_keys('watir_snake')
+        """
+        return self._element_call(lambda _: self.element.send_keys(*args), self._wait_for_writable)
+
+    def focus(self):
+        """
+        Focuses the element
+        Note that Firefox queues focus events until the window actually has focus
+        """
+        self._element_call(lambda _: self.driver.execute_script('return arguments[0].focus()',
+                                                                self.element))
+
+    @property
+    def focused(self):
+        """
+        Returns True if the element is focused
+        :rtype: bool
+        """
+        return self._element_call(lambda _: self.element == self.driver.switch_to.active_element)
+
+    def fire_event(self, event_name):
+        """
+        Simulates JavaScript events on element
+        Note that you may omit 'on' from event name
+
+        :param event_name: event to fire
+
+        :Example:
+
+        browser.button(name='new_user_button').fire_event('click')
+        browser.button(name='new_user_button').fire_event('mousemove')
+        browser.button(name='new_user_button').fire_event('onmouseover')
+        """
+        event_name = sub(r'^on', '', str(event_name)).lower()
+
+        self._element_call(lambda _: self._execute_atom('fireEvent', self.element, event_name))
 
     @property
     def driver(self):
         return self.query_scope.driver
 
+    @property
     def wd(self):
         self._assert_exists()
         return self.element
 
-    #
-    # #
-    # # Returns true if this element is visible on the page.
-    # # Raises exception if element does not exist
-    # #
-    # # @return [Boolean]
-    # #
-    #
-    # def visible?
-    #   element_call(:assert_exists) { @element.displayed? }
-    # end
-    #
-    # #
-    # # Returns true if this element is present and enabled on the page.
-    # #
-    # # @return [Boolean]
-    # # @see Watir::Wait
-    # #
-    #
+    @property
+    def visible(self):
+        """
+        Returns true if this element is visible on the page
+        Raises exception if element does not exist
+
+        :rtype: bool
+        """
+        return self._element_call(lambda _: self.element.displayed, self._assert_exists)
 
     @property
     def enabled(self):
+        """
+        Returns True if the element is present and enabled on the page
+
+        :rtype: bool
+        """
         return self._element_call(lambda _: self.element.enabled, self._assert_exists)
 
-    # #
-    # # Returns true if the element exists and is visible on the page.
-    # # Returns false if element does not exist or exists but is not visible
-    # #
-    # # @return [Boolean]
-    # # @see Watir::Wait
-    # #
-    #
-    # def present?
-    #   visible?
-    # rescue UnknownObjectException
-    #   false
-    # end
-    #
-    # #
-    # # Returns given style property of this element.
-    # #
-    # # @example
-    # #   browser.button(value: "Delete").style           #=> "border: 4px solid red;"
-    # #   browser.button(value: "Delete").style("border") #=> "4px solid rgb(255, 0, 0)"
-    # #
-    # # @param [String] property
-    # # @return [String]
-    # #
-    #
-    # def style(property = nil)
-    #   if property
-    #     element_call { @element.style property }
-    #   else
-    #     attribute_value("style").to_s.strip
-    #   end
-    # end
-    #
-    # #
-    # # Cast this Element instance to a more specific subtype.
-    # #
-    # # @example
-    # #   browser.element(xpath: "//input[@type='submit']").to_subtype
-    # #   #=> #<Watir::Button>
-    # #
-    #
-    # def to_subtype
-    #   elem = wd()
-    #   tag_name = elem.tag_name.downcase
-    #
-    #   klass = nil
-    #
-    #   if tag_name == "input"
-    #     klass = case elem.attribute(:type)
-    #       when *Button::VALID_TYPES
-    #         Button
-    #       when 'checkbox'
-    #         CheckBox
-    #       when 'radio'
-    #         Radio
-    #       when 'file'
-    #         FileField
-    #       else
-    #         TextField
-    #       end
-    #   else
-    #     klass = Watir.element_class_for(tag_name)
-    #   end
-    #
-    #   klass.new(@query_scope, element: elem)
-    # end
-    #
+    @property
+    def present(self):
+        """
+        Returns True if the element exists and is visible on the page
+        Returns False if the element does not exist or exists but is not visible
+
+        :rtype: bool
+        """
+        try:
+            return self.visible
+        except UnknownObjectException:
+            return False
+
+    def style(self, property=None):
+        """
+        Returns given style property of this element
+
+        :param property: property to get
+        :type property: str
+        :rtype: str
+
+        :Example:
+
+        browser.button(value='Delete').style           #=> "border: 4px solid red;"
+        browser.button(value='Delete').style('border') #=> "4px solid rgb(255, 0, 0)"
+        """
+        if property:
+            return self._element_call(lambda _: self.element.style(property))
+        else:
+            return str(self.attribute_value('style')).strip()
+
+    def to_subtype(self):
+        """
+        Cast this Element instance to a more specific subtype
+        :Example:
+
+        browser.element(xpath="//input[@type='submit']").to_subtype()  #=> #<Button>
+        """
+        elem = self.wd
+        tag_name = elem.tag_name.lower()
+
+        if tag_name == 'input':
+            elem_type = elem.attribute('type')
+            if elem_type in Button.VALID_TYPES:
+                klass = Button
+            elif elem_type == 'checkbox':
+                klass = CheckBox
+            elif elem_type == 'radio':
+                klass = Radio
+            elif elem_type == 'file':
+                klass = FileField
+            else:
+                klass = TextField
+        else:
+            klass = watir_snake.element_class_for(tag_name)
+
+        return klass(self.query_scope, element=elem)
 
     @property
     def browser(self):
@@ -438,7 +426,7 @@ class Element(Waitable):
         try:
             if self.element is None:
                 raise Error('Can not check staleness of unused element')
-            self.element.enabled # any wire call will check for staleness
+            self.element.enabled  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
             return True
@@ -492,14 +480,13 @@ class Element(Waitable):
                                           'waiting for {} to be '
                                           'enabled'.format(watir_snake.default_timeout, self))
 
-
-    def wait_for_writable(self):
+    def _wait_for_writable(self):
         if not watir_snake.relaxed_locate:
             return self._assert_writable()
         self._wait_for_enabled()
 
         try:
-            self.wait_until(lambda _: not getattr(self, 'read_only', None) or not self.read_only)
+            self.wait_until(lambda _: not getattr(self, 'readonly', None) or not self.readonly)
         except TimeoutError:
             raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
                                           'seconds, waiting for {} to not be '
@@ -525,14 +512,15 @@ class Element(Waitable):
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
     def _locate(self):
-        pass  # TODO
-        # ensure_context
-        #
-        # element_validator = element_validator_class.new
-        # selector_builder = selector_builder_class.new(@query_scope, @selector, self.class.attribute_list)
-        # locator = locator_class.new(@query_scope, @selector, selector_builder, element_validator)
-        #
-        # locator.locate
+        self._ensure_context()
+
+        element_validator = self._element_validator_class()
+        selector_builder = self._selector_builder_class(self.query_scope, self.selector,
+                                                        self.attribute_list)
+        locator = self._locator_class(self.query_scope, self.selector, selector_builder,
+                                      element_validator)
+
+        return locator.locate()
 
     @property
     def _selector_string(self):
@@ -541,34 +529,26 @@ class Element(Waitable):
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
 
-    # private
+    def _locator_class(self):
+        return self._import_module.Locator
 
-    # def unknown_exception
-    #   Watir::Exception::UnknownObjectException
-    # end
-    #
-    # def locator_class
-    #   Kernel.const_get("#{Watir.locator_namespace}::#{element_class_name}::Locator")
-    # rescue NameError
-    #   Kernel.const_get("#{Watir.locator_namespace}::Element::Locator")
-    # end
-    #
-    # def element_validator_class
-    #   Kernel.const_get("#{Watir.locator_namespace}::#{element_class_name}::Validator")
-    # rescue NameError
-    #   Kernel.const_get("#{Watir.locator_namespace}::Element::Validator")
-    # end
-    #
-    # def selector_builder_class
-    #   Kernel.const_get("#{Watir.locator_namespace}::#{element_class_name}::SelectorBuilder")
-    # rescue NameError
-    #   Kernel.const_get("#{Watir.locator_namespace}::Element::SelectorBuilder")
-    # end
-    #
-    # def element_class_name
-    #   self.class.name.split('::').last
-    # end
-    #
+    def _element_validator_class(self):
+        return self._import_module.Validator
+
+    def _selector_builder_class(self):
+        return self._import_module.SelectorBuilder
+
+    @property
+    def _import_module(self):
+        modules = [watir_snake.locator_namespace.__name__, self._element_class_name.lower()]
+        try:
+            return import_module('watir_snake.{}.{}.locator'.format(*modules))
+        except ImportError:
+            return import_module('watir_snake.{}.element.locator'.format(*modules[:1]))
+
+    @property
+    def _element_class_name(self):
+        return self.__class__.__name__
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
@@ -577,21 +557,17 @@ class Element(Waitable):
         else:
             self.query_scope.assert_exists()
 
-    #
-    # def attribute?(attribute_name)
-    #   !attribute_value(attribute_name).nil?
-    # end
-    #
+    def _is_attribute(self, attribute_name):
+        return self.attribute_value(attribute_name) is not None
 
     def _assert_enabled(self):
         if not self._element_call(lambda _: self.element.enabled):
             raise ObjectDisabledException('object is disabled {}'.format(self))
 
-
     def _assert_writable(self):
         self._assert_enabled()
 
-        if getattr(self, 'read_only', None) and self.read_only:
+        if getattr(self, 'readonly', None) and self.readonly:
             raise ObjectReadOnlyException('object is read only {}'.format(self))
 
     @classmethod
@@ -613,16 +589,7 @@ class Element(Waitable):
         finally:
             if Wait.timer.locked is None:
                 Wait.timer.reset()
-#
-# def method_missing(meth, *args, &blk)
-#   method = meth.to_s
-#   if method =~ Locators::Element::SelectorBuilder::WILDCARD_ATTRIBUTE
-#     attribute_value(method.tr('_', '-'), *args)
-#   else
-#     super
-#   end
-# end
-#
-# def respond_to_missing?(meth, *)
-#   Locators::Element::SelectorBuilder::WILDCARD_ATTRIBUTE === meth.to_s || super
-# end
+
+    def __getattr__(self, item):
+        if search(SelectorBuilder.WILDCARD_ATTRIBUTE, item):
+            return self.attribute_value(item.replace('_', '-'))
