@@ -8,7 +8,6 @@ from selenium.webdriver.common.action_chains import ActionChains
 from warnings import warn
 
 import watir_snake
-from watir_snake.browser import Browser
 from ..atoms import Atoms
 from ..exception import UnknownObjectException, UnknownFrameException, Error, \
     ObjectDisabledException, ObjectReadOnlyException
@@ -33,8 +32,6 @@ class Element(Atoms, Waitable):
         self.element = selector.pop('element', None)
         self.selector = selector
         self.keyword = None
-        self.id = None
-        self.class_name = None
 
     @property
     def exists(self):
@@ -524,7 +521,7 @@ class Element(Atoms, Waitable):
 
     @property
     def _selector_string(self):
-        if type(self.query_scope) == Browser:
+        if type(self.query_scope) == watir_snake.browser.Browser:
             return self.selector.__repl__()
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
@@ -593,3 +590,5 @@ class Element(Atoms, Waitable):
     def __getattr__(self, item):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, item):
             return self.attribute_value(item.replace('_', '-'))
+        raise AttributeError('{!r} is not a valid attribute for '
+                             '{}!'.format(item, self.__class__.__name__))

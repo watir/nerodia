@@ -1,26 +1,34 @@
+import watir_snake
+
+
 class MetaElement(type):
     def __new__(cls, name, parents, dct):
         final_dict = {}
 
         attrs = []
-        for parent in parents:
-            attrs.extend(getattr(parent, 'ATTRIBUTES', []))
-        final_dict['ATTRIBUTES'] = attrs
         for key, value in dct.items():
             if key.startswith('_attr'):
                 attr_name = key.split('_attr_')[-1]
                 typ, val = value
-                final_dict[attr_name] = property(fget=make_attr(typ, key, val))
+                final_dict[attr_name] = property(fget=make_attr(typ, val))
                 attrs.append(attr_name)
             else:
                 final_dict[key] = value
+        auto_gen = getattr(watir_snake.generated_attributes, name.lower(), [])
+        for each in auto_gen:
+            typ, key, val = each
+            final_dict[key] = property(fget=make_attr(typ, val))
+            attrs.append(key)
+        for parent in parents:
+            attrs.extend(getattr(parent, 'ATTRIBUTES', []))
+        final_dict['ATTRIBUTES'] = list(set(attrs))
 
         inst = super(MetaElement, cls).__new__(cls, name, parents, final_dict)
 
         return inst
 
 
-def make_attr(typ, key, val):
+def make_attr(typ, val):
     if typ == bool:
         def attr_bool(self):
             return getattr(self, 'attribute_value')(val) == 'true'

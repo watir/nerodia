@@ -1,4 +1,6 @@
+import browser
 import elements
+import generated_attributes
 import locators
 
 #
