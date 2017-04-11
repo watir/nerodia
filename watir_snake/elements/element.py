@@ -1,5 +1,6 @@
 from importlib import import_module
 
+import six
 from re import search
 from re import sub
 from selenium.common.exceptions import StaleElementReferenceException, InvalidElementStateException
@@ -8,24 +9,22 @@ from warnings import warn
 
 import watir_snake
 from watir_snake.browser import Browser
-from watir_snake.elements.text_field import TextField
 from ..atoms import Atoms
-from ..elements.button import Button
-from ..elements.checkbox import CheckBox
-from ..elements.file_field import FileField
-from ..elements.iframe import IFrame
-from ..elements.radio import Radio
 from ..exception import UnknownObjectException, UnknownFrameException, Error, \
     ObjectDisabledException, ObjectReadOnlyException
 from ..locators.element.selector_builder import SelectorBuilder
+from ..meta_element import MetaElement
 from ..wait.timer import Timer
 from ..wait.wait import Wait
 from ..wait.wait import Waitable, TimeoutError
 
 
-# class Element(AttributeHelper, Container, EventuallyPresent, Waitable, Adjacent):
+# class Element(Container, EventuallyPresent, Waitable, Adjacent):
+@six.add_metaclass(MetaElement)
 class Element(Atoms, Waitable):
-    pass
+    ATTRIBUTES = []
+    _attr_id = (str, 'id')
+    _attr_class_name = (str, 'className')
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -36,9 +35,6 @@ class Element(Atoms, Waitable):
         self.keyword = None
         self.id = None
         self.class_name = None
-        # Temporarily add 'id' and 'class_name' since they're no longer specified in the HTML spec
-        # self.attribute(str, 'id', 'id')  # TODO
-        # self.attribute(str, 'class_name', 'className')  # TODO
 
     @property
     def exists(self):
@@ -53,6 +49,10 @@ class Element(Atoms, Waitable):
             return False
 
     exist = exists
+
+    @property
+    def attribute_list(self):
+        return self.ATTRIBUTES
 
     def __repl__(self):
         string = '#<#{}: '.format(self.__class__.__name__)
@@ -364,12 +364,12 @@ class Element(Atoms, Waitable):
         except UnknownObjectException:
             return False
 
-    def style(self, property=None):
+    def style(self, prop=None):
         """
         Returns given style property of this element
 
-        :param property: property to get
-        :type property: str
+        :param prop: property to get
+        :type prop: str
         :rtype: str
 
         :Example:
@@ -377,8 +377,8 @@ class Element(Atoms, Waitable):
         browser.button(value='Delete').style           #=> "border: 4px solid red;"
         browser.button(value='Delete').style('border') #=> "4px solid rgb(255, 0, 0)"
         """
-        if property:
-            return self._element_call(lambda _: self.element.style(property))
+        if prop:
+            return self._element_call(lambda _: self.element.style(prop))
         else:
             return str(self.attribute_value('style')).strip()
 
@@ -394,16 +394,16 @@ class Element(Atoms, Waitable):
 
         if tag_name == 'input':
             elem_type = elem.attribute('type')
-            if elem_type in Button.VALID_TYPES:
-                klass = Button
+            if elem_type in watir_snake.elements.button.Button.VALID_TYPES:
+                klass = watir_snake.elements.button.Button
             elif elem_type == 'checkbox':
-                klass = CheckBox
+                klass = watir_snake.elements.checkbox.CheckBox
             elif elem_type == 'radio':
-                klass = Radio
+                klass = watir_snake.elements.radio.Radio
             elif elem_type == 'file':
-                klass = FileField
+                klass = watir_snake.elements.file_field.FileField
             else:
-                klass = TextField
+                klass = watir_snake.elements.text_field.TextField
         else:
             klass = watir_snake.element_class_for(tag_name)
 
