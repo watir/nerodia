@@ -2,11 +2,9 @@ from time import sleep
 
 import watir_snake
 from .timer import Timer
-from ..elements.element import Element
 
 
 class Wait(object):
-
     INTERVAL = 0.1
     timer = Timer()  # Access timer implementation in use
 
@@ -136,7 +134,7 @@ class Waitable(object):
         """
 
         def method(arg):
-            if type(arg) == Element:
+            if type(arg) == watir_snake.elements.element.Element:
                 arg.reset()
             return arg.present
 

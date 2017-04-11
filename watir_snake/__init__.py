@@ -1,5 +1,5 @@
+import elements
 import locators
-from elements.html_elements import HTMLElement
 
 #
 # Whether or not Watip should wait for an element to be found or present before taking an action.
@@ -33,4 +33,4 @@ def tag_to_class():
 
 
 def element_class_for(tag_name):
-    return tag_to_class[tag_name.to_sym] or HTMLElement
+    return tag_to_class.get(tag_name.to_sym) or elements.html_elements.HTMLElement
