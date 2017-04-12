@@ -27,7 +27,7 @@ class Element(Atoms, Waitable):
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
-        if not type(selector) == dict:
+        if not isinstance(selector, dict):
             raise TypeError('invalid argument: {!r}'.format(selector))
         self.element = selector.pop('element', None)
         self.selector = selector
@@ -69,7 +69,7 @@ class Element(Atoms, Waitable):
         :param other: other element to compare
         :rtype: bool
         """
-        return self.wd if type(other) == self.__class__ else other.wd
+        return self.wd if isinstance(other, self.__class__) else other.wd
 
     eql = __eq__
 
@@ -521,7 +521,7 @@ class Element(Atoms, Waitable):
 
     @property
     def _selector_string(self):
-        if type(self.query_scope) == watir_snake.browser.Browser:
+        if isinstance(self.query_scope, watir_snake.browser.Browser):
             return self.selector.__repl__()
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
@@ -549,7 +549,7 @@ class Element(Atoms, Waitable):
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        if type(self.query_scope) == IFrame:
+        if isinstance(self.query_scope, watir_snake.elements.iframe.IFrame):
             self.query_scope.switch_to()
         else:
             self.query_scope.assert_exists()
@@ -569,7 +569,7 @@ class Element(Atoms, Waitable):
 
     @classmethod
     def _assert_is_element(cls, obj):
-        if not type(obj) == Element:
+        if not isinstance(obj, Element):
             raise TypeError('execpted watir_snake.elements.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 

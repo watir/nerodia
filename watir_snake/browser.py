@@ -24,7 +24,7 @@ class Browser(Container, HasWindow, Waitable):
         :param args: args passed to the underlying driver
         :param kwargs: kwargs passed to the underlying driver
         """
-        if type(browser) == str:
+        if isinstance(browser, str):
             self.driver = getattr(webdriver, browser.capitalize())(*args, **kwargs)
         elif isinstance(browser, webdriver.Remote):
             self.driver = browser
@@ -250,11 +250,11 @@ class Browser(Container, HasWindow, Waitable):
         return self
 
     def wrap_elements_in(self, obj):
-        if type(obj) == WebElement:
+        if isinstance(obj, WebElement):
             return self.wrap_element(obj)
-        elif type(obj) == list:
+        elif isinstance(obj, list):
             return [self.wrap_elements_in(e) for e in obj]
-        elif type(obj) == dict:
+        elif isinstance(obj, dict):
             for k, v in obj.items():
                 obj[k] = self.wrap_elements_in(v)
             return obj
