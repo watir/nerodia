@@ -27,7 +27,7 @@ class MetaElement(type):
 
         for alias in dct.get('_aliases', []):
             new_name, old_name = alias
-            final_dict[new_name] = property(fget=make_alias(old_name))
+            final_dict[new_name] = final_dict[old_name]
             attrs.append(new_name)
 
         final_dict['ATTRIBUTES'] = list(set(attrs))
@@ -60,8 +60,3 @@ def make_attr(typ, val):
             return str(getattr(self, 'attribute_value')(val))
 
         return attr_str
-
-def make_alias(old_name):
-    def alias(self):
-        return getattr(self, old_name)
-    return alias
