@@ -12,6 +12,8 @@ class MetaElement(type):
                 typ, val = value
                 final_dict[attr_name] = property(fget=make_attr(typ, val))
                 attrs.append(attr_name)
+            elif key.startswith('_aliases'):
+                continue
             else:
                 final_dict[key] = value
         auto_gen = getattr(watir_snake.generated_attributes, name.lower(), [])
@@ -19,8 +21,15 @@ class MetaElement(type):
             typ, key, val = each
             final_dict[key] = property(fget=make_attr(typ, val))
             attrs.append(key)
+
         for parent in parents:
             attrs.extend(getattr(parent, 'ATTRIBUTES', []))
+
+        for alias in dct.get('_aliases', []):
+            new_name, old_name = alias
+            final_dict[new_name] = property(fget=make_alias(old_name))
+            attrs.append(new_name)
+
         final_dict['ATTRIBUTES'] = list(set(attrs))
 
         inst = super(MetaElement, cls).__new__(cls, name, parents, final_dict)
@@ -51,3 +60,8 @@ def make_attr(typ, val):
             return str(getattr(self, 'attribute_value')(val))
 
         return attr_str
+
+def make_alias(old_name):
+    def alias(self):
+        return getattr(self, old_name)
+    return alias
