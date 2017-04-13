@@ -1,10 +1,10 @@
 import six
 
 from .input import Input
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class CheckBox(Input):
     @property
     def is_set(self):
@@ -12,7 +12,7 @@ class CheckBox(Input):
         Returns True if the element is checked
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element.selected)
+        return self._element_call(lambda: self.element.is_selected())
 
     def set(self, value=True):
         """

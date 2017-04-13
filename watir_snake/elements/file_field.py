@@ -4,10 +4,10 @@ import six
 from os import path
 
 from .input import Input
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class FileField(Input):
     def set(self, filepath):
         """
@@ -18,7 +18,7 @@ class FileField(Input):
         """
         if not path.exists(filepath):
             raise ENOENT
-        self._element_call(lambda _: self.element.send_keys(filepath))
+        self._element_call(lambda: self.element.send_keys(filepath))
 
 # TODO: container
 # TODO: collection

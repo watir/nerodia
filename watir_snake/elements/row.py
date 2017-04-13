@@ -1,10 +1,10 @@
 import six
 
 from .table_row import TableRow
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class Row(TableRow):
     pass
 

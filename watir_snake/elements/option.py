@@ -1,10 +1,10 @@
 import six
 
 from .html_elements import HTMLElement
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class Option(HTMLElement):
     _aliases = [['select', 'click'], ['toggle', 'click']]
 
@@ -19,7 +19,7 @@ class Option(HTMLElement):
         Returns True if the option is selected
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element.is_selected)
+        return self._element_call(lambda: self.element.is_selected)
 
     @property
     def text(self):

@@ -1,4 +1,4 @@
-class Error(StandardError):
+class Error(Exception):
     pass
 
 

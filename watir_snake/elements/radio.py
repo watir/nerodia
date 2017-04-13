@@ -8,7 +8,7 @@ class Radio(Input):
         Returns True if the element is selected
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element.selected)
+        return self._element_call(lambda: self.element.selected)
 
     def set(self, value=True):
         """ Selects the radio input """

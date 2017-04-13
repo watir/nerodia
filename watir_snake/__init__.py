@@ -1,7 +1,4 @@
-import browser
-import elements
-import generated_attributes
-import locators
+from . import browser, elements, html_attributes, locators, svg_attributes
 
 #
 # Whether or not Watip should wait for an element to be found or present before taking an action.

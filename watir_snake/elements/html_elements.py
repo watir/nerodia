@@ -1,9 +1,9 @@
 import six
 
 from .element import Element
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class HTMLElement(Element):
     pass

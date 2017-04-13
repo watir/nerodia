@@ -2,10 +2,10 @@ from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 
-from after_hooks import AfterHooks
+from .after_hooks import AfterHooks
 from .container import Container
 from .cookies import Cookies
-from .exception import NoMatchingWindowFoundException, Error
+from .exception import Error, NoMatchingWindowFoundException
 from .has_window import HasWindow
 from .wait.wait import Waitable
 

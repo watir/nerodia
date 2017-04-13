@@ -1,2 +1,1 @@
-__all__ = ['element', 'html_elements', 'text_field', 'button', 'checkbox', 'radio', 'file_field',
-           'iframe']
+from . import button, checkbox, element, file_field, html_elements, iframe, radio, text_field

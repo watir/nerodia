@@ -22,7 +22,7 @@ class Wait(object):
         :type interval: float
         :Example:
 
-        Wait.until(lambda _: browser.text_field(name='abrakadbra').present)
+        Wait.until(lambda: browser.text_field(name='abrakadbra').present)
         """
         timeout = timeout or watir_snake.default_timeout
         result = cls._run_with_timer(timeout, interval, method, object)
@@ -44,7 +44,7 @@ class Wait(object):
         :type interval: float
         :Example:
 
-        Wait.until_not(lambda _: browser.text_field(name='abrakadbra').present)
+        Wait.until_not(lambda: browser.text_field(name='abrakadbra').present)
         """
         timeout = timeout or watir_snake.default_timeout
         result = cls._run_with_timer(timeout, interval, method, object)
@@ -141,5 +141,5 @@ class Waitable(object):
         return self.wait_while(method=method, timeout=timeout, interval=interval)
 
 
-class TimeoutError(StandardError):
+class TimeoutError(Exception):
     pass

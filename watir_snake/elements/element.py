@@ -11,13 +11,13 @@ from ..atoms import Atoms
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
 # class Element(Container, EventuallyPresent, Waitable, Adjacent):
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class Element(Atoms, Waitable):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
@@ -133,7 +133,7 @@ class Element(Atoms, Waitable):
 
         browser.element(name='new_user_button').double_click()
         """
-        self._element_call(lambda _: ActionChains(self.driver).double_click(self.element)
+        self._element_call(lambda: ActionChains(self.driver).double_click(self.element)
                            .perform(), self._wait_for_present)
         self.browser.after_hooks.run()
 
@@ -146,7 +146,7 @@ class Element(Atoms, Waitable):
 
         browser.element(name='new_user_button').right_click()
         """
-        self._element_call(lambda _: ActionChains(self.driver).context_click(self.element)
+        self._element_call(lambda: ActionChains(self.driver).context_click(self.element)
                            .perform(), self._wait_for_present)
         self.browser.after_hooks.run()
 
@@ -159,7 +159,7 @@ class Element(Atoms, Waitable):
 
         browser.element(name='new_user_button').hover()
         """
-        self._element_call(lambda _: ActionChains(self.driver).move_to_element(self.element)
+        self._element_call(lambda: ActionChains(self.driver).move_to_element(self.element)
                            .perform(), self._wait_for_present)
         self.browser.after_hooks.run()
 
@@ -178,7 +178,7 @@ class Element(Atoms, Waitable):
         """
         self._assert_is_element(other)
 
-        self._element_call(lambda _: ActionChains(self.driver).drag_and_drop(self.element, other.wd)
+        self._element_call(lambda: ActionChains(self.driver).drag_and_drop(self.element, other.wd)
                            .perform(), self._wait_for_present)
 
     def drag_and_drop_by(self, xoffset, yoffset):
@@ -193,7 +193,7 @@ class Element(Atoms, Waitable):
 
         browser.div(id='draggable').drag_and_drop_by(100, -200)
         """
-        self._element_call(lambda _: ActionChains(self.driver).
+        self._element_call(lambda: ActionChains(self.driver).
                            drag_and_drop_by_offset(self.element, xoffset, yoffset).perform(),
                            self._wait_for_present)
 
@@ -242,7 +242,7 @@ class Element(Atoms, Waitable):
 
         browser.a(id='link_2').attribute_value('title')  #=> 'link_title_2'
         """
-        return self._element_call(lambda _: self.element.attribute(attribute_name))
+        return self._element_call(lambda: self.element.get_attribute(attribute_name))
 
     @property
     def outer_html(self):
@@ -255,8 +255,8 @@ class Element(Atoms, Waitable):
 
         browser.div(id='foo').outer_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
-        return self._element_call(lambda _: self._execute_atom('getOuterHtml',
-                                                               self.element)).strip()
+        return self._element_call(lambda: self._execute_atom('getOuterHtml',
+                                                             self.element)).strip()
 
     html = outer_html
 
@@ -271,8 +271,8 @@ class Element(Atoms, Waitable):
 
         browser.div(id='foo').inner_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
-        return self._element_call(lambda _: self._execute_atom('getInnerHtml',
-                                                               self.element)).strip()
+        return self._element_call(lambda: self._execute_atom('getInnerHtml',
+                                                             self.element)).strip()
 
     def send_keys(self, *args):
         """
@@ -283,15 +283,15 @@ class Element(Atoms, Waitable):
 
         browser.text_field(name='new_user_first_name').send_keys('watir_snake')
         """
-        return self._element_call(lambda _: self.element.send_keys(*args), self._wait_for_writable)
+        return self._element_call(lambda: self.element.send_keys(*args), self._wait_for_writable)
 
     def focus(self):
         """
         Focuses the element
         Note that Firefox queues focus events until the window actually has focus
         """
-        self._element_call(lambda _: self.driver.execute_script('return arguments[0].focus()',
-                                                                self.element))
+        self._element_call(lambda: self.driver.execute_script('return arguments[0].focus()',
+                                                              self.element))
 
     @property
     def focused(self):
@@ -299,7 +299,7 @@ class Element(Atoms, Waitable):
         Returns True if the element is focused
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element == self.driver.switch_to.active_element)
+        return self._element_call(lambda: self.element == self.driver.switch_to.active_element)
 
     def fire_event(self, event_name):
         """
@@ -316,7 +316,7 @@ class Element(Atoms, Waitable):
         """
         event_name = sub(r'^on', '', str(event_name)).lower()
 
-        self._element_call(lambda _: self._execute_atom('fireEvent', self.element, event_name))
+        self._element_call(lambda: self._execute_atom('fireEvent', self.element, event_name))
 
     @property
     def driver(self):
@@ -335,7 +335,7 @@ class Element(Atoms, Waitable):
 
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element.displayed, self._assert_exists)
+        return self._element_call(lambda: self.element.displayed, self._assert_exists)
 
     @property
     def enabled(self):
@@ -344,7 +344,7 @@ class Element(Atoms, Waitable):
 
         :rtype: bool
         """
-        return self._element_call(lambda _: self.element.enabled, self._assert_exists)
+        return self._element_call(lambda: self.element.enabled, self._assert_exists)
 
     @property
     def present(self):
@@ -373,7 +373,7 @@ class Element(Atoms, Waitable):
         browser.button(value='Delete').style('border') #=> "4px solid rgb(255, 0, 0)"
         """
         if prop:
-            return self._element_call(lambda _: self.element.style(prop))
+            return self._element_call(lambda: self.element.style(prop))
         else:
             return str(self.attribute_value('style')).strip()
 
@@ -435,8 +435,7 @@ class Element(Atoms, Waitable):
         if not watir_snake.relaxed_locate:
             return self._assert_exists()
         if self.exists:  # Performance shortcut
-            return
-
+            return None
         try:
             self.query_scope.wait_for_exists()
             self.wait_until(self.exists)
@@ -481,7 +480,7 @@ class Element(Atoms, Waitable):
         self._wait_for_enabled()
 
         try:
-            self.wait_until(lambda _: not getattr(self, 'readonly', None) or not self.readonly)
+            self.wait_until(lambda: not getattr(self, 'readonly', None) or not self.readonly)
         except TimeoutError:
             raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
                                           'seconds, waiting for {} to not be '
@@ -556,7 +555,7 @@ class Element(Atoms, Waitable):
         return self.attribute_value(attribute_name) is not None
 
     def _assert_enabled(self):
-        if not self._element_call(lambda _: self.element.enabled):
+        if not self._element_call(lambda: self.element.enabled):
             raise ObjectDisabledException('object is disabled {}'.format(self))
 
     def _assert_writable(self):

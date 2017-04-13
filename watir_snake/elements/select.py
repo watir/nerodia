@@ -5,11 +5,11 @@ from watir_snake.exception import Error, NoValueFoundException, UnknownObjectExc
 from watir_snake.wait.wait import TimeoutError
 from .html_elements import HTMLElement
 from .option import Option
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 from ..wait.wait import Wait
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class Select(HTMLElement):
     def clear(self):
         """ Clears all selected options """
@@ -27,7 +27,7 @@ class Select(HTMLElement):
 
         :rtype: watir_snake.elements.option.OptionColletion
         """
-        return self._element_call(lambda _: super(Select, self).options, self._wait_for_exists)
+        return self._element_call(lambda: super(Select, self).options, self._wait_for_exists)
 
     def includes(self, term):
         """

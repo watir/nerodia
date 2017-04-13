@@ -1,10 +1,10 @@
 import six
 
 from .input import Input
-from ..meta_element import MetaElement
+from ..meta_elements import MetaHtmlElement
 
 
-@six.add_metaclass(MetaElement)
+@six.add_metaclass(MetaHtmlElement)
 class Hidden(Input):
     @property
     def visible(self):
