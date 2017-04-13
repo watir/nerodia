@@ -1,21 +1,19 @@
 from importlib import import_module
 
 import six
-from re import search
-from re import sub
-from selenium.common.exceptions import StaleElementReferenceException, InvalidElementStateException
+from re import search, sub
+from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 from warnings import warn
 
 import watir_snake
 from ..atoms import Atoms
-from ..exception import UnknownObjectException, UnknownFrameException, Error, \
-    ObjectDisabledException, ObjectReadOnlyException
+from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
+    UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
 from ..meta_element import MetaElement
 from ..wait.timer import Timer
-from ..wait.wait import Wait
-from ..wait.wait import Waitable, TimeoutError
+from ..wait.wait import TimeoutError, Wait, Waitable
 
 
 # class Element(Container, EventuallyPresent, Waitable, Adjacent):
@@ -51,7 +49,7 @@ class Element(Atoms, Waitable):
     def attribute_list(self):
         return self.ATTRIBUTES
 
-    def __repl__(self):
+    def __repr__(self):
         string = '#<#{}: '.format(self.__class__.__name__)
         if self.keyword:
             string += 'keyword: {} '.format(self.keyword)
@@ -522,7 +520,7 @@ class Element(Atoms, Waitable):
     @property
     def _selector_string(self):
         if isinstance(self.query_scope, watir_snake.browser.Browser):
-            return self.selector.__repl__()
+            return '{}'.format(self.selector)
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
 
