@@ -32,4 +32,4 @@ def tag_to_class():
 
 
 def element_class_for(tag_name):
-    return tag_to_class.get(tag_name.to_sym) or elements.html_elements.HTMLElement
+    return tag_to_class.get(tag_name.to_sym) or elements.html_element.HTMLElement

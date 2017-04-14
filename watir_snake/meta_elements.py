@@ -1,20 +1,20 @@
 import watir_snake
 
 
-class MetaHtmlElement(type):
+class MetaHTMLElement(type):
     def __new__(cls, name, parents, dct):
         final_dict = create_attributes(name, parents, dct, watir_snake.html_attributes)
 
-        inst = super(MetaHtmlElement, cls).__new__(cls, name, parents, final_dict)
+        inst = super(MetaHTMLElement, cls).__new__(cls, name, parents, final_dict)
 
         return inst
 
 
-class MetaSvgElement(type):
+class MetaSVGElement(type):
     def __new__(cls, name, parents, dct):
         final_dict = create_attributes(name, parents, dct, watir_snake.svg_attributes)
 
-        inst = super(MetaSvgElement, cls).__new__(cls, name, parents, final_dict)
+        inst = super(MetaSVGElement, cls).__new__(cls, name, parents, final_dict)
 
         return inst
 

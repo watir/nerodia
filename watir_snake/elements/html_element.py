@@ -1,9 +1,11 @@
 import six
 
-from .html_element import HTMLElement
+from .element import Element
 from ..meta_elements import MetaHTMLElement
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Area(HTMLElement):
-    _attr_href = (str, 'href')
+class HTMLElement(Element):
+    pass
+
+# TODO: collection

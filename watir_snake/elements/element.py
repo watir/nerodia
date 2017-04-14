@@ -11,13 +11,13 @@ from ..atoms import Atoms
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
-from ..meta_elements import MetaHtmlElement
+from ..meta_elements import MetaHTMLElement
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
 # class Element(Container, EventuallyPresent, Waitable, Adjacent):
-@six.add_metaclass(MetaHtmlElement)
+@six.add_metaclass(MetaHTMLElement)
 class Element(Atoms, Waitable):
     ATTRIBUTES = []
     _attr_id = (str, 'id')

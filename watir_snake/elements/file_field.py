@@ -4,10 +4,10 @@ import six
 from os import path
 
 from .input import Input
-from ..meta_elements import MetaHtmlElement
+from ..meta_elements import MetaHTMLElement
 
 
-@six.add_metaclass(MetaHtmlElement)
+@six.add_metaclass(MetaHTMLElement)
 class FileField(Input):
     def set(self, filepath):
         """

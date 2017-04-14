@@ -2,10 +2,10 @@ import six
 
 from watir_snake.exception import Error
 from .input import Input
-from ..meta_elements import MetaHtmlElement
+from ..meta_elements import MetaHTMLElement
 
 
-@six.add_metaclass(MetaHtmlElement)
+@six.add_metaclass(MetaHTMLElement)
 class Button(Input):
     """
     Class representing button elements

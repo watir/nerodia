@@ -3,13 +3,13 @@ import six
 
 from watir_snake.exception import Error, NoValueFoundException, UnknownObjectException
 from watir_snake.wait.wait import TimeoutError
-from .html_elements import HTMLElement
+from .html_element import HTMLElement
 from .option import Option
-from ..meta_elements import MetaHtmlElement
+from ..meta_elements import MetaHTMLElement
 from ..wait.wait import Wait
 
 
-@six.add_metaclass(MetaHtmlElement)
+@six.add_metaclass(MetaHTMLElement)
 class Select(HTMLElement):
     def clear(self):
         """ Clears all selected options """
