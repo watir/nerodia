@@ -1,6 +1,6 @@
 import six
 
-from .html_element import HTMLElement
+from .html_elements import HTMLElement
 from ..exception import UnknownFrameException
 from ..meta_elements import MetaHTMLElement
 

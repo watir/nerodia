@@ -94,7 +94,7 @@ htmlelement = [
     (bool, 'content_editable', 'isContentEditable')
 ]
 
-htmlelementcollection = []
+HTMLElementCollection = []
 
 font = [
     (str, 'color', 'color'),
@@ -102,13 +102,13 @@ font = [
     (str, 'size', 'size')
 ]
 
-fontcollection = []
+FontCollection = []
 
 directory = [
     (bool, 'compact', 'compact')
 ]
 
-directorycollection = []
+DirectoryCollection = []
 
 frameset = [
     (str, 'cols', 'cols'),
@@ -127,7 +127,7 @@ frameset = [
     (str, 'onunload', 'onunload')
 ]
 
-framesetcollection = []
+FrameSetCollection = []
 
 marquee = [
     (str, 'behavior', 'behavior'),
@@ -146,7 +146,7 @@ marquee = [
     (str, 'onstart', 'onstart')
 ]
 
-marqueecollection = []
+MarqueeCollection = []
 
 applet = [
     (str, 'align', 'align'),
@@ -162,20 +162,20 @@ applet = [
     (str, 'width', 'width')
 ]
 
-appletcollection = []
+AppletCollection = []
 
 canvas = [
     (int, 'width', 'width'),
     (int, 'height', 'height')
 ]
 
-canvascollection = []
+CanvasCollection = []
 
 template = [
     (str, 'content', 'content')
 ]
 
-templatecollection = []
+TemplateCollection = []
 
 script = [
     (str, 'src', 'src'),
@@ -188,14 +188,14 @@ script = [
     (str, 'for', 'htmlFor')
 ]
 
-scriptcollection = []
+ScriptCollection = []
 
 dialog = [
     (bool, 'open', 'open'),
     (str, 'return_value', 'returnValue')
 ]
 
-dialogcollection = []
+DialogCollection = []
 
 menuitem = [
     (str, 'type', 'type'),
@@ -208,7 +208,7 @@ menuitem = [
     (str, 'command', 'command')
 ]
 
-menuitemcollection = []
+MenuItemCollection = []
 
 menu = [
     (str, 'type', 'type'),
@@ -216,20 +216,20 @@ menu = [
     (bool, 'compact', 'compact')
 ]
 
-menucollection = []
+MenuCollection = []
 
 details = [
     (bool, 'open', 'open')
 ]
 
-detailscollection = []
+DetailsCollection = []
 
 legend = [
     (str, 'form', 'form'),
     (str, 'align', 'align')
 ]
 
-legendcollection = []
+LegendCollection = []
 
 fieldset = [
     (bool, 'disabled', 'disabled'),
@@ -241,7 +241,7 @@ fieldset = [
     (str, 'validation_message', 'validationMessage')
 ]
 
-fieldsetcollection = []
+FieldSetCollection = []
 
 meter = [
     (float, 'value', 'value'),
@@ -253,7 +253,7 @@ meter = [
     (str, 'labels', 'labels')
 ]
 
-metercollection = []
+MeterCollection = []
 
 progress = [
     (float, 'value', 'value'),
@@ -262,7 +262,7 @@ progress = [
     (str, 'labels', 'labels')
 ]
 
-progresscollection = []
+ProgressCollection = []
 
 output = [
     (str, 'for', 'htmlFor'),
@@ -277,7 +277,7 @@ output = [
     (str, 'labels', 'labels')
 ]
 
-outputcollection = []
+OutputCollection = []
 
 keygen = [
     (bool, 'autofocus', 'autofocus'),
@@ -293,7 +293,7 @@ keygen = [
     (str, 'labels', 'labels')
 ]
 
-keygencollection = []
+KeygenCollection = []
 
 textarea = [
     (str, 'autocomplete', 'autocomplete'),
@@ -323,7 +323,7 @@ textarea = [
     (str, 'selection_direction', 'selectionDirection')
 ]
 
-textareacollection = []
+TextAreaCollection = []
 
 option = [
     (bool, 'disabled', 'disabled'),
@@ -335,20 +335,20 @@ option = [
     (int, 'index', 'index')
 ]
 
-optioncollection = []
+OptionCollection = []
 
 optgroup = [
     (bool, 'disabled', 'disabled'),
     (str, 'label', 'label')
 ]
 
-optgroupcollection = []
+OptGroupCollection = []
 
 datalist = [
     (str, 'options', 'options')
 ]
 
-datalistcollection = []
+DataListCollection = []
 
 select = [
     (str, 'autocomplete', 'autocomplete'),
@@ -371,7 +371,7 @@ select = [
     (str, 'labels', 'labels')
 ]
 
-selectcollection = []
+SelectCollection = []
 
 button = [
     (bool, 'autofocus', 'autofocus'),
@@ -392,7 +392,7 @@ button = [
     (str, 'labels', 'labels')
 ]
 
-buttoncollection = []
+ButtonCollection = []
 
 input = [
     (str, 'accept', 'accept'),
@@ -446,7 +446,7 @@ input = [
     (str, 'use_map', 'useMap')
 ]
 
-inputcollection = []
+InputCollection = []
 
 label = [
     (str, 'form', 'form'),
@@ -454,7 +454,7 @@ label = [
     (str, 'control', 'control')
 ]
 
-labelcollection = []
+LabelCollection = []
 
 form = [
     (str, 'accept_charset', 'acceptCharset'),
@@ -469,7 +469,7 @@ form = [
     (int, 'length', 'length')
 ]
 
-formcollection = []
+FormCollection = []
 
 tablecell = [
     (int, 'col_span', 'colSpan'),
@@ -487,7 +487,7 @@ tablecell = [
     (str, 'bg_color', 'bgColor')
 ]
 
-tablecellcollection = []
+TableCellCollection = []
 
 tableheadercell = [
     (str, 'scope', 'scope'),
@@ -495,13 +495,13 @@ tableheadercell = [
     (str, 'sorted', 'sorted')
 ]
 
-tableheadercellcollection = []
+TableHeaderCellCollection = []
 
 tabledatacell = [
     (str, 'abbr', 'abbr')
 ]
 
-tabledatacellcollection = []
+TableDataCellCollection = []
 
 tablerow = [
     (int, 'row_index', 'rowIndex'),
@@ -513,7 +513,7 @@ tablerow = [
     (str, 'bg_color', 'bgColor')
 ]
 
-tablerowcollection = []
+TableRowCollection = []
 
 tablesection = [
     (str, 'align', 'align'),
@@ -522,7 +522,7 @@ tablesection = [
     (str, 'v_align', 'vAlign')
 ]
 
-tablesectioncollection = []
+TableSectionCollection = []
 
 tablecol = [
     (str, 'align', 'align'),
@@ -532,13 +532,13 @@ tablecol = [
     (str, 'width', 'width')
 ]
 
-tablecolcollection = []
+TableColCollection = []
 
 tablecaption = [
     (str, 'align', 'align')
 ]
 
-tablecaptioncollection = []
+TableCaptionCollection = []
 
 table = [
     (str, 'caption', 'caption'),
@@ -557,7 +557,7 @@ table = [
     (str, 'cell_spacing', 'cellSpacing')
 ]
 
-tablecollection = []
+TableCollection = []
 
 area = [
     (str, 'alt', 'alt'),
@@ -573,7 +573,7 @@ area = [
     (bool, 'no_href', 'noHref')
 ]
 
-areacollection = []
+AreaCollection = []
 
 map = [
     (str, 'name', 'name'),
@@ -581,7 +581,7 @@ map = [
     (str, 'images', 'images')
 ]
 
-mapcollection = []
+MapCollection = []
 
 media = [
     (str, 'error', 'error'),
@@ -615,11 +615,11 @@ media = [
     (str, 'text_tracks', 'textTracks')
 ]
 
-mediacollection = []
+MediaCollection = []
 
-audio = []
+Audio = []
 
-audiocollection = []
+AudioCollection = []
 
 video = [
     (int, 'width', 'width'),
@@ -629,7 +629,7 @@ video = [
     (str, 'poster', 'poster')
 ]
 
-videocollection = []
+VideoCollection = []
 
 track = [
     (str, 'kind', 'kind'),
@@ -641,7 +641,7 @@ track = [
     (str, 'track', 'track')
 ]
 
-trackcollection = []
+TrackCollection = []
 
 param = [
     (str, 'name', 'name'),
@@ -650,7 +650,7 @@ param = [
     (str, 'value_type', 'valueType')
 ]
 
-paramcollection = []
+ParamCollection = []
 
 object = [
     (str, 'data', 'data'),
@@ -678,7 +678,7 @@ object = [
     (str, 'border', 'border')
 ]
 
-objectcollection = []
+ObjectCollection = []
 
 embed = [
     (str, 'src', 'src'),
@@ -689,7 +689,7 @@ embed = [
     (str, 'name', 'name')
 ]
 
-embedcollection = []
+EmbedCollection = []
 
 iframe = [
     (str, 'src', 'src'),
@@ -710,7 +710,7 @@ iframe = [
     (str, 'margin_width', 'marginWidth')
 ]
 
-iframecollection = []
+IFrameCollection = []
 
 image = [
     (str, 'alt', 'alt'),
@@ -735,7 +735,7 @@ image = [
     (str, 'border', 'border')
 ]
 
-imagecollection = []
+ImageCollection = []
 
 source = [
     (str, 'srcset', 'srcset'),
@@ -745,40 +745,40 @@ source = [
     (str, 'type', 'type')
 ]
 
-sourcecollection = []
+SourceCollection = []
 
-picture = []
+Picture = []
 
-picturecollection = []
+PictureCollection = []
 
 mod = [
     (str, 'cite', 'cite'),
     (str, 'date_time', 'dateTime')
 ]
 
-modcollection = []
+ModCollection = []
 
 br = [
     (str, 'clear', 'clear')
 ]
 
-brcollection = []
+BRCollection = []
 
-span = []
+Span = []
 
-spancollection = []
+SpanCollection = []
 
 time = [
     (str, 'date_time', 'dateTime')
 ]
 
-timecollection = []
+TimeCollection = []
 
 data = [
     (str, 'value', 'value')
 ]
 
-datacollection = []
+DataCollection = []
 
 anchor = [
     (str, 'target', 'target'),
@@ -795,33 +795,33 @@ anchor = [
     (str, 'shape', 'shape')
 ]
 
-anchorcollection = []
+AnchorCollection = []
 
 div = [
     (str, 'align', 'align')
 ]
 
-divcollection = []
+DivCollection = []
 
 dlist = [
     (bool, 'compact', 'compact')
 ]
 
-dlistcollection = []
+DListCollection = []
 
 li = [
     (int, 'value', 'value'),
     (str, 'type', 'type')
 ]
 
-licollection = []
+LICollection = []
 
 ulist = [
     (bool, 'compact', 'compact'),
     (str, 'type', 'type')
 ]
 
-ulistcollection = []
+UListCollection = []
 
 olist = [
     (bool, 'reversed', 'reversed'),
@@ -830,19 +830,19 @@ olist = [
     (bool, 'compact', 'compact')
 ]
 
-olistcollection = []
+OListCollection = []
 
 quote = [
     (str, 'cite', 'cite')
 ]
 
-quotecollection = []
+QuoteCollection = []
 
 pre = [
     (int, 'width', 'width')
 ]
 
-precollection = []
+PreCollection = []
 
 hr = [
     (str, 'align', 'align'),
@@ -852,19 +852,19 @@ hr = [
     (str, 'width', 'width')
 ]
 
-hrcollection = []
+HRCollection = []
 
 paragraph = [
     (str, 'align', 'align')
 ]
 
-paragraphcollection = []
+ParagraphCollection = []
 
 heading = [
     (str, 'align', 'align')
 ]
 
-headingcollection = []
+HeadingCollection = []
 
 body = [
     (str, 'link', 'link'),
@@ -887,7 +887,7 @@ body = [
     (str, 'onunload', 'onunload')
 ]
 
-bodycollection = []
+BodyCollection = []
 
 style = [
     (str, 'media', 'media'),
@@ -895,7 +895,7 @@ style = [
     (bool, 'scoped', 'scoped')
 ]
 
-stylecollection = []
+StyleCollection = []
 
 meta = [
     (str, 'name', 'name'),
@@ -904,30 +904,30 @@ meta = [
     (str, 'scheme', 'scheme')
 ]
 
-metacollection = []
+MetaCollection = []
 
 base = [
     (str, 'href', 'href'),
     (str, 'target', 'target')
 ]
 
-basecollection = []
+BaseCollection = []
 
-title = []
+Title = []
 
-titlecollection = []
+TitleCollection = []
 
-head = []
+Head = []
 
-headcollection = []
+HeadCollection = []
 
 html = [
     (str, 'version', 'version')
 ]
 
-htmlcollection = []
+HtmlCollection = []
 
-unknown = []
+Unknown = []
 
-unknowncollection = []
+UnknownCollection = []
 

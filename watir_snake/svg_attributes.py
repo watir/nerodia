@@ -8,13 +8,13 @@ svgelement = [
     (int, 'tab_index', 'tabIndex')
 ]
 
-svgelementcollection = []
+SVGElementCollection = []
 
 mpath = [
     (str, 'href', 'href')
 ]
 
-mpathcollection = []
+MPathCollection = []
 
 animation = [
     (str, 'target_element', 'targetElement'),
@@ -26,23 +26,23 @@ animation = [
     (str, 'system_language', 'systemLanguage')
 ]
 
-animationcollection = []
+AnimationCollection = []
 
-animatetransform = []
+AnimateTransform = []
 
-animatetransformcollection = []
+AnimateTransformCollection = []
 
-animatemotion = []
+AnimateMotion = []
 
-animatemotioncollection = []
+AnimateMotionCollection = []
 
-set = []
+Set = []
 
-setcollection = []
+SetCollection = []
 
-animate = []
+Animate = []
 
-animatecollection = []
+AnimateCollection = []
 
 view = [
     (str, 'view_target', 'viewTarget'),
@@ -51,7 +51,7 @@ view = [
     (int, 'zoom_and_pan', 'zoomAndPan')
 ]
 
-viewcollection = []
+ViewCollection = []
 
 cursor = [
     (int, 'x', 'x'),
@@ -59,7 +59,7 @@ cursor = [
     (str, 'href', 'href')
 ]
 
-cursorcollection = []
+CursorCollection = []
 
 pattern = [
     (str, 'pattern_units', 'patternUnits'),
@@ -74,21 +74,21 @@ pattern = [
     (str, 'href', 'href')
 ]
 
-patterncollection = []
+PatternCollection = []
 
 stop = [
     (str, 'offset', 'offset')
 ]
 
-stopcollection = []
+StopCollection = []
 
-meshpatch = []
+MeshPatch = []
 
-meshpatchcollection = []
+MeshPatchCollection = []
 
-meshrow = []
+MeshRow = []
 
-meshrowcollection = []
+MeshRowCollection = []
 
 gradient = [
     (str, 'gradient_units', 'gradientUnits'),
@@ -97,14 +97,14 @@ gradient = [
     (str, 'href', 'href')
 ]
 
-gradientcollection = []
+GradientCollection = []
 
 meshgradient = [
     (int, 'x', 'x'),
     (int, 'y', 'y')
 ]
 
-meshgradientcollection = []
+MeshGradientCollection = []
 
 radialgradient = [
     (int, 'cx', 'cx'),
@@ -115,7 +115,7 @@ radialgradient = [
     (int, 'fr', 'fr')
 ]
 
-radialgradientcollection = []
+RadialGradientCollection = []
 
 lineargradient = [
     (int, 'x1', 'x1'),
@@ -124,7 +124,7 @@ lineargradient = [
     (int, 'y2', 'y2')
 ]
 
-lineargradientcollection = []
+LinearGradientCollection = []
 
 marker = [
     (int, 'refx', 'refX'),
@@ -139,22 +139,22 @@ marker = [
     (str, 'preserve_aspect_ratio', 'preserveAspectRatio')
 ]
 
-markercollection = []
+MarkerCollection = []
 
 symbol = [
     (str, 'view_box', 'viewBox'),
     (str, 'preserve_aspect_ratio', 'preserveAspectRatio')
 ]
 
-symbolcollection = []
+SymbolCollection = []
 
-metadata = []
+Metadata = []
 
-metadatacollection = []
+MetadataCollection = []
 
-desc = []
+Desc = []
 
-desccollection = []
+DescCollection = []
 
 graphics = [
     (str, 'transform', 'transform'),
@@ -163,7 +163,7 @@ graphics = [
     (str, 'system_language', 'systemLanguage')
 ]
 
-graphicscollection = []
+GraphicsCollection = []
 
 foreignobject = [
     (int, 'x', 'x'),
@@ -172,14 +172,14 @@ foreignobject = [
     (int, 'height', 'height')
 ]
 
-foreignobjectcollection = []
+ForeignObjectCollection = []
 
 textcontent = [
     (int, 'text_length', 'textLength'),
     (str, 'length_adjust', 'lengthAdjust')
 ]
 
-textcontentcollection = []
+TextContentCollection = []
 
 textpath = [
     (int, 'start_offset', 'startOffset'),
@@ -190,7 +190,7 @@ textpath = [
     (str, 'animated_path_seg_list', 'animatedPathSegList')
 ]
 
-textpathcollection = []
+TextPathCollection = []
 
 textpositioning = [
     (str, 'x', 'x'),
@@ -200,15 +200,15 @@ textpositioning = [
     (str, 'rotate', 'rotate')
 ]
 
-textpositioningcollection = []
+TextPositioningCollection = []
 
-tspan = []
+TSpan = []
 
-tspancollection = []
+TSpanCollection = []
 
-switch = []
+Switch = []
 
-switchcollection = []
+SwitchCollection = []
 
 use = [
     (int, 'x', 'x'),
@@ -218,15 +218,15 @@ use = [
     (str, 'href', 'href')
 ]
 
-usecollection = []
+UseCollection = []
 
-defs = []
+Defs = []
 
-defscollection = []
+DefsCollection = []
 
-g = []
+G = []
 
-gcollection = []
+GCollection = []
 
 svg = [
     (int, 'x', 'x'),
@@ -243,25 +243,25 @@ svg = [
     (int, 'zoom_and_pan', 'zoomAndPan')
 ]
 
-svgcollection = []
+SVGCollection = []
 
-geometry = []
+Geometry = []
 
-geometrycollection = []
+GeometryCollection = []
 
 polygon = [
     (str, 'points', 'points'),
     (str, 'animated_points', 'animatedPoints')
 ]
 
-polygoncollection = []
+PolygonCollection = []
 
 polyline = [
     (str, 'points', 'points'),
     (str, 'animated_points', 'animatedPoints')
 ]
 
-polylinecollection = []
+PolylineCollection = []
 
 line = [
     (int, 'x1', 'x1'),
@@ -270,7 +270,7 @@ line = [
     (int, 'y2', 'y2')
 ]
 
-linecollection = []
+LineCollection = []
 
 ellipse = [
     (int, 'cx', 'cx'),
@@ -279,7 +279,7 @@ ellipse = [
     (int, 'ry', 'ry')
 ]
 
-ellipsecollection = []
+EllipseCollection = []
 
 circle = [
     (int, 'cx', 'cx'),
@@ -287,7 +287,7 @@ circle = [
     (int, 'r', 'r')
 ]
 
-circlecollection = []
+CircleCollection = []
 
 rect = [
     (int, 'x', 'x'),
@@ -298,7 +298,7 @@ rect = [
     (int, 'ry', 'ry')
 ]
 
-rectcollection = []
+RectCollection = []
 
 path = [
     (str, 'path_length', 'pathLength'),
@@ -306,5 +306,5 @@ path = [
     (str, 'animated_path_seg_list', 'animatedPathSegList')
 ]
 
-pathcollection = []
+PathCollection = []
 
