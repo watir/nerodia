@@ -6,7 +6,11 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class Option(HTMLElement):
-    _aliases = [['select', 'click'], ['toggle', 'click']]
+    # alias
+    def select(self):
+        self.click()
+
+    toggle = select
 
     def clear(self):
         """ Un-selects the option """

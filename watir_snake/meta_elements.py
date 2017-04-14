@@ -42,11 +42,6 @@ def create_attributes(name, parents, dct, generated):
     for parent in parents:
         attrs.extend(getattr(parent, 'ATTRIBUTES', []))
 
-    for alias in dct.get('_aliases', []):
-        new_name, old_name = alias
-        final_dict[new_name] = final_dict[old_name]
-        attrs.append(new_name)
-
     final_dict['ATTRIBUTES'] = list(set(attrs))
     return final_dict
 

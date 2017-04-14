@@ -6,4 +6,10 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class TableCell(HTMLElement):
-    _aliases = [['colspan', 'col_span'], ['rowspan', 'row_span']]
+    # alias
+    def colspan(self):
+        return self.colspan()
+
+    # alias
+    def rowspan(self):
+        return self.rowspan()

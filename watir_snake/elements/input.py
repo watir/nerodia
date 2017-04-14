@@ -6,4 +6,7 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class Input(HTMLElement):
-    _aliases = [['readonly', 'read_only']]
+
+    @property  # alias
+    def readonly(self):
+        return self.read_only
