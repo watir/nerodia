@@ -1,4 +1,6 @@
-from . import html_attributes, svg_attributes, locators, browser, elements
+ttc = None
+
+tag_to_class = ttc or {}
 
 #
 # Whether or not Watip should wait for an element to be found or present before taking an action.
@@ -13,22 +15,14 @@ relaxed_locate = True
 
 default_timeout = 30
 
+from . import html_attributes, svg_attributes, locators, browser, elements
+
 #
 # Whether the locators should be used from a different namespace.
 # Defaults to watir_snake.locators.
 #
 
 locator_namespace = locators
-
-ttc = None
-
-
-@property
-def tag_to_class():
-    """
-    :rtype: dict
-    """
-    return ttc or {}
 
 
 def element_class_for(tag_name):
