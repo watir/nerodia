@@ -1,6 +1,5 @@
 from importlib import import_module
 
-import six
 from re import search, sub
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -11,13 +10,11 @@ from ..atoms import Atoms
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
-from ..meta_elements import MetaHTMLElement
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
 # class Element(Container, EventuallyPresent, Waitable, Adjacent):
-@six.add_metaclass(MetaHTMLElement)
 class Element(Atoms, Waitable):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
@@ -389,16 +386,16 @@ class Element(Atoms, Waitable):
 
         if tag_name == 'input':
             elem_type = elem.attribute('type')
-            if elem_type in watir_snake.elements.button.Button.VALID_TYPES:
-                klass = watir_snake.elements.button.Button
+            if elem_type in watir_snake.elements.Button.VALID_TYPES:
+                klass = watir_snake.elements.Button
             elif elem_type == 'checkbox':
-                klass = watir_snake.elements.checkbox.CheckBox
+                klass = watir_snake.elements.CheckBox
             elif elem_type == 'radio':
-                klass = watir_snake.elements.radio.Radio
+                klass = watir_snake.elements.Radio
             elif elem_type == 'file':
-                klass = watir_snake.elements.file_field.FileField
+                klass = watir_snake.elements.FileField
             else:
-                klass = watir_snake.elements.text_field.TextField
+                klass = watir_snake.elements.TextField
         else:
             klass = watir_snake.element_class_for(tag_name)
 
@@ -527,12 +524,15 @@ class Element(Atoms, Waitable):
     def _unknown_exception(self):
         return UnknownObjectException
 
+    @property
     def _locator_class(self):
         return self._import_module.Locator
 
+    @property
     def _element_validator_class(self):
         return self._import_module.Validator
 
+    @property
     def _selector_builder_class(self):
         return self._import_module.SelectorBuilder
 
@@ -550,7 +550,7 @@ class Element(Atoms, Waitable):
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        if isinstance(self.query_scope, watir_snake.elements.iframe.IFrame):
+        if isinstance(self.query_scope, watir_snake.elements.IFrame):
             self.query_scope.switch_to()
         else:
             self.query_scope.assert_exists()
@@ -571,7 +571,7 @@ class Element(Atoms, Waitable):
     @classmethod
     def _assert_is_element(cls, obj):
         if not isinstance(obj, Element):
-            raise TypeError('execpted watir_snake.elements.Element, '
+            raise TypeError('execpted watir_snake.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):

@@ -15,7 +15,7 @@ class Table(HTMLElement):
         Represents table rows as dictionaries
         :return:
         """
-        all_rows = self.rows().to_a
+        all_rows = self.rows().to_list
         if all_rows:
             header_row = all_rows.pop(0)
         else:

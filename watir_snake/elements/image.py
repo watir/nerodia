@@ -5,7 +5,7 @@ from ..meta_elements import MetaHTMLElement
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Form(HTMLElement):
+class Image(HTMLElement):
     @property
     def loaded(self):
         """

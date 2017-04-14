@@ -134,7 +134,7 @@ class Waitable(object):
         """
 
         def method(arg):
-            if isinstance(arg, watir_snake.elements.element.Element):
+            if isinstance(arg, watir_snake.elements.Element):
                 arg.reset()
             return arg.present
 

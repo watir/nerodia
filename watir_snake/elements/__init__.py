@@ -1,1 +1,25 @@
-from . import button, checkbox, element, file_field, html_element, iframe, radio, text_field
+from .area import Area
+from .button import Button
+from .cell import Cell
+from .checkbox import CheckBox
+from .dlist import DList
+from .element import Element
+from .file_field import FileField
+from .form import Form
+from .hidden import Hidden
+from .html_element import HTMLElement
+from .iframe import Frame, IFrame
+from .image import Image
+from .input import Input
+from .link import Anchor
+from .option import Option
+from .radio import Radio
+from .row import Row
+from .select import Select
+from .svg_element import SVGElement
+from .table import Table
+from .table_cell import TableCell
+from .table_row import TableRow
+from .table_section import TableSection
+from .text_area import TextArea
+from .text_field import TextField
