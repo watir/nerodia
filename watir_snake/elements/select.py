@@ -27,7 +27,7 @@ class Select(HTMLElement):
 
         :rtype: watir_snake.elements.option.OptionColletion
         """
-        return self._element_call(lambda: super(Select, self).options, self._wait_for_exists)
+        return self._element_call(lambda: super(Select, self).options, self.wait_for_exists)
 
     def includes(self, term):
         """

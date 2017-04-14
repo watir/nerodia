@@ -233,9 +233,13 @@ class Browser(Container, HasWindow, Waitable):
 
     exists = exist
 
+    @property
+    def browser(self):
+        return self
+
     def assert_exists(self):
         if self.closed:
-            raise StandardError('browser was closed')
+            raise Exception('browser was closed')
         # elif not window.present:  # TODO
         #     raise NoSuchWindowException('browser window was closed')
         else:
@@ -245,22 +249,18 @@ class Browser(Container, HasWindow, Waitable):
     wait_for_exists = assert_exists
     wait_for_present = assert_exists
 
-    @property
-    def browser(self):
-        return self
-
-    def wrap_elements_in(self, obj):
+    def _wrap_elements_in(self, obj):
         if isinstance(obj, WebElement):
-            return self.wrap_element(obj)
+            return self._wrap_element(obj)
         elif isinstance(obj, list):
-            return [self.wrap_elements_in(e) for e in obj]
+            return [self._wrap_elements_in(e) for e in obj]
         elif isinstance(obj, dict):
             for k, v in obj.items():
-                obj[k] = self.wrap_elements_in(v)
+                obj[k] = self._wrap_elements_in(v)
             return obj
         else:
             return obj
 
-    def wrap_element(self, element):
+    def _wrap_element(self, element):
         # Watir.element_class_for(element.tag_name.downcase).new(self, element: element)  # TODO
         return None

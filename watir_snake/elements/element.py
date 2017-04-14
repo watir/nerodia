@@ -38,7 +38,7 @@ class Element(Atoms, Waitable):
         :rtype: bool
         """
         try:
-            self._assert_exists()
+            self.assert_exists()
             return True
         except (UnknownObjectException, UnknownFrameException):
             return False
@@ -57,7 +57,7 @@ class Element(Atoms, Waitable):
         if not self.selector:
             string += '{element: (selenium element)}'
         else:
-            string += self._selector_string
+            string += self.selector_string
         string += '>'
         return string
 
@@ -121,7 +121,7 @@ class Element(Atoms, Waitable):
             else:
                 self.element.click()
 
-        self._element_call(method, self._wait_for_enabled)
+        self._element_call(method, self.wait_for_enabled)
         self.browser.after_hooks.run()
 
     def double_click(self):
@@ -134,7 +134,7 @@ class Element(Atoms, Waitable):
         browser.element(name='new_user_button').double_click()
         """
         self._element_call(lambda: ActionChains(self.driver).double_click(self.element)
-                           .perform(), self._wait_for_present)
+                           .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
     def right_click(self):
@@ -147,7 +147,7 @@ class Element(Atoms, Waitable):
         browser.element(name='new_user_button').right_click()
         """
         self._element_call(lambda: ActionChains(self.driver).context_click(self.element)
-                           .perform(), self._wait_for_present)
+                           .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
     def hover(self):
@@ -160,7 +160,7 @@ class Element(Atoms, Waitable):
         browser.element(name='new_user_button').hover()
         """
         self._element_call(lambda: ActionChains(self.driver).move_to_element(self.element)
-                           .perform(), self._wait_for_present)
+                           .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
     def drag_and_drop_on(self, other):
@@ -179,7 +179,7 @@ class Element(Atoms, Waitable):
         self._assert_is_element(other)
 
         self._element_call(lambda: ActionChains(self.driver).drag_and_drop(self.element, other.wd)
-                           .perform(), self._wait_for_present)
+                           .perform(), self.wait_for_present)
 
     def drag_and_drop_by(self, xoffset, yoffset):
         """
@@ -195,7 +195,7 @@ class Element(Atoms, Waitable):
         """
         self._element_call(lambda: ActionChains(self.driver).
                            drag_and_drop_by_offset(self.element, xoffset, yoffset).perform(),
-                           self._wait_for_present)
+                           self.wait_for_present)
 
     def flash(self):
         """
@@ -283,7 +283,7 @@ class Element(Atoms, Waitable):
 
         browser.text_field(name='new_user_first_name').send_keys('watir_snake')
         """
-        return self._element_call(lambda: self.element.send_keys(*args), self._wait_for_writable)
+        return self._element_call(lambda: self.element.send_keys(*args), self.wait_for_writable)
 
     def focus(self):
         """
@@ -324,7 +324,7 @@ class Element(Atoms, Waitable):
 
     @property
     def wd(self):
-        self._assert_exists()
+        self.assert_exists()
         return self.element
 
     @property
@@ -335,7 +335,7 @@ class Element(Atoms, Waitable):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.displayed, self._assert_exists)
+        return self._element_call(lambda: self.element.displayed, self.assert_exists)
 
     @property
     def enabled(self):
@@ -344,7 +344,7 @@ class Element(Atoms, Waitable):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.enabled, self._assert_exists)
+        return self._element_call(lambda: self.element.enabled, self.assert_exists)
 
     @property
     def present(self):
@@ -429,11 +429,9 @@ class Element(Atoms, Waitable):
     def reset(self):
         self.element = None
 
-    # Private
-
-    def _wait_for_exists(self):
+    def wait_for_exists(self):
         if not watir_snake.relaxed_locate:
-            return self._assert_exists()
+            return self.assert_exists()
         if self.exists:  # Performance shortcut
             return None
         try:
@@ -447,9 +445,9 @@ class Element(Atoms, Waitable):
             raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
                                          'located'.format(watir_snake.default_timeout, self))
 
-    def _wait_for_present(self):
+    def wait_for_present(self):
         if not watir_snake.relaxed_locate:
-            return self._assert_exists()
+            return self.assert_exists()
 
         try:
             self.query_scope.wait_for_present()
@@ -462,10 +460,10 @@ class Element(Atoms, Waitable):
             raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
                                          'located'.format(watir_snake.default_timeout, self))
 
-    def _wait_for_enabled(self):
+    def wait_for_enabled(self):
         if not watir_snake.relaxed_locate:
             return self._assert_enabled()
-        self._wait_for_present()
+        self.wait_for_present()
 
         try:
             self.wait_until(self.enabled)
@@ -474,10 +472,10 @@ class Element(Atoms, Waitable):
                                           'waiting for {} to be '
                                           'enabled'.format(watir_snake.default_timeout, self))
 
-    def _wait_for_writable(self):
+    def wait_for_writable(self):
         if not watir_snake.relaxed_locate:
             return self._assert_writable()
-        self._wait_for_enabled()
+        self.wait_for_enabled()
 
         try:
             self.wait_until(lambda: not getattr(self, 'readonly', None) or not self.readonly)
@@ -486,7 +484,7 @@ class Element(Atoms, Waitable):
                                           'seconds, waiting for {} to not be '
                                           'readonly'.format(watir_snake.default_timeout, self))
 
-    def _assert_exists(self):
+    def assert_exists(self):
         """
         Ensure that the element exists, making sure that it is not stale and located if necessary
         """
@@ -497,15 +495,15 @@ class Element(Atoms, Waitable):
         elif self.element and not self.stale:
             return
         else:
-            self.element = self._locate()
+            self.element = self.locate()
 
-        self._assert_element_found()
+        self.assert_element_found()
 
-    def _assert_element_found(self):
+    def assert_element_found(self):
         if self.element is None:
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
-    def _locate(self):
+    def locate(self):
         self._ensure_context()
 
         element_validator = self._element_validator_class()
@@ -517,11 +515,17 @@ class Element(Atoms, Waitable):
         return locator.locate()
 
     @property
-    def _selector_string(self):
+    def selector_string(self):
         if isinstance(self.query_scope, watir_snake.browser.Browser):
             return '{}'.format(self.selector)
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
+
+    # Private
+
+    @property
+    def _unknown_exception(self):
+        return UnknownObjectException
 
     def _locator_class(self):
         return self._import_module.Locator
@@ -571,7 +575,7 @@ class Element(Atoms, Waitable):
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):
-        exist_check = exist_check or self._wait_for_exists
+        exist_check = exist_check or self.wait_for_exists
         if Wait.timer.locked is None:
             Wait.timer = Timer(timeout=watir_snake.default_timeout)
         try:

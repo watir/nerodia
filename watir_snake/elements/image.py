@@ -24,5 +24,5 @@ class Form(HTMLElement):
         Returns the image's width in pixels
         :rtype: int
         """
-        self._wait_for_exists()
+        self.wait_for_exists()
         return self.driver.execute_script("return arguments[0].width", self.element)
