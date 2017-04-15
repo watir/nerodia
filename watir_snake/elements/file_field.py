@@ -3,6 +3,7 @@ from errno import ENOENT
 import six
 from os import path
 
+from .html_elements import InputCollection
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 
@@ -20,5 +21,7 @@ class FileField(Input):
             raise ENOENT
         self._element_call(lambda: self.element.send_keys(filepath))
 
-# TODO: container
-# TODO: collection
+
+@six.add_metaclass(MetaHTMLElement)
+class FileFieldCollection(InputCollection):
+    pass

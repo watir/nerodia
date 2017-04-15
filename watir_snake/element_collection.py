@@ -53,7 +53,7 @@ class ElementCollection(object):
     def to_list(self):
         """
         This collection as a list
-        :rtype: list[watir_snake.elements.element.Element
+        :rtype: list[watir_snake.elements.element.Element]
         """
         if not self.as_list:
             elements = []

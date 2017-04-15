@@ -8,4 +8,4 @@ from ..meta_elements import MetaHTMLElement
 class Form(HTMLElement):
     def submit(self):
         self._element_call(lambda: self.element.submit(), self.wait_for_present)
-        # browser.after_hooks.run()  # TODO
+        self.browser.after_hooks.run()

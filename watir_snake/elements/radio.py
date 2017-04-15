@@ -1,5 +1,6 @@
 import six
 
+from .html_elements import InputCollection
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 
@@ -19,5 +20,11 @@ class Radio(Input):
         if not self.is_set:
             self.click()
 
-# TODO: Add container portion
-# TODO: Add collection portion
+
+@six.add_metaclass(MetaHTMLElement)
+class RadioCollection(InputCollection):
+    # private
+
+    @property
+    def _element_class(self):
+        return Radio

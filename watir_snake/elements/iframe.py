@@ -1,6 +1,7 @@
 import six
 
 from .html_elements import HTMLElement
+from ..element_collection import ElementCollection
 from ..exception import UnknownFrameException
 from ..meta_elements import MetaHTMLElement
 
@@ -72,7 +73,10 @@ class IFrame(HTMLElement):
         return UnknownFrameException
 
 
-# TODO: iframe collection
+@six.add_metaclass(MetaHTMLElement)
+class IFrameCollection(ElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Frame(IFrame):
@@ -83,8 +87,10 @@ class Frame(IFrame):
         return 'frame'
 
 
-# TODO: frame collection
-# TODO: container
+@six.add_metaclass(MetaHTMLElement)
+class FrameCollection(IFrameCollection):
+    pass
+
 
 class FramedDriver(object):
     def __init__(self, element, driver):

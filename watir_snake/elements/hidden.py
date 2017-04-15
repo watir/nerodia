@@ -1,5 +1,6 @@
 import six
 
+from .html_elements import InputCollection
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 
@@ -10,5 +11,7 @@ class Hidden(Input):
     def visible(self):
         return False
 
-# TODO: container
-# TODO: collection
+
+@six.add_metaclass(MetaHTMLElement)
+class HiddenCollection(InputCollection):
+    pass

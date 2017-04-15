@@ -58,12 +58,12 @@ class Container(object):
 
     def articles(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection.new(self, self._extract_selector(tag_name='article', *args,
+        return HTMLElementCollection(self, self._extract_selector(tag_name='article', *args,
                                                                       **kwargs))
 
     def aside(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement.new(self, self._extract_selector(tag_name='aside', *args, **kwargs))
+        return HTMLElement(self, self._extract_selector(tag_name='aside', *args, **kwargs))
 
     def asides(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
@@ -164,6 +164,14 @@ class Container(object):
     def cells(self, *args, **kwargs):
         from .elements.cell import CellCollection
         return CellCollection(self, self._extract_selector(tag_name=r'^(th|td)$', *args, **kwargs))
+
+    def checkbox(self, *args, **kwargs):
+        from .elements.checkbox import CheckBox
+        return CheckBox(self, self._extract_selector(tag_name='input', type='checkbox', *args, **kwargs))
+
+    def checkboxes(self, *args, **kwargs):
+        from .elements.checkbox import CheckBoxCollection
+        return CheckBoxCollection(self, self._extract_selector(tag_name='input', type='checkbox', *args, **kwargs))
 
     def cite(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
@@ -319,6 +327,14 @@ class Container(object):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, self._extract_selector(tag_name='figure', *args, **kwargs))
 
+    def file_field(self, *args, **kwargs):
+        from .elements.file_field import FileField
+        return FileField(self, self._extract_selector(tag_name='input', type='file', *args, **kwargs))
+
+    def file_fields(self, *args, **kwargs):
+        from .elements.file_field import FileFieldCollection
+        return FileFieldCollection(self, self._extract_selector(tag_name='input', type='file', *args, **kwargs))
+
     def footer(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
         return HTMLElement(self, self._extract_selector(tag_name='footer', *args, **kwargs))
@@ -334,6 +350,14 @@ class Container(object):
     def forms(self, *args, **kwargs):
         from .elements.html_elements import FormCollection
         return FormCollection(self, self._extract_selector(tag_name='form', *args, **kwargs))
+
+    def frame(self, *args, **kwargs):
+        from .elements.iframe import Frame
+        return Frame(self, self._extract_selector(tag_name='frame', *args, **kwargs))
+
+    def frames(self, *args, **kwargs):
+        from .elements.iframe import FrameCollection
+        return FrameCollection(self, self._extract_selector(tag_name='frame', *args, **kwargs))
 
     def frameset(self, *args, **kwargs):
         from .elements.html_elements import FrameSet
@@ -414,6 +438,14 @@ class Container(object):
     def hgroups(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, self._extract_selector(tag_name='hgroup', *args, **kwargs))
+
+    def hidden(self, *args, **kwargs):
+        from .elements.hidden import Hidden
+        return Hidden(self, self._extract_selector(tag_name='input', type='hidden', *args, **kwargs))
+
+    def hiddens(self, *args, **kwargs):
+        from .elements.hidden import HiddenCollection
+        return HiddenCollection(self, self._extract_selector(tag_name='input', type='hidden', *args, **kwargs))
 
     def hr(self, *args, **kwargs):
         from .elements.html_elements import HR
@@ -663,6 +695,14 @@ class Container(object):
     def qs(self, *args, **kwargs):
         from .elements.html_elements import QuoteCollection
         return QuoteCollection(self, self._extract_selector(tag_name='q', *args, **kwargs))
+
+    def radio(self, *args, **kwargs):
+        from .elements.radio import Radio
+        return Radio(self, self._extract_selector(tag_name='input', type='radio', *args, **kwargs))
+
+    def radios(self, *args, **kwargs):
+        from .elements.radio import RadioCollection
+        return RadioCollection(self, self._extract_selector(tag_name='input', type='radio', *args, **kwargs))
 
     def rp(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement

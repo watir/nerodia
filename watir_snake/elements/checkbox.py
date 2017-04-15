@@ -1,5 +1,6 @@
 import six
 
+from .html_elements import InputCollection
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 
@@ -31,5 +32,7 @@ class CheckBox(Input):
         """
         self._assert_enabled() if self.set == value else self.click
 
-# TODO: Add container portion
-# TODO: Add collection portion
+
+@six.add_metaclass(MetaHTMLElement)
+class CheckBoxCollection(InputCollection):
+    pass

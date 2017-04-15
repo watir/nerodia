@@ -65,10 +65,14 @@ def generate_attributes(element_type, pkg):
                         f.write("{} = []\n\n".format(name))
 
                     if not hasattr(pkg, name):
-                        w.write('@six.add_metaclass(Meta{0}Element)\n'
-                                'class {1}({0}Element):\n'
-                                '    pass\n'
-                                '\n'.format(element_type.upper(), name))
+                        class_str = '@six.add_metaclass(Meta{0}Element)\n'
+                        if 'collection' in name.lower():
+                            class_str += 'class {1}({0}ElementCollection):\n'
+                        else:
+                            class_str += 'class {1}({0}Element):\n'
+                        class_str += '    pass\n'
+                        class_str += '\n'.format(element_type.upper(), name)
+                        w.write(class_str)
                         e.write('from .{}_elements import {}\n'.format(element_type, name))
 
 

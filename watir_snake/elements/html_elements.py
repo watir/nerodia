@@ -1,6 +1,7 @@
 import six
 
 from .element import Element
+from ..element_collection import ElementCollection
 from ..meta_elements import MetaHTMLElement
 
 
@@ -8,9 +9,8 @@ from ..meta_elements import MetaHTMLElement
 class HTMLElement(Element):
     pass
 
-# TODO: collection
 @six.add_metaclass(MetaHTMLElement)
-class HTMLElementCollection(HTMLElement):
+class HTMLElementCollection(ElementCollection):
     pass
 
 @six.add_metaclass(MetaHTMLElement)
