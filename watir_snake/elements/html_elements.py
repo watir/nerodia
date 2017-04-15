@@ -9,523 +9,652 @@ from ..meta_elements import MetaHTMLElement
 class HTMLElement(Element):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
 class HTMLElementCollection(ElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Font(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class FontCollection(HTMLElement):
+class FontCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Directory(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class DirectoryCollection(HTMLElement):
+class DirectoryCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class FrameSet(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class FrameSetCollection(HTMLElement):
+class FrameSetCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Marquee(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MarqueeCollection(HTMLElement):
+class MarqueeCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Applet(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class AppletCollection(HTMLElement):
+class AppletCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Canvas(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class CanvasCollection(HTMLElement):
+class CanvasCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Template(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TemplateCollection(HTMLElement):
+class TemplateCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Script(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ScriptCollection(HTMLElement):
+class ScriptCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Dialog(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class DialogCollection(HTMLElement):
+class DialogCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class MenuItem(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MenuItemCollection(HTMLElement):
+class MenuItemCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Menu(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MenuCollection(HTMLElement):
+class MenuCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Details(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class DetailsCollection(HTMLElement):
+class DetailsCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Legend(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class LegendCollection(HTMLElement):
+class LegendCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class FieldSet(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class FieldSetCollection(HTMLElement):
+class FieldSetCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Meter(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MeterCollection(HTMLElement):
+class MeterCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Progress(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ProgressCollection(HTMLElement):
+class ProgressCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Output(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class OutputCollection(HTMLElement):
+class OutputCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Keygen(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class KeygenCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class TextAreaCollection(HTMLElement):
+class KeygenCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class OptionCollection(HTMLElement):
+class TextAreaCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class OptionCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class OptGroup(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class OptGroupCollection(HTMLElement):
+class OptGroupCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class DataList(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class DataListCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class SelectCollection(HTMLElement):
+class DataListCollection(HTMLElementCollection):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class ButtonCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class InputCollection(HTMLElement):
+class SelectCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class ButtonCollection(HTMLElementCollection):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class InputCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Label(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class LabelCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class FormCollection(HTMLElement):
+class LabelCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TableCellCollection(HTMLElement):
+class FormCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class TableCellCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class TableHeaderCell(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TableHeaderCellCollection(HTMLElement):
+class TableHeaderCellCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class TableDataCell(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class TableDataCellCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class TableRowCollection(HTMLElement):
+class TableDataCellCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TableSectionCollection(HTMLElement):
+class TableRowCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class TableSectionCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class TableCol(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TableColCollection(HTMLElement):
+class TableColCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class TableCaption(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class TableCaptionCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class TableCollection(HTMLElement):
+class TableCaptionCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class AreaCollection(HTMLElement):
+class TableCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class AreaCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Map(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MapCollection(HTMLElement):
+class MapCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Media(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MediaCollection(HTMLElement):
+class MediaCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Audio(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class AudioCollection(HTMLElement):
+class AudioCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Video(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class VideoCollection(HTMLElement):
+class VideoCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Track(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TrackCollection(HTMLElement):
+class TrackCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Param(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ParamCollection(HTMLElement):
+class ParamCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Object(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ObjectCollection(HTMLElement):
+class ObjectCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Embed(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class EmbedCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class IFrameCollection(HTMLElement):
+class EmbedCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ImageCollection(HTMLElement):
+class IFrameCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class ImageCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Source(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class SourceCollection(HTMLElement):
+class SourceCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Picture(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class PictureCollection(HTMLElement):
+class PictureCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Mod(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ModCollection(HTMLElement):
+class ModCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class BR(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class BRCollection(HTMLElement):
+class BRCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Span(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class SpanCollection(HTMLElement):
+class SpanCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Time(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TimeCollection(HTMLElement):
+class TimeCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Data(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class DataCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class AnchorCollection(HTMLElement):
+class DataCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class AnchorCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Div(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class DivCollection(HTMLElement):
-    pass
 
 @six.add_metaclass(MetaHTMLElement)
-class DListCollection(HTMLElement):
+class DivCollection(HTMLElementCollection):
     pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class DListCollection(HTMLElementCollection):
+    pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class LI(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class LICollection(HTMLElement):
+class LICollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class UList(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class UListCollection(HTMLElement):
+class UListCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class OList(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class OListCollection(HTMLElement):
+class OListCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Quote(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class QuoteCollection(HTMLElement):
+class QuoteCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Pre(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class PreCollection(HTMLElement):
+class PreCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class HR(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class HRCollection(HTMLElement):
+class HRCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Paragraph(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class ParagraphCollection(HTMLElement):
+class ParagraphCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Heading(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class HeadingCollection(HTMLElement):
+class HeadingCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Body(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class BodyCollection(HTMLElement):
+class BodyCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Style(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class StyleCollection(HTMLElement):
+class StyleCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Meta(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class MetaCollection(HTMLElement):
+class MetaCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Base(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class BaseCollection(HTMLElement):
+class BaseCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Title(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class TitleCollection(HTMLElement):
+class TitleCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Head(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class HeadCollection(HTMLElement):
+class HeadCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Html(HTMLElement):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
-class HtmlCollection(HTMLElement):
+class HtmlCollection(HTMLElementCollection):
     pass
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Unknown(HTMLElement):
     pass
 
-@six.add_metaclass(MetaHTMLElement)
-class UnknownCollection(HTMLElement):
-    pass
 
+@six.add_metaclass(MetaHTMLElement)
+class UnknownCollection(HTMLElementCollection):
+    pass
