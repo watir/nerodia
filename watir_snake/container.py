@@ -876,6 +876,14 @@ class Container(object):
         from .elements.html_elements import TextAreaCollection
         return TextAreaCollection(self, self._extract_selector(tag_name='textarea', *args, **kwargs))
 
+    def text_field(self, *args, **kwargs):
+        from .elements.text_field import TextField
+        return TextField.new(self, self._extract_selector(tag_name='input', *args, **kwargs))
+
+    def text_fields(self, *args, **kwargs):
+        from .elements.text_field import TextFieldCollection
+        return TextFieldCollection.new(self, self._extract_selector(tag_name='input', *args, **kwargs))
+
     def tfoot(self, *args, **kwargs):
         from .elements.table_section import TableSection
         return TableSection(self, self._extract_selector(tag_name='tfoot', *args, **kwargs))
