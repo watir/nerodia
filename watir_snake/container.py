@@ -157,14 +157,6 @@ class Container(object):
         from .elements.html_elements import TableCaptionCollection
         return TableCaptionCollection(self, self._extract_selector(tag_name='caption', *args, **kwargs))
 
-    def cell(self, *args, **kwargs):
-        from .elements.cell import Cell
-        return Cell(self, self._extract_selector(tag_name=r'^(th|td)$', *args, **kwargs))
-
-    def cells(self, *args, **kwargs):
-        from .elements.cell import CellCollection
-        return CellCollection(self, self._extract_selector(tag_name=r'^(th|td)$', *args, **kwargs))
-
     def checkbox(self, *args, **kwargs):
         from .elements.checkbox import CheckBox
         return CheckBox(self, self._extract_selector(tag_name='input', type='checkbox', *args, **kwargs))
@@ -334,6 +326,14 @@ class Container(object):
     def file_fields(self, *args, **kwargs):
         from .elements.file_field import FileFieldCollection
         return FileFieldCollection(self, self._extract_selector(tag_name='input', type='file', *args, **kwargs))
+
+    def font(self, *args, **kwargs):
+        from .elements.html_elements import Font
+        return Font(self, self._extract_selector(tag_name='font', *args, **kwargs))
+
+    def fonts(self, *args, **kwargs):
+        from .elements.html_elements import FontCollection
+        return FontCollection(self, self._extract_selector(tag_name='font', *args, **kwargs))
 
     def footer(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
@@ -764,9 +764,13 @@ class Container(object):
         from .elements.select import Select
         return Select(self, self._extract_selector(tag_name='select', *args, **kwargs))
 
+    select_list = select
+
     def selects(self, *args, **kwargs):
         from .elements.html_elements import SelectCollection
         return SelectCollection(self, self._extract_selector(tag_name='select', *args, **kwargs))
+
+    select_lists = selects
 
     def small(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
@@ -837,7 +841,7 @@ class Container(object):
         return Table(self, self._extract_selector(tag_name='table', *args, **kwargs))
 
     def tables(self, *args, **kwargs):
-        from .elements.html_elements import TableCollection
+        from .elements.table import TableCollection
         return TableCollection(self, self._extract_selector(tag_name='table', *args, **kwargs))
 
     def tbody(self, *args, **kwargs):
@@ -845,7 +849,7 @@ class Container(object):
         return TableSection(self, self._extract_selector(tag_name='tbody', *args, **kwargs))
 
     def tbodys(self, *args, **kwargs):
-        from .elements.html_elements import TableSectionCollection
+        from .elements.table_section import TableSectionCollection
         return TableSectionCollection(self, self._extract_selector(tag_name='tbody', *args, **kwargs))
 
     def td(self, *args, **kwargs):
@@ -877,7 +881,7 @@ class Container(object):
         return TableSection(self, self._extract_selector(tag_name='tfoot', *args, **kwargs))
 
     def tfoots(self, *args, **kwargs):
-        from .elements.html_elements import TableSectionCollection
+        from .elements.table_section import TableSectionCollection
         return TableSectionCollection(self, self._extract_selector(tag_name='tfoot', *args, **kwargs))
 
     def th(self, *args, **kwargs):
@@ -893,7 +897,7 @@ class Container(object):
         return TableSection(self, self._extract_selector(tag_name='thead', *args, **kwargs))
 
     def theads(self, *args, **kwargs):
-        from .elements.html_elements import TableSectionCollection
+        from .elements.table_section import TableSectionCollection
         return TableSectionCollection(self, self._extract_selector(tag_name='thead', *args, **kwargs))
 
     def time(self, *args, **kwargs):

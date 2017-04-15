@@ -286,11 +286,6 @@ class TableRowCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class TableSectionCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class TableCol(HTMLElement):
     pass
 
@@ -307,11 +302,6 @@ class TableCaption(HTMLElement):
 
 @six.add_metaclass(MetaHTMLElement)
 class TableCaptionCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class TableCollection(HTMLElementCollection):
     pass
 
 

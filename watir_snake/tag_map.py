@@ -106,6 +106,7 @@ tag_to_class['samp'] = HTMLElement
 tag_to_class['script'] = Script
 tag_to_class['section'] = HTMLElement
 tag_to_class['select'] = Select
+tag_to_class['select_list'] = Select
 tag_to_class['small'] = HTMLElement
 tag_to_class['source'] = Source
 tag_to_class['span'] = Span

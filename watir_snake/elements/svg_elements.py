@@ -8,320 +8,397 @@ from ..meta_elements import MetaSVGElement
 class SVGElement(Element):
     pass
 
-# TODO: collection
+
 @six.add_metaclass(MetaSVGElement)
-class SVGElementCollection(SVGElement):
+class SVGElementCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class MPath(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MPathCollection(SVGElement):
+class MPathCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Animation(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class AnimationCollection(SVGElement):
+class AnimationCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class AnimateTransform(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class AnimateTransformCollection(SVGElement):
+class AnimateTransformCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class AnimateMotion(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class AnimateMotionCollection(SVGElement):
+class AnimateMotionCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Set(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class SetCollection(SVGElement):
+class SetCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Animate(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class AnimateCollection(SVGElement):
+class AnimateCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class View(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class ViewCollection(SVGElement):
+class ViewCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Cursor(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class CursorCollection(SVGElement):
+class CursorCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Pattern(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class PatternCollection(SVGElement):
+class PatternCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Stop(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class StopCollection(SVGElement):
+class StopCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class MeshPatch(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MeshPatchCollection(SVGElement):
+class MeshPatchCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class MeshRow(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MeshRowCollection(SVGElement):
+class MeshRowCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Gradient(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class GradientCollection(SVGElement):
+class GradientCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class MeshGradient(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MeshGradientCollection(SVGElement):
+class MeshGradientCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class RadialGradient(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class RadialGradientCollection(SVGElement):
+class RadialGradientCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class LinearGradient(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class LinearGradientCollection(SVGElement):
+class LinearGradientCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Marker(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MarkerCollection(SVGElement):
+class MarkerCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Symbol(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class SymbolCollection(SVGElement):
+class SymbolCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Metadata(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class MetadataCollection(SVGElement):
+class MetadataCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Desc(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class DescCollection(SVGElement):
+class DescCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Graphics(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class GraphicsCollection(SVGElement):
+class GraphicsCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class ForeignObject(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class ForeignObjectCollection(SVGElement):
+class ForeignObjectCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class TextContent(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class TextContentCollection(SVGElement):
+class TextContentCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class TextPath(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class TextPathCollection(SVGElement):
+class TextPathCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class TextPositioning(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class TextPositioningCollection(SVGElement):
+class TextPositioningCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class TSpan(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class TSpanCollection(SVGElement):
+class TSpanCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Switch(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class SwitchCollection(SVGElement):
+class SwitchCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Use(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class UseCollection(SVGElement):
+class UseCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Defs(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class DefsCollection(SVGElement):
+class DefsCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class G(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class GCollection(SVGElement):
+class GCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class SVG(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class SVGCollection(SVGElement):
+class SVGCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Geometry(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class GeometryCollection(SVGElement):
+class GeometryCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Polygon(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class PolygonCollection(SVGElement):
+class PolygonCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Polyline(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class PolylineCollection(SVGElement):
+class PolylineCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Line(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class LineCollection(SVGElement):
+class LineCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Ellipse(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class EllipseCollection(SVGElement):
+class EllipseCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Circle(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class CircleCollection(SVGElement):
+class CircleCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Rect(SVGElement):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
-class RectCollection(SVGElement):
+class RectCollection(SVGElementCollection):
     pass
+
 
 @six.add_metaclass(MetaSVGElement)
 class Path(SVGElement):
     pass
 
-@six.add_metaclass(MetaSVGElement)
-class PathCollection(SVGElement):
-    pass
 
+@six.add_metaclass(MetaSVGElement)
+class PathCollection(SVGElementCollection):
+    pass

@@ -147,5 +147,3 @@ class Select(HTMLElement):
 
     def _no_value_found(self, arg, msg=None):
         raise (NoValueFoundException(msg or '{} not found in select list'.format(arg)))
-
-# TODO: container

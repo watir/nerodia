@@ -1,14 +1,13 @@
 import six
 
-from .html_elements import HTMLElement
+from .html_elements import HTMLElement, HTMLElementCollection
 from ..exception import Error
 from ..meta_elements import MetaHTMLElement
+from ..row_container import RowContainer
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Table(HTMLElement):
-    # TODO: include RowContainer
-
+class Table(RowContainer, HTMLElement):
     @property
     def dicts(self):
         """
@@ -41,3 +40,10 @@ class Table(HTMLElement):
         :rtype: watir_snake.elements.row.Row
         """
         return self.row('index', idx)
+
+
+@six.add_metaclass(MetaHTMLElement)
+class TableCollection(HTMLElementCollection):
+    @property  # alias
+    def to_list(self):
+        return self.strings
