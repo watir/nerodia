@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import re
-import watir_snake
+
+from watir_snake.elements import html_elements, svg_elements
+
 try:
     from urllib2 import urlopen
 except ImportError:
@@ -8,7 +10,8 @@ except ImportError:
 
 URL = 'https://raw.githubusercontent.com/watir/watir/master/lib/watir/elements/{}_elements.rb'
 
-def generate_attributes(element_type):
+
+def generate_attributes(element_type, pkg):
     response = urlopen(URL.format(element_type))
     lines = response.read()
     classes = re.split(r'class (\w+) .*', lines)
@@ -61,12 +64,13 @@ def generate_attributes(element_type):
                     else:
                         f.write("{} = []\n\n".format(name))
 
-                    if not hasattr(watir_snake.elements, name):
+                    if not hasattr(pkg, name):
                         w.write('@six.add_metaclass(Meta{0}Element)\n'
                                 'class {1}({0}Element):\n'
                                 '    pass\n'
                                 '\n'.format(element_type.upper(), name))
                         e.write('from .{}_elements import {}\n'.format(element_type, name))
 
-generate_attributes('html')
-generate_attributes('svg')
+
+generate_attributes('html', html_elements)
+generate_attributes('svg', svg_elements)

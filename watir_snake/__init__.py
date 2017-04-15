@@ -15,8 +15,8 @@ relaxed_locate = True
 
 default_timeout = 30
 
-from . import html_attributes, svg_attributes, locators, browser, elements
-
+# from . import html_attributes, svg_attributes, locators, elements, browser
+from . import locators, tag_map
 #
 # Whether the locators should be used from a different namespace.
 # Defaults to watir_snake.locators.
@@ -26,4 +26,4 @@ locator_namespace = locators
 
 
 def element_class_for(tag_name):
-    return tag_to_class.get(tag_name.to_sym) or elements.html_elements.HTMLElement
+    return tag_to_class.get(tag_name)

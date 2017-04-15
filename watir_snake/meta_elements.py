@@ -1,9 +1,9 @@
-import watir_snake
+from . import html_attributes, svg_attributes
 
 
 class MetaHTMLElement(type):
     def __new__(cls, name, parents, dct):
-        final_dict = create_attributes(name, parents, dct, watir_snake.html_attributes)
+        final_dict = create_attributes(name, parents, dct, html_attributes)
 
         inst = super(MetaHTMLElement, cls).__new__(cls, name, parents, final_dict)
 
@@ -12,11 +12,12 @@ class MetaHTMLElement(type):
 
 class MetaSVGElement(type):
     def __new__(cls, name, parents, dct):
-        final_dict = create_attributes(name, parents, dct, watir_snake.svg_attributes)
+        final_dict = create_attributes(name, parents, dct, svg_attributes)
 
         inst = super(MetaSVGElement, cls).__new__(cls, name, parents, final_dict)
 
         return inst
+
 
 def create_attributes(name, parents, dct, generated):
     final_dict = {}
@@ -33,7 +34,7 @@ def create_attributes(name, parents, dct, generated):
         else:
             final_dict[key] = value
             attrs.append(key)
-    auto_gen = getattr(watir_snake.html_attributes, name.lower(), [])
+    auto_gen = getattr(generated, name.lower(), [])
     for each in auto_gen:
         typ, key, val = each
         final_dict[key] = property(fget=make_attr(typ, val))
@@ -50,18 +51,21 @@ def make_attr(typ, val):
     if typ == bool:
         def attr_bool(self):
             return self.attribute_value(val) == 'true'
+
         return attr_bool
 
     elif typ == int:
         def attr_int(self):
             value = self.attribute_value(val)
             return value and int(value)
+
         return attr_int
 
     elif typ == float:
         def attr_float(self):
             value = self.attribute_value(val)
             return value and float(value)
+
         return attr_float
 
     else:

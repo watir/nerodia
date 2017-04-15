@@ -2,6 +2,7 @@ from selenium import webdriver
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.remote.webelement import WebElement
 
+import watir_snake
 from .after_hooks import AfterHooks
 from .container import Container
 from .cookies import Cookies
@@ -262,5 +263,6 @@ class Browser(Container, HasWindow, Waitable):
             return obj
 
     def _wrap_element(self, element):
-        # Watir.element_class_for(element.tag_name.downcase).new(self, element: element)  # TODO
-        return None
+        from .elements.html_elements import HTMLElement
+        klass = watir_snake.element_class_for(element.tag_name.downcase) or HTMLElement
+        return klass(self, element=element)

@@ -7,6 +7,7 @@ from warnings import warn
 
 import watir_snake
 from ..atoms import Atoms
+from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
@@ -14,8 +15,8 @@ from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
-# class Element(Container, EventuallyPresent, Waitable, Adjacent):
-class Element(Atoms, Waitable):
+# class Element(EventuallyPresent, Adjacent):
+class Element(Container, Atoms, Waitable):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
     _attr_class_name = (str, 'className')
@@ -383,21 +384,27 @@ class Element(Atoms, Waitable):
         """
         elem = self.wd
         tag_name = elem.tag_name.lower()
+        from .button import Button
+        from .checkbox import CheckBox
+        from .file_field import FileField
+        from .html_elements import HTMLElement
+        from .radio import Radio
+        from .text_field import TextField
 
         if tag_name == 'input':
             elem_type = elem.attribute('type')
-            if elem_type in watir_snake.elements.Button.VALID_TYPES:
-                klass = watir_snake.elements.Button
+            if elem_type in Button.VALID_TYPES:
+                klass = Button
             elif elem_type == 'checkbox':
-                klass = watir_snake.elements.CheckBox
+                klass = CheckBox
             elif elem_type == 'radio':
-                klass = watir_snake.elements.Radio
+                klass = Radio
             elif elem_type == 'file':
-                klass = watir_snake.elements.FileField
+                klass = FileField
             else:
-                klass = watir_snake.elements.TextField
+                klass = TextField
         else:
-            klass = watir_snake.element_class_for(tag_name)
+            klass = watir_snake.element_class_for(tag_name) or HTMLElement
 
         return klass(self.query_scope, element=elem)
 
@@ -513,7 +520,8 @@ class Element(Atoms, Waitable):
 
     @property
     def selector_string(self):
-        if isinstance(self.query_scope, watir_snake.browser.Browser):
+        from ..browser import Browser
+        if isinstance(self.query_scope, Browser):
             return '{}'.format(self.selector)
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
@@ -550,7 +558,8 @@ class Element(Atoms, Waitable):
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        if isinstance(self.query_scope, watir_snake.elements.IFrame):
+        from ..elements.iframe import IFrame
+        if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
         else:
             self.query_scope.assert_exists()
