@@ -1,6 +1,7 @@
 import six
 
 from .element import Element
+from ..element_collection import ElementCollection
 from ..meta_elements import MetaSVGElement
 
 
@@ -10,7 +11,7 @@ class SVGElement(Element):
 
 
 @six.add_metaclass(MetaSVGElement)
-class SVGElementCollection(SVGElementCollection):
+class SVGElementCollection(ElementCollection):
     pass
 
 

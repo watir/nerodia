@@ -1,11 +1,11 @@
 from importlib import import_module
 
+import re
+
 import watir_snake
 
 
 class ElementCollection(object):
-    # TODO: include Enumerable
-
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
         self.selector = selector
@@ -89,7 +89,8 @@ class ElementCollection(object):
 
     @property
     def _elements(self):
-        if isinstance(self._query_scope, watir_snake.elements.IFrame):
+        from .elements.iframe import IFrame
+        if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
         else:
             getattr(self.query_scope, 'assert_exists')()
@@ -97,11 +98,11 @@ class ElementCollection(object):
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector,
                                                         self._element_class.attribute_list)
-        locator = self._locator_class(self.query_scope, self.selector, self._selector_builder,
-                                      self._element_validator)
+        locator = self._locator_class(self.query_scope, self.selector, selector_builder,
+                                      element_validator)
 
         if not self.elements:
-            self.elements = self.locator.locate_all()
+            self.elements = locator.locate_all()
         return self.elements
 
     @property
@@ -130,4 +131,18 @@ class ElementCollection(object):
 
     @property
     def _element_class(self):
-        return getattr(watir_snake.elements, self.__class__.__name__.replace('Collection', ''))
+        name = self.__class__.__name__.replace('Collection', '')
+        element_module = re.sub(r'^(\w+)([A-Z]{1}\w+)$', r'\1_\2'.lower(), name).lower()
+        try:
+            module = import_module('watir_snake.elements.{}'.format(element_module))
+        except ImportError:
+            html = import_module('watir_snake.elements.html_elements')
+            svg = import_module('watir_snake.elements.svg_elements')
+            if hasattr(html, name):
+                module = html
+            elif hasattr(svg, name):
+                module = svg
+            else:
+                raise TypeError(
+                    'element class for {} could not be determined'.format(self.__class__.__name__))
+        return getattr(module, name)

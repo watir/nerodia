@@ -10,6 +10,10 @@ class UserEditable(object):
             self.element.send_keys(*args)
         self._element_call(func, self.wait_for_writable)
 
+    @property
+    def value(self):
+        return self.attribute_value('value')
+
     @value.setter  # alias
     def value(self, *args):
         self.set(*args)
