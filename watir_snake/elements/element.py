@@ -48,7 +48,7 @@ class Element(Container, Atoms, Waitable):
         return self.ATTRIBUTES
 
     def __repr__(self):
-        string = '#<#{}: '.format(self.__class__.__name__)
+        string = '#<{}: '.format(self.__class__.__name__)
         if self.keyword:
             string += 'keyword: {} '.format(self.keyword)
         string += 'located: {}; '.format(self.element is not None)
