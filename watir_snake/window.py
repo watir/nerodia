@@ -1,7 +1,7 @@
 from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 
-from ..exception import NoMatchingWindowFoundException
-from ..wait.wait import Waitable, TimeoutError
+from .exception import NoMatchingWindowFoundException
+from .wait.wait import Waitable, TimeoutError
 
 
 class Window(Waitable):
@@ -22,7 +22,7 @@ class Window(Waitable):
                 raise ValueError('invalid window selector: {}'.format(selector))
 
     def __repr__(self):
-        return '#<{}:0x{:x} located={}>'.format(self.__class__.__name__, self.__hash__() * 2,
+        return '#<{}:0x{:x} located={}>'.format(self.__class__.__name__, hash(self) * 2,
                                                 self.handle is not None)
 
     def __enter__(self):
@@ -210,7 +210,6 @@ class Window(Waitable):
     def assert_exists(self):
         if self.handle not in self.driver.window_handles:
             raise NoMatchingWindowFoundException(str(self.selector))
-
 
     def wait_for_exists(self):
         import watir_snake
