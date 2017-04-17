@@ -6,6 +6,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 from warnings import warn
 
 import watir_snake
+from ..adjacent import Adjacent
 from ..atoms import Atoms
 from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
@@ -15,8 +16,8 @@ from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
-# class Element(EventuallyPresent, Adjacent):
-class Element(Container, Atoms, Waitable):
+# class Element(EventuallyPresent):
+class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
     _attr_class_name = (str, 'className')
