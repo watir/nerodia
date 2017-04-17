@@ -16,7 +16,6 @@ from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
-# class Element(EventuallyPresent):
 class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
