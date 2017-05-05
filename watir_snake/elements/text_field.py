@@ -12,7 +12,7 @@ from ..user_editable import UserEditable
 
 
 @six.add_metaclass(MetaHTMLElement)
-class TextField(UserEditable, Input, TextArea):
+class TextField(TextArea, Input):
     NON_TEXT_TYPES = ['file', 'radio', 'checkbox', 'submit', 'reset', 'image', 'button', 'hidden',
                       'range', 'color']
 
