@@ -16,6 +16,7 @@ class SelectorBuilder(object):
         self.selector = selector
         self.valid_attributes = valid_attributes
 
+    @property
     def normalized_selector(self):
         selector = {}
 
