@@ -85,7 +85,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Returns the tag name of the element
         :rtype: str
         """
-        return self._element_call(self.element.tag_name.lower)
+        return self._element_call(self.element.tag_name.lower())
 
     def click(self, *modifiers):
         """
@@ -333,7 +333,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.displayed, self.assert_exists)
+        return self._element_call(lambda: self.element.is_displayed(), self.assert_exists)
 
     @property
     def enabled(self):
@@ -342,7 +342,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.enabled, self.assert_exists)
+        return self._element_call(lambda: self.element.is_enabled(), self.assert_exists)
 
     @property
     def present(self):
@@ -371,7 +371,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         browser.button(value='Delete').style('border') #=> "4px solid rgb(255, 0, 0)"
         """
         if prop:
-            return self._element_call(lambda: self.element.style(prop))
+            return self._element_call(lambda: self.element.value_of_css_property(prop))
         else:
             return str(self.attribute_value('style')).strip()
 
@@ -425,7 +425,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         try:
             if self.element is None:
                 raise Error('Can not check staleness of unused element')
-            self.element.enabled  # any wire call will check for staleness
+            self.element.is_enabled()  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
             return True
@@ -440,7 +440,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return None
         try:
             self.query_scope.wait_for_exists()
-            self.wait_until(self.exists)
+            self.wait_until(lambda: self.exists)
         except TimeoutError:
             if watir_snake.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
@@ -455,7 +455,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         try:
             self.query_scope.wait_for_present()
-            self.wait_until(self.exists)
+            self.wait_until_present()
         except TimeoutError:
             if watir_snake.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
@@ -470,7 +470,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self.wait_for_present()
 
         try:
-            self.wait_until(self.enabled)
+            self.wait_until(lambda: self.enabled)
         except TimeoutError:
             raise ObjectDisabledException('element present, but timed out after {} seconds, '
                                           'waiting for {} to be '
@@ -548,9 +548,9 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def _import_module(self):
         modules = [watir_snake.locator_namespace.__name__, self._element_class_name.lower()]
         try:
-            return import_module('watir_snake.{}.{}.locator'.format(*modules))
+            return import_module('{}.{}'.format(*modules))
         except ImportError:
-            return import_module('watir_snake.{}.element.locator'.format(*modules[:1]))
+            return import_module('{}.element'.format(*modules[:1]))
 
     @property
     def _element_class_name(self):
@@ -600,5 +600,3 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def __getattr__(self, item):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, item):
             return self.attribute_value(item.replace('_', '-'))
-        raise AttributeError('{!r} is not a valid attribute for '
-                             '{}!'.format(item, self.__class__.__name__))

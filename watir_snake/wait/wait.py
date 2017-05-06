@@ -70,7 +70,7 @@ class Wait(object):
 
 
 class Waitable(object):
-    def wait_until(self, method=None, timeout=None, message=None, interval=None):
+    def wait_until(self, method=None, timeout=None, message=None, interval=None, object=None):
         """
         Waits until the condition is True
         :param method: method to run, typically lambda
@@ -86,7 +86,7 @@ class Waitable(object):
         browser.text_field(name='new_user_first_name').wait_until(lambda x: x.present).click
         """
         message = message or 'waiting for true condition on #{}'.format(self)
-        Wait.until(method, timeout, message, interval, object=self)
+        Wait.until(method, timeout, message, interval, object=object)
         return self
 
     def wait_while(self, method=None, timeout=None, message=None, interval=None):
@@ -119,7 +119,7 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
-        return self.wait_until(method=lambda e: e.present, timeout=timeout, interval=interval)
+        return self.wait_until(method=lambda: self.present, timeout=timeout, interval=interval)
 
     def wait_while_present(self, timeout=None, interval=None):
         """

@@ -20,7 +20,7 @@ class SelectorBuilder(object):
     def normalized_selector(self):
         selector = {}
 
-        for how, what in self.selector:
+        for how, what in self.selector.items():
             self.check_type(how, what)
 
             how, what = self._normalize_selector(how, what)

@@ -5,7 +5,7 @@ class Timer(object):
     def __init__(self, timeout=None):
         self.end_time = time() + timeout if timeout else None
 
-    def wait(self, method, timeout, object=None):
+    def wait(self, timeout, method, object=None):
         """
         Executes the given method until it returns True or exceeds the timeout
         :param timeout: time in seconds to timeout after
