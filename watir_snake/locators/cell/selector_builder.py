@@ -1,5 +1,7 @@
 import logging
 
+import re
+
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 
 
