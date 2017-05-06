@@ -135,29 +135,29 @@ class XPath(object):
 
         # the remaining entries should be attributes
         if selectors:
-            xpath += '[{}]'.format(self.attribute_expression(selectors))
+            xpath += '[{}]'.format(self.attribute_expression(None, selectors))
 
         logging.debug({'xpath': xpath, 'selectors': selectors})
 
         return ['xpath', xpath]
 
     # TODO: Get rid of building
-    def attribute_expression(self, selectors):
+    def attribute_expression(self, building, selectors):
         expressions = []
         for key, val in selectors.items():
             if isinstance(val, list):
-                term = '({})'.format(' or '.join([self.equal_pair(key, v) for v in val]))
+                term = '({})'.format(' or '.join([self.equal_pair(building, key, v) for v in val]))
             elif val is True:
                 term = self._attribute_presence(key)
             elif val is False:
                 term = self._attribute_absence(key)
             else:
-                term = self.equal_pair(key, val)
+                term = self.equal_pair(building, key, val)
             expressions.append(term)
         return ' and '.join(expressions)
 
     # TODO: Get rid of building
-    def equal_pair(self, key, value):
+    def equal_pair(self, building, key, value):
         if key == 'class':
             klass = XpathSupport.escape(' {} '.format(value))
             return "contains(concat(' ', @class, ' '), {})".format(klass)
@@ -166,11 +166,11 @@ class XPath(object):
             text = 'normalize-space()={}'.format(XpathSupport.escape(value))
             return '(@id=//label[{0}]/@for or parent::label[{0}])'.format(text)
         else:
-            return '{}={}'.format(self.lhs_for(key), XpathSupport.escape(value))
+            return '{}={}'.format(self.lhs_for(building, key), XpathSupport.escape(value))
 
     # TODO: Get rid of building
     @staticmethod
-    def lhs_for(key):
+    def lhs_for(building, key):
         if key == 'text':
             return 'normalize-space()'
         elif key == 'href':
@@ -183,8 +183,10 @@ class XPath(object):
         else:
             '@{}'.format(key.replace('_', '-'))
 
+    # private
+
     def _attribute_presence(self, attribute):
-        return self.lhs_for(attribute)
+        return self.lhs_for(None, attribute)
 
     def _attribute_absence(self, attribute):
-        return "not({})".format(self.lhs_for(attribute))
+        return "not({})".format(self.lhs_for(None, attribute))
