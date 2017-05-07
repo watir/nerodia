@@ -3,7 +3,7 @@ import logging
 import re
 
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder, \
-    XPath as ElementXpath
+    XPath as ElementXPath
 from ...elements.button import Button
 from ...exception import Error
 from ...xpath_support import XpathSupport
@@ -33,7 +33,7 @@ class SelectorBuilder(ElementSelectorBuilder):
         return ['xpath', xpath]
 
 
-class XPath(ElementXpath):
+class XPath(ElementXPath):
     @staticmethod
     def lhs_for(building, key):
         if building == 'input' and key == 'text':

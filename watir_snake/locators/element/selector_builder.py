@@ -47,6 +47,7 @@ class SelectorBuilder(object):
     def build(self, selector):
         return self._given_xpath_or_css(selector) or self._build_wd_selector(selector)
 
+    @property
     def xpath_builder(self):
         return self._xpath_builder_class(self.should_use_label_element)
 
@@ -117,7 +118,7 @@ class SelectorBuilder(object):
     @property
     def _xpath_builder_class(self):
         try:
-            mod = import_module('watir_snake.locators.{}.selector_builder')
+            mod = import_module(self.__module__)
             return mod.XPath
         except ImportError:
             return XPath
