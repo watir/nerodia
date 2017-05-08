@@ -1,0 +1,3 @@
+[submodule "watir"]
+	path = watir
+	url = https://github.com/watir/watir.git
