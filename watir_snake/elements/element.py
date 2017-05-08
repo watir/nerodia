@@ -1,4 +1,5 @@
 from importlib import import_module
+from time import sleep
 
 from re import search, sub
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
@@ -195,25 +196,37 @@ class Element(Container, Atoms, Waitable, Adjacent):
                            drag_and_drop_by_offset(self.element, xoffset, yoffset).perform(),
                            self.wait_for_present)
 
-    def flash(self):
+    def flash(self, color='red', flashes=10, delay=0):
         """
         Flashes (change background color for a moment) element
 
+        :param color: what color to flash with
+        :type color: str
+        :param flashes: number of times element should be flashed
+        :type flashes: int
+        :param delay: how long to wait between flashes
+        :type delay: int or float
+        
         :Example:
 
         browser.text_field(name='new_user_first_name').flash()
+        browser.text_field(name='new_user_first_name').flash(color='green', flashes=3, delay=0.05)
+        browser.text_field(name='new_user_first_name').flash(color='yellow')
+        browser.text_field(name='new_user_first_name').flash(flashes=4)
+        browser.text_field(name='new_user_first_name').flash(delay=0.1)
         """
         background_color = self.style('backgroundColor')
         element_color = self.driver.execute_script('arguments[0].style.backgroundColor',
                                                    self.element)
 
-        for n in range(10):
-            color = 'red' if n % 2 == 0 else background_color
+        for n in range(flashes):
+            nextcolor = color if n % 2 == 0 else background_color
             self.driver.execute_script("arguments[0].style.backgroundColor = "
-                                       "'{}'".format(color), self.element)
+                                       "'{}'".format(nextcolor), self.element)
+            sleep(delay)
 
-        self.driver.execute_script('arguments[0].style.backgroundColor = arguments[1]',
-                                   self.element, element_color)
+        self.driver.execute_script("arguments[0].style.backgroundColor = "
+                                   "'{}'".format(element_color), self.element)
 
         return self
 
