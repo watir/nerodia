@@ -5,8 +5,6 @@ from .wait.wait import Waitable, TimeoutError
 
 
 class Window(Waitable):
-    # TODO: include EventuallyPresent
-
     def __init__(self, driver, selector):
         self.driver = driver
         self.selector = selector

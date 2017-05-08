@@ -1,9 +1,10 @@
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException
+from selenium.common.exceptions import TimeoutException, NoSuchWindowException
 from selenium.webdriver.remote.webelement import WebElement
 
 import watir_snake
 from .after_hooks import AfterHooks
+from .alert import Alert
 from .container import Container
 from .cookies import Cookies
 from .exception import Error, NoMatchingWindowFoundException
@@ -78,7 +79,7 @@ class Browser(Container, HasWindow, Waitable):
             uri = 'http://{}'.format(uri)
 
         self.driver.get(uri)
-        # self.after_hooks.run  # TODO
+        self.after_hooks.run()
         return uri
 
     def back(self):
@@ -95,7 +96,7 @@ class Browser(Container, HasWindow, Waitable):
         Returns the URL of the current page
         :rtype: str
         """
-        # self.assert_exists  # TODO
+        self.assert_exists()
         return self.driver.current_url
 
     @property
@@ -136,8 +137,7 @@ class Browser(Container, HasWindow, Waitable):
         Returns the text of the page body
         :return:
         """
-        # return self.body.text  # TODO
-        return None
+        return self.body().text
 
     @property
     def html(self):
@@ -153,13 +153,12 @@ class Browser(Container, HasWindow, Waitable):
         Handles Javascript alerts, confirms and prompts
         :rtype: watir_snake.alert.Alert
         """
-        # return Alert(self)  # TODO
-        return None
+        return Alert(self)
 
     def refresh(self):
         """ Refreshes the current page """
         self.driver.refresh()
-        # self.after_hooks.run  # TODO
+        self.after_hooks.run()
 
     def wait(self, timeout=5):
         """
@@ -168,10 +167,8 @@ class Browser(Container, HasWindow, Waitable):
         :param timeout: time to wait
         :type timeout: int
         """
-        # wait_until(timeout: timeout, message: "waiting for document.readyState == 'complete'") do
-        #     ready_state == "complete"
-        raise TimeoutException
-        return None  # TODO
+        return self.wait_until(lambda: self.ready_state == "complete", timeout=timeout,
+                               message="waiting for document.readyState == 'complete'")
 
     @property
     def ready_state(self):
@@ -201,8 +198,7 @@ class Browser(Container, HasWindow, Waitable):
         args = [e.wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
 
-        # return wrap_elements_in(returned)  # TODO
-        return returned
+        return self._wrap_elements_in(returned)
 
     def send_keys(self, *args):
         """
@@ -227,7 +223,7 @@ class Browser(Container, HasWindow, Waitable):
         :rtype: bool
         """
         try:
-            # assert_exists  # TODO
+            self.assert_exists()
             return True
         except (NoMatchingWindowFoundException, Error):
             return False
@@ -241,8 +237,8 @@ class Browser(Container, HasWindow, Waitable):
     def assert_exists(self):
         if self.closed:
             raise Exception('browser was closed')
-        # elif not window.present:  # TODO
-        #     raise NoSuchWindowException('browser window was closed')
+        elif not self.window().present:
+            raise NoSuchWindowException('browser window was closed')
         else:
             self.driver.switch_to.default_content()
             return True
