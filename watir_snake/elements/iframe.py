@@ -16,7 +16,7 @@ class IFrame(HTMLElement):
         selector = dict(tag_name=self._frame_tag, **self.selector)
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope,
-                                                        selector, self.attribute_list)
+                                                        selector, self.ATTRIBUTES)
         locator = self._locator_class(self.query_scope, selector, selector_builder,
                                       element_validator)
 

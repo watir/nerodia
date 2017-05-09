@@ -55,11 +55,12 @@ class ElementCollection(object):
         This collection as a list
         :rtype: list[watir_snake.elements.element.Element]
         """
+        from .elements.html_elements import HTMLElement
         if not self.as_list:
             elements = []
             for idx, e in enumerate(self._elements):
                 element = self._element_class(self.query_scope, dict(index=idx, **self.selector))
-                if self._element_class == watir_snake.elements.HTMLElement:
+                if self._element_class == HTMLElement:
                     elements.append(element.to_subtype())
                 else:
                     elements.append(element)
@@ -97,7 +98,7 @@ class ElementCollection(object):
 
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector,
-                                                        self._element_class.attribute_list)
+                                                        self._element_class.ATTRIBUTES)
         locator = self._locator_class(self.query_scope, self.selector, selector_builder,
                                       element_validator)
 
@@ -121,9 +122,9 @@ class ElementCollection(object):
     def _import_module(self):
         modules = [watir_snake.locator_namespace.__name__, self._element_class_name.lower()]
         try:
-            return import_module('watir_snake.{}.{}.locator'.format(*modules))
+            return import_module('{}.{}'.format(*modules))
         except ImportError:
-            return import_module('watir_snake.{}.element.locator'.format(*modules[:1]))
+            return import_module('{}.element'.format(*modules[:1]))
 
     @property
     def _element_class_name(self):

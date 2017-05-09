@@ -121,7 +121,7 @@ class Locator(object):
                 return self._wd_find_by_regexp_selector(selector, 'find')
 
     def _find_all_by_one(self):
-        how, what = self.selector.items().first
+        how, what = self.selector.items()[0]
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:
@@ -131,7 +131,7 @@ class Locator(object):
 
     def _find_all_by_multiple(self):
         selector = self.selector_builder.normalized_selector
-        visible = selector.pop('visible')
+        visible = selector.pop('visible', None)
 
         if 'index' in selector:
             raise ValueError("can't locate all elements by index")

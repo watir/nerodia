@@ -47,10 +47,6 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     exist = exists
 
-    @property
-    def attribute_list(self):
-        return self.ATTRIBUTES
-
     def __repr__(self):
         string = '#<{}: '.format(self.__class__.__name__)
         if self.keyword:
@@ -528,7 +524,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector,
-                                                        self.attribute_list)
+                                                        self.ATTRIBUTES)
         locator = self._locator_class(self.query_scope, self.selector, selector_builder,
                                       element_validator)
 
