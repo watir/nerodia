@@ -1,8 +1,8 @@
 import pytest
 from _pytest.skipping import MarkEvaluator
-from selenium.webdriver import DesiredCapabilities
-from watir_snake.browser import Browser
 
+import watir_snake
+from watir_snake.browser import Browser
 from .support.webserver import WebServer
 
 browsers = (
@@ -14,6 +14,8 @@ browsers = (
     # 'remote',  TODO: just local for now
     'safari'
 )
+
+watir_snake.default_timeout = 3
 
 
 def pytest_addoption(parser):
@@ -48,7 +50,9 @@ def browser(request):
     # if driver_class == 'remote':
     #     capabilities = DesiredCapabilities.CHROME.copy()
     #     kwargs.update({'desired_capabilities': capabilities})
-    browser = Browser(browser_name, executable_path='/Users/lucast/Documents/HC-Mercurial/hc.qa.webdriver/hc/qa/webdriver/binaries/darwin/chromedriver')
+    browser = Browser(browser_name,
+                      executable_path='/Users/lucast/Documents/HC-Mercurial/hc.qa.webdriver/hc/qa'
+                                      '/webdriver/binaries/darwin/chromedriver')
     yield browser
     try:
         browser.quit()
