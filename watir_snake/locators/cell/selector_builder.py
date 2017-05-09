@@ -7,7 +7,7 @@ from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 
 class SelectorBuilder(ElementSelectorBuilder):
     def _build_wd_selector(self, selectors):
-        if any(isinstance(selector, re._pattern_type) for selector in selectors):
+        if any(isinstance(val, re._pattern_type) for val in selectors.values()):
             return None
 
         expressions = ['./th', './td']

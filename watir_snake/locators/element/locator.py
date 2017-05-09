@@ -10,7 +10,6 @@ from ...xpath_support import XpathSupport
 
 class Locator(object):
     WD_FINDERS = {
-        'class': By.CLASS_NAME,
         'class_name': By.CLASS_NAME,
         'css': By.CSS_SELECTOR,
         'id': By.ID,
@@ -162,7 +161,7 @@ class Locator(object):
             href = element.get_attribute('href')
             return href and href.strip()
         else:
-            return element.get_attribute(how.replace('_', '-'))
+            return element.get_attribute(how.replace('_', '-')) or ''
 
     @property
     def _all_elements(self):

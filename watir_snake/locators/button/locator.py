@@ -30,7 +30,7 @@ class Locator(ElementLocator):
             value = cpy.pop('value', None)
 
             return super(Locator, self)._matches_selector(element, cpy) and \
-                (value == self._fetch_value(element, 'value') or
-                 value == self._fetch_value(element, 'text'))
+                (value.search(self._fetch_value(element, 'value')) or
+                 value.search(self._fetch_value(element, 'text')))
         else:
             return super(Locator, self)._matches_selector(element, selector)
