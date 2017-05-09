@@ -9,18 +9,18 @@ from ...xpath_support import XpathSupport
 
 
 class Locator(object):
-    WD_FINDERS = [
-        'class',
-        'class_name',
-        'css',
-        'id',
-        'link',
-        'link_text',
-        'name',
-        'partial_link_text',
-        'tag_name',
-        'xpath'
-    ]
+    WD_FINDERS = {
+        'class': By.CLASS_NAME,
+        'class_name': By.CLASS_NAME,
+        'css': By.CSS_SELECTOR,
+        'id': By.ID,
+        'link': By.LINK_TEXT,
+        'link_text': By.LINK_TEXT,
+        'name': By.NAME,
+        'partial_link_text': By.PARTIAL_LINK_TEXT,
+        'tag_name': By.TAG_NAME,
+        'xpath': By.XPATH
+    }
 
     # Regular expressions that can be reliably converted to xpath `contains`
     # expressions in order to optimize the .
@@ -87,7 +87,7 @@ class Locator(object):
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:
-            return self._wd_find_first_by(how, what)
+            return self._wd_find_first_by(self.WD_FINDERS.get(how), what)
         else:
             return self._find_first_by_multiple()
 
@@ -125,7 +125,7 @@ class Locator(object):
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:
-            return self._wd_find_all_by(how, what)
+            return self._wd_find_all_by(self.WD_FINDERS.get(how), what)
         else:
             return self._find_all_by_multiple()
 
