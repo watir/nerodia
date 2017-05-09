@@ -18,9 +18,7 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 
 
 class Element(Container, Atoms, Waitable, Adjacent):
-    ATTRIBUTES = []
-    _attr_id = (str, 'id')
-    _attr_class_name = (str, 'className')
+    ATTRIBUTES = ['id', 'className']
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -610,6 +608,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
             if Wait.timer.locked is None:
                 Wait.timer.reset()
 
-    def __getattr__(self, item):
-        if search(SelectorBuilder.WILDCARD_ATTRIBUTE, item):
-            return self.attribute_value(item.replace('_', '-'))
+    def __getattribute__(self, name):
+        if search(SelectorBuilder.WILDCARD_ATTRIBUTE, name):
+            return self.attribute_value(name.replace('_', '-'))
+        else:
+            return object.__getattribute__(self, name)
