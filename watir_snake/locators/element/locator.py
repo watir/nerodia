@@ -2,6 +2,7 @@ from copy import copy, Error
 
 import re
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
+from selenium.webdriver.common.by import By
 
 from ...exception import Error
 from ...xpath_support import XpathSupport
@@ -27,7 +28,7 @@ class Locator(object):
                                     r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
                                     r'[^|]*?'  # do not try to convert expressions with alternates
                                     r'([^\[\]\\^$.|?*+()]*)'  # trailing literal characters
-                                    r'\z',
+                                    r'\Z',
                                     re.X)
 
     def __init__(self, query_scope, selector, selector_builder, element_validator):
@@ -96,18 +97,18 @@ class Locator(object):
         idx = selector.pop('index', None)
         visible = selector.pop('visible', None)
 
-        how, what = self.selector_builder.build(selector)
+        built_selector = self.selector_builder.build(selector)
 
-        if how:
+        if built_selector:
             # could build xpath/css for selector
             if idx or visible:
                 idx = idx or 0
-                elements = self.query_scope.wd.find_elements(how, what)
+                elements = self.query_scope.wd.find_elements(*built_selector)
                 if visible:
                     elements = [el for el in elements if visible == el.is_displayed()]
                 return elements[idx] if elements else None
             else:
-                return self.query_scope.wd.find_element(how, what)
+                return self.query_scope.wd.find_element(*built_selector)
         else:
             # can't use xpath, probably a regexp in there
             if idx or visible:
@@ -158,10 +159,10 @@ class Locator(object):
         elif how == 'tag_name':
             return element.tag_name.downcase
         elif how == 'href':
-            href = element.attribute('href')
+            href = element.get_attribute('href')
             return href and href.strip()
         else:
-            return element.attribute(how.replace('_', '-'))
+            return element.get_attribute(how.replace('_', '-'))
 
     @property
     def _all_elements(self):
@@ -188,24 +189,25 @@ class Locator(object):
             else:
                 query_scope = label
 
-        how, what = self.selector_builder.build(selector)
+        built_selector = self.selector_builder.build(selector)
 
-        if not how:
+        if not built_selector:
             raise Error('internal error: unable to build Selenium selector from'
                         ' {}'.format(selector))
 
-        if how == 'xpath' and self._can_convert_regexp_to_contains:
+        how, what = built_selector
+        if how == By.XPATH and self._can_convert_regexp_to_contains:
             for key, value in rx_selector.items():
                 if key == 'tag_name' or key == 'text':
                     continue
 
                 predicates = self._regexp_selector_to_predicates(key, value)
                 if predicates:
-                    what = "({})[{}]".format(what, ' and '.join(predicates))
+                    what = '({})[{}]'.format(what, ' and '.join(predicates))
 
         elements = query_scope.find_elements(how, what)
         if method == 'find':
-            return next((el for el in elements if self._matches_selector(el, rx_selector)))
+            return next((el for el in elements if self._matches_selector(el, rx_selector)), None)
         elif method == 'select':
             return [el for el in elements if self._matches_selector(el, rx_selector)]
         else:
@@ -215,9 +217,7 @@ class Locator(object):
     def _delete_regexps_from(selector):
         rx_selector = {}
 
-        selector = copy(selector)
-
-        for how, what in selector.items():
+        for how, what in copy(selector).items():
             if not isinstance(what, re._pattern_type):
                 continue
             rx_selector[how] = what
@@ -231,7 +231,7 @@ class Locator(object):
         return next((el for el in elements if self._matches_selector(el, {'text': label_exp})))
 
     def _matches_selector(self, element, selector):
-        return all(what == self._fetch_value(element, how) for how, what in selector.items())
+        return all(what.search(self._fetch_value(element, how)) for how, what in selector.items())
 
     @property
     def _can_convert_regexp_to_contains(self):
@@ -245,7 +245,7 @@ class Locator(object):
         if match is None:
             return None
 
-        lhs = self.selector_builder.xpath_builder.lhs_for(key)
+        lhs = self.selector_builder.xpath_builder.lhs_for(None, key)
 
         return ['contains({}, {})'.format(lhs, XpathSupport.escape(group)) for
                 group in match.groups() if group]

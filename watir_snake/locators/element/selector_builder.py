@@ -2,6 +2,7 @@ import logging
 from importlib import import_module
 
 import re
+from selenium.webdriver.common.by import By
 
 from ...exception import MissingWayOfFindingObjectException
 from ...xpath_support import XpathSupport
@@ -59,7 +60,7 @@ class SelectorBuilder(object):
             return [how, what]
         elif how == 'class_name':
             return ['class', what]
-        elif 'caption':
+        elif how == 'caption':
             return ['text', what]
         else:
             self._assert_valid_as_attribute(how)
@@ -82,10 +83,10 @@ class SelectorBuilder(object):
 
         how, what = [None] * 2
         if xpath:
-            how = 'xpath'
+            how = By.XPATH
             what = xpath
         elif css:
-            how = 'css'
+            how = By.CSS_SELECTOR
             what = css
 
         if selector and not self._can_be_combined_with_xpath_or_css(selector):
@@ -94,7 +95,7 @@ class SelectorBuilder(object):
         return [how, what]
 
     def _build_wd_selector(self, selectors):
-        if any(isinstance(selector, re._pattern_type) for selector in selectors):
+        if any(isinstance(val, re._pattern_type) for val in selectors.values()):
             return None
         return self._build_xpath(selectors)
 
@@ -140,7 +141,7 @@ class XPath(object):
 
         logging.debug({'xpath': xpath, 'selectors': selectors})
 
-        return ['xpath', xpath]
+        return [By.XPATH, xpath]
 
     # TODO: Get rid of building
     def attribute_expression(self, building, selectors):
@@ -182,7 +183,7 @@ class XPath(object):
             # https://github.com/watir/watir/issues/72
             return XpathSupport.lower('@type')
         else:
-            '@{}'.format(key.replace('_', '-'))
+            return '@{}'.format(key.replace('_', '-'))
 
     # private
 
