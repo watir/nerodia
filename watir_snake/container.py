@@ -8,1004 +8,1087 @@ class Container(object):
     def _extract_selector(self, *args, **kwargs):
         if args and len(args) == 2:
             return {args[0]: args[1]}
-        elif len(kwargs) > 1:
+        elif len(kwargs) < 2:
             return kwargs
-        elif len(kwargs) == 0:
-            return {}
 
-        raise ValueError('expected kwargs, got {}'.format(kwargs))
+        raise ValueError("expected kwargs dict or ('how', what), got {}".format(kwargs))
 
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
         from .elements.link import Anchor
-        return Anchor(self, self._extract_selector(tag_name='a', *args, **kwargs))
+        return Anchor(self, dict(tag_name='a', **self._extract_selector(*args, **kwargs)))
 
     def links(self, *args, **kwargs):
         from .elements.html_elements import AnchorCollection
-        return AnchorCollection(self, self._extract_selector(tag_name='a', *args, **kwargs))
+        return AnchorCollection(self, dict(tag_name='a', **self._extract_selector(*args, **kwargs)))
 
     def abbr(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='abbr', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='abbr', **self._extract_selector(*args, **kwargs)))
 
     def abbrs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='abbr', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='abbr',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def address(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='address', *args, **kwargs))
+        return HTMLElement(self,
+                           dict(tag_name='address', **self._extract_selector(*args, **kwargs)))
 
     def addresses(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='address', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='address',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def area(self, *args, **kwargs):
         from .elements.area import Area
-        return Area(self, self._extract_selector(tag_name='area', *args, **kwargs))
+        return Area(self, dict(tag_name='area', **self._extract_selector(*args, **kwargs)))
 
     def areas(self, *args, **kwargs):
         from .elements.html_elements import AreaCollection
-        return AreaCollection(self, self._extract_selector(tag_name='area', *args, **kwargs))
+        return AreaCollection(self, dict(tag_name='area',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def article(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='article', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='article',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def articles(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='article', *args,
-                                                                  **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='article',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def aside(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='aside', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='aside', **self._extract_selector(*args, **kwargs)))
 
     def asides(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='aside', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='aside',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def audio(self, *args, **kwargs):
         from .elements.html_elements import Audio
-        return Audio(self, self._extract_selector(tag_name='audio', *args, **kwargs))
+        return Audio(self, dict(tag_name='audio', **self._extract_selector(*args, **kwargs)))
 
     def audios(self, *args, **kwargs):
         from .elements.html_elements import AudioCollection
-        return AudioCollection(self, self._extract_selector(tag_name='audio', *args, **kwargs))
+        return AudioCollection(self, dict(tag_name='audio',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def b(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='b', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='b', **self._extract_selector(*args, **kwargs)))
 
     def bs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='b', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='b',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def base(self, *args, **kwargs):
         from .elements.html_elements import Base
-        return Base(self, self._extract_selector(tag_name='base', *args, **kwargs))
+        return Base(self, dict(tag_name='base', **self._extract_selector(*args, **kwargs)))
 
     def bases(self, *args, **kwargs):
         from .elements.html_elements import BaseCollection
-        return BaseCollection(self, self._extract_selector(tag_name='base', *args, **kwargs))
+        return BaseCollection(self, dict(tag_name='base',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def bdi(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='bdi', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='bdi', **self._extract_selector(*args, **kwargs)))
 
     def bdis(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='bdi', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='bdi',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def bdo(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='bdo', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='bdo', **self._extract_selector(*args, **kwargs)))
 
     def bdos(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='bdo', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='bdo',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def blockquote(self, *args, **kwargs):
         from .elements.html_elements import Quote
-        return Quote(self, self._extract_selector(tag_name='blockquote', *args, **kwargs))
+        return Quote(self, dict(tag_name='blockquote', **self._extract_selector(*args, **kwargs)))
 
     def blockquotes(self, *args, **kwargs):
         from .elements.html_elements import QuoteCollection
-        return QuoteCollection(self, self._extract_selector(tag_name='blockquote', *args, **kwargs))
+        return QuoteCollection(self, dict(tag_name='blockquote',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def body(self, *args, **kwargs):
         from .elements.html_elements import Body
-        return Body(self, self._extract_selector(tag_name='body', *args, **kwargs))
+        return Body(self, dict(tag_name='body', **self._extract_selector(*args, **kwargs)))
 
     def bodys(self, *args, **kwargs):
         from .elements.html_elements import BodyCollection
-        return BodyCollection(self, self._extract_selector(tag_name='body', *args, **kwargs))
+        return BodyCollection(self, dict(tag_name='body',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def br(self, *args, **kwargs):
         from .elements.html_elements import BR
-        return BR(self, self._extract_selector(tag_name='br', *args, **kwargs))
+        return BR(self, dict(tag_name='br', **self._extract_selector(*args, **kwargs)))
 
     def brs(self, *args, **kwargs):
         from .elements.html_elements import BRCollection
-        return BRCollection(self, self._extract_selector(tag_name='br', *args, **kwargs))
+        return BRCollection(self, dict(tag_name='br', **self._extract_selector(*args, **kwargs)))
 
     def button(self, *args, **kwargs):
         from .elements.button import Button
-        return Button(self, self._extract_selector(tag_name='button', *args, **kwargs))
+        return Button(self, dict(tag_name='button', **self._extract_selector(*args, **kwargs)))
 
     def buttons(self, *args, **kwargs):
         from .elements.html_elements import ButtonCollection
-        return ButtonCollection(self, self._extract_selector(tag_name='button', *args, **kwargs))
+        return ButtonCollection(self, dict(tag_name='button',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def canvas(self, *args, **kwargs):
         from .elements.html_elements import Canvas
-        return Canvas(self, self._extract_selector(tag_name='canvas', *args, **kwargs))
+        return Canvas(self, dict(tag_name='canvas', **self._extract_selector(*args, **kwargs)))
 
     def canvases(self, *args, **kwargs):
         from .elements.html_elements import CanvasCollection
-        return CanvasCollection(self, self._extract_selector(tag_name='canvas', *args, **kwargs))
+        return CanvasCollection(self, dict(tag_name='canvas',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def caption(self, *args, **kwargs):
         from .elements.html_elements import TableCaption
-        return TableCaption(self, self._extract_selector(tag_name='caption', *args, **kwargs))
+        return TableCaption(self, dict(tag_name='caption',
+                                       **self._extract_selector(*args, **kwargs)))
 
     def captions(self, *args, **kwargs):
         from .elements.html_elements import TableCaptionCollection
-        return TableCaptionCollection(self,
-                                      self._extract_selector(tag_name='caption', *args, **kwargs))
+        return TableCaptionCollection(self, dict(tag_name='caption',
+                                                 **self._extract_selector(*args, **kwargs)))
 
     def checkbox(self, *args, **kwargs):
         from .elements.checkbox import CheckBox
-        return CheckBox(self,
-                        self._extract_selector(tag_name='input', type='checkbox', *args, **kwargs))
+        return CheckBox(self, dict(tag_name='input', type='checkbox',
+                                   **self._extract_selector(*args, **kwargs)))
 
     def checkboxes(self, *args, **kwargs):
         from .elements.checkbox import CheckBoxCollection
-        return CheckBoxCollection(self,
-                                  self._extract_selector(tag_name='input', type='checkbox', *args,
-                                                         **kwargs))
+        return CheckBoxCollection(self, dict(tag_name='input', type='checkbox',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def cite(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='cite', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='cite', **self._extract_selector(*args, **kwargs)))
 
     def cites(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='cite', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='cite',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def code(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='code', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='code', **self._extract_selector(*args, **kwargs)))
 
     def codes(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='code', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='code',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def col(self, *args, **kwargs):
         from .elements.html_elements import TableCol
-        return TableCol(self, self._extract_selector(tag_name='col', *args, **kwargs))
+        return TableCol(self, dict(tag_name='col', **self._extract_selector(*args, **kwargs)))
 
     def cols(self, *args, **kwargs):
         from .elements.html_elements import TableColCollection
-        return TableColCollection(self, self._extract_selector(tag_name='col', *args, **kwargs))
+        return TableColCollection(self, dict(tag_name='col',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def colgroup(self, *args, **kwargs):
         from .elements.html_elements import TableCol
-        return TableCol(self, self._extract_selector(tag_name='colgroup', *args, **kwargs))
+        return TableCol(self, dict(tag_name='colgroup', **self._extract_selector(*args, **kwargs)))
 
     def colgroups(self, *args, **kwargs):
         from .elements.html_elements import TableColCollection
-        return TableColCollection(self,
-                                  self._extract_selector(tag_name='colgroup', *args, **kwargs))
+        return TableColCollection(self, dict(tag_name='colgroup',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def data(self, *args, **kwargs):
         from .elements.html_elements import Data
-        return Data(self, self._extract_selector(tag_name='data', *args, **kwargs))
+        return Data(self, dict(tag_name='data', **self._extract_selector(*args, **kwargs)))
 
     def datas(self, *args, **kwargs):
         from .elements.html_elements import DataCollection
-        return DataCollection(self, self._extract_selector(tag_name='data', *args, **kwargs))
+        return DataCollection(self, dict(tag_name='data',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def datalist(self, *args, **kwargs):
         from .elements.html_elements import DataList
-        return DataList(self, self._extract_selector(tag_name='datalist', *args, **kwargs))
+        return DataList(self, dict(tag_name='datalist',
+                                   **self._extract_selector(*args, **kwargs)))
 
     def datalists(self, *args, **kwargs):
         from .elements.html_elements import DataListCollection
-        return DataListCollection(self,
-                                  self._extract_selector(tag_name='datalist', *args, **kwargs))
+        return DataListCollection(self, dict(tag_name='datalist',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def dd(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='dd', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='dd',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def dds(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='dd', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='dd',
+                                                **self._extract_selector(*args, **kwargs)))
 
     # 'del' is an invalid method name, use delete/deletes instead
     def delete(self, *args, **kwargs):
         from .elements.html_elements import Mod
-        return Mod(self, self._extract_selector(tag_name='del', *args, **kwargs))
+        return Mod(self, dict(tag_name='del', **self._extract_selector(*args, **kwargs)))
 
     def deletes(self, *args, **kwargs):
         from .elements.html_elements import ModCollection
-        return ModCollection(self, self._extract_selector(tag_name='del', *args, **kwargs))
+        return ModCollection(self, dict(tag_name='del', **self._extract_selector(*args, **kwargs)))
 
     def details(self, *args, **kwargs):
         from .elements.html_elements import Details
-        return Details(self, self._extract_selector(tag_name='details', *args, **kwargs))
+        return Details(self, dict(tag_name='details', **self._extract_selector(*args, **kwargs)))
 
     def detailses(self, *args, **kwargs):
         from .elements.html_elements import DetailsCollection
-        return DetailsCollection(self, self._extract_selector(tag_name='details', *args, **kwargs))
+        return DetailsCollection(self, dict(tag_name='details',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def dfn(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='dfn', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='dfn', **self._extract_selector(*args, **kwargs)))
 
     def dfns(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='dfn', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='dfn',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def dialog(self, *args, **kwargs):
         from .elements.html_elements import Dialog
-        return Dialog(self, self._extract_selector(tag_name='dialog', *args, **kwargs))
+        return Dialog(self, dict(tag_name='dialog', **self._extract_selector(*args, **kwargs)))
 
     def dialogs(self, *args, **kwargs):
         from .elements.html_elements import DialogCollection
-        return DialogCollection(self, self._extract_selector(tag_name='dialog', *args, **kwargs))
+        return DialogCollection(self, dict(tag_name='dialog',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def div(self, *args, **kwargs):
         from .elements.html_elements import Div
-        return Div(self, self._extract_selector(tag_name='div', *args, **kwargs))
+        return Div(self, dict(tag_name='div', **self._extract_selector(*args, **kwargs)))
 
     def divs(self, *args, **kwargs):
         from .elements.html_elements import DivCollection
-        return DivCollection(self, self._extract_selector(tag_name='div', *args, **kwargs))
+        return DivCollection(self, dict(tag_name='div', **self._extract_selector(*args, **kwargs)))
 
     def dl(self, *args, **kwargs):
         from .elements.dlist import DList
-        return DList(self, self._extract_selector(tag_name='dl', *args, **kwargs))
+        return DList(self, dict(tag_name='dl', **self._extract_selector(*args, **kwargs)))
 
     def dls(self, *args, **kwargs):
         from .elements.html_elements import DListCollection
-        return DListCollection(self, self._extract_selector(tag_name='dl', *args, **kwargs))
+        return DListCollection(self, dict(tag_name='dl', **self._extract_selector(*args, **kwargs)))
 
     def dt(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='dt', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='dt', **self._extract_selector(*args, **kwargs)))
 
     def dts(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='dt', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='dt',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def em(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='em', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='em', **self._extract_selector(*args, **kwargs)))
 
     def ems(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='em', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='em',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def embed(self, *args, **kwargs):
         from .elements.html_elements import Embed
-        return Embed(self, self._extract_selector(tag_name='embed', *args, **kwargs))
+        return Embed(self, dict(tag_name='embed', **self._extract_selector(*args, **kwargs)))
 
     def embeds(self, *args, **kwargs):
         from .elements.html_elements import EmbedCollection
-        return EmbedCollection(self, self._extract_selector(tag_name='embed', *args, **kwargs))
+        return EmbedCollection(self, dict(tag_name='embed',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def fieldset(self, *args, **kwargs):
         from .elements.html_elements import FieldSet
-        return FieldSet(self, self._extract_selector(tag_name='fieldset', *args, **kwargs))
+        return FieldSet(self, dict(tag_name='fieldset', **self._extract_selector(*args, **kwargs)))
 
     def fieldsets(self, *args, **kwargs):
         from .elements.html_elements import FieldSetCollection
-        return FieldSetCollection(self,
-                                  self._extract_selector(tag_name='fieldset', *args, **kwargs))
+        return FieldSetCollection(self, dict(tag_name='fieldset',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def figcaption(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='figcaption', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='figcaption',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def figcaptions(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='figcaption', *args,
-                                                                  **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='figcaption',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def figure(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='figure', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='figure', **self._extract_selector(*args, **kwargs)))
 
     def figures(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='figure', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='figure',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def file_field(self, *args, **kwargs):
         from .elements.file_field import FileField
-        return FileField(self,
-                         self._extract_selector(tag_name='input', type='file', *args, **kwargs))
+        return FileField(self, dict(tag_name='input', type='file',
+                                    **self._extract_selector(*args, **kwargs)))
 
     def file_fields(self, *args, **kwargs):
         from .elements.file_field import FileFieldCollection
-        return FileFieldCollection(self,
-                                   self._extract_selector(tag_name='input', type='file', *args,
-                                                          **kwargs))
+        return FileFieldCollection(self, dict(tag_name='input', type='file',
+                                              **self._extract_selector(*args, **kwargs)))
 
     def font(self, *args, **kwargs):
         from .elements.html_elements import Font
-        return Font(self, self._extract_selector(tag_name='font', *args, **kwargs))
+        return Font(self, dict(tag_name='font', **self._extract_selector(*args, **kwargs)))
 
     def fonts(self, *args, **kwargs):
         from .elements.html_elements import FontCollection
-        return FontCollection(self, self._extract_selector(tag_name='font', *args, **kwargs))
+        return FontCollection(self, dict(tag_name='font',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def footer(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='footer', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='footer',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def footers(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='footer', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='footer',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def form(self, *args, **kwargs):
         from .elements.form import Form
-        return Form(self, self._extract_selector(tag_name='form', *args, **kwargs))
+        return Form(self, dict(tag_name='form', **self._extract_selector(*args, **kwargs)))
 
     def forms(self, *args, **kwargs):
         from .elements.html_elements import FormCollection
-        return FormCollection(self, self._extract_selector(tag_name='form', *args, **kwargs))
+        return FormCollection(self, dict(tag_name='form',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def frame(self, *args, **kwargs):
         from .elements.iframe import Frame
-        return Frame(self, self._extract_selector(tag_name='frame', *args, **kwargs))
+        return Frame(self, dict(tag_name='frame', **self._extract_selector(*args, **kwargs)))
 
     def frames(self, *args, **kwargs):
         from .elements.iframe import FrameCollection
-        return FrameCollection(self, self._extract_selector(tag_name='frame', *args, **kwargs))
+        return FrameCollection(self, dict(tag_name='frame',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def frameset(self, *args, **kwargs):
         from .elements.html_elements import FrameSet
-        return FrameSet(self, self._extract_selector(tag_name='frameset', *args, **kwargs))
+        return FrameSet(self, dict(tag_name='frameset', **self._extract_selector(*args, **kwargs)))
 
     def framesets(self, *args, **kwargs):
         from .elements.html_elements import FrameSetCollection
-        return FrameSetCollection(self,
-                                  self._extract_selector(tag_name='frameset', *args, **kwargs))
+        return FrameSetCollection(self, dict(tag_name='frameset',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def h1(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h1', *args, **kwargs))
+        return Heading(self, dict(tag_name='h1', **self._extract_selector(*args, **kwargs)))
 
     def h1s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h1', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h1',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def h2(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h2', *args, **kwargs))
+        return Heading(self, dict(tag_name='h2', **self._extract_selector(*args, **kwargs)))
 
     def h2s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h2', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h2',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def h3(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h3', *args, **kwargs))
+        return Heading(self, dict(tag_name='h3', **self._extract_selector(*args, **kwargs)))
 
     def h3s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h3', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h3',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def h4(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h4', *args, **kwargs))
+        return Heading(self, dict(tag_name='h4', **self._extract_selector(*args, **kwargs)))
 
     def h4s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h4', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h4',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def h5(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h5', *args, **kwargs))
+        return Heading(self, dict(tag_name='h5', **self._extract_selector(*args, **kwargs)))
 
     def h5s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h5', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h5',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def h6(self, *args, **kwargs):
         from .elements.html_elements import Heading
-        return Heading(self, self._extract_selector(tag_name='h6', *args, **kwargs))
+        return Heading(self, dict(tag_name='h6', **self._extract_selector(*args, **kwargs)))
 
     def h6s(self, *args, **kwargs):
         from .elements.html_elements import HeadingCollection
-        return HeadingCollection(self, self._extract_selector(tag_name='h6', *args, **kwargs))
+        return HeadingCollection(self, dict(tag_name='h6',
+                                            **self._extract_selector(*args, **kwargs)))
 
     def head(self, *args, **kwargs):
         from .elements.html_elements import Head
-        return Head(self, self._extract_selector(tag_name='head', *args, **kwargs))
+        return Head(self, dict(tag_name='head', **self._extract_selector(*args, **kwargs)))
 
     def heads(self, *args, **kwargs):
         from .elements.html_elements import HeadCollection
-        return HeadCollection(self, self._extract_selector(tag_name='head', *args, **kwargs))
+        return HeadCollection(self, dict(tag_name='head',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def header(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='header', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='header',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def headers(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='header', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='header',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def hgroup(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='hgroup', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='hgroup', **self._extract_selector(*args, **kwargs)))
 
     def hgroups(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='hgroup', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='hgroup',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def hidden(self, *args, **kwargs):
         from .elements.hidden import Hidden
-        return Hidden(self,
-                      self._extract_selector(tag_name='input', type='hidden', *args, **kwargs))
+        return Hidden(self, dict(tag_name='input', type='hidden',
+                                 **self._extract_selector(*args, **kwargs)))
 
     def hiddens(self, *args, **kwargs):
         from .elements.hidden import HiddenCollection
-        return HiddenCollection(self, self._extract_selector(tag_name='input', type='hidden', *args,
-                                                             **kwargs))
+        return HiddenCollection(self, dict(tag_name='input', type='hidden',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def hr(self, *args, **kwargs):
         from .elements.html_elements import HR
-        return HR(self, self._extract_selector(tag_name='hr', *args, **kwargs))
+        return HR(self, dict(tag_name='hr', **self._extract_selector(*args, **kwargs)))
 
     def hrs(self, *args, **kwargs):
         from .elements.html_elements import HRCollection
-        return HRCollection(self, self._extract_selector(tag_name='hr', *args, **kwargs))
+        return HRCollection(self, dict(tag_name='hr', **self._extract_selector(*args, **kwargs)))
 
     def html(self, *args, **kwargs):
         from .elements.html_elements import Html
-        return Html(self, self._extract_selector(tag_name='html', *args, **kwargs))
+        return Html(self, dict(tag_name='html', **self._extract_selector(*args, **kwargs)))
 
     def htmls(self, *args, **kwargs):
         from .elements.html_elements import HtmlCollection
-        return HtmlCollection(self, self._extract_selector(tag_name='html', *args, **kwargs))
+        return HtmlCollection(self, dict(tag_name='html',
+                                         **self._extract_selector(*args, **kwargs)))
 
     # Plural of 'i' cannot be a method name, use ital/itals instead
     def ital(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='i', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='i', **self._extract_selector(*args, **kwargs)))
 
     def itals(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='i', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='i',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def iframe(self, *args, **kwargs):
         from .elements.iframe import IFrame
-        return IFrame(self, self._extract_selector(tag_name='iframe', *args, **kwargs))
+        return IFrame(self, dict(tag_name='iframe', **self._extract_selector(*args, **kwargs)))
 
     def iframes(self, *args, **kwargs):
         from .elements.html_elements import IFrameCollection
-        return IFrameCollection(self, self._extract_selector(tag_name='iframe', *args, **kwargs))
+        return IFrameCollection(self, dict(tag_name='iframe',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def img(self, *args, **kwargs):
         from .elements.image import Image
-        return Image(self, self._extract_selector(tag_name='img', *args, **kwargs))
+        return Image(self, dict(tag_name='img', **self._extract_selector(*args, **kwargs)))
 
     def imgs(self, *args, **kwargs):
         from .elements.html_elements import ImageCollection
-        return ImageCollection(self, self._extract_selector(tag_name='img', *args, **kwargs))
+        return ImageCollection(self, dict(tag_name='img',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def input(self, *args, **kwargs):
         from .elements.input import Input
-        return Input(self, self._extract_selector(tag_name='input', *args, **kwargs))
+        return Input(self, dict(tag_name='input', **self._extract_selector(*args, **kwargs)))
 
     def inputs(self, *args, **kwargs):
         from .elements.html_elements import InputCollection
-        return InputCollection(self, self._extract_selector(tag_name='input', *args, **kwargs))
+        return InputCollection(self, dict(tag_name='input',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def ins(self, *args, **kwargs):
         from .elements.html_elements import Mod
-        return Mod(self, self._extract_selector(tag_name='ins', *args, **kwargs))
+        return Mod(self, dict(tag_name='ins', **self._extract_selector(*args, **kwargs)))
 
     def inses(self, *args, **kwargs):
         from .elements.html_elements import ModCollection
-        return ModCollection(self, self._extract_selector(tag_name='ins', *args, **kwargs))
+        return ModCollection(self, dict(tag_name='ins', **self._extract_selector(*args, **kwargs)))
 
     def kbd(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='kbd', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='kbd', **self._extract_selector(*args, **kwargs)))
 
     def kbds(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='kbd', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='kbd',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def keygen(self, *args, **kwargs):
         from .elements.html_elements import Keygen
-        return Keygen(self, self._extract_selector(tag_name='keygen', *args, **kwargs))
+        return Keygen(self, dict(tag_name='keygen', **self._extract_selector(*args, **kwargs)))
 
     def keygens(self, *args, **kwargs):
         from .elements.html_elements import KeygenCollection
-        return KeygenCollection(self, self._extract_selector(tag_name='keygen', *args, **kwargs))
+        return KeygenCollection(self, dict(tag_name='keygen',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def label(self, *args, **kwargs):
         from .elements.html_elements import Label
-        return Label(self, self._extract_selector(tag_name='label', *args, **kwargs))
+        return Label(self, dict(tag_name='label', **self._extract_selector(*args, **kwargs)))
 
     def labels(self, *args, **kwargs):
         from .elements.html_elements import LabelCollection
-        return LabelCollection(self, self._extract_selector(tag_name='label', *args, **kwargs))
+        return LabelCollection(self, dict(tag_name='label',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def legend(self, *args, **kwargs):
         from .elements.html_elements import Legend
-        return Legend(self, self._extract_selector(tag_name='legend', *args, **kwargs))
+        return Legend(self, dict(tag_name='legend', **self._extract_selector(*args, **kwargs)))
 
     def legends(self, *args, **kwargs):
         from .elements.html_elements import LegendCollection
-        return LegendCollection(self, self._extract_selector(tag_name='legend', *args, **kwargs))
+        return LegendCollection(self, dict(tag_name='legend',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def li(self, *args, **kwargs):
         from .elements.html_elements import LI
-        return LI(self, self._extract_selector(tag_name='li', *args, **kwargs))
+        return LI(self, dict(tag_name='li', **self._extract_selector(*args, **kwargs)))
 
     def lis(self, *args, **kwargs):
         from .elements.html_elements import LICollection
-        return LICollection(self, self._extract_selector(tag_name='li', *args, **kwargs))
+        return LICollection(self, dict(tag_name='li', **self._extract_selector(*args, **kwargs)))
 
     def main(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='main', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='main', **self._extract_selector(*args, **kwargs)))
 
     def mains(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='main', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='main',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def map(self, *args, **kwargs):
         from .elements.html_elements import Map
-        return Map(self, self._extract_selector(tag_name='map', *args, **kwargs))
+        return Map(self, dict(tag_name='map', **self._extract_selector(*args, **kwargs)))
 
     def maps(self, *args, **kwargs):
         from .elements.html_elements import MapCollection
-        return MapCollection(self, self._extract_selector(tag_name='map', *args, **kwargs))
+        return MapCollection(self, dict(tag_name='map', **self._extract_selector(*args, **kwargs)))
 
     def mark(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='mark', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='mark', **self._extract_selector(*args, **kwargs)))
 
     def marks(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='mark', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='mark',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def menu(self, *args, **kwargs):
         from .elements.html_elements import Menu
-        return Menu(self, self._extract_selector(tag_name='menu', *args, **kwargs))
+        return Menu(self, dict(tag_name='menu', **self._extract_selector(*args, **kwargs)))
 
     def menus(self, *args, **kwargs):
         from .elements.html_elements import MenuCollection
-        return MenuCollection(self, self._extract_selector(tag_name='menu', *args, **kwargs))
+        return MenuCollection(self, dict(tag_name='menu',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def menuitem(self, *args, **kwargs):
         from .elements.html_elements import MenuItem
-        return MenuItem(self, self._extract_selector(tag_name='menuitem', *args, **kwargs))
+        return MenuItem(self, dict(tag_name='menuitem', **self._extract_selector(*args, **kwargs)))
 
     def menuitems(self, *args, **kwargs):
         from .elements.html_elements import MenuItemCollection
-        return MenuItemCollection(self,
-                                  self._extract_selector(tag_name='menuitem', *args, **kwargs))
+        return MenuItemCollection(self, dict(tag_name='menuitem',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def meta(self, *args, **kwargs):
         from .elements.html_elements import Meta
-        return Meta(self, self._extract_selector(tag_name='meta', *args, **kwargs))
+        return Meta(self, dict(tag_name='meta', **self._extract_selector(*args, **kwargs)))
 
     def metas(self, *args, **kwargs):
         from .elements.html_elements import MetaCollection
-        return MetaCollection(self, self._extract_selector(tag_name='meta', *args, **kwargs))
+        return MetaCollection(self, dict(tag_name='meta',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def meter(self, *args, **kwargs):
         from .elements.html_elements import Meter
-        return Meter(self, self._extract_selector(tag_name='meter', *args, **kwargs))
+        return Meter(self, dict(tag_name='meter', **self._extract_selector(*args, **kwargs)))
 
     def meters(self, *args, **kwargs):
         from .elements.html_elements import MeterCollection
-        return MeterCollection(self, self._extract_selector(tag_name='meter', *args, **kwargs))
+        return MeterCollection(self, dict(tag_name='meter',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def nav(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='nav', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='nav', **self._extract_selector(*args, **kwargs)))
 
     def navs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='nav', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='nav',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def noscript(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='noscript', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='noscript',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def noscripts(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='noscript', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='noscript',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def object(self, *args, **kwargs):
         from .elements.html_elements import Object
-        return Object(self, self._extract_selector(tag_name='object', *args, **kwargs))
+        return Object(self, dict(tag_name='object', **self._extract_selector(*args, **kwargs)))
 
     def objects(self, *args, **kwargs):
         from .elements.html_elements import ObjectCollection
-        return ObjectCollection(self, self._extract_selector(tag_name='object', *args, **kwargs))
+        return ObjectCollection(self, dict(tag_name='object',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def ol(self, *args, **kwargs):
         from .elements.html_elements import OList
-        return OList(self, self._extract_selector(tag_name='ol', *args, **kwargs))
+        return OList(self, dict(tag_name='ol', **self._extract_selector(*args, **kwargs)))
 
     def ols(self, *args, **kwargs):
         from .elements.html_elements import OListCollection
-        return OListCollection(self, self._extract_selector(tag_name='ol', *args, **kwargs))
+        return OListCollection(self, dict(tag_name='ol', **self._extract_selector(*args, **kwargs)))
 
     def optgroup(self, *args, **kwargs):
         from .elements.html_elements import OptGroup
-        return OptGroup(self, self._extract_selector(tag_name='optgroup', *args, **kwargs))
+        return OptGroup(self, dict(tag_name='optgroup', **self._extract_selector(*args, **kwargs)))
 
     def optgroups(self, *args, **kwargs):
         from .elements.html_elements import OptGroupCollection
-        return OptGroupCollection(self,
-                                  self._extract_selector(tag_name='optgroup', *args, **kwargs))
+        return OptGroupCollection(self, dict(tag_name='optgroup',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def option(self, *args, **kwargs):
         from .elements.option import Option
-        return Option(self, self._extract_selector(tag_name='option', *args, **kwargs))
+        return Option(self, dict(tag_name='option', **self._extract_selector(*args, **kwargs)))
 
     def options(self, *args, **kwargs):
         from .elements.html_elements import OptionCollection
-        return OptionCollection(self, self._extract_selector(tag_name='option', *args, **kwargs))
+        return OptionCollection(self, dict(tag_name='option',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def output(self, *args, **kwargs):
         from .elements.html_elements import Output
-        return Output(self, self._extract_selector(tag_name='output', *args, **kwargs))
+        return Output(self, dict(tag_name='output', **self._extract_selector(*args, **kwargs)))
 
     def outputs(self, *args, **kwargs):
         from .elements.html_elements import OutputCollection
-        return OutputCollection(self, self._extract_selector(tag_name='output', *args, **kwargs))
+        return OutputCollection(self, dict(tag_name='output',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def p(self, *args, **kwargs):
         from .elements.html_elements import Paragraph
-        return Paragraph(self, self._extract_selector(tag_name='p', *args, **kwargs))
+        return Paragraph(self, dict(tag_name='p', **self._extract_selector(*args, **kwargs)))
 
     def ps(self, *args, **kwargs):
         from .elements.html_elements import ParagraphCollection
-        return ParagraphCollection(self, self._extract_selector(tag_name='p', *args, **kwargs))
+        return ParagraphCollection(self, dict(tag_name='p',
+                                              **self._extract_selector(*args, **kwargs)))
 
     def param(self, *args, **kwargs):
         from .elements.html_elements import Param
-        return Param(self, self._extract_selector(tag_name='param', *args, **kwargs))
+        return Param(self, dict(tag_name='param', **self._extract_selector(*args, **kwargs)))
 
     def params(self, *args, **kwargs):
         from .elements.html_elements import ParamCollection
-        return ParamCollection(self, self._extract_selector(tag_name='param', *args, **kwargs))
+        return ParamCollection(self, dict(tag_name='param',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def pre(self, *args, **kwargs):
         from .elements.html_elements import Pre
-        return Pre(self, self._extract_selector(tag_name='pre', *args, **kwargs))
+        return Pre(self, dict(tag_name='pre', **self._extract_selector(*args, **kwargs)))
 
     def pres(self, *args, **kwargs):
         from .elements.html_elements import PreCollection
-        return PreCollection(self, self._extract_selector(tag_name='pre', *args, **kwargs))
+        return PreCollection(self, dict(tag_name='pre', **self._extract_selector(*args, **kwargs)))
 
     def progress(self, *args, **kwargs):
         from .elements.html_elements import Progress
-        return Progress(self, self._extract_selector(tag_name='progress', *args, **kwargs))
+        return Progress(self, dict(tag_name='progress', **self._extract_selector(*args, **kwargs)))
 
     def progresses(self, *args, **kwargs):
         from .elements.html_elements import ProgressCollection
-        return ProgressCollection(self,
-                                  self._extract_selector(tag_name='progress', *args, **kwargs))
+        return ProgressCollection(self, dict(tag_name='progress',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def q(self, *args, **kwargs):
         from .elements.html_elements import Quote
-        return Quote(self, self._extract_selector(tag_name='q', *args, **kwargs))
+        return Quote(self, dict(tag_name='q', **self._extract_selector(*args, **kwargs)))
 
     def qs(self, *args, **kwargs):
         from .elements.html_elements import QuoteCollection
-        return QuoteCollection(self, self._extract_selector(tag_name='q', *args, **kwargs))
+        return QuoteCollection(self, dict(tag_name='q', **self._extract_selector(*args, **kwargs)))
 
     def radio(self, *args, **kwargs):
         from .elements.radio import Radio
-        return Radio(self, self._extract_selector(tag_name='input', type='radio', *args, **kwargs))
+        return Radio(self, dict(tag_name='input', type='radio',
+                                **self._extract_selector(*args, **kwargs)))
 
     def radios(self, *args, **kwargs):
         from .elements.radio import RadioCollection
-        return RadioCollection(self, self._extract_selector(tag_name='input', type='radio', *args,
-                                                            **kwargs))
+        return RadioCollection(self, dict(tag_name='input', type='radio',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def rp(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='rp', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='rp', **self._extract_selector(*args, **kwargs)))
 
     def rps(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='rp', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='rp',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def rt(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='rt', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='rt', **self._extract_selector(*args, **kwargs)))
 
     def rts(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='rt', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='rt',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def ruby(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='ruby', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='ruby', **self._extract_selector(*args, **kwargs)))
 
     def rubies(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='ruby', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='ruby',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def s(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='s', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='s', **self._extract_selector(*args, **kwargs)))
 
     def ss(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='s', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='s',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def samp(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='samp', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='samp', **self._extract_selector(*args, **kwargs)))
 
     def samps(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='samp', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='samp',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def script(self, *args, **kwargs):
         from .elements.html_elements import Script
-        return Script(self, self._extract_selector(tag_name='script', *args, **kwargs))
+        return Script(self, dict(tag_name='script', **self._extract_selector(*args, **kwargs)))
 
     def scripts(self, *args, **kwargs):
         from .elements.html_elements import ScriptCollection
-        return ScriptCollection(self, self._extract_selector(tag_name='script', *args, **kwargs))
+        return ScriptCollection(self, dict(tag_name='script',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def section(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='section', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='section',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def sections(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='section', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='section',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def select(self, *args, **kwargs):
         from .elements.select import Select
-        return Select(self, self._extract_selector(tag_name='select', *args, **kwargs))
+        return Select(self, dict(tag_name='select', **self._extract_selector(*args, **kwargs)))
 
     select_list = select
 
     def selects(self, *args, **kwargs):
         from .elements.html_elements import SelectCollection
-        return SelectCollection(self, self._extract_selector(tag_name='select', *args, **kwargs))
+        return SelectCollection(self, dict(tag_name='select',
+                                           **self._extract_selector(*args, **kwargs)))
 
     select_lists = selects
 
     def small(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='small', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='small', **self._extract_selector(*args, **kwargs)))
 
     def smalls(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='small', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='small',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def source(self, *args, **kwargs):
         from .elements.html_elements import Source
-        return Source(self, self._extract_selector(tag_name='source', *args, **kwargs))
+        return Source(self, dict(tag_name='source', **self._extract_selector(*args, **kwargs)))
 
     def sources(self, *args, **kwargs):
         from .elements.html_elements import SourceCollection
-        return SourceCollection(self, self._extract_selector(tag_name='source', *args, **kwargs))
+        return SourceCollection(self, dict(tag_name='source',
+                                           **self._extract_selector(*args, **kwargs)))
 
     def span(self, *args, **kwargs):
         from .elements.html_elements import Span
-        return Span(self, self._extract_selector(tag_name='span', *args, **kwargs))
+        return Span(self, dict(tag_name='span', **self._extract_selector(*args, **kwargs)))
 
     def spans(self, *args, **kwargs):
         from .elements.html_elements import SpanCollection
-        return SpanCollection(self, self._extract_selector(tag_name='span', *args, **kwargs))
+        return SpanCollection(self, dict(tag_name='span',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def strong(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='strong', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='strong', **self._extract_selector(*args, **kwargs)))
 
     def strongs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='strong', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='strong',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def style(self, *args, **kwargs):
         from .elements.html_elements import Style
-        return Style(self, self._extract_selector(tag_name='style', *args, **kwargs))
+        return Style(self, dict(tag_name='style', **self._extract_selector(*args, **kwargs)))
 
     def styles(self, *args, **kwargs):
         from .elements.html_elements import StyleCollection
-        return StyleCollection(self, self._extract_selector(tag_name='style', *args, **kwargs))
+        return StyleCollection(self, dict(tag_name='style',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def sub(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='sub', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='sub', **self._extract_selector(*args, **kwargs)))
 
     def subs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='sub', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='sub',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def summary(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='summary', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='summary',
+                                      **self._extract_selector(*args, **kwargs)))
 
     def summaries(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self,
-                                     self._extract_selector(tag_name='summary', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='summary',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def sup(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='sup', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='sup', **self._extract_selector(*args, **kwargs)))
 
     def sups(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='sup', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='sup',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def table(self, *args, **kwargs):
         from .elements.table import Table
-        return Table(self, self._extract_selector(tag_name='table', *args, **kwargs))
+        return Table(self, dict(tag_name='table', **self._extract_selector(*args, **kwargs)))
 
     def tables(self, *args, **kwargs):
         from .elements.table import TableCollection
-        return TableCollection(self, self._extract_selector(tag_name='table', *args, **kwargs))
+        return TableCollection(self, dict(tag_name='table',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def tbody(self, *args, **kwargs):
         from .elements.table_section import TableSection
-        return TableSection(self, self._extract_selector(tag_name='tbody', *args, **kwargs))
+        return TableSection(self, dict(tag_name='tbody', **self._extract_selector(*args, **kwargs)))
 
     def tbodys(self, *args, **kwargs):
         from .elements.table_section import TableSectionCollection
-        return TableSectionCollection(self,
-                                      self._extract_selector(tag_name='tbody', *args, **kwargs))
+        return TableSectionCollection(self, dict(tag_name='tbody',
+                                                 **self._extract_selector(*args, **kwargs)))
 
     def td(self, *args, **kwargs):
         from .elements.html_elements import TableDataCell
-        return TableDataCell(self, self._extract_selector(tag_name='td', *args, **kwargs))
+        return TableDataCell(self, dict(tag_name='td', **self._extract_selector(*args, **kwargs)))
 
     def tds(self, *args, **kwargs):
         from .elements.html_elements import TableDataCellCollection
-        return TableDataCellCollection(self, self._extract_selector(tag_name='td', *args, **kwargs))
+        return TableDataCellCollection(self, dict(tag_name='td',
+                                                  **self._extract_selector(*args, **kwargs)))
 
     def template(self, *args, **kwargs):
         from .elements.html_elements import Template
-        return Template(self, self._extract_selector(tag_name='template', *args, **kwargs))
+        return Template(self, dict(tag_name='template', **self._extract_selector(*args, **kwargs)))
 
     def templates(self, *args, **kwargs):
         from .elements.html_elements import TemplateCollection
-        return TemplateCollection(self,
-                                  self._extract_selector(tag_name='template', *args, **kwargs))
+        return TemplateCollection(self, dict(tag_name='template',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def textarea(self, *args, **kwargs):
         from .elements.text_area import TextArea
-        return TextArea(self, self._extract_selector(tag_name='textarea', *args, **kwargs))
+        return TextArea(self, dict(tag_name='textarea', **self._extract_selector(*args, **kwargs)))
 
     def textareas(self, *args, **kwargs):
         from .elements.html_elements import TextAreaCollection
-        return TextAreaCollection(self,
-                                  self._extract_selector(tag_name='textarea', *args, **kwargs))
+        return TextAreaCollection(self, dict(tag_name='textarea',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def text_field(self, *args, **kwargs):
         from .elements.text_field import TextField
-        return TextField(self, self._extract_selector(tag_name='input', *args, **kwargs))
+        return TextField(self, dict(tag_name='input', **self._extract_selector(*args, **kwargs)))
 
     def text_fields(self, *args, **kwargs):
         from .elements.text_field import TextFieldCollection
-        return TextFieldCollection(self, self._extract_selector(tag_name='input', *args, **kwargs))
+        return TextFieldCollection(self, dict(tag_name='input',
+                                              **self._extract_selector(*args, **kwargs)))
 
     def tfoot(self, *args, **kwargs):
         from .elements.table_section import TableSection
-        return TableSection(self, self._extract_selector(tag_name='tfoot', *args, **kwargs))
+        return TableSection(self, dict(tag_name='tfoot', **self._extract_selector(*args, **kwargs)))
 
     def tfoots(self, *args, **kwargs):
         from .elements.table_section import TableSectionCollection
-        return TableSectionCollection(self,
-                                      self._extract_selector(tag_name='tfoot', *args, **kwargs))
+        return TableSectionCollection(self, dict(tag_name='tfoot',
+                                                 **self._extract_selector(*args, **kwargs)))
 
     def th(self, *args, **kwargs):
         from .elements.html_elements import TableHeaderCell
-        return TableHeaderCell(self, self._extract_selector(tag_name='th', *args, **kwargs))
+        return TableHeaderCell(self, dict(tag_name='th', **self._extract_selector(*args, **kwargs)))
 
     def ths(self, *args, **kwargs):
         from .elements.html_elements import TableHeaderCellCollection
-        return TableHeaderCellCollection(self,
-                                         self._extract_selector(tag_name='th', *args, **kwargs))
+        return TableHeaderCellCollection(self, dict(tag_name='th',
+                                                    **self._extract_selector(*args, **kwargs)))
 
     def thead(self, *args, **kwargs):
         from .elements.table_section import TableSection
-        return TableSection(self, self._extract_selector(tag_name='thead', *args, **kwargs))
+        return TableSection(self, dict(tag_name='thead', **self._extract_selector(*args, **kwargs)))
 
     def theads(self, *args, **kwargs):
         from .elements.table_section import TableSectionCollection
-        return TableSectionCollection(self,
-                                      self._extract_selector(tag_name='thead', *args, **kwargs))
+        return TableSectionCollection(self, dict(tag_name='thead',
+                                                 **self._extract_selector(*args, **kwargs)))
 
     def time(self, *args, **kwargs):
         from .elements.html_elements import Time
-        return Time(self, self._extract_selector(tag_name='time', *args, **kwargs))
+        return Time(self, dict(tag_name='time', **self._extract_selector(*args, **kwargs)))
 
     def times(self, *args, **kwargs):
         from .elements.html_elements import TimeCollection
-        return TimeCollection(self, self._extract_selector(tag_name='time', *args, **kwargs))
+        return TimeCollection(self, dict(tag_name='time',
+                                         **self._extract_selector(*args, **kwargs)))
 
     def title(self, *args, **kwargs):
         from .elements.html_elements import Title
-        return Title(self, self._extract_selector(tag_name='title', *args, **kwargs))
+        return Title(self, dict(tag_name='title', **self._extract_selector(*args, **kwargs)))
 
     def titles(self, *args, **kwargs):
         from .elements.html_elements import TitleCollection
-        return TitleCollection(self, self._extract_selector(tag_name='title', *args, **kwargs))
+        return TitleCollection(self, dict(tag_name='title',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def tr(self, *args, **kwargs):
         from .elements.table_row import TableRow
-        return TableRow(self, self._extract_selector(tag_name='tr', *args, **kwargs))
+        return TableRow(self, dict(tag_name='tr', **self._extract_selector(*args, **kwargs)))
 
     def trs(self, *args, **kwargs):
         from .elements.html_elements import TableRowCollection
-        return TableRowCollection(self, self._extract_selector(tag_name='tr', *args, **kwargs))
+        return TableRowCollection(self, dict(tag_name='tr',
+                                             **self._extract_selector(*args, **kwargs)))
 
     def track(self, *args, **kwargs):
         from .elements.html_elements import Track
-        return Track(self, self._extract_selector(tag_name='track', *args, **kwargs))
+        return Track(self, dict(tag_name='track', **self._extract_selector(*args, **kwargs)))
 
     def tracks(self, *args, **kwargs):
         from .elements.html_elements import TrackCollection
-        return TrackCollection(self, self._extract_selector(tag_name='track', *args, **kwargs))
+        return TrackCollection(self, dict(tag_name='track',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def u(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='u', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='u', **self._extract_selector(*args, **kwargs)))
 
     def us(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='u', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='u',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def ul(self, *args, **kwargs):
         from .elements.html_elements import UList
-        return UList(self, self._extract_selector(tag_name='ul', *args, **kwargs))
+        return UList(self, dict(tag_name='ul', **self._extract_selector(*args, **kwargs)))
 
     def uls(self, *args, **kwargs):
         from .elements.html_elements import UListCollection
-        return UListCollection(self, self._extract_selector(tag_name='ul', *args, **kwargs))
+        return UListCollection(self, dict(tag_name='ul', **self._extract_selector(*args, **kwargs)))
 
     def var(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='var', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='var', **self._extract_selector(*args, **kwargs)))
 
     def vars(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='var', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='var',
+                                                **self._extract_selector(*args, **kwargs)))
 
     def video(self, *args, **kwargs):
         from .elements.html_elements import Video
-        return Video(self, self._extract_selector(tag_name='video', *args, **kwargs))
+        return Video(self, dict(tag_name='video', **self._extract_selector(*args, **kwargs)))
 
     def videos(self, *args, **kwargs):
         from .elements.html_elements import VideoCollection
-        return VideoCollection(self, self._extract_selector(tag_name='video', *args, **kwargs))
+        return VideoCollection(self, dict(tag_name='video',
+                                          **self._extract_selector(*args, **kwargs)))
 
     def wbr(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
-        return HTMLElement(self, self._extract_selector(tag_name='wbr', *args, **kwargs))
+        return HTMLElement(self, dict(tag_name='wbr', **self._extract_selector(*args, **kwargs)))
 
     def wbrs(self, *args, **kwargs):
         from .elements.html_elements import HTMLElementCollection
-        return HTMLElementCollection(self, self._extract_selector(tag_name='wbr', *args, **kwargs))
+        return HTMLElementCollection(self, dict(tag_name='wbr',
+                                                **self._extract_selector(*args, **kwargs)))
