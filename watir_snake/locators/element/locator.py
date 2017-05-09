@@ -106,7 +106,7 @@ class Locator(object):
                 elements = self.query_scope.wd.find_elements(*built_selector)
                 if visible:
                     elements = [el for el in elements if visible == el.is_displayed()]
-                return elements[idx] if elements else None
+                return elements[idx] if elements and idx < len(elements) else None
             else:
                 return self.query_scope.wd.find_element(*built_selector)
         else:
