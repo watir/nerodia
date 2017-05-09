@@ -1,6 +1,7 @@
 from importlib import import_module
 from time import sleep
 
+import six
 from re import search, sub
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -13,12 +14,16 @@ from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
+from ..meta_elements import MetaHTMLElement
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
+@six.add_metaclass(MetaHTMLElement)
 class Element(Container, Atoms, Waitable, Adjacent):
-    ATTRIBUTES = ['id', 'className']
+    ATTRIBUTES = []
+    _attr_id = (str, 'id')
+    _attr_class = (str, 'className')
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
