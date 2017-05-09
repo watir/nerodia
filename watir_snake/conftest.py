@@ -27,7 +27,7 @@ def pytest_addoption(parser):
         help='browser to run tests against ({})'.format(', '.join(browsers)))
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope='session')
 def browser(request):
     kwargs = {}
 
@@ -35,17 +35,6 @@ def browser(request):
         browser_name = request.config.getoption('--browser')
     except AttributeError:
         raise Exception('This test requires a --browser to be specified.')
-
-    # conditionally mark tests as expected to fail based on driver
-    request.node._evalxfail = request.node._evalxfail or MarkEvaluator(
-        request.node, 'xfail_{}'.format(browser_name.lower()))
-
-    # skip driver instantiation if xfail(run=False)
-    if not request.config.getoption('runxfail'):
-        if request.node._evalxfail.istrue():
-            if request.node._evalxfail.get('run') is False:
-                yield
-                return
 
     # if driver_class == 'remote':
     #     capabilities = DesiredCapabilities.CHROME.copy()
