@@ -233,7 +233,7 @@ class Window(Waitable):
     @property
     def _current_window(self):
         try:
-            return self.driver.window_handle
+            return self.driver.current_window_handle
         except WebDriverException:
             return None
 

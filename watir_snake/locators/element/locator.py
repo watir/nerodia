@@ -75,7 +75,7 @@ class Locator(object):
         if selector:  # Multiple attributes
             return None
 
-        element = self.query_scope.wd.find_element(id=attr_id)
+        element = self.query_scope.wd.find_element_by_id(attr_id)
         if tag_name and not self.element_validator.validate(element, {'tag_name': tag_name}):
             return None
 
