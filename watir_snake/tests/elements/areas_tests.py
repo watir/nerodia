@@ -18,7 +18,8 @@ def test_returns_the_area_at_the_given_index(browser, page):
 def test_iterates_through_areas_correctly(browser, page):
     count = 0
     for index, a in enumerate(browser.areas()):
-        assert a.id == browser.area(index=index).id
-        assert a.title == browser.area(index=index).title
+        area = browser.area(index=index)
+        assert a.id == area.id
+        assert a.title == area.title
         count += 1
     assert count > 0
