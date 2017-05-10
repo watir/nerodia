@@ -1,41 +1,39 @@
 import pytest
 from re import compile
 
-from watir_snake.exception import UnknownObjectException
-
 
 class TestAreaExist(object):
     def test_returns_true_if_the_area_exists(self, browser, page):
         page.load('images.html')
-        assert browser.area(id='NCE').exists is True
-        assert browser.area(id=compile(r'NCE')).exists is True
-        assert browser.area(title='Tables').exists is True
-        assert browser.area(title=compile(r'Tables')).exists is True
+        assert browser.area(id='NCE').exists
+        assert browser.area(id=compile(r'NCE')).exists
+        assert browser.area(title='Tables').exists
+        assert browser.area(title=compile(r'Tables')).exists
 
         # TODO: xfail IE
-        assert browser.area(href='tables.html').exists is True
+        assert browser.area(href='tables.html').exists
 
-        assert browser.area(href=compile(r'tables')).exists is True
+        assert browser.area(href=compile(r'tables')).exists
 
-        assert browser.area(index=0).exists is True
-        assert browser.area(xpath="//area[@id='NCE']").exists is True
+        assert browser.area(index=0).exists
+        assert browser.area(xpath="//area[@id='NCE']").exists
 
     def test_returns_the_first_area_if_given_no_args(self, browser, page):
         page.load('images.html')
-        assert browser.area().exists is True
+        assert browser.area().exists
 
     def test_returns_false_if_the_area_doesnt_exist(self, browser, page):
         page.load('images.html')
-        assert browser.area(id='no_such_id').exists is False
-        assert browser.area(id=compile(r'no_such_id')).exists is False
-        assert browser.area(title='no_such_title').exists is False
-        assert browser.area(title=compile(r'no_such_title')).exists is False
+        assert not browser.area(id='no_such_id').exists
+        assert not browser.area(id=compile(r'no_such_id')).exists
+        assert not browser.area(title='no_such_title').exists
+        assert not browser.area(title=compile(r'no_such_title')).exists
 
-        assert browser.area(href='no-tables.html').exists is False
-        assert browser.area(href=compile(r'no-tables')).exists is False
+        assert not browser.area(href='no-tables.html').exists
+        assert not browser.area(href=compile(r'no-tables')).exists
 
-        assert browser.area(index=1337).exists is False
-        assert browser.area(xpath="//area[@id='no_such_id']").exists is False
+        assert not browser.area(index=1337).exists
+        assert not browser.area(xpath="//area[@id='no_such_id']").exists
 
     def test_raises_correct_exception_when_what_argument_is_invalid(self, browser, page):
         with pytest.raises(TypeError):
@@ -60,6 +58,7 @@ class TestAreaId(object):
                              [{'id': 'no_such_id'},
                               {'index': 1337}])
     def test_raises_correct_exception_if_the_area_doesnt_exist(self, browser, page, selector):
+        from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.area(**selector).id
 
