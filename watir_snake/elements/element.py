@@ -19,11 +19,8 @@ from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
-@six.add_metaclass(MetaHTMLElement)
 class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
-    _attr_id = (str, 'id')
-    _attr_class_name = (str, 'className')
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope

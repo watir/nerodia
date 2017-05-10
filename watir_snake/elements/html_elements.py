@@ -7,7 +7,8 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class HTMLElement(Element):
-    pass
+    _attr_id = (str, 'id')
+    _attr_class_name = (str, 'className')
 
 
 @six.add_metaclass(MetaHTMLElement)
