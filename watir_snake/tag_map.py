@@ -21,7 +21,7 @@ from watir_snake.elements.html_elements import HTMLElement, Audio, Base, Quote, 
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \
     TableHeaderCellCollection, TimeCollection, TitleCollection, TableRowCollection, TrackCollection, \
     UListCollection, VideoCollection
-from watir_snake.elements.iframe import IFrame
+from watir_snake.elements.i_frame import IFrame
 from watir_snake.elements.image import Image
 from watir_snake.elements.input import Input
 from watir_snake.elements.link import Anchor

@@ -1,7 +1,6 @@
 from importlib import import_module
 from time import sleep
 
-import six
 from re import search, sub
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
@@ -14,7 +13,6 @@ from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException
 from ..locators.element.selector_builder import SelectorBuilder
-from ..meta_elements import MetaHTMLElement
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
@@ -395,7 +393,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         elem = self.wd
         tag_name = elem.tag_name.lower()
         from .button import Button
-        from .checkbox import CheckBox
+        from .check_box import CheckBox
         from .file_field import FileField
         from .html_elements import HTMLElement
         from .radio import Radio
@@ -568,7 +566,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        from ..elements.iframe import IFrame
+        from ..elements.i_frame import IFrame
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
         else:

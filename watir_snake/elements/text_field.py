@@ -3,7 +3,7 @@ from copy import copy
 import six
 
 from .html_elements import InputCollection
-from .iframe import IFrame
+from .i_frame import IFrame
 from .input import Input
 from .text_area import TextArea
 from ..browser import Browser

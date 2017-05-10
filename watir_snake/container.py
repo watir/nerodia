@@ -169,12 +169,12 @@ class Container(object):
                                                  **self._extract_selector(*args, **kwargs)))
 
     def checkbox(self, *args, **kwargs):
-        from .elements.checkbox import CheckBox
+        from .elements.check_box import CheckBox
         return CheckBox(self, dict(tag_name='input', type='checkbox',
                                    **self._extract_selector(*args, **kwargs)))
 
     def checkboxes(self, *args, **kwargs):
-        from .elements.checkbox import CheckBoxCollection
+        from .elements.check_box import CheckBoxCollection
         return CheckBoxCollection(self, dict(tag_name='input', type='checkbox',
                                              **self._extract_selector(*args, **kwargs)))
 
@@ -389,11 +389,11 @@ class Container(object):
                                          **self._extract_selector(*args, **kwargs)))
 
     def frame(self, *args, **kwargs):
-        from .elements.iframe import Frame
+        from .elements.i_frame import Frame
         return Frame(self, dict(tag_name='frame', **self._extract_selector(*args, **kwargs)))
 
     def frames(self, *args, **kwargs):
-        from .elements.iframe import FrameCollection
+        from .elements.i_frame import FrameCollection
         return FrameCollection(self, dict(tag_name='frame',
                                           **self._extract_selector(*args, **kwargs)))
 
@@ -526,7 +526,7 @@ class Container(object):
                                                 **self._extract_selector(*args, **kwargs)))
 
     def iframe(self, *args, **kwargs):
-        from .elements.iframe import IFrame
+        from .elements.i_frame import IFrame
         return IFrame(self, dict(tag_name='iframe', **self._extract_selector(*args, **kwargs)))
 
     def iframes(self, *args, **kwargs):

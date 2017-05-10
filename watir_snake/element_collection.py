@@ -90,7 +90,7 @@ class ElementCollection(object):
 
     @property
     def _elements(self):
-        from .elements.iframe import IFrame
+        from .elements.i_frame import IFrame
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
         else:
@@ -132,17 +132,17 @@ class ElementCollection(object):
 
     @property
     def _element_class(self):
+        from .elements.svg_elements import SVGElementCollection
+        from .elements.html_elements import HTMLElementCollection
         name = self.__class__.__name__.replace('Collection', '')
         element_module = re.sub(r'^(\w+)([A-Z]{1}\w+)$', r'\1_\2'.lower(), name).lower()
         try:
             module = import_module('watir_snake.elements.{}'.format(element_module))
         except ImportError:
-            html = import_module('watir_snake.elements.html_elements')
-            svg = import_module('watir_snake.elements.svg_elements')
-            if hasattr(html, name):
-                module = html
-            elif hasattr(svg, name):
-                module = svg
+            if isinstance(self, HTMLElementCollection):
+                module = import_module('watir_snake.elements.html_elements')
+            elif isinstance(self, SVGElementCollection):
+                module = import_module('watir_snake.elements.svg_elements')
             else:
                 raise TypeError(
                     'element class for {} could not be determined'.format(self.__class__.__name__))
