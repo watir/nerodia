@@ -23,7 +23,7 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
     _attr_id = (str, 'id')
-    _attr_class = (str, 'className')
+    _attr_class_name = (str, 'className')
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -78,14 +78,15 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Returns the text of the element
         :rtype: str
         """
-        return self._element_call(self.element.text)
+        return self._element_call(lambda: self.element.text)
 
+    @property
     def tag_name(self):
         """
         Returns the tag name of the element
         :rtype: str
         """
-        return self._element_call(self.element.tag_name.lower())
+        return self._element_call(lambda: self.element.tag_name).lower()
 
     def click(self, *modifiers):
         """
