@@ -1,4 +1,4 @@
-from ..element.valiator import Validator as ElementValidator
+from ..element.validator import Validator as ElementValidator
 from ...elements.button import Button
 
 
