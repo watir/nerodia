@@ -1,5 +1,4 @@
 import pytest
-from _pytest.skipping import MarkEvaluator
 
 import watir_snake
 from watir_snake.browser import Browser
@@ -49,16 +48,11 @@ def browser(request):
         pass
 
 
-@pytest.fixture
-def page(browser, webserver):
-    class Page(object):
-        def url(self, name):
-            return webserver.path_for(name)
-
-        def load(self, name):
-            browser.goto(self.url(name))
-
-    return Page()
+@pytest.fixture(autouse=True)
+def page(request, browser, webserver):
+    page = request.node.get_marker('page')
+    if page:
+        browser.goto(webserver.path_for(page.args[0]))
 
 
 @pytest.fixture(autouse=True, scope='session')
