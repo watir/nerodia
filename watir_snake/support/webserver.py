@@ -1,9 +1,9 @@
-
 import logging
-from os import path, chdir
 import socket
 import threading
-from io import open
+
+from os import path, chdir
+
 try:
     from urllib import request as urllib_request
 except ImportError:
@@ -25,16 +25,22 @@ DEFAULT_HOST = '127.0.0.1'
 DEFAULT_PORT = 8000
 
 
+class RequestHandler(SimpleHTTPRequestHandler):
+    # Don't do any real posting of data, just page switching
+    def do_POST(self):
+        self.do_GET()
+
 
 class WebServer(object):
     """A very basic web server."""
+
     def __init__(self, host=DEFAULT_HOST, port=DEFAULT_PORT):
         self.stop_serving = False
         self.host = host
         self.port = port
         while True:
             try:
-                self.server = HTTPServer((host, port), SimpleHTTPRequestHandler)
+                self.server = HTTPServer((host, port), RequestHandler)
                 self.host = host
                 self.port = port
                 break
