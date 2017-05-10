@@ -20,11 +20,11 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
 
-    def __init__(self, query_scope, selector):
+    def __init__(self, query_scope, selector, element=None):
         self.query_scope = query_scope
         if not isinstance(selector, dict):
             raise TypeError('invalid argument: {!r}'.format(selector))
-        self.element = selector.pop('element', None)
+        self.element = element
         self.selector = selector
         self.keyword = None
 
@@ -414,7 +414,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         else:
             klass = watir_snake.element_class_for(tag_name) or HTMLElement
 
-        return klass(self.query_scope, element=elem)
+        return klass(self.query_scope, selector=self.selector, element=elem)
 
     @property
     def browser(self):
