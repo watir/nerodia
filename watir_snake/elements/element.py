@@ -581,7 +581,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         return self.attribute_value(attribute_name) is not None
 
     def _assert_enabled(self):
-        if not self._element_call(lambda: self.element.enabled):
+        if not self._element_call(lambda: self.element.is_enabled()):
             raise ObjectDisabledException('object is disabled {}'.format(self))
 
     def _assert_writable(self):

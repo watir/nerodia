@@ -30,7 +30,10 @@ class CheckBox(Input):
         checkbox.set(False)
         checkbox.set            #=> false
         """
-        self._assert_enabled() if self.set == value else self.click
+        self._assert_enabled() if self.is_set == value else self.click()
+
+    def clear(self):
+        self.set(value=False)
 
 
 @six.add_metaclass(MetaHTMLElement)
