@@ -11,7 +11,7 @@ class Validator(object):
 
         if element_tag_name == 'input':
             # TODO - Verify this is desired behavior based on https://bugzilla.mozilla.org/show_bug.cgi?id=1290963
-            if selector.get('type') and selector.get('type') != element.attribute('type').lower():
+            if selector.get('type') and selector.get('type') != element.get_attribute('type').lower():
                 return None
 
         return element

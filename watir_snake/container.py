@@ -8,10 +8,10 @@ class Container(object):
     def _extract_selector(self, *args, **kwargs):
         if args and len(args) == 2:
             return {args[0]: args[1]}
-        elif len(kwargs) < 2:
+        elif not args:
             return kwargs
 
-        raise ValueError("expected kwargs dict or ('how', what), got {}".format(kwargs))
+        raise ValueError('expected kwargs dict or (how, what), got {}'.format(kwargs))
 
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
