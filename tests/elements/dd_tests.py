@@ -58,7 +58,7 @@ class TestDdAttributes(object):
                              [{'id': 'no_such_id'},
                               {'title': 'no_such_title'},
                               {'index': 1337}])
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
+    def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
         from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).id
@@ -81,7 +81,7 @@ class TestDdAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
+    def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
         from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).text
