@@ -75,7 +75,6 @@ class Adjacent(object):
 
     next_siblings = following_siblings
 
-    @property
     def child(self, **kwargs):
         """
         Returns element of direct child of current element
@@ -88,7 +87,6 @@ class Adjacent(object):
         kwargs['index'] = kwargs.get('index', 0)
         return self._xpath_adjacent('', **kwargs)
 
-    @property
     def children(self, **kwargs):
         """
         Returns collection of elements of direct children of current element
@@ -112,14 +110,14 @@ class Adjacent(object):
         kwargs = copy(kwargs)
         index = kwargs.pop('index', None)
         tag_name = kwargs.pop('tag_name', '')
-        if not kwargs:
+        if kwargs:
             caller = stack()[1][3]
             raise AttributeError('unsupported locators: {} for #{} method'.format(kwargs, caller))
 
         if index:
             klass = watir_snake.tag_to_class.get(tag_name) if tag_name else HTMLElement
-            klass(self, xpath="./{}{}[{}]".format(direction, tag_name or '*', index + 1))
+            return klass(self, {'xpath': './{}{}[{}]'.format(direction, tag_name or '*', index + 1)})
         else:
             klass = watir_snake.tag_to_class('{}_collection'.format(tag_name)) if tag_name else \
                 HTMLElementCollection
-            klass(self, xpath="./{}{}".format(direction, tag_name or '*'))
+            return klass(self, {'xpath': './{}{}'.format(direction, tag_name or '*')})
