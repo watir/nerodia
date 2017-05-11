@@ -18,7 +18,6 @@ class TestDeleteExist(object):
     def test_returns_the_first_delete_if_given_no_args(self, browser):
         assert browser.delete().exists
 
-    #
     def test_returns_false_if_the_delete_doesnt_exist(self, browser):
         assert not browser.delete(id='no_such_id').exists
         assert not browser.delete(id=compile(r'no_such_id')).exists
