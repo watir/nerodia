@@ -55,6 +55,14 @@ def page(request, browser, webserver):
     if page:
         browser.goto(webserver.path_for(page.args[0]))
 
+@pytest.fixture(scope='session')
+def messages(browser):
+    class Messages(object):
+        @property
+        def list(self):
+            return [el.text for el in browser.div(id='messages').divs()]
+    yield Messages()
+
 
 @pytest.fixture(autouse=True, scope='session')
 def webserver():
