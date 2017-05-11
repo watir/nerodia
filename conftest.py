@@ -1,8 +1,9 @@
+import os
 import pytest
 
 import watir_snake
 from watir_snake.browser import Browser
-from .support.webserver import WebServer
+from watir_snake.support.webserver import WebServer
 
 browsers = (
     'chrome',
@@ -38,9 +39,9 @@ def browser(request):
     # if driver_class == 'remote':
     #     capabilities = DesiredCapabilities.CHROME.copy()
     #     kwargs.update({'desired_capabilities': capabilities})
-    browser = Browser(browser_name,
-                      executable_path='/Users/lucast/Documents/HC-Mercurial/hc.qa.webdriver/hc/qa'
-                                      '/webdriver/binaries/darwin/chromedriver')
+    if os.environ.get('DRIVER_PATH'):
+        kwargs['executable_path'] = os.environ.get('DRIVER_PATH')
+    browser = Browser(browser_name, **kwargs)
     yield browser
     try:
         browser.quit()
