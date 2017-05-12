@@ -114,10 +114,10 @@ class Adjacent(object):
             caller = stack()[1][3]
             raise AttributeError('unsupported locators: {} for #{} method'.format(kwargs, caller))
 
-        if index:
+        if index is not None:
             klass = watir_snake.tag_to_class.get(tag_name) if tag_name else HTMLElement
             return klass(self, {'xpath': './{}{}[{}]'.format(direction, tag_name or '*', index + 1)})
         else:
-            klass = watir_snake.tag_to_class('{}_collection'.format(tag_name)) if tag_name else \
+            klass = watir_snake.tag_to_class.get('{}_collection'.format(tag_name)) if tag_name else \
                 HTMLElementCollection
             return klass(self, {'xpath': './{}{}'.format(direction, tag_name or '*')})
