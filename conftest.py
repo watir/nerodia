@@ -49,11 +49,23 @@ def browser(request):
         pass
 
 
+@pytest.fixture(scope='session')
+def page(browser, webserver):
+    class Page(object):
+        def url(self, name):
+            return webserver.path_for(name)
+
+        def load(self, name):
+            browser.goto(self.url(name))
+    return Page()
+
+
 @pytest.fixture(autouse=True)
-def page(request, browser, webserver):
-    page = request.node.get_marker('page')
-    if page:
-        browser.goto(webserver.path_for(page.args[0]))
+def start_page(request, page):
+    marker = request.node.get_marker('page')
+    if marker:
+        page.load(marker.args[0])
+
 
 @pytest.fixture(scope='session')
 def messages(browser):
