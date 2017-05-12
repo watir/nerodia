@@ -16,11 +16,11 @@ class AfterHooks(object):
         self.browser = browser
         self.after_hooks = []
 
-    def add(self, after_hook=None, method=None):
+    def add(self, method=None, after_hook=None):
         """
         Adds new after hook
-        :param after_hook: callable object
         :param method: callable method
+        :param after_hook: callable object
 
         :Example:
 
@@ -34,7 +34,7 @@ class AfterHooks(object):
         elif callable(after_hook):
             self.after_hooks.append(after_hook)
         else:
-            raise TypeError('expected method or callable class')
+            raise ValueError('expected method or callable class')
 
     def delete(self, after_hook):
         """
@@ -54,7 +54,7 @@ class AfterHooks(object):
 
     def run(self):
         """ Runs after hooks """
-        if self.after_hooks and self.browser.window.present:
+        if self.after_hooks and self.browser.window().present:
             for hook in self.after_hooks:
                 hook(self.browser)
 

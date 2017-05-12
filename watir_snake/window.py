@@ -131,7 +131,7 @@ class Window(Waitable):
     eql = __eq__
 
     def __hash__(self):
-        hash(self.handle) ^ hash(self.__class__)
+        return hash(self.handle) ^ hash(self.__class__)
 
     @property
     def is_current(self):
