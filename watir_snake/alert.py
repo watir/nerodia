@@ -88,6 +88,7 @@ class Alert(Waitable):
     def assert_exists(self):
         try:
             self.alert = self.browser.driver.switch_to.alert
+            self.alert.text
         except NoAlertPresentException:
             raise UnknownObjectException('unable to locate alert')
 
