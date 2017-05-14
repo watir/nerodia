@@ -1,4 +1,5 @@
 import six
+from selenium.common.exceptions import NoSuchFrameException
 
 from .html_elements import HTMLElement
 from ..element_collection import ElementCollection
@@ -13,7 +14,8 @@ class IFrame(HTMLElement):
             return None
         self.query_scope.assert_exists()
 
-        selector = dict(tag_name=self._frame_tag, **self.selector)
+        selector = self.selector.copy()
+        selector.update({'tag_name': self._frame_tag})
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope,
                                                         selector, self.ATTRIBUTES)
@@ -26,7 +28,7 @@ class IFrame(HTMLElement):
                 'unable to locate {} using {}'.format(self.selector['tag_name'],
                                                       self.selector_string))
 
-        return FramedDriver.new(self.element, self.driver)
+        return FramedDriver(self.element, self.driver)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -110,9 +112,15 @@ class FramedDriver(object):
     def wd(self):
         return self.element
 
-    def __getattr__(self, meth, *args, **kwargs):
-        if getattr(self.driver, meth):
+    def __getattr__(self, meth):
+        if hasattr(self.driver, meth):
             self.switch()
-            getattr(self.driver, meth)(*args, **kwargs)
+            return getattr(self.driver, meth)
         else:
-            getattr(self.element, meth)(*args, **kwargs)
+            return getattr(self.element, meth)
+
+    def switch(self):
+        try:
+            self.driver.switch_to.frame(self.element)
+        except NoSuchFrameException as e:
+            raise UnknownFrameException(e)
