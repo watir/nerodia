@@ -20,14 +20,14 @@ class Select(HTMLElement):
             if option.selected:
                 self.click_option(option)
 
-    @property
-    def options(self):
+    def options(self, *args, **kwargs):
         """
         Gets all the options in the select list
 
         :rtype: watir_snake.elements.option.OptionColletion
         """
-        return self._element_call(lambda: super(Select, self).options, self.wait_for_exists)
+        return self._element_call(lambda: super(Select, self).options(*args, **kwargs),
+                                  self.wait_for_exists)
 
     def includes(self, term):
         """
@@ -105,19 +105,19 @@ class Select(HTMLElement):
 
     def _select_by(self, how, term):
         found = []
-        def func():
-            if type(term) in [str, int]:
+        def func(sel):
+            if type(term) in [str, int, re._pattern_type]:
                 opt = {how: term}
-                found.extend(self.options(**opt))
+                found.extend(sel.options(**opt))
                 if not list(found):
                     found.extend(self.options(label=term))
             else:
                 raise TypeError('expected str, got {}:{}'.format(term, term.__class__))
 
-            return found and list(found)
+            return found
 
         try:
-            Wait.until(func)
+            Wait.until(func, object=self)
         except TimeoutError:
             self._no_value_found(term)
         return self._select_matching(found)

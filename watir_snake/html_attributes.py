@@ -360,7 +360,6 @@ select = [
     (bool, 'required', 'required'),
     (int, 'size', 'size'),
     (str, 'type', 'type'),
-    (str, 'options', 'options'),
     (int, 'length', 'length'),
     (str, 'selected_options', 'selectedOptions'),
     (int, 'selected_index', 'selectedIndex'),
