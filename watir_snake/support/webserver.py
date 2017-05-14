@@ -2,6 +2,7 @@ import logging
 import socket
 import threading
 
+import re
 from os import path, chdir
 
 try:
@@ -27,8 +28,26 @@ DEFAULT_PORT = 8000
 
 class RequestHandler(SimpleHTTPRequestHandler):
     # Don't do any real posting of data, just page switching
+
+    def do_GET(self):
+        if self.path.endswith('/plain_text'):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+            self.wfile.write('This is text/plain')
+        elif not re.search(r'.*\.\w+$', self.path):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/plain')
+            self.end_headers()
+        else:
+            SimpleHTTPRequestHandler.do_GET(self)
+
     def do_POST(self):
         self.do_GET()
+
+    def log_message(self, format, *args):
+        """ Override to prevent stdout on requests """
+        pass
 
 
 class WebServer(object):
