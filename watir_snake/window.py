@@ -214,7 +214,7 @@ class Window(Waitable):
         if not watir_snake.relaxed_locate:
             self.assert_exists()
         try:
-            self.wait_until(lambda: self.exists)
+            self.wait_until(lambda w: w.exists)
         except TimeoutError:
             raise NoMatchingWindowFoundException(str(self.selector))
 

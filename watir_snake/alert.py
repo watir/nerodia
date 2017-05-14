@@ -97,7 +97,7 @@ class Alert(Waitable):
             return self.assert_exists()
 
         try:
-            return self.wait_until(lambda: self.exists, message='waiting for alert')
+            return self.wait_until(lambda a: a.exists, message='waiting for alert')
         except TimeoutError:
             if watir_snake.default_timeout != 0:
                 warn(

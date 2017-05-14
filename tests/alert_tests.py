@@ -26,7 +26,7 @@ class TestAlertAPI(object):
 
     def test_returns_true_if_alert_is_present(self, browser):
         browser.button(id='alert').click()
-        browser.wait_until(lambda: browser.alert.exists, timeout=10)
+        browser.wait_until(lambda b: b.alert.exists, timeout=10)
 
     # ok
 

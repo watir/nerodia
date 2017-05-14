@@ -1,5 +1,4 @@
 from selenium import webdriver
-from selenium.common.exceptions import TimeoutException, NoSuchWindowException
 from selenium.webdriver.remote.webelement import WebElement
 
 import watir_snake
@@ -167,7 +166,7 @@ class Browser(Container, HasWindow, Waitable):
         :param timeout: time to wait
         :type timeout: int
         """
-        return self.wait_until(lambda: self.ready_state == "complete", timeout=timeout,
+        return self.wait_until(lambda b: b.ready_state == "complete", timeout=timeout,
                                message="waiting for document.readyState == 'complete'")
 
     @property
@@ -236,9 +235,9 @@ class Browser(Container, HasWindow, Waitable):
 
     def assert_exists(self):
         if self.closed:
-            raise Exception('browser was closed')
+            raise Error('browser was closed')
         elif not self.window().present:
-            raise NoSuchWindowException('browser window was closed')
+            raise NoMatchingWindowFoundException('browser window was closed')
         else:
             self.driver.switch_to.default_content()
             return True

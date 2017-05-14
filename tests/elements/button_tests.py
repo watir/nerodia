@@ -209,7 +209,7 @@ class TestButtonEnabled(object):
 class TestButtonManipulation(object):
     def test_clicks_the_button_if_it_exists(self, browser):
         browser.button(id='delete_user_submit').click()
-        browser.wait_until(lambda: 'forms_with_input_elements.html' not in browser.url)
+        browser.wait_until(lambda b: 'forms_with_input_elements.html' not in b.url)
         assert 'Semantic table' in browser.text
 
     def test_fires_events(self, browser):

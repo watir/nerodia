@@ -1,5 +1,3 @@
-from time import sleep
-
 import watir_snake
 from .timer import Timer
 
@@ -15,7 +13,7 @@ class Wait(object):
         :param method: method to run, typically lambda
         :param object: object to evaluate method with
         :param timeout: time to wait
-        :type timeout: int
+        :type timeout: float
         :param message:  message to raise if timeout is exceeded
         :type message: str
         :param interval: time to wait between each check
@@ -25,7 +23,7 @@ class Wait(object):
         Wait.until(lambda: browser.text_field(name='abrakadbra').present)
         """
         timeout = timeout or watir_snake.default_timeout
-        result = cls._run_with_timer(timeout, interval, method, object)
+        result = cls._run_with_timer(timeout, interval, method, object, until=True)
         if result:
             return result
         raise TimeoutError(cls._message_for(timeout, message))
@@ -37,7 +35,7 @@ class Wait(object):
         :param method: method to run, typically lambda
         :param object: object to evaluate method with
         :param timeout: time to wait
-        :type timeout: int
+        :type timeout: float
         :param message:  message to raise if timeout is exceeded
         :type message: str
         :param interval: time to wait between each check
@@ -47,10 +45,10 @@ class Wait(object):
         Wait.until_not(lambda: browser.text_field(name='abrakadbra').present)
         """
         timeout = timeout or watir_snake.default_timeout
-        result = cls._run_with_timer(timeout, interval, method, object)
-        if not result:
+        result = cls._run_with_timer(timeout, interval, method, object, until=False)
+        if result:
             return result
-        raise cls.TimeoutError(cls._message_for(timeout, message))
+        raise TimeoutError(cls._message_for(timeout, message))
 
     @classmethod
     def _message_for(cls, timeout, message):
@@ -60,12 +58,13 @@ class Wait(object):
         return err
 
     @classmethod
-    def _run_with_timer(cls, timeout, interval, method, object):
+    def _run_with_timer(cls, timeout, interval, method, object, until=True):
         if timeout == 0:
             return method(object) if object else method()
         else:
-            result = cls.timer.wait(timeout, method, object)
-            sleep(interval or cls.INTERVAL)
+            interval = interval or cls.INTERVAL
+            result = cls.timer.wait(timeout, method, interval=interval,
+                                    object=object, expected=until)
             return result
 
 
@@ -85,11 +84,13 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until(lambda x: x.present).click
         """
-        message = message or 'waiting for true condition on #{}'.format(self)
+        message = message or 'waiting for true condition on {}'.format(self)
+        if object is None:
+            object = self
         Wait.until(method, timeout, message, interval, object=object)
         return self
 
-    def wait_while(self, method=None, timeout=None, message=None, interval=None):
+    def wait_until_not(self, method=None, timeout=None, message=None, interval=None, object=None):
         """
         Waits while the condition is True
         :param method: method to run, typically lambda
@@ -105,7 +106,9 @@ class Waitable(object):
         browser.wait_while(lambda x: not x.exists, timeout=2)
         """
         message = message or 'waiting for false condition on {}'.format(self)
-        Wait.until_not(method, timeout, message, interval, object=self)
+        if object is None:
+            object = self
+        Wait.until_not(method, timeout, message, interval, object=object)
         return self
 
     def wait_until_present(self, timeout=None, interval=None):
@@ -119,7 +122,7 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
-        return self.wait_until(method=lambda: self.present, timeout=timeout, interval=interval)
+        return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
 
     def wait_while_present(self, timeout=None, interval=None):
         """
@@ -134,11 +137,12 @@ class Waitable(object):
         """
 
         def method(arg):
-            if isinstance(arg, watir_snake.elements.Element):
+            from watir_snake.elements.element import Element
+            if isinstance(arg, Element):
                 arg.reset()
             return arg.present
 
-        return self.wait_while(method=method, timeout=timeout, interval=interval)
+        return self.wait_until_not(method=method, timeout=timeout, interval=interval)
 
 
 class TimeoutError(Exception):

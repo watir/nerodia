@@ -448,7 +448,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return None
         try:
             self.query_scope.wait_for_exists()
-            self.wait_until(lambda: self.exists)
+            self.wait_until(lambda e: e.exists)
         except TimeoutError:
             if watir_snake.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
@@ -478,7 +478,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self.wait_for_present()
 
         try:
-            self.wait_until(lambda: self.enabled)
+            self.wait_until(lambda  e: e.enabled)
         except TimeoutError:
             raise ObjectDisabledException('element present, but timed out after {} seconds, '
                                           'waiting for {} to be '
@@ -490,7 +490,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self.wait_for_enabled()
 
         try:
-            self.wait_until(lambda: not getattr(self, 'readonly', None) or not self.readonly)
+            self.wait_until(lambda e: not getattr(e, 'readonly', None) or not e.readonly)
         except TimeoutError:
             raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
                                           'seconds, waiting for {} to not be '

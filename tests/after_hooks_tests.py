@@ -75,7 +75,7 @@ class TestAfterHooksRun(object):
         result = {}
 
         def hook(b):
-            b.wait_until(lambda: browser.title == 'Forms with input elements')
+            b.wait_until(lambda br: br.title == 'Forms with input elements')
             result['value'] = True
 
         try:
