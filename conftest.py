@@ -28,11 +28,11 @@ def pytest_addoption(parser):
 
 
 @pytest.fixture(scope='session')
-def browser(request):
+def bkwargs(request):
     kwargs = {}
 
     try:
-        browser_name = request.config.getoption('--browser')
+        kwargs['browser'] = request.config.getoption('--browser')
     except AttributeError:
         raise Exception('This test requires a --browser to be specified.')
 
@@ -41,7 +41,12 @@ def browser(request):
     #     kwargs.update({'desired_capabilities': capabilities})
     if os.environ.get('DRIVER_PATH'):
         kwargs['executable_path'] = os.environ.get('DRIVER_PATH')
-    browser = Browser(browser_name, **kwargs)
+    yield kwargs
+
+
+@pytest.fixture(scope='session')
+def browser(bkwargs):
+    browser = Browser(**bkwargs)
     yield browser
     try:
         browser.quit()
