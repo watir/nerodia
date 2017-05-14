@@ -11,7 +11,7 @@ class HasWindow(object):
 
         browser.windows(title='closeable window')
         """
-        all = [Window(self.driver, handle=handle) for handle in self.driver.window_handles]
+        all = [Window(self.driver, {'handle': handle}) for handle in self.driver.window_handles]
 
         if not args and not kwargs:
             return all
