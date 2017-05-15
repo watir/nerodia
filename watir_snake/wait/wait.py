@@ -124,7 +124,7 @@ class Waitable(object):
         """
         return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
 
-    def wait_while_present(self, timeout=None, interval=None):
+    def wait_until_not_present(self, timeout=None, interval=None):
         """
         Waits while the element is present
         :param timeout: time to wait
