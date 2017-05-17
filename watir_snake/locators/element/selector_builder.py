@@ -9,7 +9,7 @@ from ...xpath_support import XpathSupport
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [re._pattern_type, str, bool]
+    VALID_WHATS = [str, re._pattern_type, bool]
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
     def __init__(self, query_scope, selector, valid_attributes):
@@ -32,14 +32,14 @@ class SelectorBuilder(object):
     def check_type(self, how, what):
         if how == 'index':
             if not isinstance(what, int):
-                raise TypeError('expected Integer, got {}:{}'.format(what, what.__class__))
+                raise TypeError('expected {}, got {!r}:{}'.format(int, what, what.__class__))
         elif how == 'visible':
             if not isinstance(what, bool):
-                raise TypeError('expected boolean, got {}:{}'.format(what, what.__class__))
+                raise TypeError('expected {}, got {!r}:{}'.format(bool, what, what.__class__))
         else:
             if type(what) not in self.VALID_WHATS:
                 raise TypeError(
-                    'expected one of {}, got {}'.format(self.VALID_WHATS, what, what.__class__))
+                    'expected one of {}, got {!r}:{}'.format(self.VALID_WHATS, what, what.__class__))
 
     @property
     def should_use_label_element(self):
@@ -131,7 +131,7 @@ class XPath(object):
 
     def build(self, selectors):
         xpath = ".//"
-        xpath += selectors.pop('tag_name') or '*'
+        xpath += selectors.pop('tag_name', '*')
 
         selectors.pop('index', None)
 

@@ -182,9 +182,9 @@ class Locator(object):
             label = self._label_from_text(rx_selector.pop('label'))
             if not label:
                 return None
-            attr_id = label.attribute('for')
+            attr_id = label.get_attribute('for')
             if attr_id:
-                selector[attr_id] = attr_id
+                selector['id'] = attr_id
             else:
                 query_scope = label
 
@@ -227,7 +227,7 @@ class Locator(object):
     def _label_from_text(self, label_exp):
         # TODO: this won't work correctly if @wd is a sub-element
         elements = self.query_scope.wd.find_elements(tag_name='label')
-        return next((el for el in elements if self._matches_selector(el, {'text': label_exp})))
+        return next((el for el in elements if self._matches_selector(el, {'text': label_exp})), None)
 
     def _matches_selector(self, element, selector):
         return all(what.search(self._fetch_value(element, how)) for how, what in selector.items())
