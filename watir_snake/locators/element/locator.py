@@ -135,9 +135,9 @@ class Locator(object):
         if 'index' in selector:
             raise ValueError("can't locate all elements by index")
 
-        how, what = self.selector_builder.build(selector)
-        if how:
-            found = self.query_scope.wd.find_elements(how, what)
+        built = self.selector_builder.build(selector)
+        if built:
+            found = self.query_scope.wd.find_elements(*built)
         else:
             found = self._wd_find_by_regexp_selector(selector, 'select')
         if visible:

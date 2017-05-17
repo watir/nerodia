@@ -36,6 +36,10 @@ def locate_one(browser, selector, attrs=None):
     return locator(browser, to_dict(selector), attrs).locate()
 
 
+def locate_all(browser, selector, attrs=None):
+    return locator(browser, to_dict(selector), attrs).locate_all()
+
+
 @pytest.fixture
 def expect_one(mocker):
     def spec(by, value):  # allow passing by args or kwargs
@@ -231,138 +235,90 @@ class TestElementLocatorFindsSingleElement(object):
         assert e.value.message == "invalid attribute: {}".format('href')
 
 
-# class TestElementLocatorFindsSeveralElements(object):
+class TestElementLocatorFindsSeveralElements(object):
 
-# by delegating to Selenium
+    # by delegating to Selenium
 
-#     describe "by delegating to Selenium" do
-#       SELENIUM_SELECTORS.each do |loc|
-#         it "delegates to Selenium's #{loc} locator" do
-#           expect_all(loc, "bar").and_return([element(tag_name: "div")])
-#           locate_all(loc => "bar")
-#         end
-#       end
-#     end
-#
-#     describe "with an empty selector" do
-#       it "finds all when an empty selctor is given" do
-#         expect_all :xpath, './/*'
-#         locate_all({})
-#       end
-#     end
-#
-#     describe "with selectors not supported by Selenium" do
-#       it "handles selector with tag name and a single attribute" do
-#         expect_all :xpath, ".//div[@dir='foo']"
-#         locate_all tag_name: "div",
-#                    dir: "foo"
-#       end
-#
-#       it "handles selector with tag name and multiple attributes" do
-#         expect_all :xpath, ".//div[@dir='foo' and @title='bar']"
-#         locate_all [:tag_name, "div",
-#                     :dir     , "foo",
-#                     :title   , 'bar']
-#       end
-#     end
-#
-#     describe "with regexp selectors" do
-#       it "handles selector with tag name and a single regexp attribute" do
-#         elements = [
-#           element(tag_name: "div", attributes: { class: "foo" }),
-#           element(tag_name: "div", attributes: { class: "foob"}),
-#           element(tag_name: "div", attributes: { class: "doob"}),
-#           element(tag_name: "div", attributes: { class: "noob"})
-#         ]
-#
-#         expect_all(:xpath, "(.//div)[contains(@class, 'oob')]").and_return(elements)
-#         expect(locate_all(tag_name: "div", class: /oob/)).to eq elements.last(3)
-#       end
-#
-#       it "handles mix of string and regexp attributes" do
-#         elements = [
-#           element(tag_name: "div", attributes: { dir: "foo", title: "bar" }),
-#           element(tag_name: "div", attributes: { dir: "foo", title: "baz" }),
-#           element(tag_name: "div", attributes: { dir: "foo", title: "bazt"})
-#         ]
-#
-#         expect_all(:xpath, "(.//div[@dir='foo'])[contains(@title, 'baz')]").and_return(elements)
-#
-#         selector = {
-#           tag_name: "div",
-#           dir: "foo",
-#           title: /baz/
-#         }
-#
-#         expect(locate_all(selector)).to eq elements.last(2)
-#       end
-#
-#       context "and xpath" do
-#         it "converts a leading run of regexp literals to a contains() expression" do
-#           elements = [
-#             element(tag_name: "div", attributes: { class: "foo" }),
-#             element(tag_name: "div", attributes: { class: "foob" }),
-#             element(tag_name: "div", attributes: { class: "bar" })
-#           ]
-#
-#           expect_all(:xpath, "(.//div)[contains(@class, 'fo')]").and_return(elements.first(2))
-#
-#           expect(locate_one(tag_name: "div", class: /fo.b$/)).to eq elements[1]
-#         end
-#
-#         it "converts a trailing run of regexp literals to a contains() expression" do
-#           elements = [
-#             element(tag_name: "div", attributes: { class: "foo" }),
-#             element(tag_name: "div", attributes: { class: "foob" })
-#           ]
-#
-#           expect_all(:xpath, "(.//div)[contains(@class, 'b')]").and_return(elements.last(1))
-#
-#           expect(locate_one(tag_name: "div", class: /^fo.b/)).to eq elements[1]
-#         end
-#
-#         it "converts a leading and a trailing run of regexp literals to a contains() expression" do
-#           elements = [
-#             element(tag_name: "div", attributes: { class: "foo" }),
-#             element(tag_name: "div", attributes: { class: "foob" })
-#           ]
-#
-#           expect_all(:xpath, "(.//div)[contains(@class, 'fo') and contains(@class, 'b')]").
-#             and_return(elements.last(1))
-#
-#           expect(locate_one(tag_name: "div", class: /fo.b/)).to eq elements[1]
-#         end
-#
-#         it "does not try to convert case insensitive expressions" do
-#           elements = [
-#             element(tag_name: "div", attributes: { class: "foo" }),
-#             element(tag_name: "div", attributes: { class: "foob"})
-#           ]
-#
-#           expect_all(:xpath, ".//div").and_return(elements.last(1))
-#
-#           expect(locate_one(tag_name: "div", class: /FOOB/i)).to eq elements[1]
-#         end
-#
-#         it "does not try to convert expressions containing '|'" do
-#           elements = [
-#             element(tag_name: "div", attributes: { class: "foo" }),
-#             element(tag_name: "div", attributes: { class: "foob"})
-#           ]
-#
-#           expect_all(:xpath, ".//div").and_return(elements.last(1))
-#
-#           expect(locate_one(tag_name: "div", class: /x|b/)).to eq elements[1]
-#         end
-#       end
-#     end
-#
-#     describe "errors" do
-#       it "raises ArgumentError if :index is given" do
-#         expect { locate_all(tag_name: "div", index: 1) }.to \
-#         raise_error(ArgumentError, "can't locate all elements by :index")
-#       end
-#     end
-#   end
-#
-# end
+    @pytest.mark.parametrize('finder', Locator.WD_FINDERS.items())
+    def test_delegates_to_seleniums_locators(self, browser, finder, expect_all):
+        arg, str = finder
+        locate_all(browser, {arg: 'bar'})
+        expect_all.assert_called_once_with(str, 'bar')
+
+    # with an empty selector
+
+    def test_finds_all_when_an_empty_selctor_is_given(self, browser, expect_all):
+        locate_all(browser, {})
+        expect_all.assert_called_once_with(By.XPATH, './/*')
+
+    # with selectors not supported by Selenium
+
+    def test_handles_selector_with_tag_name_and_single_attribute(self, browser, expect_all):
+        locate_all(browser, {'tag_name': 'div', 'dir': 'foo'})
+        expect_all.assert_called_once_with(By.XPATH, ".//div[@dir='foo']")
+
+    # with regexp selectors
+
+    def test_handles_selector_with_tag_name_and_a_single_regexp_attribute(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'doob'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'noob'})]
+
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'oob')}
+        assert locate_all(browser, selector) == elements[-3:]
+
+    def test_handles_mix_of_string_and_regexp_attributes(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'bar'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'baz'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'bazt'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'dir': 'foo', 'title': re.compile(r'baz')}
+        assert locate_all(browser, selector) == elements[-2:]
+
+    # with regexp selectors and xpath
+
+    def test_converts_a_leading_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'bar'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'fo.b$')}
+        assert locate_one(browser, selector) == elements[1]
+
+    def test_converts_a_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'^fo.b')}
+        assert locate_one(browser, selector) == elements[1]
+
+    def test_converts_a_leading_and_a_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'fo.b')}
+        assert locate_one(browser, selector) == elements[1]
+
+    def test_does_not_try_to_convert_case_insensitive_expressions(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'FOOB', re.IGNORECASE)}
+        assert locate_one(browser, selector) == elements[1]
+
+    def test_does_not_try_to_convert_expressions_containing_pipe(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'x|b')}
+        assert locate_one(browser, selector) == elements[1]
+
+    # errors
+
+    def test_raises_correct_exception_if_index_is_given(self, browser, mocker, expect_all):
+        with pytest.raises(ValueError) as e:
+            selector = {'tag_name': 'div', 'index': 1}
+            locate_all(browser, selector)
+        assert e.value.message == "can't locate all elements by index"
