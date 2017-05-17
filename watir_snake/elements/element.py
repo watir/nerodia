@@ -250,6 +250,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         return self._element_call(lambda: self.element.get_attribute(attribute_name))
 
+    get_attriubte = attribute_value
+
     @property
     def outer_html(self):
         """
