@@ -46,8 +46,10 @@ class ElementCollection(object):
         :return: instance of Element subclass
         :rtype: watir_snake.elements.element.Element
         """
-        return self.to_list[idx] or self._element_class(self.query_scope,
-                                                        dict(index=idx, **self.selector))
+        try:
+            return self.to_list[idx]
+        except IndexError:
+            return  self._element_class(self.query_scope, dict(index=idx, **self.selector))
 
     @property
     def to_list(self):
@@ -136,6 +138,8 @@ class ElementCollection(object):
         from .elements.html_elements import HTMLElementCollection
         name = self.__class__.__name__.replace('Collection', '')
         element_module = re.sub(r'^(\w+)([A-Z]{1}\w+)$', r'\1_\2'.lower(), name).lower()
+        if element_module == 'frame':  # special cases
+            element_module = 'i_frame'
         try:
             module = import_module('watir_snake.elements.{}'.format(element_module))
         except ImportError:
