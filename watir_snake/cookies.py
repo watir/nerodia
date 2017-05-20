@@ -67,7 +67,7 @@ class Cookies(object):
         browser.cookies.save('.cookies')
         """
         with open(file, 'w') as f:
-            f.write(dump(self.to_list, f, indent=4))
+            dump(self.to_list, f, indent=4)
 
     def load(self, file='.cookies'):
         """
@@ -80,7 +80,7 @@ class Cookies(object):
         """
         with open(file, 'r') as f:
             for cookie in load(f):
-                self.add(cookie.pop('name'), c.pop('value'), **c)
+                self.add(cookie.pop('name'), cookie.pop('value'), **cookie)
 
     # private
 

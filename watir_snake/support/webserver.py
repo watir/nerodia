@@ -35,6 +35,12 @@ class RequestHandler(SimpleHTTPRequestHandler):
             self.send_header('Content-type', 'text/plain')
             self.end_headers()
             self.wfile.write('This is text/plain')
+        elif re.search(r'/set_cookie', self.path):
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.send_header('Set-Cookie', 'monster=1')
+            self.end_headers()
+            self.wfile.write("<html>C is for cookie, it's good enough for me</html>")
         elif not re.search(r'.*\.\w+$', self.path):
             self.send_response(200)
             self.send_header('Content-type', 'text/plain')
