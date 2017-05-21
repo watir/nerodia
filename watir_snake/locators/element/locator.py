@@ -100,20 +100,20 @@ class Locator(object):
 
         if built_selector:
             # could build xpath/css for selector
-            if idx or visible:
+            if idx or visible is not None:
                 idx = idx or 0
                 elements = self.query_scope.wd.find_elements(*built_selector)
-                if visible:
+                if visible is not None:
                     elements = [el for el in elements if visible == el.is_displayed()]
                 return elements[idx] if elements and idx < len(elements) else None
             else:
                 return self.query_scope.wd.find_element(*built_selector)
         else:
             # can't use xpath, probably a regexp in there
-            if idx or visible:
+            if idx or visible is not None:
                 idx = idx or 0
                 elements = self._wd_find_by_regexp_selector(selector, 'select')
-                if visible:
+                if visible is not None:
                     elements = [el for el in elements if visible == el.is_displayed()]
                 return elements[idx] if elements else None
             else:
@@ -140,7 +140,7 @@ class Locator(object):
             found = self.query_scope.wd.find_elements(*built)
         else:
             found = self._wd_find_by_regexp_selector(selector, 'select')
-        if visible:
+        if visible is not None:
             return [el for el in found if visible == el.is_displayed()]
         else:
             return found
