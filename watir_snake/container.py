@@ -3,6 +3,10 @@ class Container(object):
         from .elements.html_elements import HTMLElement
         return HTMLElement(self, self._extract_selector(*args, **kwargs))
 
+    def elements(self, *args, **kwargs):
+        from .elements.html_elements import HTMLElementCollection
+        return HTMLElementCollection(self, self._extract_selector(*args, **kwargs))
+
     # private
 
     def _extract_selector(self, *args, **kwargs):

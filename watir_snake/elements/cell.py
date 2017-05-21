@@ -16,5 +16,5 @@ class CellCollection(TableCellCollection):
     def elements(self):
         # we do this craziness since the xpath used will find direct child rows
         # before any rows inside thead/tbody/tfoot...
-        elements = super(CellCollection, self).elements
+        elements = super(CellCollection, self).els
         return sorted(elements, key=lambda e: int(e.get_attribute('cellIndex')))

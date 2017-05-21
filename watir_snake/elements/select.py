@@ -37,7 +37,7 @@ class Select(HTMLElement):
         :rtype: bool
         """
         def func():
-            elements = self.element.find_elements_by_css_selector('option')
+            elements = self.el.find_elements_by_css_selector('option')
             for e in elements:
                 text = e.text
                 label = e.get_attribute('label')
@@ -71,7 +71,7 @@ class Select(HTMLElement):
         :raises: UnknownObjectException
         """
         def func():
-            elements = self.element.find_elements_by_css_selector('option')
+            elements = self.el.find_elements_by_css_selector('option')
             for e in elements:
                 text = e.text
                 label = e.get_attribute('label')
@@ -132,7 +132,7 @@ class Select(HTMLElement):
 
     def _matches_regexp(self, how, element, exp):
         if how == 'text':
-            return (re.search(exp, self.element.text) or re.search(exp, self.element.label)) \
+            return (re.search(exp, self.el.text) or re.search(exp, self.el.label)) \
                    is not None
         elif how == 'value':
             return re.search(exp, element.value) is not None

@@ -6,8 +6,8 @@ class UserEditable(object):
         :param args: value to set the input to
         """
         def func():
-            self.element.clear()
-            self.element.send_keys(*args)
+            self.el.clear()
+            self.el.send_keys(*args)
         self._element_call(func, self.wait_for_writable)
 
     @property
@@ -30,4 +30,4 @@ class UserEditable(object):
         Clears the text field
         :return:
         """
-        self._element_call(lambda: self.clement.clear(), self.wait_for_writable)
+        self._element_call(lambda: self.el.clear(), self.wait_for_writable)

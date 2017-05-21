@@ -13,7 +13,7 @@ class CheckBox(Input):
         Returns True if the element is checked
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.is_selected())
+        return self._element_call(lambda: self.el.is_selected())
 
     def set(self, value=True):
         """

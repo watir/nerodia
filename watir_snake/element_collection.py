@@ -10,7 +10,7 @@ class ElementCollection(object):
         self.query_scope = query_scope
         self.selector = selector
         self.as_list = []
-        self.elements = []
+        self.els = []
 
     def __iter__(self):
         """
@@ -104,9 +104,9 @@ class ElementCollection(object):
         locator = self._locator_class(self.query_scope, self.selector, selector_builder,
                                       element_validator)
 
-        if not self.elements:
-            self.elements = locator.locate_all()
-        return self.elements
+        if not self.els:
+            self.els = locator.locate_all()
+        return self.els
 
     @property
     def _locator_class(self):

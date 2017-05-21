@@ -28,7 +28,7 @@ class IFrame(HTMLElement):
                 'unable to locate {} using {}'.format(self.selector['tag_name'],
                                                       self.selector_string))
 
-        return FramedDriver(self.element, self.driver)
+        return FramedDriver(self.el, self.driver)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
@@ -96,7 +96,7 @@ class FrameCollection(IFrameCollection):
 
 class FramedDriver(object):
     def __init__(self, element, driver):
-        self.element = element
+        self.el = element
         self.driver = driver
 
     def __eq__(self, other):
@@ -110,17 +110,17 @@ class FramedDriver(object):
 
     @property
     def wd(self):
-        return self.element
+        return self.el
 
     def __getattr__(self, meth):
         if hasattr(self.driver, meth):
             self.switch()
             return getattr(self.driver, meth)
         else:
-            return getattr(self.element, meth)
+            return getattr(self.el, meth)
 
     def switch(self):
         try:
-            self.driver.switch_to.frame(self.element)
+            self.driver.switch_to.frame(self.el)
         except NoSuchFrameException as e:
             raise UnknownFrameException(e)

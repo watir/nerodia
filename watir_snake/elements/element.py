@@ -24,7 +24,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self.query_scope = query_scope
         if not isinstance(selector, dict):
             raise TypeError('invalid argument: {!r}'.format(selector))
-        self.element = element
+        self.el = element
         self.selector = selector
         self.keyword = None
 
@@ -46,7 +46,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         string = '#<{}: '.format(self.__class__.__name__)
         if self.keyword:
             string += 'keyword: {} '.format(self.keyword)
-        string += 'located: {}; '.format(self.element is not None)
+        string += 'located: {}; '.format(self.el is not None)
         if not self.selector:
             string += '{element: (selenium element)}'
         else:
@@ -65,7 +65,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     eql = __eq__
 
     def __hash__(self):
-        return self.element.__hash__() if self.element else super(Element, self).__hash__()
+        return self.el.__hash__() if self.el else super(Element, self).__hash__()
 
     @property
     def text(self):
@@ -73,7 +73,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Returns the text of the element
         :rtype: str
         """
-        return self._element_call(lambda: self.element.text)
+        return self._element_call(lambda: self.el.text)
 
     @property
     def tag_name(self):
@@ -81,7 +81,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Returns the tag name of the element
         :rtype: str
         """
-        return self._element_call(lambda: self.element.tag_name).lower()
+        return self._element_call(lambda: self.el.tag_name).lower()
 
     def click(self, *modifiers):
         """
@@ -108,12 +108,12 @@ class Element(Container, Atoms, Waitable, Adjacent):
                 action = ActionChains(self.driver)
                 for mod in modifiers:
                     action.key_down(mod)
-                action.click(self.element)
+                action.click(self.el)
                 for mod in modifiers:
                     action.key_up(mod)
                 action.perform()
             else:
-                self.element.click()
+                self.el.click()
 
         self._element_call(method, self.wait_for_enabled)
         self.browser.after_hooks.run()
@@ -127,7 +127,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.element(name='new_user_button').double_click()
         """
-        self._element_call(lambda: ActionChains(self.driver).double_click(self.element)
+        self._element_call(lambda: ActionChains(self.driver).double_click(self.el)
                            .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
@@ -140,7 +140,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.element(name='new_user_button').right_click()
         """
-        self._element_call(lambda: ActionChains(self.driver).context_click(self.element)
+        self._element_call(lambda: ActionChains(self.driver).context_click(self.el)
                            .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
@@ -153,7 +153,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.element(name='new_user_button').hover()
         """
-        self._element_call(lambda: ActionChains(self.driver).move_to_element(self.element)
+        self._element_call(lambda: ActionChains(self.driver).move_to_element(self.el)
                            .perform(), self.wait_for_present)
         self.browser.after_hooks.run()
 
@@ -172,7 +172,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         self._assert_is_element(other)
 
-        self._element_call(lambda: ActionChains(self.driver).drag_and_drop(self.element, other.wd)
+        self._element_call(lambda: ActionChains(self.driver).drag_and_drop(self.el, other.wd)
                            .perform(), self.wait_for_present)
 
     def drag_and_drop_by(self, xoffset, yoffset):
@@ -188,7 +188,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         browser.div(id='draggable').drag_and_drop_by(100, -200)
         """
         self._element_call(lambda: ActionChains(self.driver).
-                           drag_and_drop_by_offset(self.element, xoffset, yoffset).perform(),
+                           drag_and_drop_by_offset(self.el, xoffset, yoffset).perform(),
                            self.wait_for_present)
 
     def flash(self, color='red', flashes=10, delay=0):
@@ -212,16 +212,16 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         background_color = self.style('backgroundColor')
         element_color = self.driver.execute_script('arguments[0].style.backgroundColor',
-                                                   self.element)
+                                                   self.el)
 
         for n in range(flashes):
             nextcolor = color if n % 2 == 0 else background_color
             self.driver.execute_script("arguments[0].style.backgroundColor = "
-                                       "'{}'".format(nextcolor), self.element)
+                                       "'{}'".format(nextcolor), self.el)
             sleep(delay)
 
         self.driver.execute_script("arguments[0].style.backgroundColor = "
-                                   "'{}'".format(element_color), self.element)
+                                   "'{}'".format(element_color), self.el)
 
         return self
 
@@ -248,7 +248,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.a(id='link_2').attribute_value('title')  #=> 'link_title_2'
         """
-        return self._element_call(lambda: self.element.get_attribute(attribute_name))
+        return self._element_call(lambda: self.el.get_attribute(attribute_name))
 
     get_attriubte = attribute_value
 
@@ -264,7 +264,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         browser.div(id='foo').outer_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
         return self._element_call(lambda: self._execute_atom('getOuterHtml',
-                                                             self.element)).strip()
+                                                             self.el)).strip()
 
     html = outer_html
 
@@ -280,7 +280,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         browser.div(id='foo').inner_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
         return self._element_call(lambda: self._execute_atom('getInnerHtml',
-                                                             self.element)).strip()
+                                                             self.el)).strip()
 
     def send_keys(self, *args):
         """
@@ -291,7 +291,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.text_field(name='new_user_first_name').send_keys('watir_snake')
         """
-        return self._element_call(lambda: self.element.send_keys(*args), self.wait_for_writable)
+        return self._element_call(lambda: self.el.send_keys(*args), self.wait_for_writable)
 
     def focus(self):
         """
@@ -299,7 +299,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Note that Firefox queues focus events until the window actually has focus
         """
         self._element_call(lambda: self.driver.execute_script('return arguments[0].focus()',
-                                                              self.element))
+                                                              self.el))
 
     @property
     def focused(self):
@@ -307,7 +307,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Returns True if the element is focused
         :rtype: bool
         """
-        return self._element_call(lambda: self.element == self.driver.switch_to.active_element)
+        return self._element_call(lambda: self.el == self.driver.switch_to.active_element)
 
     def fire_event(self, event_name):
         """
@@ -324,7 +324,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         event_name = sub(r'^on', '', str(event_name)).lower()
 
-        self._element_call(lambda: self._execute_atom('fireEvent', self.element, event_name))
+        self._element_call(lambda: self._execute_atom('fireEvent', self.el, event_name))
 
     @property
     def driver(self):
@@ -333,7 +333,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     @property
     def wd(self):
         self.assert_exists()
-        return self.element
+        return self.el
 
     @property
     def visible(self):
@@ -343,7 +343,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.is_displayed(), self.assert_exists)
+        return self._element_call(lambda: self.el.is_displayed(), self.assert_exists)
 
     @property
     def enabled(self):
@@ -352,7 +352,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.element.is_enabled(), self.assert_exists)
+        return self._element_call(lambda: self.el.is_enabled(), self.assert_exists)
 
     @property
     def present(self):
@@ -381,7 +381,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         browser.button(value='Delete').style('border') #=> "4px solid rgb(255, 0, 0)"
         """
         if prop:
-            return self._element_call(lambda: self.element.value_of_css_property(prop))
+            return self._element_call(lambda: self.el.value_of_css_property(prop))
         else:
             return str(self.attribute_value('style')).strip()
 
@@ -433,15 +433,15 @@ class Element(Container, Atoms, Waitable, Adjacent):
         :rtype: bool
         """
         try:
-            if self.element is None:
+            if self.el is None:
                 raise Error('Can not check staleness of unused element')
-            self.element.is_enabled()  # any wire call will check for staleness
+            self.el.is_enabled()  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
             return True
 
     def reset(self):
-        self.element = None
+        self.el = None
 
     def wait_for_exists(self):
         if not watir_snake.relaxed_locate:
@@ -502,19 +502,19 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         Ensure that the element exists, making sure that it is not stale and located if necessary
         """
-        if self.element and not self.selector:
+        if self.el and not self.selector:
             self._ensure_context()
             if self.stale:
                 self.reset()
-        elif self.element and not self.stale:
+        elif self.el and not self.stale:
             return
         else:
-            self.element = self.locate()
+            self.el = self.locate()
 
         self.assert_element_found()
 
     def assert_element_found(self):
-        if self.element is None:
+        if self.el is None:
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
     def locate(self):
@@ -578,7 +578,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         return self.attribute_value(attribute_name) is not None
 
     def _assert_enabled(self):
-        if not self._element_call(lambda: self.element.is_enabled()):
+        if not self._element_call(lambda: self.el.is_enabled()):
             raise ObjectDisabledException('object is disabled {}'.format(self))
 
     def _assert_writable(self):

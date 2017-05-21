@@ -16,7 +16,7 @@ class Image(HTMLElement):
             return False
 
         return self.driver.execute_script('return typeof arguments[0].naturalWidth != "undefined" '
-                                          '&& arguments[0].naturalWidth > 0', self.element)
+                                          '&& arguments[0].naturalWidth > 0', self.el)
 
     @property
     def width(self):
@@ -25,4 +25,4 @@ class Image(HTMLElement):
         :rtype: int
         """
         self.wait_for_exists()
-        return self.driver.execute_script("return arguments[0].width", self.element)
+        return self.driver.execute_script("return arguments[0].width", self.el)

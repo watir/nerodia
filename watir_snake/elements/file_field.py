@@ -19,7 +19,7 @@ class FileField(Input):
         """
         if not path.exists(filepath):
             raise ENOENT
-        self._element_call(lambda: self.element.send_keys(filepath))
+        self._element_call(lambda: self.el.send_keys(filepath))
 
 
 @six.add_metaclass(MetaHTMLElement)
