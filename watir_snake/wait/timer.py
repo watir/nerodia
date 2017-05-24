@@ -17,9 +17,11 @@ class Timer(object):
         :rtype: bool
         """
         end_time = self.end_time or time() + timeout
+        run_once = False
         while True:
-            if time() > end_time:
+            if time() > end_time and run_once:
                 break
+            run_once = True
             result = method(object) if object else method()
             if result == expected:
                 return True
