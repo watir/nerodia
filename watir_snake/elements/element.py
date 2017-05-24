@@ -470,7 +470,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             if watir_snake.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
                      'Element to exist. If the test is still passing, consider using '
-                     'Element#present instead of catching UnknownObjectException')
+                     'Element#exists instead of catching UnknownObjectException')
             raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
                                          'located'.format(watir_snake.default_timeout, self))
 
