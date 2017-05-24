@@ -104,7 +104,8 @@ class TestWaitDefaultTimer(object):
             Wait.timer = Timer()
 
 
-# TODO: not for relaxed_locate
+@pytest.mark.skipif('watir_snake.relaxed_locate',
+                    reason='only applicable when not relaxed locating')
 @pytest.mark.page('wait.html')
 class TestElementWaitUntil(object):
     def test_invokes_subsequent_method_calls_when_the_element_becomes_enabled(self, browser):

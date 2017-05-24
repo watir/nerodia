@@ -25,6 +25,19 @@ def pytest_addoption(parser):
         choices=browsers,
         metavar='BROWSER',
         help='browser to run tests against ({})'.format(', '.join(browsers)))
+    parser.addoption(
+        '--not_relaxed',
+        action='store_true',
+        help='whether to not use relaxed_locate for tests')
+
+
+def pytest_collection_modifyitems(session, config, items):
+    """ called after collection has been performed, may filter or re-order the items in-place
+    :param session: pytest session instance
+    :param config: configuration of pytest
+    :param items: items collected
+    """
+    watir_snake.relaxed_locate = not config.getoption('--not_relaxed')
 
 
 @pytest.fixture(scope='session')
