@@ -16,8 +16,6 @@ def timeout_reset():
 
 @pytest.mark.page('wait.html')
 @pytest.mark.usefixtures('timeout_reset')
-@pytest.mark.relaxed_only
-@pytest.mark.skip_relaxed_locate
 @pytest.mark.skipif('watir_snake.relaxed_locate is False',
                     reason='only applicable when relaxed locating')
 class TestRelaxedLocate(object):
@@ -142,7 +140,6 @@ class TestRelaxedLocate(object):
 
 @pytest.mark.page('wait.html')
 @pytest.mark.usefixtures('timeout_reset')
-@pytest.mark.not_relaxed_only
 @pytest.mark.skipif('watir_snake.relaxed_locate',
                     reason='only applicable when not relaxed locating')
 class TestNotRelaxedLocate(object):
