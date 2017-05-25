@@ -49,7 +49,7 @@ class ElementCollection(object):
         try:
             return self.to_list[idx]
         except IndexError:
-            return  self._element_class(self.query_scope, dict(index=idx, **self.selector))
+            return self._element_class(self.query_scope, dict(index=idx, **self.selector))
 
     @property
     def to_list(self):

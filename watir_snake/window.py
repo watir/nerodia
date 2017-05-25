@@ -1,3 +1,4 @@
+import re
 from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 
 from .exception import NoMatchingWindowFoundException
@@ -24,7 +25,8 @@ class Window(Waitable):
                                                 self.handle is not None)
 
     def __enter__(self):
-        self.use()
+        self.original = self._current_window
+        return self.use()
 
     def __exit__(self, *args):
         self.unuse()
@@ -41,7 +43,7 @@ class Window(Waitable):
         """
         with self:
             size = self.driver.get_window_size()
-        return size
+        return Dimension(**size)
 
     @property
     def position(self):
@@ -55,7 +57,7 @@ class Window(Waitable):
         """
         with self:
             pos = self.driver.get_window_position()
-        return pos
+        return Point(**pos)
 
     def resize_to(self, width, height):
         """
@@ -148,8 +150,11 @@ class Window(Waitable):
 
     def close(self):
         """ Closes the window """
-        with self:
+        if self._current_window == self.handle:
             self.driver.close()
+        else:
+            with self:
+                self.driver.close()
 
     @property
     def title(self):
@@ -194,7 +199,9 @@ class Window(Waitable):
         window.unuse()
         :rtype: Window
         """
-        self.driver.switch_to.window(self.original)
+        current = self.driver.window_handles
+        orig = self.original if self.original in current else current[0]
+        self.driver.switch_to.window(orig)
         return self
 
     @property
@@ -224,7 +231,10 @@ class Window(Waitable):
         if not self.selector:
             self.window_handle = None
         elif 'index' in self.selector:
-            self.window_handle = self.driver.window_handles[int(self.selector.get('index'))]
+            try:
+                self.window_handle = self.driver.window_handles[int(self.selector.get('index'))]
+            except IndexError:
+                self.window_handle = None
         else:
             self.window_handle = next((x for x in self.driver.window_handles if
                                        self._matches(x) is True), False)
@@ -238,17 +248,59 @@ class Window(Waitable):
             return None
 
     def _matches(self, handle):
-        orig = self.driver.current_window_handle
+        try:
+            orig = self.driver.current_window_handle
+        except NoSuchWindowException:
+            orig = None
         try:
             self.driver.switch_to.window(handle)
 
-            matches_title = (not self.selector.get('title')) or \
-                            self.selector.get('title') == self.driver.title
-            matches_url = (not self.selector.get('url')) or \
-                          self.selector.get('url') == self.driver.current_url
+            if 'title' in self.selector:
+                title_value = self.selector.get('title')
+                driver_title = self.driver.title
+                if isinstance(title_value, re._pattern_type):
+                    matches_title = title_value.search(driver_title) is not None
+                else:
+                    matches_title = title_value == driver_title
+            else:
+                matches_title = True
+
+            if 'url' in self.selector:
+                url_value = self.selector.get('url')
+                driver_url = self.driver.current_url
+                if isinstance(url_value, re._pattern_type):
+                    matches_url = url_value.search(driver_url) is not None
+                else:
+                    matches_url = url_value == driver_url
+            else:
+                matches_url = True
 
             return matches_title and matches_url
         except (NoSuchWindowException, WebDriverException):
             return False
         finally:
+            current = self.driver.window_handles
+            orig = orig if orig in current else current[0]
             self.driver.switch_to.window(orig)
+
+
+class Dimension(object):
+    __slots__ = ['width', 'height']
+
+    def __init__(self, width=None, height=None):
+        self.width = width
+        self.height = height
+
+    def __eq__(self, other):
+        return self.width == other.width and self.height == other.height
+
+
+class Point(object):
+    __slots__ = ['x', 'y']
+
+    def __init__(self, x=None, y=None):
+        self.x = x
+        self.y = y
+
+    def __eq__(self, other):
+        return self.x == other.x and self.y == other.y
