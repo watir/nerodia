@@ -28,7 +28,7 @@ class IFrame(HTMLElement):
                 'unable to locate {} using {}'.format(self.selector['tag_name'],
                                                       self.selector_string))
 
-        return FramedDriver(self.el, self.driver)
+        return FramedDriver(element, self.driver)
 
     def __eq__(self, other):
         if not isinstance(other, self.__class__):

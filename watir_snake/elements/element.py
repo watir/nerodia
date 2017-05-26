@@ -463,6 +463,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         if not watir_snake.relaxed_locate:
             return self.assert_exists()
 
+        self.wait_for_exists()
         try:
             self.query_scope.wait_for_present()
             self.wait_until_present()
@@ -477,8 +478,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def wait_for_enabled(self):
         if not watir_snake.relaxed_locate:
             return self._assert_enabled()
-        self.wait_for_present()
 
+        self.wait_for_present()
         try:
             self.wait_until(lambda  e: e.enabled)
         except TimeoutError:
@@ -489,8 +490,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def wait_for_writable(self):
         if not watir_snake.relaxed_locate:
             return self._assert_writable()
-        self.wait_for_enabled()
 
+        self.wait_for_enabled()
         try:
             self.wait_until(lambda e: not getattr(e, 'readonly', None) or not e.readonly)
         except TimeoutError:
