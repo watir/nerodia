@@ -1,4 +1,6 @@
-from selenium import webdriver
+from importlib import import_module
+
+from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
 import watir_snake
@@ -26,11 +28,13 @@ class Browser(Container, HasWindow, Waitable):
         :param kwargs: kwargs passed to the underlying driver
         """
         if isinstance(browser, str):
-            self.driver = getattr(webdriver, browser.capitalize())(*args, **kwargs)
-        elif isinstance(browser, webdriver.Remote):
+            module = import_module('selenium.webdriver.{}.webdriver'.format(browser.lower()))
+            self.driver = module.WebDriver(*args, **kwargs)
+        elif isinstance(browser, WebDriver):
             self.driver = browser
         else:
-            raise TypeError('A WebDriver instance must be supplied')
+            raise TypeError('A browser name or WebDriver instance must be supplied, '
+                            'got {}'.format(type(browser)))
 
         self.after_hooks = AfterHooks(self)
         self.current_frame = None
@@ -259,5 +263,5 @@ class Browser(Container, HasWindow, Waitable):
 
     def _wrap_element(self, element):
         from .elements.html_elements import HTMLElement
-        klass = watir_snake.element_class_for(element.tag_name.downcase) or HTMLElement
-        return klass(self, element=element)
+        klass = watir_snake.element_class_for(element.tag_name.lower()) or HTMLElement
+        return klass(self, {'element': element})
