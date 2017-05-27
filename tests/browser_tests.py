@@ -1,6 +1,17 @@
 import pytest
 import re
 
+from watir_snake.browser import Browser
+from watir_snake.elements.html_elements import Body
+
+BROWSERS = ['chrome',
+            'firefox',
+            'ie',
+            'edge',
+            'safari',
+            'phantomjs',
+            'remote']
+
 
 @pytest.fixture
 def cleanup_browser(browser):
@@ -235,3 +246,121 @@ class TestBrowserBackForth(object):
         from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(id='foo').id
+
+
+@pytest.mark.page('non_control_elements.html')
+# TODO: xfail safari
+class TestBrowserInit(object):
+    @pytest.mark.parametrize('browser_name', BROWSERS)
+    def test_passes_the_args_to_selenium(self, mocker, browser_name):
+        mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name))
+        Browser(browser_name, 'foo', bar='bar')
+        mock.assert_called_once_with('foo', bar='bar')
+
+    @pytest.mark.parametrize('browser_name', BROWSERS)
+    def test_takes_a_driver_instance_as_argument(self, mocker, browser_name):
+        from importlib import import_module
+        module = import_module('selenium.webdriver.{}.webdriver'.format(browser_name))
+        mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name), spec=module.WebDriver).return_value
+        browser = Browser(mock)
+        assert browser.driver == mock
+
+    def test_raises_correct_exception_for_invalid_args(self):
+        with pytest.raises(TypeError):
+            Browser(object)
+
+
+@pytest.mark.page('definition_lists.html')
+class TestBrowserElementWrap(object):
+    def test_wraps_elements_as_package_objects(self, browser):
+        returned = browser.execute_script('return document.body;')
+        assert isinstance(returned, Body)
+
+    def test_wraps_elements_in_a_list(self, browser):
+        lst = browser.execute_script('return [document.body];')
+        assert len(lst) == 1
+        assert isinstance(lst[0], Body)
+
+    def test_wraps_elements_in_a_dict(self, browser):
+        dct = browser.execute_script('return {element: document.body};')
+        assert isinstance(dct.get('element'), Body)
+
+    def test_wraps_elements_in_a_deep_object(self, browser):
+        dct = browser.execute_script('return {elements: [document.body], '
+                                     'body: {element: document.body}};')
+        assert isinstance(dct.get('elements')[0], Body)
+        assert isinstance(dct.get('body').get('element'), Body)
+
+
+class TestBrowserSendKeys(object):
+    @pytest.mark.page('forms_with_input_elements.html')
+    def test_sends_keystrokes_to_the_active_element(self, browser):
+        browser.send_keys('hello')
+        assert browser.text_field(id='new_user_first_name').value == 'hello'
+
+    @pytest.mark.page('frames.html')
+    def test_sends_keystrokes_to_a_frame(self, browser):
+        tf = browser.frame().text_field(id='senderElement')
+        tf.clear()
+
+        browser.frame().send_keys('hello')
+        assert tf.value == 'hello'
+
+
+# TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1290814
+class TestBrowserClosed(object):
+    def test_raises_correct_exception_when_trying_to_interact_with_a_closed_browser(self, bkwargs, page):
+        from watir_snake.browser import Browser
+        from watir_snake.exception import Error
+        with pytest.raises(Error) as e:
+            b = Browser(**bkwargs)
+            b.goto(page.url('definition_lists.html'))
+            b.close()
+            b.dl(id='experience-list').id
+        assert e.value.message == 'browser was closed'
+
+
+class TestBrowserWait(object):
+    def test_delegates_wait_until_not_to_the_wait_module(self, browser, mocker):
+        mock = mocker.patch('watir_snake.wait.wait.Wait.until_not')
+        def method():
+            pass
+        browser.wait_until_not(timeout=3, message='foo', interval=0.2, method=method)
+        mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
+                                     object=browser)
+
+    def test_delegates_wait_until_to_the_wait_module(self, browser, mocker):
+        mock = mocker.patch('watir_snake.wait.wait.Wait.until')
+        def method():
+            pass
+        browser.wait_until(timeout=3, message='foo', interval=0.2, method=method)
+        mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
+                                     object=browser)
+
+    def test_waits_until_document_readystate_is_complete(self, browser, mocker):
+        mock = mocker.patch('watir_snake.browser.Browser.ready_state',
+                            new_callable=mocker.PropertyMock)
+        mock.side_effect = ['incomplete', 'complete']
+        browser.wait()
+        assert mock.call_count == 2
+
+
+class TestBrowserReadyState(object):
+    def test_gets_the_document_ready_state_property(self, browser, mocker):
+        mock = mocker.patch('watir_snake.browser.Browser.ready_state',
+                            new_callable=mocker.PropertyMock)
+        browser.ready_state
+        assert mock.call_count == 1
+
+
+class TestBrowserRepr(object):
+    def test_works_even_if_browser_is_closed(self, browser, bkwargs):
+        b = Browser(**bkwargs)
+        b.close()
+        repr(b)
+
+
+class TestBrowserScreenshot(object):
+    def test_returns_an_instance_of_screenshot(self, browser):
+        from watir_snake.screenshot import Screenshot
+        assert isinstance(browser.screenshot, Screenshot)

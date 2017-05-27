@@ -87,7 +87,8 @@ class Waitable(object):
         message = message or 'waiting for true condition on {}'.format(self)
         if object is None:
             object = self
-        Wait.until(method, timeout, message, interval, object=object)
+        Wait.until(method=method, timeout=timeout, message=message, interval=interval,
+                   object=object)
         return self
 
     def wait_until_not(self, method=None, timeout=None, message=None, interval=None, object=None):
@@ -108,7 +109,8 @@ class Waitable(object):
         message = message or 'waiting for false condition on {}'.format(self)
         if object is None:
             object = self
-        Wait.until_not(method, timeout, message, interval, object=object)
+        Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
+                   object=object)
         return self
 
     def wait_until_present(self, timeout=None, interval=None):
