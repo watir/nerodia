@@ -1,4 +1,4 @@
-from copy import copy, Error
+from copy import copy
 
 import re
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException

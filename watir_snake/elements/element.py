@@ -201,7 +201,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         :type flashes: int
         :param delay: how long to wait between flashes
         :type delay: int or float
-        
+
         :Example:
 
         browser.text_field(name='new_user_first_name').flash()
@@ -467,13 +467,12 @@ class Element(Container, Atoms, Waitable, Adjacent):
         try:
             self.query_scope.wait_for_present()
             self.wait_until_present()
-        except TimeoutError:
+        except TimeoutError as e:
             if watir_snake.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
-                     'Element to exist. If the test is still passing, consider using '
+                     'Element to be present. If the test is still passing, consider using '
                      'Element#exists instead of catching UnknownObjectException')
-            raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
-                                         'located'.format(watir_snake.default_timeout, self))
+            raise UnknownObjectException('element located, but {}'.format(e.message))
 
     def wait_for_enabled(self):
         if not watir_snake.relaxed_locate:
@@ -481,7 +480,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         self.wait_for_present()
         try:
-            self.wait_until(lambda  e: e.enabled)
+            self.wait_until(lambda e: e.enabled)
         except TimeoutError:
             raise ObjectDisabledException('element present, but timed out after {} seconds, '
                                           'waiting for {} to be '

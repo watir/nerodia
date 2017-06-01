@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('definition_lists.html')
 
 def test_returns_the_matching_elements(browser):
     assert browser.dts(class_name='current-industry').to_list == \
-           [browser.dt(class_name='current-industry')]
+        [browser.dt(class_name='current-industry')]
 
 
 def test_returns_the_number_of_divs(browser):

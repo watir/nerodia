@@ -3,6 +3,7 @@ from re import compile
 
 pytestmark = pytest.mark.page('images.html')
 
+
 class TestAreaExist(object):
     def test_returns_true_if_the_area_exists(self, browser):
         assert browser.area(id='NCE').exists

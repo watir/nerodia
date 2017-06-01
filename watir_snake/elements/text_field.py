@@ -8,7 +8,6 @@ from .input import Input
 from .text_area import TextArea
 from ..browser import Browser
 from ..meta_elements import MetaHTMLElement
-from ..user_editable import UserEditable
 
 
 @six.add_metaclass(MetaHTMLElement)

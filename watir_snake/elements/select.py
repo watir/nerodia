@@ -105,6 +105,7 @@ class Select(HTMLElement):
 
     def _select_by(self, how, term):
         found = []
+
         def func(sel):
             if type(term) in [str, int, re._pattern_type]:
                 opt = {how: term}
@@ -133,12 +134,11 @@ class Select(HTMLElement):
     def _matches_regexp(self, how, element, exp):
         if how == 'text':
             return (re.search(exp, self.el.text) or re.search(exp, self.el.label)) \
-                   is not None
+                is not None
         elif how == 'value':
             return re.search(exp, element.value) is not None
         else:
             raise Error('unknown how: {}'.format(how))
-
 
     def _click_option(self, element):
         if not isinstance(element, Option):

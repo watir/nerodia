@@ -71,7 +71,6 @@ class TestBrowserAttributes(object):
 
         for IE9, this needs to be enabled in
         View => Toolbars -> Status bar
-         
         """
         browser.execute_script("window.status = 'All done!';")
         assert browser.status == 'All done!'
@@ -114,7 +113,7 @@ class TestBrowserAttributes(object):
         assert browser.title == 'Non-control elements'
 
     @pytest.mark.page('frames.html')
-    def test_always_returns_top_url(self, browser):
+    def test_always_returns_top_title(self, browser):
         browser.element(tag_name='title').text
         browser.frame().body().exists  # switches to frame
         assert browser.title == 'Frames'
@@ -177,7 +176,7 @@ class TestBrowserExecuteScript(object):
         assert browser.pre(id='rspec').text == 'javascript text'
 
     def test_executes_the_given_javascript_in_the_context_of_an_anonymous_function(self, browser):
-        assert browser.execute_script('1 + 1') == None
+        assert browser.execute_script('1 + 1') is None
         assert browser.execute_script('return 1 + 1') == 2
 
     def test_returns_correct_python_objects(self, browser):
@@ -323,16 +322,20 @@ class TestBrowserClosed(object):
 class TestBrowserWait(object):
     def test_delegates_wait_until_not_to_the_wait_module(self, browser, mocker):
         mock = mocker.patch('watir_snake.wait.wait.Wait.until_not')
+
         def method():
             pass
+
         browser.wait_until_not(timeout=3, message='foo', interval=0.2, method=method)
         mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
                                      object=browser)
 
     def test_delegates_wait_until_to_the_wait_module(self, browser, mocker):
         mock = mocker.patch('watir_snake.wait.wait.Wait.until')
+
         def method():
             pass
+
         browser.wait_until(timeout=3, message='foo', interval=0.2, method=method)
         mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
                                      object=browser)

@@ -10,7 +10,7 @@ try:
 except ImportError:
     import urllib as urllib_request
 try:
-    from http.server import BaseHTTPRequestHandler, HTTPServer, SimpleHTTPRequestHandler
+    from http.server import HTTPServer, SimpleHTTPRequestHandler
 except ImportError:
     from BaseHTTPServer import HTTPServer
     from SimpleHTTPServer import SimpleHTTPRequestHandler

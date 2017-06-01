@@ -95,7 +95,7 @@ class TestDeleteAttributes(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'xpath': "//del[@id='no_such_id']"}])
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
+    def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
         from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text

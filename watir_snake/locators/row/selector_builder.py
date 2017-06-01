@@ -8,7 +8,7 @@ from ...exception import Error
 
 class SelectorBuilder(ElementSelectorBuilder):
     def _build_wd_selector(self, selectors):
-        if any(isinstance(val, re._pattern_type) for vel in selectors.values()):
+        if any(isinstance(val, re._pattern_type) for val in selectors.values()):
             return None
 
         if not selectors.pop('tag_name', None):

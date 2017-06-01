@@ -110,7 +110,7 @@ class Waitable(object):
         if object is None:
             object = self
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
-                   object=object)
+                       object=object)
         return self
 
     def wait_until_present(self, timeout=None, interval=None):
@@ -124,7 +124,9 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
-        return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
+        message = 'waiting for true condition on present'
+        return self.wait_until(method=lambda x: x.present, timeout=timeout, message=message,
+                               interval=interval)
 
     def wait_until_not_present(self, timeout=None, interval=None):
         """
