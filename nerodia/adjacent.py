@@ -6,7 +6,7 @@ class Adjacent(object):
     def parent(self, **kwargs):
         """
         Returns parent element of current element
-        :rtype: watir_snake.elements.elements.Element
+        :rtype: nerodia.elements.elements.Element
 
         :Example:
 
@@ -18,7 +18,7 @@ class Adjacent(object):
     def preceding_sibling(self, **kwargs):
         """
         Returns preceding sibling element of current element
-        :rtype: watir_snake.elements.elements.Element
+        :rtype: nerodia.elements.elements.Element
 
         :Example:
 
@@ -33,7 +33,7 @@ class Adjacent(object):
     def preceding_siblings(self, **kwargs):
         """
         Returns collection of preceding sibling elements of current element
-        :rtype: watir_snake.element_collection.ElementCollection
+        :rtype: nerodia.element_collection.ElementCollection
 
         :Example:
 
@@ -48,7 +48,7 @@ class Adjacent(object):
     def following_sibling(self, **kwargs):
         """
         Returns following sibling element of current element
-        :rtype: watir_snake.elements.elements.Element
+        :rtype: nerodia.elements.elements.Element
 
         :Example:
 
@@ -63,7 +63,7 @@ class Adjacent(object):
     def following_siblings(self, **kwargs):
         """
         Returns collection of following sibling elements of current element
-        :rtype: watir_snake.element_collection.ElementCollection
+        :rtype: nerodia.element_collection.ElementCollection
 
         :Example:
 
@@ -78,7 +78,7 @@ class Adjacent(object):
     def child(self, **kwargs):
         """
         Returns element of direct child of current element
-        :rtype: watir_snake.elements.elements.Element
+        :rtype: nerodia.elements.elements.Element
 
         :Example:
 
@@ -90,7 +90,7 @@ class Adjacent(object):
     def children(self, **kwargs):
         """
         Returns collection of elements of direct children of current element
-        :rtype: watir_snake.element_collection.ElementCollection
+        :rtype: nerodia.element_collection.ElementCollection
 
         :Example:
 
@@ -105,7 +105,7 @@ class Adjacent(object):
 
     def _xpath_adjacent(self, direction='', **kwargs):
         from .elements.html_elements import HTMLElement, HTMLElementCollection
-        import watir_snake
+        import nerodia
 
         kwargs = copy(kwargs)
         index = kwargs.pop('index', None)
@@ -115,9 +115,9 @@ class Adjacent(object):
             raise AttributeError('unsupported locators: {} for #{} method'.format(kwargs, caller))
 
         if index is not None:
-            klass = watir_snake.tag_to_class.get(tag_name) if tag_name else HTMLElement
+            klass = nerodia.tag_to_class.get(tag_name) if tag_name else HTMLElement
             return klass(self, {'xpath': './{}{}[{}]'.format(direction, tag_name or '*', index + 1)})
         else:
-            klass = watir_snake.tag_to_class.get('{}_collection'.format(tag_name)) if tag_name else \
+            klass = nerodia.tag_to_class.get('{}_collection'.format(tag_name)) if tag_name else \
                 HTMLElementCollection
             return klass(self, {'xpath': './{}{}'.format(direction, tag_name or '*')})

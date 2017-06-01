@@ -1,7 +1,7 @@
 from selenium.common.exceptions import NoAlertPresentException
 from warnings import warn
 
-import watir_snake
+import nerodia
 from .exception import UnknownObjectException
 from .wait.wait import Waitable, TimeoutError
 
@@ -93,13 +93,13 @@ class Alert(Waitable):
             raise UnknownObjectException('unable to locate alert')
 
     def wait_for_exists(self):
-        if not watir_snake.relaxed_locate:
+        if not nerodia.relaxed_locate:
             return self.assert_exists()
 
         try:
             return self.wait_until(lambda a: a.exists, message='waiting for alert')
         except TimeoutError:
-            if watir_snake.default_timeout != 0:
+            if nerodia.default_timeout != 0:
                 warn(
                     'This code has slept for the duration of the default timeout waiting for an '
                     'Alert to exist. If the test is still passing, consider using Alert#exists? '

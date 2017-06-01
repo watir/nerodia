@@ -56,7 +56,7 @@ class TestCheckboxExist(object):
             browser.checkbox(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.checkbox(no_such_how='some_value').exists
 
@@ -70,7 +70,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(id='new_user_interests_books').class_name == ''
 
     def test_raises_correct_exception_for_idif_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(id='no_such_id').class_name
 
@@ -82,7 +82,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(index=1).id == ''
 
     def test_raises_correct_exception_for_id_if_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).id
 
@@ -94,7 +94,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(id='new_user_interests_food').name == ''
 
     def test_raises_correct_exception_for_name_if_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).name
 
@@ -106,7 +106,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(id='new_user_interests_books').title == ''
 
     def test_raises_correct_exception_for_title_if_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).title
 
@@ -115,7 +115,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(index=0).type == 'checkbox'
 
     def test_raises_correct_exception_for_type_if_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).type
 
@@ -124,7 +124,7 @@ class TestCheckboxAttributes(object):
         assert browser.checkbox(id='new_user_interests_books').value == 'books'
 
     def test_raises_correct_exception_for_value_if_the_checkbox_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).value
 
@@ -152,7 +152,7 @@ class TestCheckboxEnabled(object):
                              [{'id': 'no_such_id'},
                               {'xpath': "//input[@id='no_such_id']"}])
     def test_raises_correct_exception_for_enabled_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).enabled
 
@@ -164,7 +164,7 @@ class TestCheckboxEnabled(object):
         assert not browser.checkbox(id='new_user_interests_books').disabled
 
     def test_raises_correct_exception_for_disabled_if_the_checkbox_button_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).disabled
 
@@ -175,7 +175,7 @@ class TestCheckboxManipulation(object):
                              [{'id': 'new_user_interests_dentistry'},
                               {'xpath': "//input[@id='new_user_interests_dentistry']"}])
     def test_raises_correct_exception_for_clear_if_the_checkbox_is_disabled(self, browser, selector):
-        from watir_snake.exception import ObjectDisabledException
+        from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
             assert not browser.checkbox(id='new_user_interests_dentistry').is_set
             browser.checkbox(**selector).clear()
@@ -192,7 +192,7 @@ class TestCheckboxManipulation(object):
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
     def test_raises_correct_exception_for_clear_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).clear()
 
@@ -216,7 +216,7 @@ class TestCheckboxManipulation(object):
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
     def test_raises_correct_exception_for_set_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).set()
 
@@ -224,7 +224,7 @@ class TestCheckboxManipulation(object):
                              [{'id': 'new_user_interests_dentistry'},
                               {'xpath': "//input[@id='new_user_interests_dentistry']"}])
     def test_raises_correct_exception_for_set_if_the_checkbox_is_disabled(self, browser, selector):
-        from watir_snake.exception import ObjectDisabledException
+        from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
             browser.checkbox(**selector).set()
 
@@ -246,6 +246,6 @@ class TestCheckboxManipulation(object):
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
     def test_raises_correct_exception_for_is_set_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).is_set

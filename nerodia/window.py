@@ -217,8 +217,8 @@ class Window(Waitable):
             raise NoMatchingWindowFoundException(str(self.selector))
 
     def wait_for_exists(self):
-        import watir_snake
-        if not watir_snake.relaxed_locate:
+        import nerodia
+        if not nerodia.relaxed_locate:
             self.assert_exists()
         try:
             self.wait_until(lambda w: w.exists)

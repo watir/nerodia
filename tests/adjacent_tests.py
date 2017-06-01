@@ -1,6 +1,6 @@
 import pytest
 
-from watir_snake.elements.html_elements import Div, Span, HTMLElement, HTMLElementCollection
+from nerodia.elements.html_elements import Div, Span, HTMLElement, HTMLElementCollection
 
 pytestmark = pytest.mark.page('nested_elements.html')
 

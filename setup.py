@@ -11,12 +11,12 @@ for scheme in INSTALL_SCHEMES.values():
 
 setup_args = {
     'cmdclass': {'install': install},
-    'name': 'watir_snake',
+    'name': 'nerodia',
     'version': "0.1.0",
     'license': 'MIT',
     'description': 'Python port of WATIR',
     'long_description': open(join(abspath(dirname(__file__)), 'README.rst')).read(),
-    'url': 'https://github.com/lmtierney/watir-snake',
+    'url': 'https://github.com/lmtierney/nerodia',
     'classifiers': ['Intended Audience :: Developers',
                     'Operating System :: POSIX',
                     'Operating System :: Microsoft :: Windows',
@@ -29,8 +29,8 @@ setup_args = {
                     'Programming Language :: Python :: 3.4',
                     'Programming Language :: Python :: 3.5',
                     'Programming Language :: Python :: 3.6'],
-    'package_dir': {'watir_snake': 'watir_snake'},
-    'packages': ['watir_snake'],
+    'package_dir': {'nerodia': 'nerodia'},
+    'packages': ['nerodia'],
     'zip_safe': False
 }
 

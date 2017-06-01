@@ -2,10 +2,10 @@ import pytest
 import re
 from selenium.webdriver.common.by import By
 
-from watir_snake.elements.html_elements import HTMLElement
-from watir_snake.exception import MissingWayOfFindingObjectException
-from watir_snake.locators.element import Validator, SelectorBuilder
-from watir_snake.locators.element.locator import Locator
+from nerodia.elements.html_elements import HTMLElement
+from nerodia.exception import MissingWayOfFindingObjectException
+from nerodia.locators.element import Validator, SelectorBuilder
+from nerodia.locators.element.locator import Locator
 
 
 def to_dict(selector):
@@ -19,7 +19,7 @@ def to_dict(selector):
 
 
 def element(mocker, values, attrs=None):
-    mock = mocker.patch('watir_snake.elements.element.Element', selector=values).return_value
+    mock = mocker.patch('nerodia.elements.element.Element', selector=values).return_value
     attrs = attrs if attrs else {}
     mock.get_attribute.side_effect = lambda x: attrs[x]
     mock.tag_name = values.get('tag_name')
@@ -118,12 +118,12 @@ class TestElementLocatorFindsSingleElement(object):
         expect_one.assert_called_once_with(By.XPATH, ".//div[@aria-label='foo']")
 
     def test_normalizes_space_for_the_href_attribute(self, browser, expect_one):
-        from watir_snake.elements.link import Anchor
+        from nerodia.elements.link import Anchor
         locate_one(browser, {'tag_name': 'a', 'href': 'foo'}, Anchor.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//a[normalize-space(@href)='foo']")
 
     def test_wraps_type_attribute_with_translate_for_upper_case_values(self, browser, expect_one):
-        from watir_snake.elements.input import Input
+        from nerodia.elements.input import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'file'}, Input.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//input[{}='file']".format(translated_type))
@@ -131,18 +131,18 @@ class TestElementLocatorFindsSingleElement(object):
     # uses the corresponding <label>'s @for attribute or parent::label when locating by label
     def test_uses_the_corresponding_label_for_attribute_for_parent_label_when_locating_by_label(
             self, browser, expect_one):
-        from watir_snake.elements.input import Input
+        from nerodia.elements.input import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'text', 'label': 'foo'}, Input.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//input[{}='text' and (@id=//label[normalize-space()='foo']/@for or parent::label[normalize-space()='foo'])]".format(translated_type))
 
     def test_uses_label_attribute_if_it_is_valid_for_element(self, browser, expect_one):
-        from watir_snake.elements.option import Option
+        from nerodia.elements.option import Option
         locate_one(browser, {'tag_name': 'option', 'label': 'foo'}, Option.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//option[@label='foo']")
 
     def test_translates_ruby_attribute_names_to_content_attribute_names(self, browser, expect_one):
-        from watir_snake.elements.html_elements import Meta
+        from nerodia.elements.html_elements import Meta
         locate_one(browser, {'tag_name': 'meta', 'http_equiv': 'foo'}, Meta.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//meta[@http-equiv='foo']")
 
@@ -208,7 +208,7 @@ class TestElementLocatorFindsSingleElement(object):
         assert locate_one(browser, selector) == elements[1]
 
     def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_one):
-        from watir_snake.elements.input import Input
+        from nerodia.elements.input import Input
         expect_one.return_value = element(mocker, values={'tag_name': 'div'})
         selector = {'tag_name': 'input', 'xpath': '//div'}
         assert locate_one(browser, selector, Input.ATTRIBUTES) is None
@@ -228,7 +228,7 @@ class TestElementLocatorFindsSingleElement(object):
         assert e.value.message == "expected one of [{}, {}, {}], got 123:{}".format(str, re._pattern_type, bool, int)
 
     def test_raises_correct_exception_if_the_attribute_is_not_valid(self, browser, mocker, expect_all):
-        from watir_snake.elements.input import Input
+        from nerodia.elements.input import Input
         with pytest.raises(MissingWayOfFindingObjectException) as e:
             selector = {'tag_name': 'input', 'href': 'foo'}
             locate_one(browser, selector, Input.ATTRIBUTES)

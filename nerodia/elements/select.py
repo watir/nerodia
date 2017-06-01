@@ -1,8 +1,8 @@
 import re
 import six
 
-from watir_snake.exception import Error, NoValueFoundException, UnknownObjectException
-from watir_snake.wait.wait import TimeoutError
+from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
+from nerodia.wait.wait import TimeoutError
 from .html_elements import HTMLElement
 from .option import Option
 from ..meta_elements import MetaHTMLElement
@@ -24,7 +24,7 @@ class Select(HTMLElement):
         """
         Gets all the options in the select list
 
-        :rtype: watir_snake.elements.option.OptionColletion
+        :rtype: nerodia.elements.option.OptionColletion
         """
         return self._element_call(lambda: super(Select, self).options(*args, **kwargs),
                                   self.wait_for_exists)
@@ -97,7 +97,7 @@ class Select(HTMLElement):
     def selected_options(self):
         """
         Returns an array of currently selected options
-        :rtype: list[watir_snake.elements.option.Option]
+        :rtype: list[nerodia.elements.option.Option]
         """
         return [e for e in self.options if e.is_selected()]
 

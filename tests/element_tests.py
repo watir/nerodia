@@ -32,7 +32,7 @@ class TestElementEnabled(object):
         assert not browser.element(name='new_user_submit_disabled').enabled
 
     def test_correct_exception_if_the_element_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.element(name='no_such_name').enabled
 
@@ -60,7 +60,7 @@ class TestElementCall(object):
                 made.append(True)
 
         element = browser.div(id='text')
-        mock = mocker.patch('watir_snake.elements.element.Element.assert_element_found')
+        mock = mocker.patch('nerodia.elements.element.Element.assert_element_found')
         mock.side_effect = make_stale
         element.text
 

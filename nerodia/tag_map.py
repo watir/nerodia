@@ -1,9 +1,9 @@
-from watir_snake import tag_to_class
-from watir_snake.elements.area import Area
-from watir_snake.elements.button import Button
-from watir_snake.elements.d_list import DList
-from watir_snake.elements.form import Form
-from watir_snake.elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
+from nerodia import tag_to_class
+from nerodia.elements.area import Area
+from nerodia.elements.button import Button
+from nerodia.elements.d_list import DList
+from nerodia.elements.form import Form
+from nerodia.elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
     Heading, Head, HR, Html, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
     OList, OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
@@ -21,16 +21,16 @@ from watir_snake.elements.html_elements import HTMLElement, Audio, Base, Quote, 
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \
     TableHeaderCellCollection, TimeCollection, TitleCollection, TableRowCollection, TrackCollection, \
     UListCollection, VideoCollection
-from watir_snake.elements.i_frame import IFrame
-from watir_snake.elements.image import Image
-from watir_snake.elements.input import Input
-from watir_snake.elements.link import Anchor
-from watir_snake.elements.option import Option
-from watir_snake.elements.select import Select
-from watir_snake.elements.table import Table, TableCollection
-from watir_snake.elements.table_row import TableRow
-from watir_snake.elements.table_section import TableSection, TableSectionCollection
-from watir_snake.elements.text_area import TextArea
+from nerodia.elements.i_frame import IFrame
+from nerodia.elements.image import Image
+from nerodia.elements.input import Input
+from nerodia.elements.link import Anchor
+from nerodia.elements.option import Option
+from nerodia.elements.select import Select
+from nerodia.elements.table import Table, TableCollection
+from nerodia.elements.table_row import TableRow
+from nerodia.elements.table_section import TableSection, TableSectionCollection
+from nerodia.elements.text_area import TextArea
 
 tag_to_class['a'] = Anchor
 tag_to_class['a_collection'] = AnchorCollection

@@ -3,7 +3,7 @@ from importlib import import_module
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 
-import watir_snake
+import nerodia
 from .after_hooks import AfterHooks
 from .alert import Alert
 from .container import Container
@@ -21,7 +21,7 @@ except ImportError:
 class Browser(Container, HasWindow, Waitable):
     def __init__(self, browser='chrome', *args, **kwargs):
         """
-        Creates a watir_snake.browser.Browser instance
+        Creates a nerodia.browser.Browser instance
         :param browser: firefox, ie, chrome, remote or Selenium WebDriver instance
         :type browser: selenium.webdriver.remote.webdriver.WebDriver or str
         :param args: args passed to the underlying driver
@@ -122,7 +122,7 @@ class Browser(Container, HasWindow, Waitable):
     def cookies(self):
         """
         Handles cookies
-        :rtype: watir_snake.cookies.Cookies
+        :rtype: nerodia.cookies.Cookies
         """
         return Cookies(self.driver)
 
@@ -154,7 +154,7 @@ class Browser(Container, HasWindow, Waitable):
     def alert(self):
         """
         Handles Javascript alerts, confirms and prompts
-        :rtype: watir_snake.alert.Alert
+        :rtype: nerodia.alert.Alert
         """
         return Alert(self)
 
@@ -214,7 +214,7 @@ class Browser(Container, HasWindow, Waitable):
     def screenshot(self):
         """
         Handles screenshots of current pages
-        :rtype: watir_snake.screenshot.Screenshot
+        :rtype: nerodia.screenshot.Screenshot
         """
         from .screenshot import Screenshot
         return Screenshot(self.driver)
@@ -263,5 +263,5 @@ class Browser(Container, HasWindow, Waitable):
 
     def _wrap_element(self, element):
         from .elements.html_elements import HTMLElement
-        klass = watir_snake.element_class_for(element.tag_name.lower()) or HTMLElement
+        klass = nerodia.element_class_for(element.tag_name.lower()) or HTMLElement
         return klass(self, {'element': element})

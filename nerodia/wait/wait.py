@@ -1,4 +1,4 @@
-import watir_snake
+import nerodia
 from .timer import Timer
 
 
@@ -22,7 +22,7 @@ class Wait(object):
 
         Wait.until(lambda: browser.text_field(name='abrakadbra').present)
         """
-        timeout = timeout or watir_snake.default_timeout
+        timeout = timeout or nerodia.default_timeout
         result = cls._run_with_timer(timeout, interval, method, object, until=True)
         if result:
             return result
@@ -44,7 +44,7 @@ class Wait(object):
 
         Wait.until_not(lambda: browser.text_field(name='abrakadbra').present)
         """
-        timeout = timeout or watir_snake.default_timeout
+        timeout = timeout or nerodia.default_timeout
         result = cls._run_with_timer(timeout, interval, method, object, until=False)
         if result:
             return result
@@ -141,7 +141,7 @@ class Waitable(object):
         """
 
         def method(arg):
-            from watir_snake.elements.element import Element
+            from nerodia.elements.element import Element
             if isinstance(arg, Element):
                 arg.reset()
             return arg.present

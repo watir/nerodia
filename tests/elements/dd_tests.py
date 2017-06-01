@@ -22,7 +22,7 @@ class TestDdExist(object):
             browser.dd(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.dd(no_such_how='some_value').exists
 
@@ -42,7 +42,7 @@ class TestDdAttributes(object):
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).class_name
 
@@ -59,7 +59,7 @@ class TestDdAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337}])
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).id
 
@@ -82,7 +82,7 @@ class TestDdAttributes(object):
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).text
 
@@ -110,7 +110,7 @@ class TestButtonManipulation(object):
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
     def test_raises_correct_exception_if_element_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).click()
 

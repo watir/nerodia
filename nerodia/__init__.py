@@ -19,7 +19,7 @@ from . import locators, tag_map  # noqa
 
 #
 # Whether the locators should be used from a different namespace.
-# Defaults to watir_snake.locators.
+# Defaults to nerodia.locators.
 #
 
 locator_namespace = locators

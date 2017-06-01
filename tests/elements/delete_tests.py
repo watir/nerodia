@@ -33,7 +33,7 @@ class TestDeleteExist(object):
             browser.delete(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.delete(no_such_how='some_value').exists
 
@@ -48,7 +48,7 @@ class TestDeleteAttributes(object):
         assert browser.delete(index=2).class_name == ''
 
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(id='no_such_id').class_name
 
@@ -64,7 +64,7 @@ class TestDeleteAttributes(object):
                              [{'id': 'no_such_id'},
                               {'index': 1337}])
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).id
 
@@ -80,7 +80,7 @@ class TestDeleteAttributes(object):
                              [{'id': 'no_such_id'},
                               {'xpath': "//del[@id='no_such_id']"}])
     def test_raises_correct_exception_for_title_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).title
 
@@ -96,7 +96,7 @@ class TestDeleteAttributes(object):
                              [{'id': 'no_such_id'},
                               {'xpath': "//del[@id='no_such_id']"}])
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text
 
@@ -121,6 +121,6 @@ class TestDeleteManipulation(object):
                              [{'id': 'no_such_id'},
                               {'title': 'no_such_title'}])
     def test_raises_correct_exception_if_element_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).click()

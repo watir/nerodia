@@ -1,6 +1,6 @@
 import pytest
 
-from watir_snake.container import Container
+from nerodia.container import Container
 
 
 class TestContainerExtractSelector(object):

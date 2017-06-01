@@ -37,7 +37,7 @@ class Table(RowContainer, HTMLElement):
         Returns row of this table with given index
 
         :param idx: row index
-        :rtype: watir_snake.elements.row.Row
+        :rtype: nerodia.elements.row.Row
         """
         return self.row('index', idx)
 

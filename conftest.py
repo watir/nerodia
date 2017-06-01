@@ -1,9 +1,9 @@
 import os
 import pytest
 
-import watir_snake
-from watir_snake.browser import Browser
-from watir_snake.support.webserver import WebServer
+import nerodia
+from nerodia.browser import Browser
+from nerodia.support.webserver import WebServer
 
 browsers = (
     'chrome',
@@ -15,7 +15,7 @@ browsers = (
     'safari'
 )
 
-watir_snake.default_timeout = 3
+nerodia.default_timeout = 3
 
 
 def pytest_addoption(parser):
@@ -37,7 +37,7 @@ def pytest_collection_modifyitems(session, config, items):
     :param config: configuration of pytest
     :param items: items collected
     """
-    watir_snake.relaxed_locate = not config.getoption('--not_relaxed')
+    nerodia.relaxed_locate = not config.getoption('--not_relaxed')
 
 
 @pytest.fixture(scope='session')

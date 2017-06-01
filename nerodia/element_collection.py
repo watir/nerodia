@@ -2,7 +2,7 @@ from importlib import import_module
 
 import re
 
-import watir_snake
+import nerodia
 
 
 class ElementCollection(object):
@@ -44,7 +44,7 @@ class ElementCollection(object):
         :param idx: index of wanted element, 0-indexed
         :type idx: int
         :return: instance of Element subclass
-        :rtype: watir_snake.elements.element.Element
+        :rtype: nerodia.elements.element.Element
         """
         try:
             return self.to_list[idx]
@@ -55,7 +55,7 @@ class ElementCollection(object):
     def to_list(self):
         """
         This collection as a list
-        :rtype: list[watir_snake.elements.element.Element]
+        :rtype: list[nerodia.elements.element.Element]
         """
         from .elements.html_elements import HTMLElement
         if not self.as_list:
@@ -122,7 +122,7 @@ class ElementCollection(object):
 
     @property
     def _import_module(self):
-        modules = [watir_snake.locator_namespace.__name__, self._element_class_name.lower()]
+        modules = [nerodia.locator_namespace.__name__, self._element_class_name.lower()]
         try:
             return import_module('{}.{}'.format(*modules))
         except ImportError:
@@ -141,12 +141,12 @@ class ElementCollection(object):
         if element_module == 'frame':  # special cases
             element_module = 'i_frame'
         try:
-            module = import_module('watir_snake.elements.{}'.format(element_module))
+            module = import_module('nerodia.elements.{}'.format(element_module))
         except ImportError:
             if isinstance(self, HTMLElementCollection):
-                module = import_module('watir_snake.elements.html_elements')
+                module = import_module('nerodia.elements.html_elements')
             elif isinstance(self, SVGElementCollection):
-                module = import_module('watir_snake.elements.svg_elements')
+                module = import_module('nerodia.elements.svg_elements')
             else:
                 raise TypeError(
                     'element class for {} could not be determined'.format(self.__class__.__name__))

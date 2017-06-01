@@ -15,12 +15,12 @@ class TestElementInit(object):
                                 title='Dancing is fun!').value == 'dancing'
 
     def test_raises_correct_exception_with_a_sane_error_message_when_given_a_dict_of_how_what_arguments(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=100, name='foo').id
 
     def test_raises_correct_exception_if_given_the_wrong_number_of_arguments(self):
-        from watir_snake.elements.element import Element
+        from nerodia.elements.element import Element
         with pytest.raises(TypeError):
             Element('container', 1, 2, 3, 4)
         with pytest.raises(TypeError):
@@ -77,7 +77,7 @@ class TestElementWithoutTagName(object):
         assert browser.element(title='no title').exists
 
     def test_raises_correct_exception_if_the_attribute_is_invalid_for_the_element_type(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.element(foo='no title').exists
         with pytest.raises(MissingWayOfFindingObjectException):
@@ -99,30 +99,30 @@ class TestElementWithoutTagName(object):
 
 class TestElementSubtype(object):
     def test_returns_a_checkbox_instance(self, browser):
-        from watir_snake.elements.check_box import CheckBox
+        from nerodia.elements.check_box import CheckBox
         assert isinstance(browser.input(xpath="//input[@type='checkbox']").to_subtype(), CheckBox)
 
     def test_returns_a_radio_instance(self, browser):
-        from watir_snake.elements.radio import Radio
+        from nerodia.elements.radio import Radio
         assert isinstance(browser.input(xpath="//input[@type='radio']").to_subtype(), Radio)
 
     def test_returns_a_button_instance(self, browser):
-        from watir_snake.elements.button import Button
+        from nerodia.elements.button import Button
         assert isinstance(browser.input(xpath="//input[@type='button']").to_subtype(), Button)
         assert isinstance(browser.input(xpath="//input[@type='submit']").to_subtype(), Button)
         assert isinstance(browser.input(xpath="//input[@type='reset']").to_subtype(), Button)
         assert isinstance(browser.input(xpath="//input[@type='image']").to_subtype(), Button)
 
     def test_returns_a_text_field_instance(self, browser):
-        from watir_snake.elements.text_field import TextField
+        from nerodia.elements.text_field import TextField
         assert isinstance(browser.input(xpath="//input[@type='text']").to_subtype(), TextField)
 
     def test_returns_a_file_field_instance(self, browser):
-        from watir_snake.elements.file_field import FileField
+        from nerodia.elements.file_field import FileField
         assert isinstance(browser.input(xpath="//input[@type='file']").to_subtype(), FileField)
 
     def test_returns_a_div_instance(self, browser):
-        from watir_snake.elements.html_elements import Div
+        from nerodia.elements.html_elements import Div
         assert isinstance(browser.element(xpath="//*[@id='messages']").to_subtype(), Div)
 
 
@@ -151,12 +151,12 @@ class TestElementVisibility(object):
         assert browser.text_field(id='new_user_email').visible
 
     def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').visible
 
     def test_raises_correct_exception_if_the_element_is_stale(self, browser, mocker):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             wd_element = browser.text_field(id='new_user_email').wd
 

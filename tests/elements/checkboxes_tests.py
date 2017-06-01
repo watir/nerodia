@@ -16,7 +16,7 @@ def test_returns_the_button_at_the_given_index(browser):
 
 
 def test_iterates_through_buttons_correctly(browser):
-    from watir_snake.elements.check_box import CheckBox
+    from nerodia.elements.check_box import CheckBox
     count = 0
     for index, c in enumerate(browser.checkboxes()):
         checkbox = browser.checkbox(index=index)

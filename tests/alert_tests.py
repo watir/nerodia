@@ -1,6 +1,6 @@
 import pytest
 
-from watir_snake.wait.wait import TimeoutError
+from nerodia.wait.wait import TimeoutError
 
 pytestmark = pytest.mark.page('alerts.html')
 
@@ -44,14 +44,14 @@ class TestAlertAPI(object):
 
     # wait_until_present
 
-    @pytest.mark.skipif('watir_snake.relaxed_locate',
+    @pytest.mark.skipif('nerodia.relaxed_locate',
                         reason='only applicable when not relaxed locating')
     def test_waits_until_alert_is_present_and_goes_on(self, browser):
         browser.button(id='timeout-alert').click()
         browser.alert.wait_until_present().ok()
         assert not browser.alert.exists
 
-    @pytest.mark.skipif('watir_snake.relaxed_locate',
+    @pytest.mark.skipif('nerodia.relaxed_locate',
                         reason='only applicable when not relaxed locating')
     def test_raises_error_if_alert_is_not_present_after_timeout(self, browser):
         with pytest.raises(TimeoutError):

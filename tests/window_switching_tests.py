@@ -1,9 +1,9 @@
 import pytest
 import re
 
-from watir_snake.exception import NoMatchingWindowFoundException
-from watir_snake.wait.wait import Wait
-from watir_snake.window import Window
+from nerodia.exception import NoMatchingWindowFoundException
+from nerodia.wait.wait import Wait
+from nerodia.window import Window
 
 
 @pytest.fixture
@@ -174,7 +174,7 @@ class TestWindows(object):
 
     # wait_until_present
     def test_times_out_waiting_for_a_non_present_window(self, browser):
-        from watir_snake.wait.wait import TimeoutError
+        from nerodia.wait.wait import TimeoutError
         with pytest.raises(TimeoutError):
             browser.window(title='noop').wait_until(timeout=0.5, method=lambda w: w.present)
 

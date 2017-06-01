@@ -2,17 +2,17 @@ from time import time
 
 import pytest
 
-import watir_snake
-from watir_snake.exception import NoValueFoundException
-from watir_snake.wait.wait import Wait, TimeoutError, Timer
+import nerodia
+from nerodia.exception import NoValueFoundException
+from nerodia.wait.wait import Wait, TimeoutError, Timer
 
 
 @pytest.fixture
 def default_timeout_handling(browser):
-    orig_timeout = watir_snake.default_timeout
-    watir_snake.default_timeout = 1
+    orig_timeout = nerodia.default_timeout
+    nerodia.default_timeout = 1
     yield
-    watir_snake.default_timeout = orig_timeout
+    nerodia.default_timeout = orig_timeout
 
 
 class TestWaitUntil(object):
@@ -47,7 +47,7 @@ class TestWaitUntil(object):
         assert count.get('value') == 2
 
     def test_uses_timer_for_waiting(self, mocker):
-        mocker.patch('watir_snake.wait.wait.Timer.wait')
+        mocker.patch('nerodia.wait.wait.Timer.wait')
         Wait.until(timeout=0.5, method=lambda: True)
         Timer.wait.assert_called_once()
 
@@ -84,7 +84,7 @@ class TestWaitWhile(object):
         assert count.get('value') == 2
 
     def test_uses_timer_for_waiting(self, mocker):
-        mocker.patch('watir_snake.wait.wait.Timer.wait')
+        mocker.patch('nerodia.wait.wait.Timer.wait')
         Wait.until_not(timeout=0.5, method=lambda: True)
         Timer.wait.assert_called_once()
 
@@ -104,7 +104,7 @@ class TestWaitDefaultTimer(object):
             Wait.timer = Timer()
 
 
-@pytest.mark.skipif('watir_snake.relaxed_locate',
+@pytest.mark.skipif('nerodia.relaxed_locate',
                     reason='only applicable when not relaxed locating')
 @pytest.mark.page('wait.html')
 class TestElementWaitUntilEnabled(object):
@@ -154,7 +154,7 @@ class TestElementWaitUntilPresent(object):
         assert e.value.message == message
 
     def test_users_provided_interval(self, browser, mocker):
-        mock = mocker.patch('watir_snake.elements.html_elements.Div.present',
+        mock = mocker.patch('nerodia.elements.html_elements.Div.present',
                             new_callable=mocker.PropertyMock)
         element = browser.div(id='bar')
         try:
@@ -187,7 +187,7 @@ class TestElementWaitUntilNotPresent(object):
         assert e.value.message == message
 
     def test_users_provided_interval(self, browser, mocker):
-        mock = mocker.patch('watir_snake.elements.html_elements.Div.present',
+        mock = mocker.patch('nerodia.elements.html_elements.Div.present',
                             new_callable=mocker.PropertyMock)
         element = browser.div(id='foo')
         try:
@@ -272,22 +272,22 @@ class TestDefaultTimeout(object):
         start_time = time()
         with pytest.raises(TimeoutError):
             Wait.until(lambda: False)
-        assert watir_snake.default_timeout < time() - start_time < watir_snake.default_timeout + 1
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
 
     def test_is_used_by_wait_until_not(self, browser):
         start_time = time()
         with pytest.raises(TimeoutError):
             Wait.until_not(lambda: True)
-        assert watir_snake.default_timeout < time() - start_time < watir_snake.default_timeout + 1
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
 
     def test_is_used_by_element_wait_until_present(self, browser):
         start_time = time()
         with pytest.raises(TimeoutError):
             browser.div(id='bar').wait_until_present()
-        assert watir_snake.default_timeout < time() - start_time < watir_snake.default_timeout + 1
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
 
     def test_is_used_by_element_wait_until_not_present(self, browser):
         start_time = time()
         with pytest.raises(TimeoutError):
             browser.div(id='foo').wait_until_not_present()
-        assert watir_snake.default_timeout < time() - start_time < watir_snake.default_timeout + 1
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1

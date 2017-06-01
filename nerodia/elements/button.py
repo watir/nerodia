@@ -1,6 +1,6 @@
 import six
 
-from watir_snake.exception import Error
+from nerodia.exception import Error
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 

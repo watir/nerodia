@@ -6,7 +6,7 @@ from selenium.common.exceptions import InvalidElementStateException, StaleElemen
 from selenium.webdriver.common.action_chains import ActionChains
 from warnings import warn
 
-import watir_snake
+import nerodia
 from ..adjacent import Adjacent
 from ..atoms import Atoms
 from ..container import Container
@@ -289,7 +289,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         :Example:
 
-        browser.text_field(name='new_user_first_name').send_keys('watir_snake')
+        browser.text_field(name='new_user_first_name').send_keys('nerodia')
         """
         return self._element_call(lambda: self.el.send_keys(*args), self.wait_for_writable)
 
@@ -414,7 +414,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             else:
                 klass = TextField
         else:
-            klass = watir_snake.element_class_for(tag_name) or HTMLElement
+            klass = nerodia.element_class_for(tag_name) or HTMLElement
 
         return klass(self.query_scope, selector=self.selector, element=elem)
 
@@ -422,7 +422,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def browser(self):
         """
         Returns browser
-        :rtype: watir_snake.browser.Browser
+        :rtype: nerodia.browser.Browser
         """
         return self.query_scope.browser
 
@@ -444,7 +444,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self.el = None
 
     def wait_for_exists(self):
-        if not watir_snake.relaxed_locate:
+        if not nerodia.relaxed_locate:
             return self.assert_exists()
         if self.exists:  # Performance shortcut
             return None
@@ -452,15 +452,15 @@ class Element(Container, Atoms, Waitable, Adjacent):
             self.query_scope.wait_for_exists()
             self.wait_until(lambda e: e.exists)
         except TimeoutError:
-            if watir_snake.default_timeout != 0:
+            if nerodia.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
                      'Element to exist. If the test is still passing, consider using '
                      'Element#exists instead of catching UnknownObjectException')
             raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
-                                         'located'.format(watir_snake.default_timeout, self))
+                                         'located'.format(nerodia.default_timeout, self))
 
     def wait_for_present(self):
-        if not watir_snake.relaxed_locate:
+        if not nerodia.relaxed_locate:
             return self.assert_exists()
 
         self.wait_for_exists()
@@ -468,14 +468,14 @@ class Element(Container, Atoms, Waitable, Adjacent):
             self.query_scope.wait_for_present()
             self.wait_until_present()
         except TimeoutError as e:
-            if watir_snake.default_timeout != 0:
+            if nerodia.default_timeout != 0:
                 warn('This code has slept for the duration of the default timeout waiting for an '
                      'Element to be present. If the test is still passing, consider using '
                      'Element#exists instead of catching UnknownObjectException')
             raise UnknownObjectException('element located, but {}'.format(e.message))
 
     def wait_for_enabled(self):
-        if not watir_snake.relaxed_locate:
+        if not nerodia.relaxed_locate:
             return self._assert_enabled()
 
         self.wait_for_present()
@@ -484,10 +484,10 @@ class Element(Container, Atoms, Waitable, Adjacent):
         except TimeoutError:
             raise ObjectDisabledException('element present, but timed out after {} seconds, '
                                           'waiting for {} to be '
-                                          'enabled'.format(watir_snake.default_timeout, self))
+                                          'enabled'.format(nerodia.default_timeout, self))
 
     def wait_for_writable(self):
-        if not watir_snake.relaxed_locate:
+        if not nerodia.relaxed_locate:
             return self._assert_writable()
 
         self.wait_for_enabled()
@@ -496,7 +496,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         except TimeoutError:
             raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
                                           'seconds, waiting for {} to not be '
-                                          'readonly'.format(watir_snake.default_timeout, self))
+                                          'readonly'.format(nerodia.default_timeout, self))
 
     def assert_exists(self):
         """
@@ -556,7 +556,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     @property
     def _import_module(self):
-        modules = [watir_snake.locator_namespace.__name__, self._element_class_name.lower()]
+        modules = [nerodia.locator_namespace.__name__, self._element_class_name.lower()]
         try:
             return import_module('{}.{}'.format(*modules))
         except ImportError:
@@ -590,13 +590,13 @@ class Element(Container, Atoms, Waitable, Adjacent):
     @classmethod
     def _assert_is_element(cls, obj):
         if not isinstance(obj, Element):
-            raise TypeError('execpted watir_snake.Element, '
+            raise TypeError('execpted nerodia.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):
         exist_check = exist_check or self.wait_for_exists
         if Wait.timer.locked is None:
-            Wait.timer = Timer(timeout=watir_snake.default_timeout)
+            Wait.timer = Timer(timeout=nerodia.default_timeout)
         try:
             exist_check()
             return method()

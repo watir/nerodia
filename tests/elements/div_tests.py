@@ -37,7 +37,7 @@ class TestDivExist(object):
             browser.div(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.div(no_such_how='some_value').exists
 
@@ -57,7 +57,7 @@ class TestDivAttributes(object):
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(**selector).class_name
 
@@ -74,7 +74,7 @@ class TestDivAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337}])
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(**selector).id
 
@@ -93,7 +93,7 @@ class TestDivAttributes(object):
         assert browser.div(id='promo').style() == ''
 
     def test_raises_correct_exception_for_title_if_element_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(id='no_such_id').style()
 
@@ -116,7 +116,7 @@ class TestDivAttributes(object):
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text
 
@@ -142,7 +142,7 @@ class TestDivManipulation(object):
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
     def test_raises_correct_exception_when_clicking_a_div_that_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 

@@ -69,7 +69,7 @@ class TestButtonExist(object):
             browser.button(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.button(no_such_how='some_value').exists
 
@@ -89,7 +89,7 @@ class TestButtonAttributes(object):
         assert browser.button(index=2).id == 'new_user_button'
 
     def test_raises_correct_exception_for_id_if_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(index=1337).id
 
@@ -100,7 +100,7 @@ class TestButtonAttributes(object):
         assert browser.button(index=2).name == 'new_user_button'
 
     def test_raises_correct_exception_for_name_if_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').name
 
@@ -110,7 +110,7 @@ class TestButtonAttributes(object):
         assert 'images/button.png' in browser.button(name='new_user_image').src
 
     def test_raises_correct_exception_for_src_if_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').src
 
@@ -123,7 +123,7 @@ class TestButtonAttributes(object):
         assert browser.button(id='new_user_submit').style() == ''
 
     def test_raises_correct_exception_for_style_if_the_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').style()
 
@@ -141,7 +141,7 @@ class TestButtonAttributes(object):
         assert browser.button(index=2).type == 'button'
 
     def test_raises_correct_exception_for_type_if_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').type
 
@@ -152,7 +152,7 @@ class TestButtonAttributes(object):
         assert browser.button(index=2).value == 'Button'
 
     def test_raises_correct_exception_for_value_if_button_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').value
 
@@ -164,7 +164,7 @@ class TestButtonAttributes(object):
         assert browser.button(index=3).text == 'Preview'
 
     def test_raises_correct_exception_for_text_if_the_element_does_not_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').text
 
@@ -189,7 +189,7 @@ class TestButtonEnabled(object):
         assert not browser.button(name='new_user_submit_disabled').enabled
 
     def test_raises_correct_exception_for_enabled_if_the_button_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').enabled
 
@@ -201,7 +201,7 @@ class TestButtonEnabled(object):
         assert browser.button(name='new_user_submit_disabled').disabled
 
     def test_raises_correct_exception_for_disabled_if_the_button_doesnt_exist(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').disabled
 
@@ -220,11 +220,11 @@ class TestButtonManipulation(object):
                              [{'value': 'no_such_value'},
                               {'id': 'no_such_id'}])
     def test_raises_correct_exception_when_clicking_a_button_that_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 
     def test_raises_correct_exception_when_clicking_a_disabled_button(self, browser):
-        from watir_snake.exception import ObjectDisabledException
+        from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
             browser.button(value='Disabled').click()

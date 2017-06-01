@@ -1,8 +1,8 @@
 import pytest
 import re
 
-from watir_snake.browser import Browser
-from watir_snake.elements.html_elements import Body
+from nerodia.browser import Browser
+from nerodia.elements.html_elements import Body
 
 BROWSERS = ['chrome',
             'firefox',
@@ -121,7 +121,7 @@ class TestBrowserAttributes(object):
     # start
 
     def test_goes_to_the_given_url_and_return_an_instance_of_itself(self, page, bkwargs):
-        from watir_snake.browser import Browser
+        from nerodia.browser import Browser
         browser = Browser.start(page.url('non_control_elements.html'), **bkwargs)
 
         assert isinstance(browser, Browser)
@@ -242,7 +242,7 @@ class TestBrowserBackForth(object):
 
     @pytest.mark.page('plain_text')
     def test_raises_correct_exception_when_trying_to_access_dom_elements_on_plain_text_page(self, browser):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(id='foo').id
 
@@ -309,8 +309,8 @@ class TestBrowserSendKeys(object):
 # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1290814
 class TestBrowserClosed(object):
     def test_raises_correct_exception_when_trying_to_interact_with_a_closed_browser(self, bkwargs, page):
-        from watir_snake.browser import Browser
-        from watir_snake.exception import Error
+        from nerodia.browser import Browser
+        from nerodia.exception import Error
         with pytest.raises(Error) as e:
             b = Browser(**bkwargs)
             b.goto(page.url('definition_lists.html'))
@@ -321,7 +321,7 @@ class TestBrowserClosed(object):
 
 class TestBrowserWait(object):
     def test_delegates_wait_until_not_to_the_wait_module(self, browser, mocker):
-        mock = mocker.patch('watir_snake.wait.wait.Wait.until_not')
+        mock = mocker.patch('nerodia.wait.wait.Wait.until_not')
 
         def method():
             pass
@@ -331,7 +331,7 @@ class TestBrowserWait(object):
                                      object=browser)
 
     def test_delegates_wait_until_to_the_wait_module(self, browser, mocker):
-        mock = mocker.patch('watir_snake.wait.wait.Wait.until')
+        mock = mocker.patch('nerodia.wait.wait.Wait.until')
 
         def method():
             pass
@@ -341,7 +341,7 @@ class TestBrowserWait(object):
                                      object=browser)
 
     def test_waits_until_document_readystate_is_complete(self, browser, mocker):
-        mock = mocker.patch('watir_snake.browser.Browser.ready_state',
+        mock = mocker.patch('nerodia.browser.Browser.ready_state',
                             new_callable=mocker.PropertyMock)
         mock.side_effect = ['incomplete', 'complete']
         browser.wait()
@@ -350,7 +350,7 @@ class TestBrowserWait(object):
 
 class TestBrowserReadyState(object):
     def test_gets_the_document_ready_state_property(self, browser, mocker):
-        mock = mocker.patch('watir_snake.browser.Browser.ready_state',
+        mock = mocker.patch('nerodia.browser.Browser.ready_state',
                             new_callable=mocker.PropertyMock)
         browser.ready_state
         assert mock.call_count == 1
@@ -365,5 +365,5 @@ class TestBrowserRepr(object):
 
 class TestBrowserScreenshot(object):
     def test_returns_an_instance_of_screenshot(self, browser):
-        from watir_snake.screenshot import Screenshot
+        from nerodia.screenshot import Screenshot
         assert isinstance(browser.screenshot, Screenshot)

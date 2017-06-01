@@ -39,7 +39,7 @@ class TestAreaExist(object):
             browser.area(id=3.14).exists
 
     def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from watir_snake.exception import MissingWayOfFindingObjectException
+        from nerodia.exception import MissingWayOfFindingObjectException
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.area(no_such_how='some_value').exists
 
@@ -55,7 +55,7 @@ class TestAreaId(object):
                              [{'id': 'no_such_id'},
                               {'index': 1337}])
     def test_raises_correct_exception_if_the_area_doesnt_exist(self, browser, selector):
-        from watir_snake.exception import UnknownObjectException
+        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.area(**selector).id
 
