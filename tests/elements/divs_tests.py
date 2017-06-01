@@ -11,11 +11,11 @@ def test_returns_the_number_of_divs(browser):
     assert len(browser.divs()) == 12
 
 
-def test_returns_the_delete_at_the_given_index(browser):
+def test_returns_the_div_at_the_given_index(browser):
     assert browser.divs()[1].id == 'outer_container'
 
 
-def test_iterates_through_deletes_correctly(browser):
+def test_iterates_through_divs_correctly(browser):
     count = 0
     for index, d in enumerate(browser.divs()):
         div = browser.div(index=index)
