@@ -22,7 +22,7 @@ def verify_cookie(browser):
 def cookie_file():
     import tempfile
     tmp = tempfile.NamedTemporaryFile()
-    yield file
+    yield tmp
     tmp.close()
 
 
