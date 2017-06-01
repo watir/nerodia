@@ -1,6 +1,11 @@
 dist: trusty
 sudo: required
 language: python
+addons:
+  firefox: latest
+  apt:
+    packages:
+      - google-chrome-stable
 env:
   global:
   - DISPLAY=:99.0
