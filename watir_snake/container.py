@@ -292,7 +292,7 @@ class Container(object):
         return DivCollection(self, dict(tag_name='div', **self._extract_selector(*args, **kwargs)))
 
     def dl(self, *args, **kwargs):
-        from .elements.dlist import DList
+        from .elements.d_list import DList
         return DList(self, dict(tag_name='dl', **self._extract_selector(*args, **kwargs)))
 
     def dls(self, *args, **kwargs):
@@ -330,10 +330,14 @@ class Container(object):
         from .elements.html_elements import FieldSet
         return FieldSet(self, dict(tag_name='fieldset', **self._extract_selector(*args, **kwargs)))
 
+    field_set = fieldset
+
     def fieldsets(self, *args, **kwargs):
         from .elements.html_elements import FieldSetCollection
         return FieldSetCollection(self, dict(tag_name='fieldset',
                                              **self._extract_selector(*args, **kwargs)))
+
+    field_sets = fieldsets
 
     def figcaption(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement

@@ -1,7 +1,7 @@
 from watir_snake import tag_to_class
 from watir_snake.elements.area import Area
 from watir_snake.elements.button import Button
-from watir_snake.elements.dlist import DList
+from watir_snake.elements.d_list import DList
 from watir_snake.elements.form import Form
 from watir_snake.elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \

@@ -10,7 +10,7 @@ class TestDlExist(object):
         assert browser.dl(xpath="//dl[@id='experience-list']").exists
         assert browser.dl(index=0).exists
 
-    def test_returns_the_first_div_if_given_no_args(self, browser):
+    def test_returns_the_first_dl_if_given_no_args(self, browser):
         assert browser.dl().exists
 
     def test_returns_false_if_the_element_doesnt_exist(self, browser):
@@ -43,7 +43,7 @@ class TestDlAttributes(object):
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
         from watir_snake.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
-            browser.div(**selector).class_name
+            browser.dl(**selector).class_name
 
     # id
 
