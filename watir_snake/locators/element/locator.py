@@ -165,7 +165,7 @@ class Locator(object):
 
     @property
     def _all_elements(self):
-        return self.query_scope.wd.find_elements(xpath='.//*')
+        return self.query_scope.wd.find_elements(By.XPATH, './/*')
 
     def _wd_find_first_by(self, how, what):
         if isinstance(what, str):
