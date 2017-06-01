@@ -60,7 +60,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         :param other: other element to compare
         :rtype: bool
         """
-        return self.wd if isinstance(other, self.__class__) else other.wd
+        return isinstance(other, self.__class__) and self.wd == other.wd
 
     eql = __eq__
 
@@ -402,7 +402,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         from .text_field import TextField
 
         if tag_name == 'input':
-            elem_type = elem.attribute('type')
+            elem_type = elem.get_attribute('type')
             if elem_type in Button.VALID_TYPES:
                 klass = Button
             elif elem_type == 'checkbox':
