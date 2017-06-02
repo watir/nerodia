@@ -1,9 +1,9 @@
 from nerodia import tag_to_class
-from nerodia.elements.area import Area
-from nerodia.elements.button import Button
-from nerodia.elements.d_list import DList
-from nerodia.elements.form import Form
-from nerodia.elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
+from .elements.area import Area
+from .elements.button import Button
+from .elements.d_list import DList
+from .elements.form import Form
+from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
     Heading, Head, HR, Html, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
     OList, OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
@@ -21,16 +21,16 @@ from nerodia.elements.html_elements import HTMLElement, Audio, Base, Quote, Body
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \
     TableHeaderCellCollection, TimeCollection, TitleCollection, TableRowCollection, TrackCollection, \
     UListCollection, VideoCollection
-from nerodia.elements.i_frame import IFrame
-from nerodia.elements.image import Image
-from nerodia.elements.input import Input
-from nerodia.elements.link import Anchor
-from nerodia.elements.option import Option
-from nerodia.elements.select import Select
-from nerodia.elements.table import Table, TableCollection
-from nerodia.elements.table_row import TableRow
-from nerodia.elements.table_section import TableSection, TableSectionCollection
-from nerodia.elements.text_area import TextArea
+from .elements.i_frame import IFrame
+from .elements.image import Image
+from .elements.input import Input
+from .elements.link import Anchor
+from .elements.option import Option
+from .elements.select import Select
+from .elements.table import Table, TableCollection
+from .elements.table_row import TableRow
+from .elements.table_section import TableSection, TableSectionCollection
+from .elements.text_area import TextArea
 
 tag_to_class['a'] = Anchor
 tag_to_class['a_collection'] = AnchorCollection

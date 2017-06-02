@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
 from distutils.command.install import INSTALL_SCHEMES
-
 from os.path import dirname, join, abspath
+
 from setuptools import setup
 from setuptools.command.install import install
 
@@ -30,7 +30,23 @@ setup_args = {
                     'Programming Language :: Python :: 3.5',
                     'Programming Language :: Python :: 3.6'],
     'package_dir': {'nerodia': 'nerodia'},
-    'packages': ['nerodia'],
+    'packages': ['nerodia',
+                 'nerodia.elements',
+                 'nerodia.locators',
+                 'nerodia.locators.button',
+                 'nerodia.locators.cell',
+                 'nerodia.locators.element',
+                 'nerodia.locators.row',
+                 'nerodia.locators.text_area',
+                 'nerodia.locators.text_field',
+                 'nerodia.wait'],
+    'package_data': {
+        'nerodia.atoms': ['*.js']
+    },
+    'data_files': [('nerodia/atoms', ['nerodia/atoms/fireEvent.js']),
+                   ('nerodia/atoms', ['nerodia/atoms/getInnerHtml.js']),
+                   ('nerodia/atoms', ['nerodia/atoms/getOuterHtml.js']),
+                   ('nerodia/atoms', ['nerodia/atoms/selectText.js'])],
     'zip_safe': False
 }
 
