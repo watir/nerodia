@@ -6,6 +6,7 @@ def load_atoms(*args, **kwargs):
     cls.load('fireEvent')
     cls.load('getOuterHtml')
     cls.load('getInnerHtml')
+    cls.load('selectText')
     return cls
 
 

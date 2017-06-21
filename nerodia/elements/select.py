@@ -92,7 +92,8 @@ class Select(HTMLElement):
         Returns None if no option is selected
         :rtype: str or None
         """
-        return next((o.value for o in self.options() if o.is_selected()), None)
+        selected = self.selected_options
+        return selected[0] if selected else None
 
     @property
     def text(self):
@@ -107,7 +108,14 @@ class Select(HTMLElement):
         Returns an array of currently selected options
         :rtype: list[nerodia.elements.option.Option]
         """
-        return [e for e in self.options() if e.is_selected()]
+        script = 'var result = [];' \
+                 'var options = arguments[0].options;' \
+                 'for (var i = 0; i < options.length; i++) {' \
+                 '  var option = options[i];' \
+                 '  if (option.selected) { result.push(option) }' \
+                 '}' \
+                 'return result;'
+        return self._element_call(lambda: self.browser.execute_script(script, self.el))
 
     # private
 

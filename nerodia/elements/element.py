@@ -1,10 +1,10 @@
 from importlib import import_module
-from time import sleep
-
 from re import search, sub
+from time import sleep
+from warnings import warn
+
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
-from warnings import warn
 
 import nerodia
 from ..adjacent import Adjacent
@@ -224,6 +224,9 @@ class Element(Container, Atoms, Waitable, Adjacent):
                                    "'{}'".format(element_color), self.el)
 
         return self
+
+    def select_text(self, string):
+        self._element_call(lambda: self._execute_atom('selectText', self.el, string))
 
     @property
     def value(self):

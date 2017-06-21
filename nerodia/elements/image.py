@@ -24,5 +24,5 @@ class Image(HTMLElement):
         Returns the image's width in pixels
         :rtype: int
         """
-        self.wait_for_exists()
-        return self.driver.execute_script("return arguments[0].width", self.el)
+        return self._element_call(
+            lambda: self.driver.execute_script('return arguments[0].width', self.el))
