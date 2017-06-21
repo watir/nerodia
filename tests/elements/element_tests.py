@@ -1,7 +1,7 @@
 from platform import system
+from re import compile
 
 import pytest
-from re import compile
 from selenium.webdriver.common.keys import Keys
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
@@ -236,7 +236,6 @@ class TestElementExist(object):
             browser.div(css='div', class_name='foo').exists
 
 
-# TODO: not phantomjs
 @pytest.mark.page('keylogger.html')
 class TestElementSendKeys(object):
     def test_sends_keystrokes_to_the_element(self, browser):

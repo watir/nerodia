@@ -130,7 +130,7 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
-    # TODO: xfail safari, phantomjs
+    # TODO: xfail safari
     @pytest.mark.page('alerts.html')
     def test_runs_after_hooks_after_alert_ok(self, browser):
         result = {}
@@ -147,7 +147,7 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
-    # TODO: xfail safari, phantomjs
+    # TODO: xfail safari
     @pytest.mark.page('alerts.html')
     def test_runs_after_hooks_after_alert_close(self, browser):
         result = {}

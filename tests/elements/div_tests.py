@@ -1,5 +1,6 @@
-import pytest
 from re import compile
+
+import pytest
 
 pytestmark = pytest.mark.page('non_control_elements.html')
 
@@ -151,7 +152,7 @@ class TestDivManipulation(object):
         browser.div(id='html_test').double_click()
         assert 'double clicked' in messages.list
 
-    # TODO: xfail firefox, phantomjs (https://github.com/detro/ghostdriver/issues/125)
+    # TODO: xfail firefox
     @pytest.mark.page('right_click.html')
     def test_fires_the_oncontextmenu_event(self, browser, messages):
         browser.div(id='click').right_click()

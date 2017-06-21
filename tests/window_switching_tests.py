@@ -1,5 +1,6 @@
-import pytest
 import re
+
+import pytest
 
 from nerodia.exception import NoMatchingWindowFoundException
 from nerodia.wait.wait import Wait
@@ -274,7 +275,7 @@ class TestCurrentWindowClosed(object):
 
 
 # TODO: xfail safari, or skip
-# TODO: xfail IE, phantom
+# TODO: xfail IE
 @pytest.mark.page('window_switching.html')
 class TestWindowRect(object):
     def test_should_get_the_size_of_the_current_window(self, browser):
@@ -295,7 +296,6 @@ class TestWindowRect(object):
         assert new_size.width == initial_size.width - 20
         assert new_size.height == initial_size.height - 20
 
-    # TODO: xfail phantomjs
     def test_should_move_the_window(self, browser):
         initial_pos = browser.window().position
         browser.window().move_to(initial_pos.x + 2, initial_pos.y + 2)

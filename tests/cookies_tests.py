@@ -26,7 +26,6 @@ def cookie_file():
     tmp.close()
 
 
-# TODO: xfail phantomjs
 @pytest.mark.page('set_cookie/index.html')
 @pytest.mark.usefixtures('clear_cookies', 'verify_cookie')
 class TestBrowserCookies(object):

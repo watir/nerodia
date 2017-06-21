@@ -1,5 +1,6 @@
-import pytest
 import re
+
+import pytest
 
 from nerodia.browser import Browser
 from nerodia.elements.html_elements import Body
@@ -9,7 +10,6 @@ BROWSERS = ['chrome',
             'ie',
             'edge',
             'safari',
-            'phantomjs',
             'remote']
 
 

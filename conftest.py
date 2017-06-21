@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 import nerodia
@@ -10,7 +11,6 @@ browsers = (
     'edge',
     'firefox',
     'ie',
-    'phantomjs'
     # 'remote',  TODO: just local for now
     'safari'
 )

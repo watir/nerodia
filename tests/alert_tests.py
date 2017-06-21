@@ -14,7 +14,7 @@ def cleanup_alert(browser):
 
 @pytest.mark.usefixtures('cleanup_alert')
 class TestAlertAPI(object):
-    # TODO: xfail safari, phantomjs
+    # TODO: xfail safari
     def test_returns_text_of_alert(self, browser):
         browser.button(id='alert').click()
         assert 'ok' in browser.alert.text
