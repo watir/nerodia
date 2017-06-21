@@ -1,4 +1,5 @@
 import re
+
 import six
 
 from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
@@ -16,7 +17,7 @@ class Select(HTMLElement):
         if not self.multiple:
             raise Error('you can only clear multi-selects')
 
-        for option in self.options:
+        for option in self.options():
             if option.selected:
                 self.click_option(option)
 
@@ -91,7 +92,14 @@ class Select(HTMLElement):
         Returns None if no option is selected
         :rtype: str or None
         """
-        return next((o.value for o in self.options if o.is_selected()), None)
+        return next((o.value for o in self.options() if o.is_selected()), None)
+
+    @property
+    def text(self):
+        # Returns the text of the first selected option in the select list
+        # Returns nil if no option is selected
+        # :rtype: str or None
+        return next((o.text for o in self.options() if o.is_selected()), None)
 
     @property
     def selected_options(self):
@@ -99,7 +107,7 @@ class Select(HTMLElement):
         Returns an array of currently selected options
         :rtype: list[nerodia.elements.option.Option]
         """
-        return [e for e in self.options if e.is_selected()]
+        return [e for e in self.options() if e.is_selected()]
 
     # private
 
@@ -145,5 +153,6 @@ class Select(HTMLElement):
             element = Option(self, element=element)
         element.click()
 
-    def _no_value_found(self, arg, msg=None):
+    @staticmethod
+    def _no_value_found(arg, msg=None):
         raise (NoValueFoundException(msg or '{} not found in select list'.format(arg)))
