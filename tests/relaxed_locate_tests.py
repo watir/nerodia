@@ -153,8 +153,11 @@ class TestNotRelaxedLocate(object):
         assert time() - start < 1
 
     def test_raises_exception_immediately_on_element_eventually_present(self, browser):
-        from selenium.common.exceptions import ElementNotVisibleException
+        from selenium.common.exceptions import ElementNotInteractableException, \
+            ElementNotVisibleException
+        err = ElementNotInteractableException if browser.name == 'firefox' \
+            else ElementNotVisibleException
         nerodia.default_timeout = 3
         browser.link(id='show_bar').click()
-        with pytest.raises(ElementNotVisibleException):
+        with pytest.raises(err):
             browser.div(id='bar').click()
