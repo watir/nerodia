@@ -429,6 +429,10 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         return self.query_scope.browser
 
+    def execute_script(self, script, *args):
+        """ Delegates script execution to Browser or IFrame """
+        self.query_scope.execute_script(script, *args)
+
     @property
     def stale(self):
         """

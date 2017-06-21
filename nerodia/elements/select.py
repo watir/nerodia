@@ -115,7 +115,7 @@ class Select(HTMLElement):
                  '  if (option.selected) { result.push(option) }' \
                  '}' \
                  'return result;'
-        return self._element_call(lambda: self.browser.execute_script(script, self.el))
+        return self._element_call(lambda: self.query_scope.execute_script(script, self.el))
 
     # private
 

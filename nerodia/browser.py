@@ -201,7 +201,7 @@ class Browser(Container, HasWindow, Waitable):
         args = [e.wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
 
-        return self._wrap_elements_in(returned)
+        return self._wrap_elements_in(self, returned)
 
     def send_keys(self, *args):
         """
@@ -249,19 +249,21 @@ class Browser(Container, HasWindow, Waitable):
     wait_for_exists = assert_exists
     wait_for_present = assert_exists
 
-    def _wrap_elements_in(self, obj):
+    @staticmethod
+    def _wrap_elements_in(scope, obj):
         if isinstance(obj, WebElement):
-            return self._wrap_element(obj)
+            return Browser._wrap_element(scope, obj)
         elif isinstance(obj, list):
-            return [self._wrap_elements_in(e) for e in obj]
+            return [Browser._wrap_elements_in(scope, e) for e in obj]
         elif isinstance(obj, dict):
             for k, v in obj.items():
-                obj[k] = self._wrap_elements_in(v)
+                obj[k] = Browser._wrap_elements_in(scope, v)
             return obj
         else:
             return obj
 
-    def _wrap_element(self, element):
+    @staticmethod
+    def _wrap_element(scope, element):
         from .elements.html_elements import HTMLElement
         klass = nerodia.element_class_for(element.tag_name.lower()) or HTMLElement
-        return klass(self, {'element': element})
+        return klass(scope, {'element': element})

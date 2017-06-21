@@ -61,8 +61,13 @@ class IFrame(HTMLElement):
         self.wait_for_exists()
         return self.wd.page_source
 
-    def execute_script(self, *args):
-        return self.browser.execute_script(*args)
+    def execute_script(self, script, *args):
+        """ Executes JavaScript in context of frame """
+        from .element import Element
+        args = [e.wd if isinstance(e, Element) else e for e in args]
+        returned = self.driver.execute_script(script, *args)
+
+        return self.browser._wrap_elements_in(self, returned)
 
     # private
 
