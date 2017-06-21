@@ -93,14 +93,15 @@ class Select(HTMLElement):
         :rtype: str or None
         """
         selected = self.selected_options
-        return selected[0] if selected else None
+        return selected[0].value if selected else None
 
     @property
     def text(self):
         # Returns the text of the first selected option in the select list
         # Returns nil if no option is selected
         # :rtype: str or None
-        return next((o.text for o in self.options() if o.is_selected()), None)
+        selected = self.selected_options
+        return selected[0].text if selected else None
 
     @property
     def selected_options(self):
