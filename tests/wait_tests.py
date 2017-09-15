@@ -177,7 +177,7 @@ class TestElementWaitUntilPresent(object):
 class TestElementWaitUntilNotPresent(object):
     def test_waits_until_the_element_disappears(self, browser):
         browser.link(id='hide_foo').click()
-        browser.div(id='foo').wait_until_not_present(timeout=1)
+        browser.div(id='foo').wait_until_not_present(timeout=2)
 
     def test_times_out_if_the_element_doesnt_disappear(self, browser):
         repr = "#<Div: located: False; {'tag_name': 'div', 'id': 'foo'}>"

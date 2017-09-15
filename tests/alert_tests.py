@@ -1,5 +1,6 @@
 import pytest
 
+import nerodia
 from nerodia.wait.wait import TimeoutError
 
 pytestmark = pytest.mark.page('alerts.html')
@@ -54,8 +55,12 @@ class TestAlertAPI(object):
     @pytest.mark.skipif('nerodia.relaxed_locate',
                         reason='only applicable when not relaxed locating')
     def test_raises_error_if_alert_is_not_present_after_timeout(self, browser):
+        orig_timeout = nerodia.default_timeout
+        nerodia.default_timeout = 2
         with pytest.raises(TimeoutError):
             browser.alert.wait_until_present().ok()
+
+        nerodia.default_timeout = orig_timeout
 
     # confirm
 

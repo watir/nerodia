@@ -3,10 +3,14 @@ from re import search, sub
 from time import sleep
 from warnings import warn
 
-from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException
+from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException, \
+    ElementNotVisibleException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
+from nerodia.elements.button import Button
+from nerodia.elements.input import Input
+from nerodia.elements.option import Option
 from ..adjacent import Adjacent
 from ..atoms import Atoms
 from ..container import Container
@@ -455,37 +459,30 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return self.assert_exists()
         if self.exists:  # Performance shortcut
             return None
+
         try:
             self.query_scope.wait_for_exists()
             self.wait_until(lambda e: e.exists)
         except TimeoutError:
-            if nerodia.default_timeout != 0:
-                warn('This code has slept for the duration of the default timeout waiting for an '
-                     'Element to exist. If the test is still passing, consider using '
-                     'Element#exists instead of catching UnknownObjectException')
-            raise UnknownObjectException('timed out after {} seconds, waiting for {} to be '
-                                         'located'.format(nerodia.default_timeout, self))
+            raise self._unknown_exception('timed out after {} seconds, waiting for {} to be '
+                                          'located'.format(nerodia.default_timeout, self))
 
     def wait_for_present(self):
         if not nerodia.relaxed_locate:
-            return self.assert_exists()
+            return self.visible
+        if self.present:
+            return True
 
-        self.wait_for_exists()
         try:
             self.query_scope.wait_for_present()
             self.wait_until_present()
         except TimeoutError as e:
-            if nerodia.default_timeout != 0:
-                warn('This code has slept for the duration of the default timeout waiting for an '
-                     'Element to be present. If the test is still passing, consider using '
-                     'Element#exists instead of catching UnknownObjectException')
-            raise UnknownObjectException('element located, but {}'.format(e.message))
+            raise self._unknown_exception('element located, but {}'.format(e.message))
 
     def wait_for_enabled(self):
         if not nerodia.relaxed_locate:
             return self._assert_enabled()
 
-        self.wait_for_present()
         try:
             self.wait_until(lambda e: e.enabled)
         except TimeoutError:
@@ -494,10 +491,13 @@ class Element(Container, Atoms, Waitable, Adjacent):
                                           'enabled'.format(nerodia.default_timeout, self))
 
     def wait_for_writable(self):
-        if not nerodia.relaxed_locate:
-            return self._assert_writable()
+        self.wait_for_exists()
 
         self.wait_for_enabled()
+        if not nerodia.relaxed_locate:
+            if hasattr(self, 'readonly') and self.readonly:
+                self._raise_writable()
+
         try:
             self.wait_until(lambda e: not getattr(e, 'readonly', None) or not e.readonly)
         except TimeoutError:
@@ -533,7 +533,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
         locator = self._locator_class(self.query_scope, self.selector, selector_builder,
                                       element_validator)
 
-        return locator.locate()
+        self.el = locator.locate()
+        return self.el
 
     @property
     def selector_string(self):
@@ -544,6 +545,20 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
 
     # Private
+
+    def _raise_writable(self):
+        raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
+                                      'seconds, waiting for {} to not be '
+                                      'readonly'.format(nerodia.default_timeout, self))
+
+    def _raise_disabled(self):
+        raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
+                                      'seconds, waiting for {} to not be '
+                                      'disabled'.format(nerodia.default_timeout, self))
+
+    def _raise_present(self):
+        raise ObjectReadOnlyException('element located, but timed out after {} seconds, waiting '
+                                      'for {} to be present'.format(nerodia.default_timeout, self))
 
     @property
     def _unknown_exception(self):
@@ -588,12 +603,6 @@ class Element(Container, Atoms, Waitable, Adjacent):
         if not self._element_call(lambda: self.el.is_enabled()):
             raise ObjectDisabledException('object is disabled {}'.format(self))
 
-    def _assert_writable(self):
-        self._assert_enabled()
-
-        if getattr(self, 'readonly', None) and self.readonly:
-            raise ObjectReadOnlyException('object is read only {}'.format(self))
-
     @classmethod
     def _assert_is_element(cls, obj):
         if not isinstance(obj, Element):
@@ -605,10 +614,27 @@ class Element(Container, Atoms, Waitable, Adjacent):
         if Wait.timer.locked is None:
             Wait.timer = Timer(timeout=nerodia.default_timeout)
         try:
-            exist_check()
+            if exist_check == self.wait_for_enabled:
+                if any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
+                    self.wait_for_enabled()
+                else:
+                    self.wait_for_exists()
+            else:
+                exist_check()
             return method()
         except StaleElementReferenceException:
             exist_check()
+            return method()
+        except (ElementNotVisibleException, ElementNotInteractableException):
+            if (Wait.timer.remaining_time <= 0) or \
+                    (exist_check in [self.wait_for_present, self.wait_for_enabled]):
+                self._raise_present()
+            return method()
+        except InvalidElementStateException, e:
+            if (Wait.timer.remaining_time <= 0) or \
+                    (exist_check in [self.wait_for_writable, self.wait_for_enabled]) or \
+                    ('user-editable' in e.msg):
+                self._raise_disabled()
             return method()
         finally:
             if Wait.timer.locked is None:

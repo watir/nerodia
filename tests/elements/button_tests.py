@@ -193,6 +193,11 @@ class TestButtonEnabled(object):
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').enabled
 
+    def test_raises_correct_exception_for_enabled_if_disabled_button_is_clicked(self, browser):
+        from nerodia.exception import ObjectDisabledException
+        with pytest.raises(ObjectDisabledException):
+            browser.button(name='new_user_submit_disabled').click()
+
     # diabled
     def test_returns_false_when_button_is_enabled(self, browser):
         assert not browser.button(name='new_user_submit').disabled
