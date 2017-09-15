@@ -128,7 +128,7 @@ class Select(HTMLElement):
                 opt = {how: term}
                 found.extend(sel.options(**opt))
                 if not list(found):
-                    found.extend(self.options(label=term))
+                    found.extend(sel.options(label=term))
             else:
                 raise TypeError('expected str, got {}:{}'.format(term, term.__class__))
 

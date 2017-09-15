@@ -332,7 +332,7 @@ select = [
     (str, 'name', 'name'),
     (bool, 'required', 'required'),
     (str, 'type', 'type'),
-    (str, 'options', 'options'),
+    (str, 'element_options', 'options'),
     (int, 'length', 'length'),
     (str, 'selectedoptions', 'selectedOptions'),
     (int, 'selectedindex', 'selectedIndex'),
