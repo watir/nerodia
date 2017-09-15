@@ -92,11 +92,7 @@ class ElementCollection(object):
 
     @property
     def _elements(self):
-        from .elements.i_frame import IFrame
-        if isinstance(self.query_scope, IFrame):
-            self.query_scope.switch_to()
-        else:
-            getattr(self.query_scope, 'assert_exists')()
+        self.query_scope._ensure_context()
 
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector,

@@ -4,15 +4,16 @@ from time import sleep
 from warnings import warn
 
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException, \
-    ElementNotVisibleException, ElementNotInteractableException
+    ElementNotVisibleException, ElementNotInteractableException, NoSuchWindowException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
+from nerodia.browser import Browser
 from ..adjacent import Adjacent
 from ..atoms import Atoms
 from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
-    UnknownFrameException, UnknownObjectException
+    UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
 from ..locators.element.selector_builder import SelectorBuilder
 from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
@@ -336,7 +337,11 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     @property
     def wd(self):
-        self.assert_exists()
+        from .i_frame import FramedDriver
+        if isinstance(self.el, FramedDriver):
+            return self.driver
+        if self.el is None:
+            self.assert_exists()
         return self.el
 
     @property
@@ -458,7 +463,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return None
 
         try:
-            self.query_scope.wait_for_exists()
+            if not isinstance(self.query_scope, Browser):
+                self.query_scope.wait_for_exists()
             self.wait_until(lambda e: e.exists)
         except TimeoutError:
             raise self._unknown_exception('timed out after {} seconds, waiting for {} to be '
@@ -507,7 +513,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         Ensure that the element exists, making sure that it is not stale and located if necessary
         """
         if self.el and not self.selector:
-            self._ensure_context()
+            self.query_scope._ensure_context()
             if self.stale:
                 self.reset()
         elif self.el and not self.stale:
@@ -522,7 +528,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
     def locate(self):
-        self._ensure_context()
+        self.query_scope._ensure_context()
 
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector,
@@ -587,11 +593,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        from ..elements.i_frame import IFrame
-        if isinstance(self.query_scope, IFrame):
-            self.query_scope.switch_to()
-        else:
-            self.query_scope.assert_exists()
+        self.assert_exists()
 
     def _is_attribute(self, attribute_name):
         return self.attribute_value(attribute_name) is not None
@@ -637,6 +639,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
                     ('user-editable' in e.msg):
                 self._raise_disabled()
             return method()
+        except NoSuchWindowException:
+            raise NoMatchingWindowFoundException('browser window was closed')
         finally:
             if Wait.timer.locked is None:
                 Wait.timer.reset()

@@ -12,7 +12,7 @@ class IFrame(HTMLElement):
     def locate(self):
         if not self.selector:
             return None
-        self.query_scope.assert_exists()
+        self.query_scope._ensure_context()
 
         selector = self.selector.copy()
         selector.update({'tag_name': self._frame_tag})
@@ -27,7 +27,7 @@ class IFrame(HTMLElement):
             raise self._unknown_exception(
                 'unable to locate {} using {}'.format(self.selector['tag_name'],
                                                       self.selector_string))
-        self.el = FramedDriver(element, self.driver)
+        self.el = FramedDriver(element, self.browser)
         return self.el
 
     def __eq__(self, other):
@@ -59,7 +59,7 @@ class IFrame(HTMLElement):
         :rtype: str
         """
         self.wait_for_exists()
-        return self.wd.page_source
+        return self.el.page_source
 
     def execute_script(self, script, *args):
         """ Executes JavaScript in context of frame """
@@ -70,6 +70,9 @@ class IFrame(HTMLElement):
         return self.browser._wrap_elements_in(self, returned)
 
     # private
+
+    def _ensure_context(self):
+        self.switch_to()
 
     @property
     def _frame_tag(self):
@@ -127,5 +130,6 @@ class FramedDriver(object):
     def switch(self):
         try:
             self.driver.switch_to.frame(self.el)
+            self.browser.default_context = False
         except NoSuchFrameException as e:
             raise UnknownFrameException(e)

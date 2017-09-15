@@ -39,6 +39,7 @@ class Browser(Container, HasWindow, Waitable):
         self.after_hooks = AfterHooks(self)
         self.current_frame = None
         self.closed = False
+        self.default_context = True
 
     @property
     def wd(self):
@@ -225,11 +226,7 @@ class Browser(Container, HasWindow, Waitable):
         True if browser is not closed and False otherwise
         :rtype: bool
         """
-        try:
-            self.assert_exists()
-            return True
-        except (NoMatchingWindowFoundException, Error):
-            return False
+        return not self.closed and self.window.present
 
     exists = exist
 
@@ -238,16 +235,19 @@ class Browser(Container, HasWindow, Waitable):
         return self
 
     def assert_exists(self):
+        self._ensure_context()
+        if self.window.present:
+            return
+        raise NoMatchingWindowFoundException('browser window was closed')
+
+    # private
+
+    def _ensure_context(self):
         if self.closed:
             raise Error('browser was closed')
-        elif not self.window().present:
-            raise NoMatchingWindowFoundException('browser window was closed')
-        else:
+        if not self.default_context:
             self.driver.switch_to.default_content()
-            return True
-
-    wait_for_exists = assert_exists
-    wait_for_present = assert_exists
+            self.default_context = True
 
     @staticmethod
     def _wrap_elements_in(scope, obj):
