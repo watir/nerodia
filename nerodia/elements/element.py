@@ -4,13 +4,10 @@ from time import sleep
 from warnings import warn
 
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException, \
-    ElementNotVisibleException
+    ElementNotVisibleException, ElementNotInteractableException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
-from nerodia.elements.button import Button
-from nerodia.elements.input import Input
-from nerodia.elements.option import Option
 from ..adjacent import Adjacent
 from ..atoms import Atoms
 from ..container import Container
@@ -340,7 +337,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     @property
     def wd(self):
         self.assert_exists()
-        return self.el
+        return self.elselect
 
     @property
     def visible(self):
@@ -610,6 +607,10 @@ class Element(Container, Atoms, Waitable, Adjacent):
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):
+        from .button import Button
+        from .input import Input
+        from .option import Option
+        from .select import Select
         exist_check = exist_check or self.wait_for_exists
         if Wait.timer.locked is None:
             Wait.timer = Timer(timeout=nerodia.default_timeout)
