@@ -337,7 +337,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     @property
     def wd(self):
         self.assert_exists()
-        return self.elselect
+        return self.el
 
     @property
     def visible(self):
