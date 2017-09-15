@@ -6,30 +6,14 @@ htmlelement = [
     (bool, 'translate', 'translate'),
     (str, 'dir', 'dir'),
     (str, 'dataset', 'dataset'),
-    (bool, 'item_scope', 'itemScope'),
-    (str, 'item_type', 'itemType'),
-    (str, 'item_id', 'itemId'),
-    (str, 'item_ref', 'itemRef'),
-    (str, 'item_prop', 'itemProp'),
-    (str, 'properties', 'properties'),
-    (str, 'item_value', 'itemValue'),
     (bool, 'hidden', 'hidden'),
-    (int, 'tab_index', 'tabIndex'),
-    (str, 'access_key', 'accessKey'),
-    (str, 'access_key_label', 'accessKeyLabel'),
+    (int, 'tabindex', 'tabIndex'),
+    (str, 'accesskey', 'accessKey'),
     (bool, 'draggable', 'draggable'),
     (str, 'dropzone', 'dropzone'),
-    (str, 'context_menu', 'contextMenu'),
+    (str, 'contextmenu', 'contextMenu'),
     (bool, 'spellcheck', 'spellcheck'),
-    (str, 'command_type', 'commandType'),
-    (str, 'command_label', 'commandLabel'),
-    (str, 'command_icon', 'commandIcon'),
-    (bool, 'command_hidden', 'commandHidden'),
-    (bool, 'command_disabled', 'commandDisabled'),
-    (bool, 'command_checked', 'commandChecked'),
     (str, 'onabort', 'onabort'),
-    (str, 'onautocomplete', 'onautocomplete'),
-    (str, 'onautocompleteerror', 'onautocompleteerror'),
     (str, 'onblur', 'onblur'),
     (str, 'oncancel', 'oncancel'),
     (str, 'oncanplay', 'oncanplay'),
@@ -69,7 +53,7 @@ htmlelement = [
     (str, 'onmouseout', 'onmouseout'),
     (str, 'onmouseover', 'onmouseover'),
     (str, 'onmouseup', 'onmouseup'),
-    (str, 'onmousewheel', 'onmousewheel'),
+    (str, 'onwheel', 'onwheel'),
     (str, 'onpause', 'onpause'),
     (str, 'onplay', 'onplay'),
     (str, 'onplaying', 'onplaying'),
@@ -82,7 +66,6 @@ htmlelement = [
     (str, 'onseeking', 'onseeking'),
     (str, 'onselect', 'onselect'),
     (str, 'onshow', 'onshow'),
-    (str, 'onsort', 'onsort'),
     (str, 'onstalled', 'onstalled'),
     (str, 'onsubmit', 'onsubmit'),
     (str, 'onsuspend', 'onsuspend'),
@@ -90,6 +73,9 @@ htmlelement = [
     (str, 'ontoggle', 'ontoggle'),
     (str, 'onvolumechange', 'onvolumechange'),
     (str, 'onwaiting', 'onwaiting'),
+    (str, 'oncopy', 'oncopy'),
+    (str, 'oncut', 'oncut'),
+    (str, 'onpaste', 'onpaste'),
     (str, 'content_editable', 'contentEditable'),
     (bool, 'content_editable', 'isContentEditable')
 ]
@@ -98,8 +84,7 @@ HTMLElementCollection = []
 
 font = [
     (str, 'color', 'color'),
-    (str, 'face', 'face'),
-    (str, 'size', 'size')
+    (str, 'face', 'face')
 ]
 
 FontCollection = []
@@ -122,8 +107,10 @@ frameset = [
     (str, 'ononline', 'ononline'),
     (str, 'onpagehide', 'onpagehide'),
     (str, 'onpageshow', 'onpageshow'),
+    (str, 'onrejectionhandled', 'onrejectionhandled'),
     (str, 'onpopstate', 'onpopstate'),
     (str, 'onstorage', 'onstorage'),
+    (str, 'onunhandledrejection', 'onunhandledrejection'),
     (str, 'onunload', 'onunload')
 ]
 
@@ -131,16 +118,14 @@ FrameSetCollection = []
 
 marquee = [
     (str, 'behavior', 'behavior'),
-    (str, 'bg_color', 'bgColor'),
+    (str, 'bgcolor', 'bgColor'),
     (str, 'direction', 'direction'),
-    (str, 'height', 'height'),
     (int, 'hspace', 'hspace'),
     (int, 'loop', 'loop'),
-    (int, 'scroll_amount', 'scrollAmount'),
-    (int, 'scroll_delay', 'scrollDelay'),
-    (bool, 'true_speed', 'trueSpeed'),
+    (int, 'scrollamount', 'scrollAmount'),
+    (int, 'scrolldelay', 'scrollDelay'),
+    (bool, 'truespeed', 'trueSpeed'),
     (int, 'vspace', 'vspace'),
-    (str, 'width', 'width'),
     (str, 'onbounce', 'onbounce'),
     (str, 'onfinish', 'onfinish'),
     (str, 'onstart', 'onstart')
@@ -153,21 +138,16 @@ applet = [
     (str, 'alt', 'alt'),
     (str, 'archive', 'archive'),
     (str, 'code', 'code'),
-    (str, 'code_base', 'codeBase'),
-    (str, 'height', 'height'),
+    (str, 'codebase', 'codeBase'),
     (int, 'hspace', 'hspace'),
     (str, 'name', 'name'),
     (str, 'object', 'object'),
-    (int, 'vspace', 'vspace'),
-    (str, 'width', 'width')
+    (int, 'vspace', 'vspace')
 ]
 
 AppletCollection = []
 
-canvas = [
-    (int, 'width', 'width'),
-    (int, 'height', 'height')
-]
+Canvas = []
 
 CanvasCollection = []
 
@@ -183,19 +163,13 @@ script = [
     (str, 'charset', 'charset'),
     (bool, 'async', 'async'),
     (bool, 'defer', 'defer'),
-    (str, 'cross_origin', 'crossOrigin'),
+    (str, 'crossorigin', 'crossOrigin'),
+    (str, 'nonce', 'nonce'),
     (str, 'event', 'event'),
     (str, 'for', 'htmlFor')
 ]
 
 ScriptCollection = []
-
-dialog = [
-    (bool, 'open', 'open'),
-    (str, 'return_value', 'returnValue')
-]
-
-DialogCollection = []
 
 menuitem = [
     (str, 'type', 'type'),
@@ -204,8 +178,7 @@ menuitem = [
     (bool, 'disabled', 'disabled'),
     (bool, 'checked', 'checked'),
     (str, 'radiogroup', 'radiogroup'),
-    (bool, 'default', 'default'),
-    (str, 'command', 'command')
+    (bool, 'default', 'default')
 ]
 
 MenuItemCollection = []
@@ -236,9 +209,9 @@ fieldset = [
     (str, 'form', 'form'),
     (str, 'name', 'name'),
     (str, 'type', 'type'),
-    (bool, 'will_validate', 'willValidate'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage')
+    (str, 'validationmessage', 'validationMessage')
 ]
 
 FieldSetCollection = []
@@ -269,11 +242,11 @@ output = [
     (str, 'form', 'form'),
     (str, 'name', 'name'),
     (str, 'type', 'type'),
-    (str, 'default_value', 'defaultValue'),
+    (str, 'defaultvalue', 'defaultValue'),
     (str, 'value', 'value'),
-    (bool, 'will_validate', 'willValidate'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels')
 ]
 
@@ -287,9 +260,9 @@ keygen = [
     (str, 'keytype', 'keytype'),
     (str, 'name', 'name'),
     (str, 'type', 'type'),
-    (bool, 'will_validate', 'willValidate'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels')
 ]
 
@@ -299,28 +272,28 @@ textarea = [
     (str, 'autocomplete', 'autocomplete'),
     (bool, 'autofocus', 'autofocus'),
     (int, 'cols', 'cols'),
-    (str, 'dir_name', 'dirName'),
+    (str, 'dirname', 'dirName'),
     (bool, 'disabled', 'disabled'),
     (str, 'form', 'form'),
-    (str, 'input_mode', 'inputMode'),
-    (int, 'max_length', 'maxLength'),
-    (int, 'min_length', 'minLength'),
+    (str, 'inputmode', 'inputMode'),
+    (int, 'maxlength', 'maxLength'),
+    (int, 'minlength', 'minLength'),
     (str, 'name', 'name'),
     (str, 'placeholder', 'placeholder'),
-    (bool, 'read_only', 'readOnly'),
+    (bool, 'readonly', 'readOnly'),
     (bool, 'required', 'required'),
     (str, 'wrap', 'wrap'),
     (str, 'type', 'type'),
-    (str, 'default_value', 'defaultValue'),
+    (str, 'defaultvalue', 'defaultValue'),
     (str, 'value', 'value'),
-    (int, 'text_length', 'textLength'),
-    (bool, 'will_validate', 'willValidate'),
+    (int, 'textlength', 'textLength'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels'),
-    (int, 'selection_start', 'selectionStart'),
-    (int, 'selection_end', 'selectionEnd'),
-    (str, 'selection_direction', 'selectionDirection')
+    (int, 'selectionstart', 'selectionStart'),
+    (int, 'selectionend', 'selectionEnd'),
+    (str, 'selectiondirection', 'selectionDirection')
 ]
 
 TextAreaCollection = []
@@ -329,7 +302,7 @@ option = [
     (bool, 'disabled', 'disabled'),
     (str, 'form', 'form'),
     (str, 'label', 'label'),
-    (bool, 'default_selected', 'defaultSelected'),
+    (bool, 'defaultselected', 'defaultSelected'),
     (bool, 'selected', 'selected'),
     (str, 'value', 'value'),
     (int, 'index', 'index')
@@ -358,15 +331,15 @@ select = [
     (bool, 'multiple', 'multiple'),
     (str, 'name', 'name'),
     (bool, 'required', 'required'),
-    (int, 'size', 'size'),
     (str, 'type', 'type'),
+    (str, 'options', 'options'),
     (int, 'length', 'length'),
-    (str, 'selected_options', 'selectedOptions'),
-    (int, 'selected_index', 'selectedIndex'),
+    (str, 'selectedoptions', 'selectedOptions'),
+    (int, 'selectedindex', 'selectedIndex'),
     (str, 'value', 'value'),
-    (bool, 'will_validate', 'willValidate'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels')
 ]
 
@@ -376,18 +349,18 @@ button = [
     (bool, 'autofocus', 'autofocus'),
     (bool, 'disabled', 'disabled'),
     (str, 'form', 'form'),
-    (str, 'form_action', 'formAction'),
-    (str, 'form_enctype', 'formEnctype'),
-    (str, 'form_method', 'formMethod'),
-    (bool, 'form_no_validate', 'formNoValidate'),
-    (str, 'form_target', 'formTarget'),
+    (str, 'formaction', 'formAction'),
+    (str, 'formenctype', 'formEnctype'),
+    (str, 'formmethod', 'formMethod'),
+    (bool, 'formnovalidate', 'formNoValidate'),
+    (str, 'formtarget', 'formTarget'),
     (str, 'name', 'name'),
     (str, 'type', 'type'),
     (str, 'value', 'value'),
     (str, 'menu', 'menu'),
-    (bool, 'will_validate', 'willValidate'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels')
 ]
 
@@ -398,51 +371,46 @@ input = [
     (str, 'alt', 'alt'),
     (str, 'autocomplete', 'autocomplete'),
     (bool, 'autofocus', 'autofocus'),
-    (bool, 'default_checked', 'defaultChecked'),
+    (bool, 'defaultchecked', 'defaultChecked'),
     (bool, 'checked', 'checked'),
-    (str, 'dir_name', 'dirName'),
+    (str, 'dirname', 'dirName'),
     (bool, 'disabled', 'disabled'),
     (str, 'form', 'form'),
     (str, 'files', 'files'),
-    (str, 'form_action', 'formAction'),
-    (str, 'form_enctype', 'formEnctype'),
-    (str, 'form_method', 'formMethod'),
-    (bool, 'form_no_validate', 'formNoValidate'),
-    (str, 'form_target', 'formTarget'),
-    (int, 'height', 'height'),
+    (str, 'formaction', 'formAction'),
+    (str, 'formenctype', 'formEnctype'),
+    (str, 'formmethod', 'formMethod'),
+    (bool, 'formnovalidate', 'formNoValidate'),
+    (str, 'formtarget', 'formTarget'),
     (bool, 'indeterminate', 'indeterminate'),
-    (str, 'input_mode', 'inputMode'),
+    (str, 'inputmode', 'inputMode'),
     (str, 'list', 'list'),
     (str, 'max', 'max'),
-    (int, 'max_length', 'maxLength'),
+    (int, 'maxlength', 'maxLength'),
     (str, 'min', 'min'),
-    (int, 'min_length', 'minLength'),
+    (int, 'minlength', 'minLength'),
     (bool, 'multiple', 'multiple'),
     (str, 'name', 'name'),
     (str, 'pattern', 'pattern'),
     (str, 'placeholder', 'placeholder'),
-    (bool, 'read_only', 'readOnly'),
+    (bool, 'readonly', 'readOnly'),
     (bool, 'required', 'required'),
-    (int, 'size', 'size'),
     (str, 'src', 'src'),
     (str, 'step', 'step'),
     (str, 'type', 'type'),
-    (str, 'default_value', 'defaultValue'),
+    (str, 'defaultvalue', 'defaultValue'),
     (str, 'value', 'value'),
-    (str, 'value_as_date', 'valueAsDate'),
-    (float, 'value_as_number', 'valueAsNumber'),
-    (float, 'value_low', 'valueLow'),
-    (float, 'value_high', 'valueHigh'),
-    (int, 'width', 'width'),
-    (bool, 'will_validate', 'willValidate'),
+    (str, 'valueasdate', 'valueAsDate'),
+    (float, 'valueasnumber', 'valueAsNumber'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'labels', 'labels'),
-    (int, 'selection_start', 'selectionStart'),
-    (int, 'selection_end', 'selectionEnd'),
-    (str, 'selection_direction', 'selectionDirection'),
+    (int, 'selectionstart', 'selectionStart'),
+    (int, 'selectionend', 'selectionEnd'),
+    (str, 'selectiondirection', 'selectionDirection'),
     (str, 'align', 'align'),
-    (str, 'use_map', 'useMap')
+    (str, 'usemap', 'useMap')
 ]
 
 InputCollection = []
@@ -463,7 +431,7 @@ form = [
     (str, 'encoding', 'encoding'),
     (str, 'method', 'method'),
     (str, 'name', 'name'),
-    (bool, 'no_validate', 'noValidate'),
+    (bool, 'novalidate', 'noValidate'),
     (str, 'target', 'target'),
     (int, 'length', 'length')
 ]
@@ -471,27 +439,24 @@ form = [
 FormCollection = []
 
 tablecell = [
-    (int, 'col_span', 'colSpan'),
-    (int, 'row_span', 'rowSpan'),
+    (int, 'colspan', 'colSpan'),
+    (int, 'rowspan', 'rowSpan'),
     (str, 'headers', 'headers'),
-    (int, 'cell_index', 'cellIndex'),
+    (int, 'cellindex', 'cellIndex'),
     (str, 'align', 'align'),
     (str, 'axis', 'axis'),
-    (str, 'height', 'height'),
-    (str, 'width', 'width'),
     (str, 'ch', 'ch'),
-    (str, 'ch_off', 'chOff'),
-    (bool, 'no_wrap', 'noWrap'),
-    (str, 'v_align', 'vAlign'),
-    (str, 'bg_color', 'bgColor')
+    (str, 'choff', 'chOff'),
+    (bool, 'nowrap', 'noWrap'),
+    (str, 'valign', 'vAlign'),
+    (str, 'bgcolor', 'bgColor')
 ]
 
 TableCellCollection = []
 
 tableheadercell = [
     (str, 'scope', 'scope'),
-    (str, 'abbr', 'abbr'),
-    (str, 'sorted', 'sorted')
+    (str, 'abbr', 'abbr')
 ]
 
 TableHeaderCellCollection = []
@@ -503,13 +468,13 @@ tabledatacell = [
 TableDataCellCollection = []
 
 tablerow = [
-    (int, 'row_index', 'rowIndex'),
-    (int, 'section_row_index', 'sectionRowIndex'),
+    (int, 'rowindex', 'rowIndex'),
+    (int, 'sectionrowindex', 'sectionRowIndex'),
     (str, 'align', 'align'),
     (str, 'ch', 'ch'),
-    (str, 'ch_off', 'chOff'),
-    (str, 'v_align', 'vAlign'),
-    (str, 'bg_color', 'bgColor')
+    (str, 'choff', 'chOff'),
+    (str, 'valign', 'vAlign'),
+    (str, 'bgcolor', 'bgColor')
 ]
 
 TableRowCollection = []
@@ -517,8 +482,8 @@ TableRowCollection = []
 tablesection = [
     (str, 'align', 'align'),
     (str, 'ch', 'ch'),
-    (str, 'ch_off', 'chOff'),
-    (str, 'v_align', 'vAlign')
+    (str, 'choff', 'chOff'),
+    (str, 'valign', 'vAlign')
 ]
 
 TableSectionCollection = []
@@ -526,9 +491,8 @@ TableSectionCollection = []
 tablecol = [
     (str, 'align', 'align'),
     (str, 'ch', 'ch'),
-    (str, 'ch_off', 'chOff'),
-    (str, 'v_align', 'vAlign'),
-    (str, 'width', 'width')
+    (str, 'choff', 'chOff'),
+    (str, 'valign', 'vAlign')
 ]
 
 TableColCollection = []
@@ -541,19 +505,15 @@ TableCaptionCollection = []
 
 table = [
     (str, 'caption', 'caption'),
-    (str, 't_head', 'tHead'),
-    (str, 't_foot', 'tFoot'),
-    (str, 't_bodies', 'tBodies'),
-    (bool, 'sortable', 'sortable'),
+    (str, 'tbodies', 'tBodies'),
     (str, 'align', 'align'),
     (str, 'border', 'border'),
     (str, 'frame', 'frame'),
     (str, 'rules', 'rules'),
     (str, 'summary', 'summary'),
-    (str, 'width', 'width'),
-    (str, 'bg_color', 'bgColor'),
-    (str, 'cell_padding', 'cellPadding'),
-    (str, 'cell_spacing', 'cellSpacing')
+    (str, 'bgcolor', 'bgColor'),
+    (str, 'cellpadding', 'cellPadding'),
+    (str, 'cellspacing', 'cellSpacing')
 ]
 
 TableCollection = []
@@ -564,12 +524,21 @@ area = [
     (str, 'shape', 'shape'),
     (str, 'target', 'target'),
     (str, 'download', 'download'),
-    (str, 'ping', 'ping'),
     (str, 'rel', 'rel'),
-    (str, 'rel_list', 'relList'),
+    (str, 'rellist', 'relList'),
     (str, 'hreflang', 'hreflang'),
     (str, 'type', 'type'),
-    (bool, 'no_href', 'noHref')
+    (bool, 'nohref', 'noHref'),
+    (str, 'href', 'href'),
+    (str, 'origin', 'origin'),
+    (str, 'protocol', 'protocol'),
+    (str, 'username', 'username'),
+    (str, 'password', 'password'),
+    (str, 'host', 'host'),
+    (str, 'hostname', 'hostname'),
+    (str, 'port', 'port'),
+    (str, 'pathname', 'pathname'),
+    (str, 'search', 'search')
 ]
 
 AreaCollection = []
@@ -585,33 +554,31 @@ MapCollection = []
 media = [
     (str, 'error', 'error'),
     (str, 'src', 'src'),
-    (str, 'src_object', 'srcObject'),
-    (str, 'current_src', 'currentSrc'),
-    (str, 'cross_origin', 'crossOrigin'),
-    (int, 'network_state', 'networkState'),
+    (str, 'srcobject', 'srcObject'),
+    (str, 'currentsrc', 'currentSrc'),
+    (str, 'crossorigin', 'crossOrigin'),
+    (int, 'networkstate', 'networkState'),
     (str, 'preload', 'preload'),
     (str, 'buffered', 'buffered'),
-    (int, 'ready_state', 'readyState'),
+    (int, 'readystate', 'readyState'),
     (bool, 'seeking', 'seeking'),
-    (float, 'current_time', 'currentTime'),
+    (float, 'currenttime', 'currentTime'),
     (float, 'duration', 'duration'),
     (bool, 'paused', 'paused'),
-    (float, 'default_playback_rate', 'defaultPlaybackRate'),
-    (float, 'playback_rate', 'playbackRate'),
+    (float, 'defaultplaybackrate', 'defaultPlaybackRate'),
+    (float, 'playbackrate', 'playbackRate'),
     (str, 'played', 'played'),
     (str, 'seekable', 'seekable'),
     (bool, 'ended', 'ended'),
     (bool, 'autoplay', 'autoplay'),
     (bool, 'loop', 'loop'),
-    (str, 'media_group', 'mediaGroup'),
-    (str, 'controller', 'controller'),
     (bool, 'controls', 'controls'),
     (float, 'volume', 'volume'),
     (bool, 'muted', 'muted'),
-    (bool, 'default_muted', 'defaultMuted'),
-    (str, 'audio_tracks', 'audioTracks'),
-    (str, 'video_tracks', 'videoTracks'),
-    (str, 'text_tracks', 'textTracks')
+    (bool, 'defaultmuted', 'defaultMuted'),
+    (str, 'audiotracks', 'audioTracks'),
+    (str, 'videotracks', 'videoTracks'),
+    (str, 'texttracks', 'textTracks')
 ]
 
 MediaCollection = []
@@ -621,10 +588,8 @@ Audio = []
 AudioCollection = []
 
 video = [
-    (int, 'width', 'width'),
-    (int, 'height', 'height'),
-    (int, 'video_width', 'videoWidth'),
-    (int, 'video_height', 'videoHeight'),
+    (int, 'videowidth', 'videoWidth'),
+    (int, 'videoheight', 'videoHeight'),
     (str, 'poster', 'poster')
 ]
 
@@ -636,7 +601,7 @@ track = [
     (str, 'srclang', 'srclang'),
     (str, 'label', 'label'),
     (bool, 'default', 'default'),
-    (int, 'ready_state', 'readyState'),
+    (int, 'readystate', 'readyState'),
     (str, 'track', 'track')
 ]
 
@@ -646,7 +611,7 @@ param = [
     (str, 'name', 'name'),
     (str, 'value', 'value'),
     (str, 'type', 'type'),
-    (str, 'value_type', 'valueType')
+    (str, 'valuetype', 'valueType')
 ]
 
 ParamCollection = []
@@ -654,17 +619,14 @@ ParamCollection = []
 object = [
     (str, 'data', 'data'),
     (str, 'type', 'type'),
-    (bool, 'type_must_match', 'typeMustMatch'),
+    (bool, 'typemustmatch', 'typeMustMatch'),
     (str, 'name', 'name'),
-    (str, 'use_map', 'useMap'),
     (str, 'form', 'form'),
-    (str, 'width', 'width'),
-    (str, 'height', 'height'),
-    (str, 'content_document', 'contentDocument'),
-    (str, 'content_window', 'contentWindow'),
-    (bool, 'will_validate', 'willValidate'),
+    (str, 'contentdocument', 'contentDocument'),
+    (str, 'contentwindow', 'contentWindow'),
+    (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
-    (str, 'validation_message', 'validationMessage'),
+    (str, 'validationmessage', 'validationMessage'),
     (str, 'align', 'align'),
     (str, 'archive', 'archive'),
     (str, 'code', 'code'),
@@ -672,8 +634,9 @@ object = [
     (int, 'hspace', 'hspace'),
     (str, 'standby', 'standby'),
     (int, 'vspace', 'vspace'),
-    (str, 'code_base', 'codeBase'),
-    (str, 'code_type', 'codeType'),
+    (str, 'codebase', 'codeBase'),
+    (str, 'codetype', 'codeType'),
+    (str, 'usemap', 'useMap'),
     (str, 'border', 'border')
 ]
 
@@ -682,8 +645,6 @@ ObjectCollection = []
 embed = [
     (str, 'src', 'src'),
     (str, 'type', 'type'),
-    (str, 'width', 'width'),
-    (str, 'height', 'height'),
     (str, 'align', 'align'),
     (str, 'name', 'name')
 ]
@@ -695,18 +656,14 @@ iframe = [
     (str, 'srcdoc', 'srcdoc'),
     (str, 'name', 'name'),
     (str, 'sandbox', 'sandbox'),
-    (bool, 'seamless', 'seamless'),
-    (bool, 'allow_fullscreen', 'allowFullscreen'),
-    (str, 'width', 'width'),
-    (str, 'height', 'height'),
-    (str, 'content_document', 'contentDocument'),
-    (str, 'content_window', 'contentWindow'),
+    (bool, 'allowfullscreen', 'allowFullscreen'),
+    (str, 'contentdocument', 'contentDocument'),
+    (str, 'contentwindow', 'contentWindow'),
     (str, 'align', 'align'),
     (str, 'scrolling', 'scrolling'),
-    (str, 'frame_border', 'frameBorder'),
-    (str, 'long_desc', 'longDesc'),
-    (str, 'margin_height', 'marginHeight'),
-    (str, 'margin_width', 'marginWidth')
+    (str, 'frameborder', 'frameBorder'),
+    (str, 'marginheight', 'marginHeight'),
+    (str, 'marginwidth', 'marginWidth')
 ]
 
 IFrameCollection = []
@@ -716,21 +673,18 @@ image = [
     (str, 'src', 'src'),
     (str, 'srcset', 'srcset'),
     (str, 'sizes', 'sizes'),
-    (str, 'cross_origin', 'crossOrigin'),
-    (str, 'use_map', 'useMap'),
-    (bool, 'map', 'isMap'),
-    (int, 'width', 'width'),
-    (int, 'height', 'height'),
-    (int, 'natural_width', 'naturalWidth'),
-    (int, 'natural_height', 'naturalHeight'),
+    (str, 'crossorigin', 'crossOrigin'),
+    (str, 'usemap', 'useMap'),
+    (bool, 'ismap', 'isMap'),
+    (int, 'naturalwidth', 'naturalWidth'),
+    (int, 'naturalheight', 'naturalHeight'),
     (bool, 'complete', 'complete'),
-    (str, 'current_src', 'currentSrc'),
+    (str, 'currentsrc', 'currentSrc'),
     (str, 'name', 'name'),
     (str, 'lowsrc', 'lowsrc'),
     (str, 'align', 'align'),
     (int, 'hspace', 'hspace'),
     (int, 'vspace', 'vspace'),
-    (str, 'long_desc', 'longDesc'),
     (str, 'border', 'border')
 ]
 
@@ -752,7 +706,7 @@ PictureCollection = []
 
 mod = [
     (str, 'cite', 'cite'),
-    (str, 'date_time', 'dateTime')
+    (str, 'datetime', 'dateTime')
 ]
 
 ModCollection = []
@@ -768,7 +722,7 @@ Span = []
 SpanCollection = []
 
 time = [
-    (str, 'date_time', 'dateTime')
+    (str, 'datetime', 'dateTime')
 ]
 
 TimeCollection = []
@@ -782,16 +736,25 @@ DataCollection = []
 anchor = [
     (str, 'target', 'target'),
     (str, 'download', 'download'),
-    (str, 'ping', 'ping'),
     (str, 'rel', 'rel'),
-    (str, 'rel_list', 'relList'),
+    (str, 'rev', 'rev'),
+    (str, 'rellist', 'relList'),
     (str, 'hreflang', 'hreflang'),
     (str, 'type', 'type'),
     (str, 'coords', 'coords'),
     (str, 'charset', 'charset'),
     (str, 'name', 'name'),
-    (str, 'rev', 'rev'),
-    (str, 'shape', 'shape')
+    (str, 'shape', 'shape'),
+    (str, 'href', 'href'),
+    (str, 'origin', 'origin'),
+    (str, 'protocol', 'protocol'),
+    (str, 'username', 'username'),
+    (str, 'password', 'password'),
+    (str, 'host', 'host'),
+    (str, 'hostname', 'hostname'),
+    (str, 'port', 'port'),
+    (str, 'pathname', 'pathname'),
+    (str, 'search', 'search')
 ]
 
 AnchorCollection = []
@@ -837,18 +800,14 @@ quote = [
 
 QuoteCollection = []
 
-pre = [
-    (int, 'width', 'width')
-]
+Pre = []
 
 PreCollection = []
 
 hr = [
     (str, 'align', 'align'),
     (str, 'color', 'color'),
-    (bool, 'no_shade', 'noShade'),
-    (str, 'size', 'size'),
-    (str, 'width', 'width')
+    (bool, 'noshade', 'noShade')
 ]
 
 HRCollection = []
@@ -867,9 +826,9 @@ HeadingCollection = []
 
 body = [
     (str, 'link', 'link'),
-    (str, 'v_link', 'vLink'),
-    (str, 'a_link', 'aLink'),
-    (str, 'bg_color', 'bgColor'),
+    (str, 'vlink', 'vLink'),
+    (str, 'alink', 'aLink'),
+    (str, 'bgcolor', 'bgColor'),
     (str, 'background', 'background'),
     (str, 'onafterprint', 'onafterprint'),
     (str, 'onbeforeprint', 'onbeforeprint'),
@@ -881,8 +840,10 @@ body = [
     (str, 'ononline', 'ononline'),
     (str, 'onpagehide', 'onpagehide'),
     (str, 'onpageshow', 'onpageshow'),
+    (str, 'onrejectionhandled', 'onrejectionhandled'),
     (str, 'onpopstate', 'onpopstate'),
     (str, 'onstorage', 'onstorage'),
+    (str, 'onunhandledrejection', 'onunhandledrejection'),
     (str, 'onunload', 'onunload')
 ]
 
@@ -890,8 +851,8 @@ BodyCollection = []
 
 style = [
     (str, 'media', 'media'),
-    (str, 'type', 'type'),
-    (bool, 'scoped', 'scoped')
+    (str, 'nonce', 'nonce'),
+    (str, 'type', 'type')
 ]
 
 StyleCollection = []
@@ -929,3 +890,4 @@ HtmlCollection = []
 Unknown = []
 
 UnknownCollection = []
+
