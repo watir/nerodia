@@ -483,6 +483,13 @@ class Element(Container, Atoms, Waitable, Adjacent):
             raise self._unknown_exception('element located, but {}'.format(e.message))
 
     def wait_for_enabled(self):
+        from .button import Button
+        from .input import Input
+        from .option import Option
+        from .select import Select
+        if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
+            return self.wait_for_exists()
+
         if not nerodia.relaxed_locate:
             return self._assert_enabled()
 
@@ -609,21 +616,12 @@ class Element(Container, Atoms, Waitable, Adjacent):
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):
-        from .button import Button
-        from .input import Input
-        from .option import Option
-        from .select import Select
         exist_check = exist_check or self.wait_for_exists
         if Wait.timer.locked is None:
             Wait.timer = Timer(timeout=nerodia.default_timeout)
+
         try:
-            if exist_check == self.wait_for_enabled:
-                if any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
-                    self.wait_for_enabled()
-                else:
-                    self.wait_for_exists()
-            else:
-                exist_check()
+            exist_check()
             return method()
         except StaleElementReferenceException:
             exist_check()
