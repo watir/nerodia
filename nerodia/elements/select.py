@@ -1,11 +1,11 @@
 import re
+from warnings import warn
 
 import six
 
 from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
 from nerodia.wait.wait import TimeoutError
 from .html_elements import HTMLElement
-from .option import Option
 from ..meta_elements import MetaHTMLElement
 from ..wait.wait import Wait
 
@@ -28,16 +28,27 @@ class Select(HTMLElement):
         :param term: string or regex to match against the option
         :rtype: bool
         """
-        return self.option(text=term).exists or self.option(label=text).exists
+        return self.option(text=term).exists or self.option(label=term).exists
 
     def select(self, term):
         """
-        Select the option(s) whose text or label matches the given string
+        Select the option whose text or label matches the given string
         If this is a multi-select and several options match the value given, all will be selected
         :param term: string or regex to match against the option
-        :return:
+        :return: The text of the option selected. If multiple options match, returns the first match
+        :rtype: str
         """
         self._select_by('text', term)
+
+    def select_all(self, term):
+        """
+        Select all the options whose text or label matches the given string
+        If this is a multi-select and several options match the value given, all will be selected
+        :param term: string or regex to match against the option
+        :return: The text of the first option selected.
+        :rtype: str
+        """
+        self._select_all_by('text', term)
 
     def select_value(self, value):
         """
@@ -106,13 +117,38 @@ class Select(HTMLElement):
         found = []
 
         def func(sel):
-            if type(term) in [str, int, re._pattern_type]:
+            if type(term) in [str, unicode, int, re._pattern_type]:
                 opt = {how: term}
                 found.extend(sel.options(**opt))
                 if not list(found):
                     found.extend(sel.options(label=term))
             else:
-                raise TypeError('expected str, got {}:{}'.format(term, term.__class__))
+                raise TypeError('expected str or regexp, got {}:{}'.format(term, term.__class__))
+            if len(found) > 1:
+                warn('Selecting Multiple Options with #select is deprecated, please use '
+                     '#select_all')
+            return found
+
+        try:
+            Wait.until(func, object=self)
+        except TimeoutError:
+            raise NoValueFoundException('{} not found in select list'.format(term))
+        return self._select_matching(found)
+
+    def _select_by_all(self, how, term):
+        if not self.multiple:
+            raise Error('you can only use #select_all on multi-selects')
+
+        found = []
+
+        def func(sel):
+            if type(term) in [str, unicode, int, re._pattern_type]:
+                opt = {how: term}
+                found.extend(sel.options(**opt))
+                if not list(found):
+                    found.extend(sel.options(label=term))
+            else:
+                raise TypeError('expected str or regexp, got {}:{}'.format(term, term.__class__))
 
             return found
 
