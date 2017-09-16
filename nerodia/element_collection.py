@@ -58,12 +58,22 @@ class ElementCollection(object):
         :rtype: list[nerodia.elements.element.Element]
         """
         from .elements.html_elements import HTMLElement
+        from .elements.input import Input
+        dic = {}
         if not self.as_list:
             elements = []
             for idx, e in enumerate(self._elements):
-                element = self._element_class(self.query_scope, dict(index=idx, **self.selector))
-                if self._element_class == HTMLElement:
-                    elements.append(element.to_subtype())
+                element = self._element_class(self.query_scope, dict(index=idx, element=e,
+                                                                     **self.selector))
+                if element.__class__ in [HTMLElement, Input]:
+                    element = element.to_subtype()
+                    class_name = element.__class__.__name__
+                    dic[class_name] = dic.get(class_name, [])
+                    dic[class_name].append(element)
+                    idx = len(dic[class_name]) - 1
+                    elements.append(element.__class__(self.query_scope,
+                                                      dict(element=e, tag_name=element.tag_name,
+                                                           index=idx, **self.selector)))
                 else:
                     elements.append(element)
             self.as_list = elements

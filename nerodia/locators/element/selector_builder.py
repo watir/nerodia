@@ -9,7 +9,7 @@ from ...xpath_support import XpathSupport
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [str, re._pattern_type, bool]
+    VALID_WHATS = [str, unicode, re._pattern_type, bool]
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
     def __init__(self, query_scope, selector, valid_attributes):

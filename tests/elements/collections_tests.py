@@ -23,3 +23,11 @@ def test_can_contain_more_than_one_type_of_element(browser):
     collection = browser.div(id='parent').children()
     assert any(isinstance(el, Span) for el in collection)
     assert any(isinstance(el, Div) for el in collection)
+
+
+@pytest.mark.page('nested_elements.html')
+def test_relocates_the_same_element(browser):
+    collection = browser.div(id='parent').children()
+    tag = collection[3].tag_name
+    browser.refresh()
+    assert collection[3].tag_name == tag
