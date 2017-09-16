@@ -401,8 +401,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.element(xpath="//input[@type='submit']").to_subtype()  #=> #<Button>
         """
-        elem = self.wd
-        tag_name = elem.tag_name.lower()
+        tag = self.tag_name
         from .button import Button
         from .check_box import CheckBox
         from .file_field import FileField
@@ -410,8 +409,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
         from .radio import Radio
         from .text_field import TextField
 
-        if tag_name == 'input':
-            elem_type = elem.get_attribute('type')
+        if tag == 'input':
+            elem_type = self.attribute_value('type')
             if elem_type in Button.VALID_TYPES:
                 klass = Button
             elif elem_type == 'checkbox':
@@ -423,9 +422,9 @@ class Element(Container, Atoms, Waitable, Adjacent):
             else:
                 klass = TextField
         else:
-            klass = nerodia.element_class_for(tag_name) or HTMLElement
+            klass = nerodia.element_class_for(tag) or HTMLElement
 
-        return klass(self.query_scope, selector=self.selector, element=elem)
+        return klass(self.query_scope, selector=self.selector, element=self.wd)
 
     @property
     def browser(self):
