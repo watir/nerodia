@@ -193,13 +193,36 @@ class TestElementExistsClassLocator(object):
     def test_matches_when_the_element_has_several_classes(self, browser):
         e = browser.div(class_name='b')
         assert e.exists
-        assert e.class_name == 'a b'
+        assert e.class_name == 'a b c'
 
     def test_does_not_match_only_part_of_the_class_name(self, browser):
-        assert not browser.div(class_name='c').exists
+        assert not browser.div(class_name='bc').exists
 
     def test_matches_part_of_the_class_name_when_given_a_regexp(self, browser):
         assert browser.div(class_name=compile(r'c')).exists
+
+
+@pytest.mark.page('class_locator.html')
+class TestElementExistsMultipleClassLocator(object):
+    def test_matches_when_the_element_has_a_single_class(self, browser):
+        e = browser.div(class_name=['a'])
+        assert e.exists
+        assert e.class_name == 'a'
+
+    def test_matches_a_non_ordered_subset(self, browser):
+        e = browser.div(class_name=['c', 'a'])
+        assert e.exists
+        assert e.class_name == 'a b c'
+
+    def test_matches_one_with_negation(self, browser):
+        e = browser.div(class_name=['!a'])
+        assert e.exists
+        assert e.class_name == 'abc'
+
+    def test_matches_multiple_with_negation(self, browser):
+        e = browser.div(class_name=['a', '!c', 'b'])
+        assert e.exists
+        assert e.class_name == 'a b'
 
 
 @pytest.mark.page('data_attributes.html')

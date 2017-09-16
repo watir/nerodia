@@ -221,11 +221,11 @@ class TestElementLocatorFindsSingleElement(object):
             locate_one(browser, selector)
         assert e.value.message == "expected {}, got 'bar':{}".format(int, str)
 
-    def test_raises_correct_exception_if_selector_value_is_not_a_string_regexp_or_boolean(self, browser, mocker, expect_all):
+    def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, mocker, expect_all):
         with pytest.raises(TypeError) as e:
             selector = {'tag_name': 123}
             locate_one(browser, selector)
-        assert e.value.message == "expected one of [{}, {}, {}], got 123:{}".format(str, re._pattern_type, bool, int)
+        assert e.value.message == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(list, str, unicode, re._pattern_type, bool, int)
 
     def test_raises_correct_exception_if_the_attribute_is_not_valid(self, browser, mocker, expect_all):
         from nerodia.elements.input import Input

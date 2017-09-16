@@ -1,5 +1,6 @@
 import logging
 from importlib import import_module
+from warnings import warn
 
 import re
 from selenium.webdriver.common.by import By
@@ -9,7 +10,7 @@ from ...xpath_support import XpathSupport
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [str, unicode, re._pattern_type, bool]
+    VALID_WHATS = [list, str, unicode, re._pattern_type, bool]
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
     def __init__(self, query_scope, selector, valid_attributes):
@@ -37,6 +38,8 @@ class SelectorBuilder(object):
             if not isinstance(what, bool):
                 raise TypeError('expected {}, got {!r}:{}'.format(bool, what, what.__class__))
         else:
+            if isinstance(what, list) and how != 'class_name':
+                raise TypeError("only 'class_name' locator can have a value of a list")
             if type(what) not in self.VALID_WHATS:
                 raise TypeError(
                     'expected one of {}, got {!r}:{}'.format(self.VALID_WHATS, what, what.__class__))
@@ -147,7 +150,9 @@ class XPath(object):
     def attribute_expression(self, building, selectors):
         expressions = []
         for key, val in selectors.items():
-            if isinstance(val, list):
+            if isinstance(val, list) and key == 'class':
+                term = '({})'.format(' and '.join([self._build_class_match(v) for v in val]))
+            elif isinstance(val, list):
                 term = '({})'.format(' or '.join([self.equal_pair(building, key, v) for v in val]))
             elif val is True:
                 term = self._attribute_presence(key)
@@ -161,8 +166,10 @@ class XPath(object):
     # TODO: Get rid of building
     def equal_pair(self, building, key, value):
         if key == 'class':
-            klass = XpathSupport.escape(' {} '.format(value))
-            return "contains(concat(' ', @class, ' '), {})".format(klass)
+            if ' ' in value.strip():
+                warn("using the 'class_name' locator to locate multiple classes with a str value "
+                     "is deprecated; use a list instead")
+            return self._build_class_match(value)
         elif key == 'label' and self.should_use_label_element:
             # we assume 'label' means a corresponding label element, not the attribute
             text = 'normalize-space()={}'.format(XpathSupport.escape(value))
@@ -186,6 +193,14 @@ class XPath(object):
             return '@{}'.format(key.replace('_', '-'))
 
     # private
+
+    def _build_class_match(self, value):
+        if re.match('!', value):
+            escaped = XpathSupport.escape(" {} ".format(value[1:]))
+            return "not(contains(concat(' ', @class, ' '), {}))".format(escaped)
+        else:
+            escaped = XpathSupport.escape(" {} ".format(value))
+            return "contains(concat(' ', @class, ' '), {})".format(escaped)
 
     def _attribute_presence(self, attribute):
         return self.lhs_for(None, attribute)
