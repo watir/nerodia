@@ -47,11 +47,11 @@ class Locator(object):
             else:
                 element = self._find_first_by_multiple()
 
-            # This actually only applies when finding by xpath/css -
-            # browser.text_field(xpath="//input[@type='radio']")
-            # We don't need to validate the element if we built the xpath ourselves.
-            # It is also used to alter behavior of methods locating more than one type of element
-            # (e.g. text_field locates both input and textarea)
+            # Validation not necessary if Nerodia builds the xpath
+
+            if 'xpath' not in self.selector.keys() and 'css' not in self.selector.keys():
+                return element
+
             if element:
                 return self.element_validator.validate(element, self.selector)
         except (NoSuchElementException, StaleElementReferenceException):
