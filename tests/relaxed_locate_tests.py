@@ -3,8 +3,7 @@ from time import time
 import pytest
 
 import nerodia
-from nerodia.exception import UnknownObjectException, ObjectDisabledException, \
-    ObjectReadOnlyException
+from nerodia.exception import UnknownObjectException
 
 
 @pytest.fixture
@@ -29,11 +28,11 @@ class TestRelaxedLocate(object):
         assert time() - start > timeout
 
     def test_does_not_wait_on_element_that_is_already_present(self, browser):
-        nerodia.default_timeout = 2
+        nerodia.default_timeout = 5
         element = browser.link()
         start = time()
         element.click()
-        assert time() - start < 2
+        assert time() - start < 5
 
     def test_waits_until_present_present_and_takes_action_on_element_eventually_present(self, browser):
         nerodia.default_timeout = 3
