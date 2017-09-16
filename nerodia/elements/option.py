@@ -14,11 +14,11 @@ class Option(HTMLElement):
 
     def clear(self):
         """ Un-selects the option """
-        if self.selected:
+        if self.is_selected:
             self.click()
 
     @property
-    def selected(self):
+    def is_selected(self):
         """
         Returns True if the option is selected
         :rtype: bool
@@ -35,8 +35,9 @@ class Option(HTMLElement):
             * inner element text
         :rtype: str
         """
-        attribute = next((x for x in ['label', 'text'] if self._is_attribute(x) is True), False)
-        if attribute is not False:
-            return self._attribute_value(attribute)
-        else:
-            return super(Option, self).text
+        for attr in ['label', 'text']:
+            val = self.attribute_value(attr)
+            if val:
+                return val
+
+        return super(Option, self).text

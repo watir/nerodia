@@ -18,17 +18,8 @@ class Select(HTMLElement):
             raise Error('you can only clear multi-selects')
 
         for option in self.options():
-            if option.selected:
-                self.click_option(option)
-
-    def options(self, *args, **kwargs):
-        """
-        Gets all the options in the select list
-
-        :rtype: nerodia.elements.option.OptionColletion
-        """
-        return self._element_call(lambda: super(Select, self).options(*args, **kwargs),
-                                  self.wait_for_exists)
+            if option.is_selected:
+                option.click()
 
     def includes(self, term):
         """
@@ -37,15 +28,7 @@ class Select(HTMLElement):
         :param term: string or regex to match against the option
         :rtype: bool
         """
-        def func():
-            elements = self.el.find_elements_by_css_selector('option')
-            for e in elements:
-                text = e.text
-                label = e.get_attribute('label')
-                if term in [text, label] or re.search(term, text) or re.search(term, label):
-                    return True
-            return False
-        return self._element_call(func)
+        return self.option(text=term).exists or self.option(label=text).exists
 
     def select(self, term):
         """
@@ -71,19 +54,18 @@ class Select(HTMLElement):
         :rtype: bool
         :raises: UnknownObjectException
         """
-        def func():
-            elements = self.el.find_elements_by_css_selector('option')
-            for e in elements:
-                text = e.text
-                label = e.get_attribute('label')
-                if term in [text, label] or re.search(term, text) or re.search(term, label):
-                    if e.is_selected():
-                        return True
+        by_text = self.options(text=term)
+        if any(option.is_selected for option in by_text):
+            return True
+
+        by_label = self.options(label=term)
+        if any(option.is_selected for option in by_label):
+            return True
+
+        if len(by_text) + len(by_label) != 0:
             return False
-        result = self._element_call(func)
-        if result is not True:
-            raise UnknownObjectException('Unable to locate option matching {}'.format(term))
-        return result
+
+        raise UnknownObjectException('Unable to locate option matching {}'.format(term))
 
     @property
     def value(self):
@@ -137,7 +119,7 @@ class Select(HTMLElement):
         try:
             Wait.until(func, object=self)
         except TimeoutError:
-            self._no_value_found(term)
+            raise NoValueFoundException('{} not found in select list'.format(term))
         return self._select_matching(found)
 
     def select_matching(self, elements):
@@ -145,7 +127,7 @@ class Select(HTMLElement):
             elements = elements[:1]
         for element in elements:
             if not element.is_selected():
-                self._click_option(element)
+                element.click()
         return elements[0].text if elements[0].exist else ''
 
     def _matches_regexp(self, how, element, exp):
@@ -156,12 +138,3 @@ class Select(HTMLElement):
             return re.search(exp, element.value) is not None
         else:
             raise Error('unknown how: {}'.format(how))
-
-    def _click_option(self, element):
-        if not isinstance(element, Option):
-            element = Option(self, selector={'element': element})
-        element.click()
-
-    @staticmethod
-    def _no_value_found(arg, msg=None):
-        raise (NoValueFoundException(msg or '{} not found in select list'.format(arg)))
