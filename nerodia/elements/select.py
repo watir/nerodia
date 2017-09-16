@@ -159,7 +159,7 @@ class Select(HTMLElement):
 
     def _click_option(self, element):
         if not isinstance(element, Option):
-            element = Option(self, element=element)
+            element = Option(self, selector={'element': element})
         element.click()
 
     @staticmethod

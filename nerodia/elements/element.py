@@ -22,11 +22,12 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 class Element(Container, Atoms, Waitable, Adjacent):
     ATTRIBUTES = []
 
-    def __init__(self, query_scope, selector, element=None):
+    def __init__(self, query_scope, selector):
         self.query_scope = query_scope
         if not isinstance(selector, dict):
             raise TypeError('invalid argument: {!r}'.format(selector))
-        self.el = element
+
+        self.el = selector.pop('element', None)
         self.selector = selector
         self.keyword = None
 
@@ -424,7 +425,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         else:
             klass = nerodia.element_class_for(tag) or HTMLElement
 
-        return klass(self.query_scope, selector=self.selector, element=self.wd)
+        return klass(self.query_scope, selector={'element': self.wd})
 
     @property
     def browser(self):
