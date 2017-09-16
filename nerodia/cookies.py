@@ -44,9 +44,16 @@ class Cookies(object):
 
         browser.cookies.add('my_session', 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain='mysite.com')
         """
-        cookie = {'name': name, 'value': value, 'secure': kwargs.get('secure'),
-                  'path': kwargs.get('path'), 'expires': kwargs.get('expires'),
-                  'domain': kwargs.get('domain')}
+        cookie = {'name': name, 'value': value}
+        keys = kwargs.keys()
+        if 'secure' in keys:
+            cookie['secure'] = kwargs.get('secure')
+        if 'path' in keys:
+            cookie['path'] = kwargs.get('path')
+        if 'expires' in keys:
+            cookie['expires'] = kwargs.get('expires')
+        if 'domain' in keys:
+            cookie['domain'] =  kwargs.get('domain')
         self.driver.add_cookie(cookie)
 
     def delete(self, name):
