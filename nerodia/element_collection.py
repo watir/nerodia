@@ -52,6 +52,24 @@ class ElementCollection(object):
             return self._element_class(self.query_scope, dict(index=idx, **self.selector))
 
     @property
+    def is_empty(self):
+        """
+        Returns True if no elements are found
+
+        :Example:
+
+        browser.select_list(name='new_user_languages').options(class_name='not_here').is_empty
+
+        :Example:
+
+        browser.select_list(name='new_user_languages').options(id='danish').is_empty
+
+        :return: True if no elements are found
+        :rtype: bool
+        """
+        return len(self) == 0
+
+    @property
     def to_list(self):
         """
         This collection as a list
@@ -78,6 +96,8 @@ class ElementCollection(object):
                     elements.append(element)
             self.as_list = elements
         return self.as_list
+
+    locate = to_list
 
     def __eq__(self, other):
         """

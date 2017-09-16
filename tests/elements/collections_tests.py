@@ -13,7 +13,7 @@ def test_returns_inner_elements_of_parent_element_having_same_html_tag(browser):
 
 def test_returns_correct_subtype_of_elements(browser):
     from nerodia.elements.html_elements import Span
-    collection = browser.span(id='a_span').spans().to_list
+    collection = browser.span(id='a_span').spans()
     assert all(isinstance(el, Span) for el in collection)
 
 
@@ -31,3 +31,16 @@ def test_relocates_the_same_element(browser):
     tag = collection[3].tag_name
     browser.refresh()
     assert collection[3].tag_name == tag
+
+
+@pytest.mark.page('collections.html')
+def test_returns_value_for_empty(browser):
+    assert browser.span(id='a_span').options().is_empty
+
+
+@pytest.mark.page('collections.html')
+def test_locates_elements(browser, mocker):
+    mock = mocker.patch('nerodia.container.Container.spans')
+    mock.return_value = []
+    spans = browser.span(id='a_span').spans()
+    assert spans == []
