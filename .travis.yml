@@ -13,12 +13,12 @@ matrix:
   include:
   - python: 2.7
     env: TOXENV=flake8
-  - python: 2.7
-    env: TOXENV=py27-chrome
+#  - python: 2.7
+#    env: TOXENV=py27-chrome
   - python: 3.6
     env: TOXENV=flake8
-  - python: 3.6
-    env: TOXENV=py36-chrome
+#  - python: 3.6
+#    env: TOXENV=py36-chrome
 install:
 - pip install tox-travis
 before_script:
