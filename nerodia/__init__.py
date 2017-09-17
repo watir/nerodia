@@ -24,6 +24,14 @@ from . import locators, tag_map  # noqa
 
 locator_namespace = locators
 
+from .logger import Logger
+
+#
+# Custom logger
+#
+
+logger = Logger()
+
 
 def element_class_for(tag_name):
     return tag_to_class.get(tag_name)
