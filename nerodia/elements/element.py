@@ -1,8 +1,10 @@
 from importlib import import_module
+from inspect import stack
 from re import search, sub
 from time import sleep
 
-from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException, \
+from selenium.common.exceptions import InvalidElementStateException, \
+    StaleElementReferenceException, \
     ElementNotVisibleException, ElementNotInteractableException, NoSuchWindowException
 from selenium.webdriver.common.action_chains import ActionChains
 
@@ -14,7 +16,6 @@ from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
 from ..locators.element.selector_builder import SelectorBuilder
-from ..wait.timer import Timer
 from ..wait.wait import TimeoutError, Wait, Waitable
 
 
@@ -616,7 +617,13 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     def _element_call(self, method, exist_check=None):
         exist_check = exist_check or self.wait_for_exists
-        if Wait.timer.locked is None:
+        caller = stack()[1][3]
+        info = '-> `{}#{}` after `#{}`'.format(self, caller, exist_check.__name__)
+        if Wait.timer.locked:
+            nerodia.logger.info(info + ' (as prerequisite for a previously specified execution)')
+        else:
+            from ..wait.timer import Timer
+            nerodia.logger.info(info)
             Wait.timer = Timer(timeout=nerodia.default_timeout)
 
         try:
@@ -639,6 +646,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         except NoSuchWindowException:
             raise NoMatchingWindowFoundException('browser window was closed')
         finally:
+            nerodia.logger.info('<- `{}#{}` has been completed'.format(self, caller))
             if Wait.timer.locked is None:
                 Wait.timer.reset()
 
