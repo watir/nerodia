@@ -53,7 +53,11 @@ class SelectorBuilder(object):
         return not self._is_valid_attribute('label')
 
     def build(self, selector):
-        return self._given_xpath_or_css(selector) or self._build_wd_selector(selector)
+        if 'xpath' in selector or 'css' in selector:
+            return self._given_xpath_or_css(selector)
+        built = self._build_wd_selector(selector)
+        nerodia.logger.debug('Converted {} to {}'.format(selector, built))
+        return built
 
     @property
     def xpath_builder(self):
