@@ -1,7 +1,6 @@
 from importlib import import_module
 from re import search, sub
 from time import sleep
-from warnings import warn
 
 from selenium.common.exceptions import InvalidElementStateException, StaleElementReferenceException, \
     ElementNotVisibleException, ElementNotInteractableException, NoSuchWindowException
@@ -631,7 +630,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
                     (exist_check in [self.wait_for_present, self.wait_for_enabled]):
                 self._raise_present()
             return method()
-        except InvalidElementStateException, e:
+        except InvalidElementStateException as e:
             if (Wait.timer.remaining_time <= 0) or \
                     (exist_check in [self.wait_for_writable, self.wait_for_enabled]) or \
                     ('user-editable' in e.msg):

@@ -404,6 +404,7 @@ class Path(SVGElement):
 class PathCollection(SVGElementCollection):
     pass
 
+
 @six.add_metaclass(MetaSVGElement)
 class Hatchpath(SVGElement):
     pass
@@ -462,4 +463,3 @@ class Mesh(SVGElement):
 @six.add_metaclass(MetaSVGElement)
 class MeshCollection(SVGElementCollection):
     pass
-

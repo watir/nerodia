@@ -53,7 +53,7 @@ class Cookies(object):
         if 'expires' in keys:
             cookie['expires'] = kwargs.get('expires')
         if 'domain' in keys:
-            cookie['domain'] =  kwargs.get('domain')
+            cookie['domain'] = kwargs.get('domain')
         self.driver.add_cookie(cookie)
 
     def delete(self, name):

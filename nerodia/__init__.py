@@ -1,3 +1,5 @@
+from .logger import Logger
+
 ttc = None
 
 tag_to_class = ttc or {}
@@ -23,8 +25,6 @@ from . import locators, tag_map  # noqa
 #
 
 locator_namespace = locators
-
-from .logger import Logger
 
 #
 # Custom logger

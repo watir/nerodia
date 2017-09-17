@@ -2,15 +2,19 @@ import logging
 from importlib import import_module
 from warnings import warn
 
+import six
+
 import re
 from selenium.webdriver.common.by import By
 
 from ...exception import MissingWayOfFindingObjectException
 from ...xpath_support import XpathSupport
 
+STRING_TYPES = [six.text_type, six.binary_type]
+
 
 class SelectorBuilder(object):
-    VALID_WHATS = [list, str, unicode, re._pattern_type, bool]
+    VALID_WHATS = [list, re._pattern_type, bool] + STRING_TYPES
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
     def __init__(self, query_scope, selector, valid_attributes):

@@ -1,6 +1,7 @@
 import logging
 logger = logging.getLogger(__name__)
 
+
 class Logger(object):
     def __init__(self):
         self._logger = logging.getLogger(__name__.split('.')[0])
