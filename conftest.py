@@ -100,3 +100,11 @@ def webserver():
     webserver.start()
     yield webserver
     webserver.stop()
+
+
+@pytest.fixture
+def temp_file():
+    import tempfile
+    tmp = tempfile.NamedTemporaryFile()
+    yield tmp
+    tmp.close()

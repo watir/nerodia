@@ -18,14 +18,6 @@ def verify_cookie(browser):
     verify_cookies_count(browser, 1)
 
 
-@pytest.fixture
-def cookie_file():
-    import tempfile
-    tmp = tempfile.NamedTemporaryFile()
-    yield tmp
-    tmp.close()
-
-
 @pytest.mark.page('set_cookie/index.html')
 @pytest.mark.usefixtures('clear_cookies', 'verify_cookie')
 class TestBrowserCookies(object):
@@ -75,24 +67,26 @@ class TestBrowserCookies(object):
         verify_cookies_count(browser, 0)
 
     # TODO: xfail IE
-    def test_saves_cookies_to_file(self, browser, cookie_file):
+    def test_saves_cookies_to_file(self, browser, temp_file):
         from json import load
-        browser.cookies.save(cookie_file.name)
-        assert load(cookie_file) == browser.cookies.to_list
+        browser.cookies.save(temp_file.name)
+        assert load(temp_file) == browser.cookies.to_list
 
     # TODO: xfail IE
-    def test_loads_cookies_from_file(self, browser, cookie_file):
+    def test_loads_cookies_from_file(self, browser, temp_file):
         from json import load
-        browser.cookies.save(cookie_file.name)
+        browser.cookies.save(temp_file.name)
         browser.cookies.clear()
-        browser.cookies.load(cookie_file.name)
+        browser.cookies.load(temp_file.name)
 
         expected = browser.cookies.to_list
-        actual = load(cookie_file)
+        actual = load(temp_file)
         # https://code.google.com/p/selenium/issues/detail?id=6834
         for each in expected:
             each.pop('expires', None)
+            each.pop('expiry', None)
         for each in actual:
             each.pop('expires', None)
+            each.pop('expiry', None)
 
         assert actual == expected
