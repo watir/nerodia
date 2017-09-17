@@ -1,8 +1,8 @@
 import re
-from warnings import warn
 
 import six
 
+import nerodia
 from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
 from nerodia.wait.wait import TimeoutError
 from .html_elements import HTMLElement
@@ -127,8 +127,8 @@ class Select(HTMLElement):
             else:
                 raise TypeError('expected str or regexp, got {}:{}'.format(term, term.__class__))
             if len(elements) > 1:
-                warn('Selecting Multiple Options with #select is deprecated, please use '
-                     '#select_all')
+                nerodia.logger.deprecate('Selecting Multiple Options with #select',
+                                         '#select_all')
             if len(elements) > 0:
                 found.extend(elements)
                 return True

@@ -1,12 +1,12 @@
 import logging
 from importlib import import_module
-from warnings import warn
 
 import six
 
 import re
 from selenium.webdriver.common.by import By
 
+import nerodia
 from ...exception import MissingWayOfFindingObjectException
 from ...xpath_support import XpathSupport
 
@@ -171,8 +171,8 @@ class XPath(object):
     def equal_pair(self, building, key, value):
         if key == 'class':
             if ' ' in value.strip():
-                warn("using the 'class_name' locator to locate multiple classes with a str value "
-                     "is deprecated; use a list instead")
+                nerodia.logger.deprecate("using the 'class_name' locator to locate multiple "
+                                         "classes with a str value", "use a list instead")
             return self._build_class_match(value)
         elif key == 'label' and self.should_use_label_element:
             # we assume 'label' means a corresponding label element, not the attribute

@@ -1,5 +1,4 @@
 from selenium.common.exceptions import NoAlertPresentException
-from warnings import warn
 
 import nerodia
 from .exception import UnknownObjectException
@@ -100,8 +99,8 @@ class Alert(Waitable):
             return self.wait_until(lambda a: a.exists, message='waiting for alert')
         except TimeoutError:
             if nerodia.default_timeout != 0:
-                warn(
-                    'This code has slept for the duration of the default timeout waiting for an '
-                    'Alert to exist. If the test is still passing, consider using Alert#exists? '
-                    'instead of rescuing UnknownObjectException')
+                nerodia.logger.warn('This code has slept for the duration of the default timeout '
+                                    'waiting for an Alert to exist. If the test is still passing, '
+                                    'consider using Alert#exists? instead of rescuing '
+                                    'UnknownObjectException')
             raise UnknownObjectException('unable to locate alert')
