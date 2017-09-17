@@ -114,20 +114,24 @@ class Select(HTMLElement):
     # private
 
     def _select_by(self, how, term):
+        from ..locators.element.selector_builder import SelectorBuilder
         found = []
 
         def func(sel):
-            if type(term) in [str, unicode, int, re._pattern_type]:
+            elements = []
+            if type(term) in SelectorBuilder.VALID_WHATS:
                 opt = {how: term}
-                found.extend(sel.options(**opt))
+                elements.extend(sel.options(**opt))
                 if not list(found):
-                    found.extend(sel.options(label=term))
+                    elements.extend(sel.options(label=term))
             else:
                 raise TypeError('expected str or regexp, got {}:{}'.format(term, term.__class__))
-            if len(found) > 1:
+            if len(elements) > 1:
                 warn('Selecting Multiple Options with #select is deprecated, please use '
                      '#select_all')
-            return found
+            if len(elements) > 0:
+                found.extend(elements)
+                return True
 
         try:
             Wait.until(func, object=self)
@@ -136,21 +140,24 @@ class Select(HTMLElement):
         return self._select_matching(found)
 
     def _select_by_all(self, how, term):
+        from ..locators.element.selector_builder import SelectorBuilder
         if not self.multiple:
             raise Error('you can only use #select_all on multi-selects')
 
         found = []
 
         def func(sel):
-            if type(term) in [str, unicode, int, re._pattern_type]:
+            elements = []
+            if type(term) in SelectorBuilder.VALID_WHATS:
                 opt = {how: term}
-                found.extend(sel.options(**opt))
+                elements.extend(sel.options(**opt))
                 if not list(found):
-                    found.extend(sel.options(label=term))
+                    elements.extend(sel.options(label=term))
             else:
                 raise TypeError('expected str or regexp, got {}:{}'.format(term, term.__class__))
-
-            return found
+            if len(elements) > 0:
+                found.extend(elements)
+                return True
 
         try:
             Wait.until(func, object=self)
@@ -158,7 +165,7 @@ class Select(HTMLElement):
             raise NoValueFoundException('{} not found in select list'.format(term))
         return self._select_matching(found)
 
-    def select_matching(self, elements):
+    def _select_matching(self, elements):
         if not self.multiple:
             elements = elements[:1]
         for element in elements:
