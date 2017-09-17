@@ -70,4 +70,3 @@ def test_allows_sopping_output_to_file(temp_file):
 def test_allows_to_deprecate_functionality(caplog):
     nerodia.logger.deprecate('#old', '#new')
     assert '[DEPRECATION] #old is deprecated. Use #new instead.' in caplog.text()
-
