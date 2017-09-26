@@ -4,6 +4,7 @@ import pytest
 
 from nerodia.browser import Browser
 from nerodia.elements.html_elements import Body
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 BROWSERS = ['chrome',
             'firefox',
@@ -11,6 +12,8 @@ BROWSERS = ['chrome',
             'edge',
             'safari',
             'remote']
+
+W3C_BROWSERS = ['firefox']
 
 
 @pytest.fixture
@@ -250,24 +253,53 @@ class TestBrowserBackForth(object):
 @pytest.mark.page('non_control_elements.html')
 # TODO: xfail safari
 class TestBrowserInit(object):
-    @pytest.mark.parametrize('browser_name', BROWSERS)
-    def test_passes_the_args_to_selenium(self, mocker, browser_name):
-        mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name))
-        Browser(browser_name, 'foo', bar='bar')
-        mock.assert_called_once_with('foo', bar='bar')
 
-    @pytest.mark.parametrize('browser_name', BROWSERS)
-    def test_takes_a_driver_instance_as_argument(self, mocker, browser_name):
+    @pytest.mark.parametrize('browser_name', W3C_BROWSERS)
+    def test_passes_capabilities_to_selenium(self, browser_name):
+        caps_name = 'internetexplorer' if browser_name == 'ie'else browser_name
+        caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
+        caps.update({'acceptInsecureCerts': True})
+        browser = Browser(browser_name, desired_capabilities=caps)
+        insecure = browser.wd.capabilities['acceptInsecureCerts']
+        browser.quit()
+
+        assert insecure is True
+
+    def test_remote_when_passed_url_arg(self, browser):
+        from selenium.webdriver.remote.webdriver import RemoteConnection, WebDriver
+        browser_name = browser.name
+        caps_name = 'internetexplorer' if browser_name == 'internet explorer'else browser_name
+        caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
+        browser = Browser(browser_name, desired_capabilities=caps)
+        driver = browser.wd
+        executor = driver.command_executor
+        browser.quit()
+
+        assert driver.__class__.__name__ == WebDriver.__name__
+        assert driver.name == caps.get('browserName')
+        assert isinstance(executor, RemoteConnection)
+
+    def test_accepts_browser_options(self, bkwargs, mocker):
         from importlib import import_module
-        module = import_module('selenium.webdriver.{}.webdriver'.format(browser_name))
-        mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name), spec=module.WebDriver).return_value
-        browser = Browser(mock)
-        assert browser.driver == mock
+        browser_name = bkwargs.get('browser').lower()
+        module = import_module('selenium.webdriver.{}.options'.format(browser_name))
+        opts = module.Options()
 
-    def test_raises_correct_exception_for_invalid_args(self):
-        with pytest.raises(TypeError):
-            Browser(object)
+        mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name))
 
+        caps_name = 'internetexplorer' if browser_name == 'ie'else browser_name
+        caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
+
+        browser = Browser(browser_name, options=opts)
+        browser.quit()
+
+        kwargs = {'desired_capabilities': caps}
+        kwargs['{}_options'.format(browser_name)] = opts
+        mock.assert_called_once_with(**kwargs)
+
+    def test_takes_driver_instance_as_argument(self, browser):
+        new_browser = Browser(browser.wd)
+        assert new_browser.wd == browser.wd
 
 @pytest.mark.page('definition_lists.html')
 class TestBrowserElementWrap(object):
