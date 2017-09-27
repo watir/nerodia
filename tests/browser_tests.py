@@ -301,6 +301,7 @@ class TestBrowserInit(object):
         new_browser = Browser(browser.wd)
         assert new_browser.wd == browser.wd
 
+
 @pytest.mark.page('definition_lists.html')
 class TestBrowserElementWrap(object):
     def test_wraps_elements_as_package_objects(self, browser):
