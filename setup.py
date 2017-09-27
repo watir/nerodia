@@ -29,6 +29,7 @@ setup_args = {
                     'Programming Language :: Python :: 3.4',
                     'Programming Language :: Python :: 3.5',
                     'Programming Language :: Python :: 3.6'],
+    'install_requires': ['selenium', 'six'],
     'package_dir': {'nerodia': 'nerodia'},
     'packages': ['nerodia',
                  'nerodia.elements',
