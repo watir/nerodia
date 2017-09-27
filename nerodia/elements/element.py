@@ -550,7 +550,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
     def selector_string(self):
         from ..browser import Browser
         if isinstance(self.query_scope, Browser):
-            return self.selector.__repr__
+            return self.selector.__repr__()
         else:
             return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
 
