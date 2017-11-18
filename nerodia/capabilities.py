@@ -41,7 +41,7 @@ class Capabilities(object):
             if self.selenium_browser == 'chrome':
                 self._process_chrome_options(browser_options)
             elif self.selenium_browser == 'firefox':
-                self._process_chrome_options(browser_options)
+                self._process_firefox_options(browser_options)
             elif self.selenium_browser == 'safari':
                 self._process_safari_options(browser_options)
 
