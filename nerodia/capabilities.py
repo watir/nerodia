@@ -68,7 +68,7 @@ class Capabilities(object):
             if 'experimental_options' in self.options:
                 for name, value in self.options.pop('experimental_options').items():
                     options.add_experimental_option(name, value)
-        self.selenium_opts['options'] = options
+        self.selenium_opts['chrome_options'] = options
 
     def _process_firefox_options(self, browser_options):
         from selenium.webdriver.firefox.options import Options
@@ -90,7 +90,7 @@ class Capabilities(object):
                 options.profile = self.options.pop('profile')
             if 'log_level' in self.options:
                 options.log.level = self.options.pop('log_level')
-        self.selenium_opts['options'] = options
+        self.selenium_opts['firefox_options'] = options
 
     def _process_safari_options(self, browser_options):
         if 'technology_preview' in self.options:
