@@ -1,6 +1,7 @@
 import os
 
 import pytest
+from _pytest.skipping import MarkEvaluator
 
 import nerodia
 from nerodia.browser import Browser
@@ -16,6 +17,9 @@ browsers = (
 )
 
 nerodia.default_timeout = 3
+
+
+browser_instance = None
 
 
 def pytest_addoption(parser):
@@ -49,32 +53,52 @@ def bkwargs(request):
     except AttributeError:
         raise Exception('This test requires a --browser to be specified.')
 
-    # if driver_class == 'remote':
-    #     capabilities = DesiredCapabilities.CHROME.copy()
-    #     kwargs.update({'desired_capabilities': capabilities})
     if os.environ.get('DRIVER_PATH'):
         kwargs['executable_path'] = os.environ.get('DRIVER_PATH')
     yield kwargs
 
 
 @pytest.fixture(scope='session')
-def browser(bkwargs):
-    browser = Browser(**bkwargs)
-    yield browser
-    try:
-        browser.quit()
-    except:
-        pass
+def browser_manager(bkwargs):
+    manager = BrowserManager(bkwargs)
+    yield manager
+    manager.quit()
+
+
+@pytest.fixture(scope='function')
+def browser(request, browser_manager):
+    # conditionally mark tests as expected to fail based on driver
+    request.node._evalxfail = request.node._evalxfail or MarkEvaluator(
+        request.node, 'xfail_{}'.format(browser_manager.name))
+    if request.node._evalxfail.istrue():
+        def fin():
+            global driver_instance
+            if driver_instance is not None:
+                driver_instance.quit()
+            driver_instance = None
+        request.addfinalizer(fin)
+
+    # skip driver instantiation if xfail(run=False)
+    if not request.config.getoption('runxfail'):
+        if request.node._evalxfail.istrue():
+            if request.node._evalxfail.get('run') is False:
+                yield
+                return
+
+    yield browser_manager.browser
+
+    if MarkEvaluator(request.node, 'quits_browser').istrue():
+        browser_manager.quit()
 
 
 @pytest.fixture(scope='session')
-def page(browser, webserver):
+def page(browser_manager, webserver):
     class Page(object):
         def url(self, name):
             return webserver.path_for(name)
 
         def load(self, name):
-            browser.goto(self.url(name))
+            browser_manager.browser.goto(self.url(name))
     return Page()
 
 
@@ -108,3 +132,30 @@ def temp_file():
     tmp = tempfile.NamedTemporaryFile()
     yield tmp
     tmp.close()
+
+
+class BrowserManager(object):
+    def __init__(self, bkwargs):
+        self.bkwargs = bkwargs
+        self.name = bkwargs['browser'].lower()
+        self.instance = None
+
+    @property
+    def browser(self):
+        if not self.instance:
+            self.create_session()
+        return self.instance
+
+    def create(self):
+        return Browser(**self.bkwargs)
+
+    def create_session(self):
+        self.instance = self.create()
+
+    def clear(self):
+        self.instance = None
+
+    def quit(self):
+        if self.instance:
+            self.instance.quit()
+            self.instance = None
