@@ -232,7 +232,7 @@ class Browser(Container, HasWindow, Waitable):
         True if browser is not closed and False otherwise
         :rtype: bool
         """
-        return not self.closed and self.window.present
+        return not self.closed and self.window().present
 
     exists = exist
 
@@ -242,7 +242,7 @@ class Browser(Container, HasWindow, Waitable):
 
     def assert_exists(self):
         self._ensure_context()
-        if self.window.present:
+        if self.window().present:
             return
         raise NoMatchingWindowFoundException('browser window was closed')
 

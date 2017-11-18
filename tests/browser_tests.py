@@ -150,11 +150,6 @@ class TestBrowserAttributes(object):
     def test_goes_to_a_data_url_scheme_address_without_raising_errors(self, browser):
         browser.goto('data:text/html;content-type=utf-8,foobar')
 
-    # TODO: only chrome
-    # chrome://settings/browser
-    def test_goes_to_internal_chrome_url_chrome_settings_browser_without_raising_error(self, browser):
-        browser.goto('chrome://settings/browser')
-
     @pytest.mark.page('timeout_window_location.html')
     def test_updates_the_page_when_location_is_changed_with_set_timeout_and_window_location(self, browser):
         browser.wait_until_not(lambda b: 'timeout_window_location.html' in b.url, timeout=10)
@@ -279,9 +274,9 @@ class TestBrowserInit(object):
         assert driver.name == caps.get('browserName')
         assert isinstance(executor, RemoteConnection)
 
-    def test_accepts_browser_options(self, bkwargs, mocker):
+    def test_accepts_browser_options(self, browser_manager, mocker):
         from importlib import import_module
-        browser_name = bkwargs.get('browser').lower()
+        browser_name = browser_manager.name
         module = import_module('selenium.webdriver.{}.options'.format(browser_name))
         opts = module.Options()
 
@@ -293,7 +288,10 @@ class TestBrowserInit(object):
         browser = Browser(browser_name, options=opts)
         browser.quit()
 
-        kwargs = {'desired_capabilities': caps}
+        key = 'desired_capabilities' if browser_name in ['safari', 'chrome'] else 'capabilities'
+
+        kwargs = {}
+        kwargs[key] = caps
         kwargs['{}_options'.format(browser_name)] = opts
         mock.assert_called_once_with(**kwargs)
 

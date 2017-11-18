@@ -103,9 +103,10 @@ class FrameCollection(IFrameCollection):
 
 
 class FramedDriver(object):
-    def __init__(self, element, driver):
+    def __init__(self, element, browser):
         self.el = element
-        self.driver = driver
+        self.browser = browser
+        self.driver = browser.driver
 
     def __eq__(self, other):
         return self.wd == other.wd

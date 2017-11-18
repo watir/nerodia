@@ -135,9 +135,9 @@ def temp_file():
 
 
 class BrowserManager(object):
-    def __init__(self, bkwargs):
-        self.bkwargs = bkwargs
-        self.name = bkwargs['browser'].lower()
+    def __init__(self, kwargs):
+        self.kwargs = kwargs
+        self.name = kwargs['browser'].lower()
         self.instance = None
 
     @property
@@ -147,7 +147,7 @@ class BrowserManager(object):
         return self.instance
 
     def create(self):
-        return Browser(**self.bkwargs)
+        return Browser(**self.kwargs)
 
     def create_session(self):
         self.instance = self.create()
