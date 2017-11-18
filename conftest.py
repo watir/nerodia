@@ -25,6 +25,7 @@ browser_instance = None
 def pytest_addoption(parser):
     parser.addoption(
         '--browser',
+        default='chrome',
         action='store',
         choices=browsers,
         metavar='BROWSER',
