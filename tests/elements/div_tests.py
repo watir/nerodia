@@ -147,12 +147,11 @@ class TestDivManipulation(object):
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 
-    # TODO: xfail safari
+    @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/661')
     def test_double_click_fires_the_ondblclick_event(self, browser, messages):
         browser.div(id='html_test').double_click()
         assert 'double clicked' in messages.list
 
-    # TODO: xfail firefox
     @pytest.mark.page('right_click.html')
     def test_fires_the_oncontextmenu_event(self, browser, messages):
         browser.div(id='click').right_click()

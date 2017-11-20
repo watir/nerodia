@@ -100,7 +100,7 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
-    # TODO: xfail safari, firefox
+    @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/661')
     @pytest.mark.page('non_control_elements.html')
     def test_runs_after_hooks_after_element_double_click(self, browser):
         result = {}

@@ -86,8 +86,8 @@ class TestElementWithoutTagName(object):
     def test_finds_several_elements_by_xpath(self, browser):
         assert len(browser.elements(xpath="//a")) == 1
 
-    def test_finds_several_elements_by_arbitrary_value(self, browser):
-        assert len(browser.elements(id=compile(r'^new_user'))) == 32
+    def test_finds_several_elements_by_arbitrary_attribute(self, browser):
+        assert len(browser.elements(id=compile(r'^new_user'))) == 33
 
     def test_finds_an_element_from_an_elements_subtree(self, browser):
         assert browser.fieldset().element(id='first_label').exists
@@ -125,13 +125,14 @@ class TestElementSubtype(object):
         from nerodia.elements.html_elements import Div
         assert isinstance(browser.element(xpath="//*[@id='messages']").to_subtype(), Div)
 
-
-class TestElementFocus(object):
-    def test_fires_the_onfocus_event_for_the_given_element(self, browser):
-        tf = browser.text_field(id='new_user_occupation')
-        assert tf.value == 'Developer'
-        tf.focus()
-        assert browser.div(id='onfocus_test').text == 'changed by onfocus event'
+# TODO: re-enable when JS calls are updated
+# see https://github.com/watir/watir/commit/26fe1fa78147d9056fa3c40b5ef98fb3212a52f3
+# class TestElementFocus(object):
+#     def test_fires_the_onfocus_event_for_the_given_element(self, browser):
+#         tf = browser.text_field(id='new_user_occupation')
+#         assert tf.value == 'Developer'
+#         tf.focus()
+#         assert browser.div(id='onfocus_test').text == 'changed by onfocus event'
 
     # TODO: xfail edge?
     def test_knows_if_the_element_is_focused(self, browser):
@@ -273,7 +274,9 @@ class TestElementSendKeys(object):
         assert receiver.value == 'helloworld'
         assert len(browser.element(id='output').ps()) == 10
 
-    # TODO: xfail safari, chrome http://code.google.com/p/chromium/issues/detail?id=93879
+    @pytest.mark.xfail_chrome(reason='http://code.google.com/p/chromium/issues/detail?id=93879')
+    @pytest.mark.xfail_firefox
+    @pytest.mark.xfail_safari
     def test_performs_key_combinations(self, browser):
         receiver = browser.text_field(id='receiver')
         receiver.send_keys('foo')
@@ -282,7 +285,9 @@ class TestElementSendKeys(object):
         assert receiver.value == ''
         assert len(browser.element(id='output').ps()) == 6
 
-    # TODO: xfail safari, chrome http://code.google.com/p/chromium/issues/detail?id=93879
+    @pytest.mark.xfail_chrome(reason='http://code.google.com/p/chromium/issues/detail?id=93879')
+    @pytest.mark.xfail_firefox
+    @pytest.mark.xfail_safari
     def test_performs_arbitrary_list_of_key_combinations(self, browser):
         receiver = browser.text_field(id='receiver')
         receiver.send_keys('foo')
