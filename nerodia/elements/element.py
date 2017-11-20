@@ -616,6 +616,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _element_call(self, method, exist_check=None):
+        already_locked = Wait.timer.locked
         exist_check = exist_check or self.wait_for_exists
         caller = stack()[1][3]
         info = '-> `{}#{}` after `#{}`'.format(self, caller, exist_check.__name__)
@@ -647,7 +648,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             raise NoMatchingWindowFoundException('browser window was closed')
         finally:
             nerodia.logger.info('<- `{}#{}` has been completed'.format(self, caller))
-            if Wait.timer.locked is None:
+            if not already_locked:
                 Wait.timer.reset()
 
     def __getattribute__(self, name):
