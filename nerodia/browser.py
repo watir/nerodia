@@ -71,7 +71,7 @@ class Browser(Container, HasWindow, Waitable):
                                                              self.title)
         except UnexpectedAlertPresentException:
             return '#<{}:0x{:x} alert=True>'.format(self.__class__.__name__, self.__hash__() * 2)
-        except:
+        except:  # noqa
             return '#<{}:0x{:x} closed={}>'.format(self.__class__.__name__, self.__hash__() * 2,
                                                    self.closed)
 
