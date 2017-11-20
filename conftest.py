@@ -108,11 +108,11 @@ def start_page(request, page):
 
 
 @pytest.fixture(scope='session')
-def messages(browser):
+def messages(browser_manager):
     class Messages(object):
         @property
         def list(self):
-            return [el.text for el in browser.div(id='messages').divs()]
+            return [el.text for el in browser_manager.browser.div(id='messages').divs()]
     yield Messages()
 
 
