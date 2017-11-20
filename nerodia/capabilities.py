@@ -56,7 +56,7 @@ class Capabilities(object):
                     options.add_argument(arg)
             if 'binary' in self.options or 'binary_location' in self.options:
                 options.binary_location = self.options.pop('binary') or \
-                                          self.options.pop('binary_location')
+                    self.options.pop('binary_location')
             if 'debugger_address' in self.options:
                 options.debugger_address = self.options.pop('debugger_address')
             if 'extensions' in self.options:
