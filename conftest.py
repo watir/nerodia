@@ -73,10 +73,7 @@ def browser(request, browser_manager):
         request.node, 'xfail_{}'.format(browser_manager.name))
     if request.node._evalxfail.istrue():
         def fin():
-            global driver_instance
-            if driver_instance is not None:
-                driver_instance.quit()
-            driver_instance = None
+            browser_manager.quit()
         request.addfinalizer(fin)
 
     # skip driver instantiation if xfail(run=False)
