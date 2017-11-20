@@ -179,11 +179,16 @@ class TestElementWaitUntilNotPresent(object):
         browser.div(id='foo').wait_until_not_present(timeout=2)
 
     def test_times_out_if_the_element_doesnt_disappear(self, browser):
-        repr = "#<Div: located: False; {'tag_name': 'div', 'id': 'foo'}>"
-        message = 'timed out after 1 seconds, waiting for false condition on {}'.format(repr)
+        element = "#<Div: located: False;"
+        tag = "'tag_name': 'div'"
+        id = "'id': 'foo'"
+        message = 'timed out after 1 seconds, waiting for false condition on'
         with pytest.raises(TimeoutError) as e:
             browser.div(id='foo').wait_until_not_present(timeout=1)
-        assert e.value.message == message
+        assert element in e.value.message
+        assert tag in e.value.message
+        assert id in e.value.message
+        assert message in e.value.message
 
     def test_users_provided_interval(self, browser, mocker):
         mock = mocker.patch('nerodia.elements.html_elements.Div.present',

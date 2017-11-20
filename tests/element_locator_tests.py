@@ -81,11 +81,23 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_handles_selector_with_tag_name_and_multiple_attributes(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'title': 'foo', 'dir': 'bar'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[@dir='bar' and @title='foo']")
+        expect_one.assert_called_once()
+        by, selector = expect_one.call_args[0]
+        assert by == 'xpath'
+        assert '//div' in selector
+        assert 'and' in selector
+        assert "@dir='bar'" in selector
+        assert "@title='foo'" in selector
 
     def test_handles_selector_with_no_tag_name_and_multiple_attributes(self, browser, expect_one):
         locate_one(browser, {'title': 'bar', 'dir': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//*[@dir='foo' and @title='bar']")
+        expect_one.assert_called_once()
+        by, selector = expect_one.call_args[0]
+        assert by == 'xpath'
+        assert '//*' in selector
+        assert 'and' in selector
+        assert "@dir='foo'" in selector
+        assert "@title='bar'" in selector
 
     def test_handles_selector_with_attribute_presence(self, browser, expect_one):
         locate_one(browser, ['data_view', True])
@@ -134,7 +146,18 @@ class TestElementLocatorFindsSingleElement(object):
         from nerodia.elements.input import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'text', 'label': 'foo'}, Input.ATTRIBUTES)
-        expect_one.assert_called_once_with(By.XPATH, ".//input[{}='text' and (@id=//label[normalize-space()='foo']/@for or parent::label[normalize-space()='foo'])]".format(translated_type))
+        expect_one.assert_called_once()
+        by, selector = expect_one.call_args[0]
+        and_parts = selector.split(' and ')
+        or_parts = selector.split(' or ')
+        text = "{}='text'".format(translated_type)
+        id = "@id=//label[normalize-space()='foo']/@for"
+        parent = "parent::label[normalize-space()='foo']"
+        assert by == 'xpath'
+        assert (text in and_parts[0] and id in and_parts[1]) or \
+            (text in and_parts[1] and id in and_parts[0])
+        assert (id in or_parts[0] and parent in or_parts[1]) or \
+            (id in or_parts[1] and parent in or_parts[0])
 
     def test_uses_label_attribute_if_it_is_valid_for_element(self, browser, expect_one):
         from nerodia.elements.option import Option

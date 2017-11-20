@@ -102,13 +102,23 @@ class TestElementRepr(object):
 
     def test_displays_selector_string_for_element_from_collection(self, browser):
         elements = browser.frames()
-        assert "'index': -1, 'tag_name': 'frame'" in repr(elements[-1])
+        rep = repr(elements[-1])
+        assert "'tag_name': 'frame'" in rep
+        assert "'index': -1" in rep
 
     @pytest.mark.page('wait.html')
     def test_displays_selector_string_for_nested_element(self, browser):
         element = browser.div(index=1).div(id='div2')
-        assert "{'index': 1, 'tag_name': 'div'} --> {'tag_name': 'div', 'id': 'div2'" in repr(element)
+        left, right = repr(element).split('-->')
+        assert "'index': 1" in left
+        assert "'tag_name': 'div'" in left
+        assert "'id': 'div2'" in right
+        assert "'tag_name': 'div'" in right
 
     def test_displays_selector_string_for_nested_element_under_frame(self, browser):
         element = browser.iframe(id='one').iframe(id='three')
-        assert "{'tag_name': 'iframe', 'id': 'one'} --> {'tag_name': 'iframe', 'id': 'three'" in repr(element)
+        left, right = repr(element).split('-->')
+        assert "'tag_name': 'iframe'" in left
+        assert "'id': 'one'" in left
+        assert "'tag_name': 'iframe'" in right
+        assert "'id': 'three'" in right
