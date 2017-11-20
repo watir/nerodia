@@ -89,9 +89,9 @@ class ElementCollection(object):
                     dic[class_name] = dic.get(class_name, [])
                     dic[class_name].append(element)
                     idx = len(dic[class_name]) - 1
-                    elements.append(element.__class__(self.query_scope,
-                                                      dict(element=e, tag_name=element.tag_name,
-                                                           index=idx, **self.selector)))
+                    new_selector = dict(self.selector, element=e, index=idx,
+                                        tag_name=element.tag_name)
+                    elements.append(element.__class__(self.query_scope, new_selector))
                 else:
                     elements.append(element)
             self.as_list = elements
