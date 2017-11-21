@@ -156,9 +156,10 @@ class TestWindows(object):
     # url
 
     def test_returns_the_url_of_the_window(self, browser):
-        assert len(
-            filter(lambda w: re.search(r'window_switching\.html', w.url), browser.windows())) == 1
-        assert len(filter(lambda w: re.search(r'closeable\.html', w.url), browser.windows())) == 1
+        assert len(list(filter(lambda w: re.search(r'window_switching\.html', w.url),
+                               browser.windows()))) == 1
+        assert len(list(filter(lambda w: re.search(r'closeable\.html', w.url),
+                               browser.windows()))) == 1
 
     def test_does_not_change_the_current_window_when_checking_url(self, browser):
         assert re.search(r'window_switching\.html', browser.url)

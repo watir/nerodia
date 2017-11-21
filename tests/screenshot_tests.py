@@ -2,7 +2,7 @@ import base64
 
 import pytest
 
-PNG_HEADER = "\211PNG"
+PNG_HEADER = b'\211PNG'
 
 
 @pytest.mark.page('wait.html')

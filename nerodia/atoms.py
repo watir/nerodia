@@ -1,4 +1,5 @@
 from os import path
+import six
 
 
 def load_atoms(*args, **kwargs):
@@ -9,10 +10,8 @@ def load_atoms(*args, **kwargs):
     cls.load('selectText')
     return cls
 
-
+@six.add_metaclass(load_atoms)
 class Atoms(object):
-    __metaclass__ = load_atoms
-
     ATOMS = {}
 
     @classmethod

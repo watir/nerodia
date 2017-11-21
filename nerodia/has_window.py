@@ -35,4 +35,4 @@ class HasWindow(object):
         if not all(key in ['title', 'url'] for key in selector.keys()):
             raise ValueError('invalid window selector: {}'.format(selector))
 
-        return filter(lambda w: all(v == getattr(w, k) for k, v in selector.items()), windows)
+        return list(filter(lambda w: all(v == getattr(w, k) for k, v in selector.items()), windows))
