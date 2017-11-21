@@ -115,7 +115,7 @@ class SelectorBuilder(object):
 
     @staticmethod
     def _can_be_combined_with_xpath_or_css(selector):
-        keys = selector.keys()
+        keys = list(selector)
         if keys == ['tag_name']:
             return True
 

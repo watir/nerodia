@@ -49,7 +49,7 @@ class Locator(object):
 
             # Validation not necessary if Nerodia builds the xpath
 
-            if 'xpath' not in self.selector.keys() and 'css' not in self.selector.keys():
+            if 'xpath' not in list(self.selector) and 'css' not in list(self.selector):
                 return element
 
             if element:

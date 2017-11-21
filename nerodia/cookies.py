@@ -45,7 +45,7 @@ class Cookies(object):
         browser.cookies.add('my_session', 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain='mysite.com')
         """
         cookie = {'name': name, 'value': value}
-        keys = kwargs.keys()
+        keys = list(kwargs)
         if 'secure' in keys:
             cookie['secure'] = kwargs.get('secure')
         if 'path' in keys:

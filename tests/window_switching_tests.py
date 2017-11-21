@@ -1,5 +1,6 @@
 import re
 
+import os
 import pytest
 
 from nerodia.exception import NoMatchingWindowFoundException
@@ -304,6 +305,8 @@ class TestWindowRect(object):
         assert new_pos.x == initial_pos.x + 2
         assert new_pos.y == initial_pos.y + 2
 
+    @pytest.mark.skipif(os.environ.get('CI') == 'true',
+                        reason='Maximize command does not work on Travis')
     def test_should_maximize_the_window(self, browser):
         initial_size = browser.window().size
         browser.window().resize_to(initial_size.width, initial_size.height - 20)
