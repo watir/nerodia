@@ -82,7 +82,7 @@ class Locator(object):
         return element
 
     def _find_first_by_one(self):
-        how, what = self.selector.items()[0]
+        how, what = list(self.selector.items())[0]
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:
@@ -120,7 +120,7 @@ class Locator(object):
                 return self._wd_find_by_regexp_selector(selector, 'find')
 
     def _find_all_by_one(self):
-        how, what = self.selector.items()[0]
+        how, what = list(self.selector.items())[0]
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:
