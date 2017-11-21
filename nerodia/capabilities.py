@@ -45,61 +45,60 @@ class Capabilities(object):
             elif self.selenium_browser == 'safari':
                 self._process_safari_options(browser_options)
 
-    def _process_chrome_options(self, browser_options):
+    def _process_chrome_options(self, opts):
         from selenium.webdriver.chrome.options import Options
-        if isinstance(browser_options, Options):
-            options = browser_options
+        if isinstance(opts, Options):
+            options = opts
         else:
             options = Options()
-            if 'args' in self.options:
-                for arg in self.options.pop('args'):
+            if 'args' in opts:
+                for arg in opts.pop('args'):
                     options.add_argument(arg)
-            if 'binary' in self.options or 'binary_location' in self.options:
-                options.binary_location = self.options.pop('binary') or \
-                    self.options.pop('binary_location')
-            if 'debugger_address' in self.options:
-                options.debugger_address = self.options.pop('debugger_address')
-            if 'extensions' in self.options:
-                for path in self.options.pop('extensions'):
+            if 'binary' in opts or 'binary_location' in opts:
+                options.binary_location = opts.pop('binary') or opts.pop('binary_location')
+            if 'debugger_address' in opts:
+                options.debugger_address = opts.pop('debugger_address')
+            if 'extensions' in opts:
+                for path in opts.pop('extensions'):
                     options.add_extension(path)
-            if 'encoded_extensions' in self.options:
-                for string in self.options.pop('encoded_extensions'):
+            if 'encoded_extensions' in opts:
+                for string in opts.pop('encoded_extensions'):
                     options.add_encoded_extension(string)
-            if 'experimental_options' in self.options:
-                for name, value in self.options.pop('experimental_options').items():
+            if 'experimental_options' in opts:
+                for name, value in opts.pop('experimental_options').items():
                     options.add_experimental_option(name, value)
         self.selenium_opts['chrome_options'] = options
 
-    def _process_firefox_options(self, browser_options):
+    def _process_firefox_options(self, opts):
         from selenium.webdriver.firefox.options import Options
-        if isinstance(browser_options, Options):
-            options = browser_options
+        if isinstance(opts, Options):
+            options = opts
         else:
             options = Options()
-            if 'args' in self.options:
-                for arg in self.options.pop('args'):
+            if 'args' in opts:
+                for arg in opts.pop('args'):
                     options.add_argument(arg)
-            if 'binary' in self.options or 'binary_location' in self.options:
-                options.binary = self.options.pop('binary') or self.options.pop('binary_location')
-            if 'prefs' in self.options:
-                for name, value in self.options.pop('prefs').items():
+            if 'binary' in opts or 'binary_location' in opts:
+                options.binary = opts.pop('binary') or opts.pop('binary_location')
+            if 'prefs' in opts:
+                for name, value in opts.pop('prefs').items():
                     options.set_preference(name, value)
-            if 'proxy' in self.options:
-                options.proxy = self.options.pop('proxy')
-            if 'profile' in self.options:
-                options.profile = self.options.pop('profile')
-            if 'log_level' in self.options:
-                options.log.level = self.options.pop('log_level')
+            if 'proxy' in opts:
+                options.proxy = opts.pop('proxy')
+            if 'profile' in opts:
+                options.profile = opts.pop('profile')
+            if 'log_level' in opts:
+                options.log.level = opts.pop('log_level')
         self.selenium_opts['firefox_options'] = options
 
-    def _process_safari_options(self, browser_options):
-        if 'technology_preview' in self.options:
+    def _process_safari_options(self, opts):
+        if 'technology_preview' in opts:
             from selenium.webdriver import DesiredCapabilities
-            if 'desired_capabilities' in self.options:
-                caps = self.options.pop('desired_capabilities')
+            if 'desired_capabilities' in opts:
+                caps = opts.pop('desired_capabilities')
             else:
                 caps = DesiredCapabilities.SAFARI.copy()
-            caps['safari.options'] = {'technologyPreview': self.options.pop('technology_preview')}
+            caps['safari.options'] = {'technologyPreview': opts.pop('technology_preview')}
             self.selenium_opts['desired_capabilities'] = caps
 
     def _process_caps(self):
