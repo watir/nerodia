@@ -480,7 +480,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
             self.query_scope.wait_for_present()
             self.wait_until_present()
         except TimeoutError as e:
-            raise self._unknown_exception('element located, but {}'.format(e.message))
+            raise self._unknown_exception('element located, but {}'.format(e))
 
     def wait_for_enabled(self):
         from .button import Button

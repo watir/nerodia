@@ -347,7 +347,7 @@ class TestBrowserClosed(object):
             b.goto(page.url('definition_lists.html'))
             b.close()
             b.dl(id='experience-list').id
-        assert e.value.message == 'browser was closed'
+        assert e.value.args[0] == 'browser was closed'
 
 
 class TestBrowserWait(object):

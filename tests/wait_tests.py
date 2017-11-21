@@ -32,7 +32,7 @@ class TestWaitUntil(object):
         msg = 'oops'
         with pytest.raises(TimeoutError) as e:
             Wait.until(timeout=0.5, message=msg, method=lambda: False)
-        assert e.value.message == 'timed out after 0.5 seconds, {}'.format(msg)
+        assert e.value.args[0] == 'timed out after 0.5 seconds, {}'.format(msg)
 
     def test_uses_provided_interval(self):
         count = {'value': 0}
@@ -69,7 +69,7 @@ class TestWaitWhile(object):
         msg = 'oops'
         with pytest.raises(TimeoutError) as e:
             Wait.until_not(timeout=0.5, message=msg, method=lambda: True)
-        assert e.value.message == 'timed out after 0.5 seconds, {}'.format(msg)
+        assert e.value.args[0] == 'timed out after 0.5 seconds, {}'.format(msg)
 
     def test_uses_provided_interval(self):
         count = {'value': 0}
@@ -122,7 +122,7 @@ class TestElementWaitUntilEnabled(object):
         element = browser.button(id='btn')
         with pytest.raises(TimeoutError) as e:
             element.wait_until(timeout=1, method=lambda e: e.enabled).click()
-        assert e.value.message == message
+        assert e.value.args[0] == message
 
     def test_responds_to_element_methods(self, browser):
         element = browser.button().wait_until(method=lambda _: True)
@@ -150,7 +150,7 @@ class TestElementWaitUntilPresent(object):
         message = 'timed out after 1 seconds, waiting for true condition on present'
         with pytest.raises(TimeoutError) as e:
             browser.div(id='bar').wait_until_present(timeout=1)
-        assert e.value.message == message
+        assert e.value.args[0] == message
 
     def test_users_provided_interval(self, browser, mocker):
         mock = mocker.patch('nerodia.elements.html_elements.Div.present',
@@ -185,10 +185,11 @@ class TestElementWaitUntilNotPresent(object):
         message = 'timed out after 1 seconds, waiting for false condition on'
         with pytest.raises(TimeoutError) as e:
             browser.div(id='foo').wait_until_not_present(timeout=1)
-        assert element in e.value.message
-        assert tag in e.value.message
-        assert id in e.value.message
-        assert message in e.value.message
+        error = e.value.args[0]
+        assert element in error
+        assert tag in error
+        assert id in error
+        assert message in error
 
     def test_users_provided_interval(self, browser, mocker):
         mock = mocker.patch('nerodia.elements.html_elements.Div.present',

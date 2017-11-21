@@ -242,7 +242,7 @@ class TestElementLocatorFindsSingleElement(object):
         with pytest.raises(TypeError) as e:
             selector = {'tag_name': 'div', 'index': 'bar'}
             locate_one(browser, selector)
-        assert e.value.message == "expected {}, got 'bar':{}".format(int, str)
+        assert e.value.args[0] == "expected {}, got 'bar':{}".format(int, str)
 
     def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, mocker, expect_all):
         from nerodia.locators.element.selector_builder import SelectorBuilder
@@ -250,14 +250,14 @@ class TestElementLocatorFindsSingleElement(object):
             selector = {'tag_name': 123}
             locate_one(browser, selector)
         expected = SelectorBuilder.VALID_WHATS + [int]
-        assert e.value.message == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
+        assert e.value.args[0] == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
 
     def test_raises_correct_exception_if_the_attribute_is_not_valid(self, browser, mocker, expect_all):
         from nerodia.elements.input import Input
         with pytest.raises(MissingWayOfFindingObjectException) as e:
             selector = {'tag_name': 'input', 'href': 'foo'}
             locate_one(browser, selector, Input.ATTRIBUTES)
-        assert e.value.message == "invalid attribute: {}".format('href')
+        assert e.value.args[0] == "invalid attribute: {}".format('href')
 
 
 class TestElementLocatorFindsSeveralElements(object):
@@ -346,4 +346,4 @@ class TestElementLocatorFindsSeveralElements(object):
         with pytest.raises(ValueError) as e:
             selector = {'tag_name': 'div', 'index': 1}
             locate_all(browser, selector)
-        assert e.value.message == "can't locate all elements by index"
+        assert e.value.args[0] == "can't locate all elements by index"
