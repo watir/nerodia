@@ -134,11 +134,11 @@ class TestBrowserAttributes(object):
     # goto
 
     # TODO: xfail IE
-    def test_adds_http_to_urls_with_no_url_scheme_specified(self, browser, webserver, page):
+    def test_adds_http_to_urls_with_no_url_scheme_specified(self, browser, webserver):
         url = webserver.host
         assert url is not None
-        browser.goto(url)
-        assert re.search('http://{}/'.format(url), browser.url)
+        browser.goto(webserver.path_for('non_control_elements.html').split('://')[-1])
+        assert re.search('http://{}'.format(url), browser.url)
 
     def test_goes_to_the_given_url_without_raising_errors(self, browser, page):
         browser.goto(page.url('non_control_elements.html'))
