@@ -36,7 +36,7 @@ def test_allows_setting_level_by_string():
 
 def test_outputs_to_stdout_by_default(caplog):
     nerodia.logger.warn('warning_message')
-    assert 'warning_message' in caplog.text()
+    assert 'warning_message' in caplog.text
 
 
 def test_allows_to_output_to_file(temp_file):
@@ -69,4 +69,4 @@ def test_allows_sopping_output_to_file(temp_file):
 
 def test_allows_to_deprecate_functionality(caplog):
     nerodia.logger.deprecate('#old', '#new')
-    assert '[DEPRECATION] #old is deprecated. Use #new instead.' in caplog.text()
+    assert '[DEPRECATION] #old is deprecated. Use #new instead.' in caplog.text
