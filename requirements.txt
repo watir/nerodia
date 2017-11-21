@@ -1,5 +1,5 @@
 pytest
-pytest-capturelog
+pytest-catchlog
 pytest-instafail
 pytest-mock
 selenium
