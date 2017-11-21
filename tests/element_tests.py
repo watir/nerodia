@@ -73,6 +73,7 @@ class TestElementHover(object):
 
         assert link.style('font-size') == '10px'
         link.hover()
+        link.wait_until(lambda e: e.style('font-size') == '20px')
         assert link.style('font-size') == '20px'
 
 
