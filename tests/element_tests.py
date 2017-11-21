@@ -67,13 +67,13 @@ class TestElementCall(object):
 
 @pytest.mark.page('hover.html')
 class TestElementHover(object):
-    # TODO: xfail Firefox, IE, safari
+    # TODO: xfail IE, safari
     def test_should_hover_over_the_element(self, browser):
         link = browser.link()
 
         assert link.style('font-size') == '10px'
         link.hover()
-        link.wait_until(lambda e: e.style('font-size') == '20px')
+        link.wait_until(lambda e: e.style('font-size') == '20px', timeout=30)
         assert link.style('font-size') == '20px'
 
 
