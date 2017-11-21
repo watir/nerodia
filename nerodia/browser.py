@@ -85,7 +85,7 @@ class Browser(Container, HasWindow, Waitable):
         :return: the url you end up at
         :rtype: str
         """
-        if urlparse(uri).scheme == '':
+        if urlparse(uri).scheme == '' or 'http' not in uri:
             uri = 'http://{}'.format(uri)
 
         self.driver.get(uri)
