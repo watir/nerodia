@@ -10,6 +10,7 @@ def load_atoms(*args, **kwargs):
     cls.load('selectText')
     return cls
 
+
 @six.add_metaclass(load_atoms)
 class Atoms(object):
     ATOMS = {}
