@@ -1,3 +1,4 @@
+import re
 from copy import copy
 from inspect import stack
 
@@ -13,7 +14,7 @@ class Adjacent(object):
         browser.text_field(name='new_user_field_name').parent() == browser.fieldset    #=> True
         """
         kwargs['index'] = kwargs.get('index', 0)
-        return self._xpath_adjacent('ancestor::', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='ancestor', plural=False))
 
     def preceding_sibling(self, **kwargs):
         """
@@ -25,8 +26,7 @@ class Adjacent(object):
         browser.text_field(name='new_user_first_name').preceding_sibling(index=1) == browser.legend
         #=> True
         """
-        kwargs['index'] = kwargs.get('index', 0)
-        return self._xpath_adjacent('preceding-sibling::', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='preceding', plural=False))
 
     previous_sibling = preceding_sibling
 
@@ -41,7 +41,7 @@ class Adjacent(object):
         """
         if 'index' in kwargs:
             raise ValueError('#previous_siblings can not take an index value')
-        return self._xpath_adjacent("preceding-sibling::", **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='preceding', plural=True))
 
     previous_siblings = preceding_siblings
 
@@ -55,8 +55,7 @@ class Adjacent(object):
         browser.text_field(name='new_user_first_name').following_sibling(index=2) == \
             browser.text_field(id='new_user_last_name')    #=> True
         """
-        kwargs['index'] = kwargs.get('index', 0)
-        return self._xpath_adjacent('following-sibling::', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='following', plural=False))
 
     next_sibling = following_sibling
 
@@ -71,7 +70,7 @@ class Adjacent(object):
         """
         if 'index' in kwargs:
             raise ValueError('#following_siblings can not take an index value')
-        return self._xpath_adjacent('following-sibling::', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='following', plural=True))
 
     next_siblings = following_siblings
 
@@ -84,8 +83,7 @@ class Adjacent(object):
 
         browser.form(id='new_user').child == browser.fieldset    #=> True
         """
-        kwargs['index'] = kwargs.get('index', 0)
-        return self._xpath_adjacent('', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='child', plural=False))
 
     def children(self, **kwargs):
         """
@@ -99,25 +97,28 @@ class Adjacent(object):
         """
         if 'index' in kwargs:
             raise ValueError('#children can not take an index value')
-        return self._xpath_adjacent('', **kwargs)
+        return self._xpath_adjacent(**dict(kwargs, adjacent='child', plural=True))
 
     # private
 
-    def _xpath_adjacent(self, direction='', **kwargs):
+    def _xpath_adjacent(self, **kwargs):
         from .elements.html_elements import HTMLElement, HTMLElementCollection
         import nerodia
 
-        kwargs = copy(kwargs)
+        plural = kwargs.pop('plural', None)
         index = kwargs.pop('index', None)
-        tag_name = kwargs.pop('tag_name', '')
-        if kwargs:
-            caller = stack()[1][3]
-            raise AttributeError('unsupported locators: {} for #{} method'.format(kwargs, caller))
+        tag_name = kwargs.get('tag_name')
 
-        if index is not None:
-            klass = nerodia.tag_to_class.get(tag_name) if tag_name else HTMLElement
-            return klass(self, {'xpath': './{}{}[{}]'.format(direction, tag_name or '*', index + 1)})
+        if not (plural or any(isinstance(val, re._pattern_type) for val in kwargs.values())):
+            kwargs['index'] = index or 0
+
+        if not plural and tag_name:
+            klass = nerodia.tag_to_class.get(tag_name)
+        elif not plural:
+            klass = HTMLElement
+        elif tag_name:
+            klass = nerodia.tag_to_class.get('{}_collection'.format(tag_name))
         else:
-            klass = nerodia.tag_to_class.get('{}_collection'.format(tag_name)) if tag_name else \
-                HTMLElementCollection
-            return klass(self, {'xpath': './{}{}'.format(direction, tag_name or '*')})
+            klass = HTMLElementCollection
+
+        return klass(self, kwargs)

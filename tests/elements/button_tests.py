@@ -64,6 +64,15 @@ class TestButtonExist(object):
         assert not browser.button(xpath="//input[@type='text']").exists
         assert browser.button(xpath="//input[@type='button']").exists
 
+    def test_matches_the_specific_type_when_locating_by_type(self, browser):
+        assert browser.button(type='button').type == 'button'
+        assert browser.button(type='reset').type == 'reset'
+        assert browser.button(type='submit').type == 'submit'
+        assert browser.button(type='image').type == 'image'
+
+    def test_matches_valid_input_types_when_type_is_boolean(self, browser):
+        assert all(button.tag_name == 'button' for button in browser.buttons(type=False))
+
     def test_raises_correct_exception_when_what_argument_is_invalid(self, browser):
         with pytest.raises(TypeError):
             browser.button(id=3.14).exists

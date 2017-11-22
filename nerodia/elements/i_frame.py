@@ -39,7 +39,7 @@ class IFrame(HTMLElement):
         self.locate().switch()
 
     def assert_exists(self):
-        if 'element' in self.selector:
+        if self.element and not self.selector:
             raise UnknownFrameException(
                 'wrapping a Selenium element as a Frame is not currently supported')
         return super(IFrame, self).assert_exists()

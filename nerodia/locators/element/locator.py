@@ -68,9 +68,8 @@ class Locator(object):
     def _by_id(self):
         selector = copy(self.selector)
         attr_id = selector.pop('id', None)
-        if not isinstance(attr_id, str):
+        if not isinstance(attr_id, str) or selector.get('adjacent'):
             return None
-
         tag_name = selector.pop('tag_name', None)
         if selector:  # Multiple attributes
             return None
@@ -93,14 +92,14 @@ class Locator(object):
     def _find_first_by_multiple(self):
         selector = self.selector_builder.normalized_selector
 
-        idx = selector.pop('index', None)
+        idx = selector.pop('index', None) if not selector.get('adjacent') else None
         visible = selector.pop('visible', None)
 
         built_selector = self.selector_builder.build(selector)
 
         if built_selector:
             # could build xpath/css for selector
-            if idx or visible is not None:
+            if idx is not None or visible is not None:
                 idx = idx or 0
                 elements = self.query_scope.wd.find_elements(*built_selector)
                 if visible is not None:
@@ -110,7 +109,7 @@ class Locator(object):
                 return self.query_scope.wd.find_element(*built_selector)
         else:
             # can't use xpath, probably a regexp in there
-            if idx or visible is not None:
+            if idx is not None or visible is not None:
                 idx = idx or 0
                 elements = self._wd_find_by_regexp_selector(selector, 'select')
                 if visible is not None:

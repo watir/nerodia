@@ -19,14 +19,17 @@ class SelectorBuilder(ElementSelectorBuilder):
 
         button_attr_exp = self.xpath_builder.attribute_expression('button', selectors)
 
-        selectors['type'] = Button.VALID_TYPES
-        input_attr_exp = self.xpath_builder.attribute_expression('input', selectors)
-
         xpath = './/button'
         if button_attr_exp:
             xpath += '[{}]'.format(button_attr_exp)
-        xpath += ' | .//input'
-        xpath += '[{}]'.format(input_attr_exp)
+
+        if selectors.get('type') is not False:
+            if selectors.get('type') in [None, True]:
+                selectors['type'] = Button.VALID_TYPES
+            input_attr_exp = self.xpath_builder.attribute_expression('input', selectors)
+
+            xpath += ' | .//input'
+            xpath += '[{}]'.format(input_attr_exp)
 
         logging.debug({'build_wd_selector': xpath})
 

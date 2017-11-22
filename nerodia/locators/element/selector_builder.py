@@ -66,7 +66,8 @@ class SelectorBuilder(object):
     # private
 
     def _normalize_selector(self, how, what):
-        if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'label', 'css', 'visible']:
+        if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'label', 'css', 'visible',
+                   'adjacent']:
             # include 'class' since the valid attribute is 'class_name'
             return [how, what]
         elif how == 'class_name':
@@ -141,14 +142,19 @@ class XPath(object):
         self.should_use_label_element = should_use_label_element
 
     def build(self, selectors):
-        xpath = ".//"
+        adjacent = selectors.pop('adjacent', None)
+        xpath = self._process_adjacent(adjacent) if adjacent else './/'
+
         xpath += selectors.pop('tag_name', '*')
 
-        selectors.pop('index', None)
+        index = selectors.pop('index', None)
 
         # the remaining entries should be attributes
         if selectors:
             xpath += '[{}]'.format(self.attribute_expression(None, selectors))
+
+        if adjacent and index is not None:
+            xpath += "[{}]".format(index + 1)
 
         logging.debug({'xpath': xpath, 'selectors': selectors})
 
@@ -201,6 +207,16 @@ class XPath(object):
             return '@{}'.format(key.replace('_', '-'))
 
     # private
+
+    def _process_adjacent(self, adjacent):
+        xpath = './'
+        if adjacent == 'ancestor':
+            xpath += 'ancestor::'
+        elif adjacent == 'preceding':
+            xpath += 'preceding-sibling::'
+        elif adjacent == 'following':
+            xpath += 'following-sibling::'
+        return xpath
 
     def _build_class_match(self, value):
         if re.match('!', value):
