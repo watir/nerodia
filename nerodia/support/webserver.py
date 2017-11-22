@@ -11,9 +11,11 @@ except ImportError:
     import urllib as urllib_request
 try:
     from http.server import HTTPServer, SimpleHTTPRequestHandler
+    from socketserver import ThreadingMixIn
 except ImportError:
     from BaseHTTPServer import HTTPServer
     from SimpleHTTPServer import SimpleHTTPRequestHandler
+    from SocketServer import ThreadingMixIn
 
 HTML_ROOT = path.abspath(path.join(path.dirname(__file__), '..', '..', 'watir', 'spec',
                                    'watirspec', 'html'))
@@ -56,6 +58,10 @@ class RequestHandler(SimpleHTTPRequestHandler):
         pass
 
 
+class ThreadedHTTPServer(ThreadingMixIn, HTTPServer):
+    pass
+
+
 class WebServer(object):
     """A very basic web server."""
 
@@ -65,7 +71,7 @@ class WebServer(object):
         self.port = port
         while True:
             try:
-                self.server = HTTPServer((host, port), RequestHandler)
+                self.server = ThreadedHTTPServer((host, port), RequestHandler)
                 self.host = host
                 self.port = port
                 break
