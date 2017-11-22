@@ -40,5 +40,6 @@ class TestElementDragAndDrop(object):
     @pytest.mark.quits_browser
     def test_can_drag_an_element_by_the_given_offset(self, browser, draggable, droppable):
         assert droppable.text == 'Drop here'
-        draggable.drag_and_drop_by(200, 150)
+        y = 150 if browser.wd.w3c else 50
+        draggable.drag_and_drop_by(200, y)
         assert droppable.text == 'Dropped!'
