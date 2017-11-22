@@ -250,7 +250,8 @@ class TestBrowserBackForth(object):
 class TestBrowserInit(object):
 
     @pytest.mark.only(W3C_BROWSERS)
-    def test_passes_capabilities_to_selenium(self, browser_name):
+    def test_passes_capabilities_to_selenium(self, browser_manager):
+        browser_name = browser_manager.name
         caps_name = 'internetexplorer' if browser_name == 'ie'else browser_name
         caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
         caps.update({'acceptInsecureCerts': True})
