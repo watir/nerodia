@@ -16,7 +16,7 @@ class TestScreenshot(object):
 
     def test_saves_screenshot_to_given_file(self, browser):
         import tempfile
-        tmp = tempfile.NamedTemporaryFile()
+        tmp = tempfile.NamedTemporaryFile(suffix='.png')
         try:
             browser.screenshot.save(tmp.name)
             assert tmp.read()[0:4] == PNG_HEADER
