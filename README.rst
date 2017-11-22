@@ -1,3 +1,6 @@
+.. image:: https://travis-ci.org/watir/nerodia.svg?branch=master
+    :target: https://travis-ci.org/watir/nerodia
+
 Introduction
 ==============
 Nerodia is a Python port of the Watir ruby gem. https://github.com/watir/watir
