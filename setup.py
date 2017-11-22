@@ -16,7 +16,7 @@ setup_args = {
     'license': 'MIT',
     'description': 'Python port of WATIR',
     'long_description': open(join(abspath(dirname(__file__)), 'README.rst')).read(),
-    'url': 'https://github.com/lmtierney/nerodia',
+    'url': 'https://github.com/watir/nerodia',
     'classifiers': ['Intended Audience :: Developers',
                     'Operating System :: POSIX',
                     'Operating System :: Microsoft :: Windows',
