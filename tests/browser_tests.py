@@ -249,7 +249,7 @@ class TestBrowserBackForth(object):
 # TODO: xfail safari
 class TestBrowserInit(object):
 
-    @pytest.mark.parametrize('browser_name', W3C_BROWSERS)
+    @pytest.mark.only(W3C_BROWSERS)
     def test_passes_capabilities_to_selenium(self, browser_name):
         caps_name = 'internetexplorer' if browser_name == 'ie'else browser_name
         caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
