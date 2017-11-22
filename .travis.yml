@@ -38,17 +38,17 @@ matrix:
   include:
   - env: TOXENV=flake8
     <<: *two
-#  - env: TOXENV=py27-chrome
-#    <<: *two
-#    <<: *chrome
+  - env: TOXENV=py27-chrome
+    <<: *two
+    <<: *chrome
   - env: TOXENV=py27-firefox
     <<: *two
     <<: *firefox-nightly
   - env: TOXENV=flake8
     <<: *three
-#  - env: TOXENV=py36-chrome
-#    <<: *three
-#    <<: *chrome
+  - env: TOXENV=py36-chrome
+    <<: *three
+    <<: *chrome
   - env: TOXENV=py36-firefox
     <<: *three
     <<: *firefox-nightly
