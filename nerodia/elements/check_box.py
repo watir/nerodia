@@ -15,6 +15,8 @@ class CheckBox(Input):
         """
         return self._element_call(lambda: self.el.is_selected())
 
+    is_checked = is_set
+
     def set(self, value=True):
         """
         Sets checkbox to the given value
@@ -32,8 +34,12 @@ class CheckBox(Input):
         """
         self._assert_enabled() if self.is_set == value else self.click()
 
+    check = set
+
     def clear(self):
         self.set(value=False)
+
+    uncheck = clear
 
 
 @six.add_metaclass(MetaHTMLElement)
