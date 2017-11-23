@@ -1,3 +1,5 @@
+from selenium.webdriver import DesiredCapabilities
+
 import nerodia
 
 
@@ -5,13 +7,20 @@ class Capabilities(object):
     DEFAULT_URL = 'http://127.0.0.1:{}/wd/hub'
 
     def __init__(self, browser, **options):
-        self.browser = options.pop('browser') if browser == 'remote' else browser
-        if browser == 'remote' or options.pop('url', None):
+        self.options = options.copy()
+
+        if browser == 'remote' and 'browser' in self.options:
+            self.browser = self.options.pop('browser')
+        elif browser == 'remote' and 'desired_capabilities' in self.options:
+            self.browser = self.options['desired_capabilities'].get('browserName')
+        else:
+            self.browser = browser
+
+        if browser == 'remote' or options.get('url'):
             self.selenium_browser = 'remote'
         else:
             self.selenium_browser = browser
 
-        self.options = options
         self.selenium_opts = {}
 
     @property
@@ -44,6 +53,8 @@ class Capabilities(object):
                 self._process_firefox_options(browser_options)
             elif self.selenium_browser == 'safari':
                 self._process_safari_options(browser_options)
+            elif self.selenium_browser == 'remote':
+                self._process_remote_options(browser_options)
 
     def _process_chrome_options(self, opts):
         from selenium.webdriver.chrome.options import Options
@@ -54,6 +65,11 @@ class Capabilities(object):
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
+            # TODO: update this after next selenium py release, there is a headless convenience
+            # method
+            if 'headless' in opts:
+                options.add_argument('--headless')
+                options.add_argument('--disable-gpu')
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary_location = opts.pop('binary') or opts.pop('binary_location')
             if 'debugger_address' in opts:
@@ -93,7 +109,22 @@ class Capabilities(object):
 
     def _process_safari_options(self, opts):
         if 'technology_preview' in opts:
-            from selenium.webdriver import DesiredCapabilities
+            self.selenium_opts['executable_path'] = \
+                '/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver'
+
+    def _process_remote_options(self, opts):
+        if self.browser == 'chrome' and self.options.pop('headless', None):
+            # TODO: update this after next selenium py release, options classes will be able to be
+            # passed through remote
+            args = self.options.pop('args', [])
+            if 'desired_capabilities' in opts:
+                caps = opts.pop('desired_capabilities')
+            else:
+                caps = DesiredCapabilities.CHROME.copy()
+            caps['goog:chromeOptions'] = {'args': args + ['--headless', '--disable-gpu']}
+            self.selenium_opts['desired_capabilities'] = caps
+
+        if self.browser == 'safari' and self.options.pop('technology_preview', None):
             if 'desired_capabilities' in opts:
                 caps = opts.pop('desired_capabilities')
             else:
