@@ -72,6 +72,17 @@ class Adjacent(object):
 
     next_siblings = following_siblings
 
+    def siblings(self, **kwargs):
+        """
+        Returns collection of sibling elements of current element, including the current element
+        :rtype: nerodia.element_collection.ElementCollection
+
+        :Example:
+
+        len(browser.text_field(name='new_user_first_name').siblings)    #=> 56
+        """
+        return self.parent().children(**kwargs)
+
     def child(self, **kwargs):
         """
         Returns element of direct child of current element

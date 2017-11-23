@@ -34,6 +34,23 @@ class TestAdjacentParent(object):
         assert not browser.div(id='first_sibling').parent(tag_name='table').exists
 
 
+class TestAdjacentSiblings(object):
+    def test_gets_collection_of_all_siblings_of_an_element(self, browser):
+        siblings = browser.div(id='second_sibling').siblings()
+        assert isinstance(siblings, HTMLElementCollection)
+        assert len(siblings) == 5
+
+    def test_accepts_tag_name_argument(self, browser):
+        siblings = browser.div(id='second_sibling').siblings(tag_name='div')
+        assert len(siblings) == 3
+        assert all(isinstance(sibling, Div) for sibling in siblings)
+
+    def test_accepts_class_name_argument(self, browser):
+        siblings = browser.div(id='second_sibling').siblings(class_name='b')
+        assert len(siblings) == 2
+        assert all(isinstance(sibling, Div) for sibling in siblings)
+
+
 class TestAdjacentFollowingSibling(object):
     def test_gets_immediate_following_sibling_of_an_element_by_default(self, browser):
         assert browser.div(id='first_sibling').following_sibling().id == 'between_siblings1'
