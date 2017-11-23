@@ -97,7 +97,13 @@ class ElementCollection(object):
             self.as_list = elements
         return self.as_list
 
-    locate = to_list
+    def locate(self):
+        """
+        Locate all elements and return self
+        :rtype: ElementCollection
+        """
+        self.to_list
+        return self
 
     def __eq__(self, other):
         """
