@@ -17,6 +17,7 @@ from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException,
     UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
 from ..locators.element.selector_builder import SelectorBuilder
 from ..wait.wait import TimeoutError, Wait, Waitable
+from ..window import Dimension, Point
 
 
 class Element(Container, Atoms, Waitable, Adjacent):
@@ -258,6 +259,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     get_attriubte = attribute_value
 
+    attribute = attribute_value
+
     @property
     def outer_html(self):
         """
@@ -331,6 +334,81 @@ class Element(Container, Atoms, Waitable, Adjacent):
         event_name = sub(r'^on', '', str(event_name)).lower()
 
         self._element_call(lambda: self._execute_atom('fireEvent', self.el, event_name))
+
+    def scroll_into_view(self):
+        """
+        Scroll until the element is in the view screen
+        :rtype: Point
+
+        :Example:
+
+        browser.button(name='new_user_button').scroll_into_view()
+        """
+        return Point(**self._element_call(lambda: self.el.location_once_scrolled_into_view))
+
+    @property
+    def location(self):
+        """
+        Get the location of the element (x, y)
+        :rtype: Point
+
+        :Example:
+
+        browser.button(name='new_user_button').location
+        """
+        return Point(**self._element_call(lambda: self.el.location))
+
+    @property
+    def size(self):
+        """
+        Get the size of the element (width, height)
+        :rtype: Dimension
+
+        :Example:
+
+        browser.button(name='new_user_button').size
+        """
+        return Dimension(**self._element_call(lambda: self.el.size))
+
+    @property
+    def height(self):
+        """
+        Get the height of the element
+        :rtype: int
+
+        :Example:
+
+        browser.button(name='new_user_button').height
+        """
+        return self.size.height
+
+    @property
+    def width(self):
+        """
+        Get the width of the element
+        :rtype: int
+
+        :Example:
+
+        browser.button(name='new_user_button').width
+        """
+        return self.size.width
+
+    @property
+    def center(self):
+        """
+        Get the center coordinates of the element
+        :rtype: Point
+
+        :Example:
+
+        browser.button(name='new_user_button').center
+        """
+        location = self.location
+        size = self.size
+        return Point(round(location.x + size.width / 2), round(location.y + size.height / 2))
+
+    centre = center
 
     @property
     def driver(self):
@@ -477,7 +555,8 @@ class Element(Container, Atoms, Waitable, Adjacent):
             return True
 
         try:
-            self.query_scope.wait_for_present()
+            if not isinstance(self.query_scope, Browser):
+                self.query_scope.wait_for_present()
             self.wait_until_present()
         except TimeoutError as e:
             raise self._unknown_exception('element located, but {}'.format(e))

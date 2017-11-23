@@ -4,6 +4,8 @@ from re import compile
 import pytest
 from selenium.webdriver.common.keys import Keys
 
+from nerodia.window import Point, Dimension
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 MODIFIER = Keys.COMMAND if system().lower() == 'darwin' else Keys.CONTROL
@@ -309,3 +311,58 @@ class TestElementInnerOutterHTML(object):
 
     def test_returns_outer_html_code_of_element(self, browser):
         assert browser.div(id='foo').outer_html == '<div id="foo"><a href="#">hello</a></div>'
+
+
+class TestElementScrollIntoView(object):
+    @pytest.mark.quits_browser
+    def test_scrolls_element_into_view(self, browser):
+        el = browser.button(name='new_user_image')
+        element_center = el.center.y
+        browser.window().resize_to(browser.window().size.width, element_center - 100)
+
+        bottom_viewport_script = 'return window.pageYOffset + window.innerHeight;'
+        assert browser.execute_script(bottom_viewport_script) < element_center
+
+        assert isinstance(el.scroll_into_view(), Point)
+
+        assert browser.execute_script(bottom_viewport_script) > element_center
+
+
+class TestElementSizeLocation(object):
+
+    # location
+
+    def test_returns_coordinates_for_element_location(self, browser):
+        location = browser.button(name='new_user_image').location
+
+        assert isinstance(location, Point)
+        assert location.y > 0
+        assert location.x > 0
+
+    # size
+
+    def test_returns_size_of_element(self, browser):
+        size = browser.button(name='new_user_image').size
+
+        assert isinstance(size, Dimension)
+        assert size.width == 104
+        assert size.height == 70
+
+    # height
+
+    def test_returns_height_of_element(self, browser):
+        assert browser.button(name='new_user_image').height == 70
+
+    # width
+
+    def test_returns_width_of_element(self, browser):
+        assert browser.button(name='new_user_image').width == 104
+
+    # center
+
+    def test_returns_center_of_element(self, browser):
+        location = browser.button(name='new_user_image').center
+
+        assert isinstance(location, Point)
+        assert location.y > 0
+        assert location.x > 0
