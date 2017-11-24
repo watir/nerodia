@@ -362,7 +362,7 @@ class Container(object):
                                               tag_name='input', type='file'))
 
     def font(self, *args, **kwargs):
-        from .elements.html_elements import Font
+        from .elements.font import Font
         return Font(self, dict(self._extract_selector(*args, **kwargs), tag_name='font'))
 
     def fonts(self, *args, **kwargs):

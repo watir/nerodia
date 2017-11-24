@@ -17,11 +17,6 @@ class HTMLElementCollection(ElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Font(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class FontCollection(HTMLElementCollection):
     pass
 
