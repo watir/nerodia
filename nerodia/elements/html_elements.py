@@ -502,17 +502,7 @@ class LICollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class UList(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class UListCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class OList(HTMLElement):
     pass
 
 

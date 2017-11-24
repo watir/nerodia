@@ -680,7 +680,7 @@ class Container(object):
                                            tag_name='object'))
 
     def ol(self, *args, **kwargs):
-        from .elements.html_elements import OList
+        from .elements.list import OList
         return OList(self, dict(self._extract_selector(*args, **kwargs), tag_name='ol'))
 
     def ols(self, *args, **kwargs):
@@ -1040,7 +1040,7 @@ class Container(object):
                                                 tag_name='u'))
 
     def ul(self, *args, **kwargs):
-        from .elements.html_elements import UList
+        from .elements.list import UList
         return UList(self, dict(self._extract_selector(*args, **kwargs), tag_name='ul'))
 
     def uls(self, *args, **kwargs):

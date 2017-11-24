@@ -563,7 +563,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
     def wait_for_enabled(self):
         from .button import Button
-        from .input import Input
+        from .html_elements import Input
         from .option import Option
         from .select import Select
         if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):

@@ -76,7 +76,7 @@ class ElementCollection(object):
         :rtype: list[nerodia.elements.element.Element]
         """
         from .elements.html_elements import HTMLElement
-        from .elements.input import Input
+        from .elements.html_elements import Input
         dic = {}
         if not self.as_list:
             elements = []
