@@ -12,8 +12,16 @@ class Row(TableRow):
 
 @six.add_metaclass(MetaHTMLElement)
 class RowCollection(TableRowCollection):
-    def to_a(self):
+    def __init__(self, *args, **kwargs):
+        self.list = None
+        super(RowCollection, self).__init__(*args, **kwargs)
+
+    @property
+    def to_list(self):
         # we do this craziness since the xpath used will find direct child rows
         # before any rows inside thead/tbody/tfoot...
-        elements = super(RowCollection, self).to_list
-        return sorted(elements, key=lambda e: int(e.attribute_value('rowIndex')))
+        if self.list:
+            return self.list
+        else:
+            elements = super(RowCollection, self).to_list
+            return sorted(elements, key=lambda e: int(e.attribute_value('rowIndex')))
