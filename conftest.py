@@ -122,6 +122,9 @@ def messages(browser_manager):
         @property
         def list(self):
             return [el.text for el in browser_manager.browser.div(id='messages').divs()]
+
+        def __len__(self):
+            return len(self.list)
     yield Messages()
 
 
