@@ -1,6 +1,4 @@
 import re
-from copy import copy
-from inspect import stack
 
 
 class Adjacent(object):
