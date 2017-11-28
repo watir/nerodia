@@ -1,6 +1,6 @@
 import six
 
-from .html_elements import HTMLElement, HTMLElementCollection
+from .html_elements import HTMLElement
 from ..exception import Error
 from ..meta_elements import MetaHTMLElement
 from ..row_container import RowContainer
@@ -59,7 +59,7 @@ class Table(RowContainer, HTMLElement):
         :param idx: row index
         :rtype: nerodia.elements.row.Row
         """
-        return self.row('index', idx)
+        return self.row(index=idx)
 
     # private
 
@@ -73,11 +73,3 @@ class Table(RowContainer, HTMLElement):
         row_id = 'row at index {}'.format(index - 1) if index is not None else 'designated row'
         raise Error('{} has {} cells, while header row has '
                     '{}'.format(row_id, row_size, header_size))
-
-
-
-@six.add_metaclass(MetaHTMLElement)
-class TableCollection(HTMLElementCollection):
-    @property  # alias
-    def to_list(self):
-        return self.strings

@@ -15,7 +15,7 @@ class RowContainer(object):
         """
         self.wait_for_exists()
 
-        rws = []
-        for rw in rws:
-            rws.append([cl.text for cl in rw.cells()])
-        return rws
+        rows = []
+        for row in self.rows():
+            rows.append([cell.text for cell in row])
+        return rows

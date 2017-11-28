@@ -1,6 +1,6 @@
 import six
 
-from .html_elements import HTMLElement, HTMLElementCollection
+from .html_elements import HTMLElement
 from ..meta_elements import MetaHTMLElement
 from ..row_container import RowContainer
 
@@ -14,11 +14,4 @@ class TableSection(RowContainer, HTMLElement):
         :param idx: row index
         :rtype: nerodia.elements.row.Row
         """
-        return self.row('index', idx)
-
-
-@six.add_metaclass(MetaHTMLElement)
-class TableSectionCollection(HTMLElementCollection):
-    @property  # alias
-    def to_list(self):
-        return self.strings
+        return self.row(index=idx)

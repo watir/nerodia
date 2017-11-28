@@ -19,8 +19,8 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
     OptGroupCollection, OptionCollection, OutputCollection, ParagraphCollection, ParamCollection, \
     PreCollection, ProgressCollection, ScriptCollection, SelectCollection, SourceCollection, \
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \
-    TableHeaderCellCollection, TimeCollection, TitleCollection, TableRowCollection, TrackCollection, \
-    UListCollection, VideoCollection
+    TableHeaderCellCollection, TableSectionCollection, TimeCollection, TitleCollection, \
+    TableRowCollection, TrackCollection, UListCollection, VideoCollection
 from .elements.i_frame import IFrame
 from .elements.image import Image
 from .elements.link import Anchor
@@ -29,7 +29,7 @@ from .elements.option import Option
 from .elements.select import Select
 from .elements.table import Table, TableCollection
 from .elements.table_row import TableRow
-from .elements.table_section import TableSection, TableSectionCollection
+from .elements.table_section import TableSection
 from .elements.text_area import TextArea
 
 tag_to_class['a'] = Anchor

@@ -928,7 +928,7 @@ class Container(object):
         return TableSection(self, dict(self._extract_selector(*args, **kwargs), tag_name='tbody'))
 
     def tbodys(self, *args, **kwargs):
-        from .elements.table_section import TableSectionCollection
+        from .elements.html_elements import TableSectionCollection
         return TableSectionCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                  tag_name='tbody'))
 
