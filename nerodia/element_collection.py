@@ -142,15 +142,18 @@ class ElementCollection(object):
 
     @property
     def _locator_class(self):
-        return self._import_module.Locator
+        from .locators.element.locator import Locator
+        return getattr(self._import_module, 'Locator', Locator)
 
     @property
     def _element_validator_class(self):
-        return self._import_module.Validator
+        from .locators.element.validator import Validator
+        return getattr(self._import_module, 'Validator', Validator)
 
     @property
     def _selector_builder_class(self):
-        return self._import_module.SelectorBuilder
+        from .locators.element.selector_builder import SelectorBuilder
+        return getattr(self._import_module, 'SelectorBuilder', SelectorBuilder)
 
     @property
     def _import_module(self):

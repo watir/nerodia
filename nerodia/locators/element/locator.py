@@ -155,7 +155,7 @@ class Locator(object):
         if how == 'text':
             return element.text
         elif how == 'tag_name':
-            return element.tag_name.downcase
+            return element.tag_name.lower()
         elif how == 'href':
             href = element.get_attribute('href')
             return href and href.strip()

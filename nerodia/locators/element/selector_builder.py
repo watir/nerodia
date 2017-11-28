@@ -132,7 +132,7 @@ class SelectorBuilder(object):
     def _xpath_builder_class(self):
         try:
             mod = import_module(self.__module__)
-            return mod.XPath
+            return getattr(mod, 'XPath', XPath)
         except ImportError:
             return XPath
 
