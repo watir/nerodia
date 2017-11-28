@@ -1,6 +1,7 @@
 import re
 
 import pytest
+
 import nerodia
 from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
 
