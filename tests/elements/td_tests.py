@@ -22,8 +22,8 @@ class TestTdExists(object):
         assert browser.td(id=re.compile('no_such_id')).exists is False
         assert browser.td(text='no_such_text').exists is False
         assert browser.td(text=re.compile('no_such_text')).exists is False
-        assert browser.ol(index=1337).exists is False
-        assert browser.ol(xpath="//td[@id='no_such_id']").exists is False
+        assert browser.td(index=1337).exists is False
+        assert browser.td(xpath="//td[@id='no_such_id']").exists is False
 
     def test_raises_correct_exception_when_what_argument_is_invalid(self, browser):
         with pytest.raises(TypeError):
@@ -40,15 +40,15 @@ class TestTdClick(object):
         browser.td(id='t2_r1_c1').click()
         assert 'td' in messages.list
 
-    def test_gets_the_colspan_attribute(self, browser):
-        assert browser.td(id='colspan_2').colspan == 2
-        assert browser.td(id='no_colspan').colspan == 1
-
 
 class TestTdAttributes(object):
     def test_returns_the_text_inside_the_td(self, browser):
         assert browser.td(id='t1_r2_c1').text == 'Table 1, Row 2, Cell 1'
         assert browser.td(id='t2_r1_c1').text == 'Table 2, Row 1, Cell 1'
+
+    def test_gets_the_colspan_attribute(self, browser):
+        assert browser.td(id='colspan_2').colspan == 2
+        assert browser.td(id='no_colspan').colspan == 1
 
 
 def test_finds_all_attribute_methods(browser):
