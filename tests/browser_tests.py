@@ -30,7 +30,6 @@ class TestBrowserExists(object):
     def test_returns_true_if_we_are_at_a_page(self, browser):
         assert browser.exists
 
-    # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1223277
     @pytest.mark.page('window_switching.html')
     def test_returns_false_if_window_is_closed(self, browser):
         browser.link(id='open').click()
@@ -338,7 +337,6 @@ class TestBrowserSendKeys(object):
         assert tf.value == 'hello'
 
 
-# TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1290814
 class TestBrowserClosed(object):
     def test_raises_correct_exception_when_trying_to_interact_with_a_closed_browser(self, bkwargs, page):
         from nerodia.browser import Browser

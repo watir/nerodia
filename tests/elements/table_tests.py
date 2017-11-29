@@ -62,8 +62,9 @@ class TestTableOther(object):
     @pytest.mark.page('uneven_table.html')
     def test_raises_correct_exception_if_table_could_not_be_parsed(self, browser):
         from nerodia.exception import Error
-        with pytest.raises(Error):
+        with pytest.raises(Error) as e:
             browser.table().dicts
+        assert e.value.args[0] == "row at index 0 has 2 cells, while header row has 3"
 
     def test_click_fires_the_tables_onclick_event(self, browser, messages):
         browser.table(id='inner').click()

@@ -44,7 +44,6 @@ class HasWindow(object):
             self._original_window = self.window()
         return self._original_window
 
-
     # private
 
     def _filter_windows(self, selector, windows):

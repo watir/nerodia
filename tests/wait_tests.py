@@ -3,7 +3,6 @@ from time import time
 import pytest
 
 import nerodia
-from nerodia.exception import NoValueFoundException
 from nerodia.wait.wait import Wait, TimeoutError, Timer
 
 
@@ -161,15 +160,6 @@ class TestElementWaitUntilPresent(object):
         except TimeoutError:
             pass
         assert mock.call_count == 2
-
-    @pytest.mark.usefixtures('default_timeout_handling')
-    def test_waits_to_select_an_option(self, browser):
-        browser.link(id='add_select').click()
-        select_list = browser.select_list(id='languages')
-        start_time = time()
-        with pytest.raises(NoValueFoundException):
-            select_list.select('No')
-        assert time() - start_time > 1
 
 
 @pytest.mark.page('wait.html')

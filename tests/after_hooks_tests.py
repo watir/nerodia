@@ -164,7 +164,6 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
-    # TODO: xfail firefox (https://bugzilla.mozilla.org/show_bug.cgi?id=1279211)
     def test_raises_correct_exception_when_running_error_checks_with_alert_present(self, browser, page):
         from selenium.common.exceptions import UnexpectedAlertPresentException
         with pytest.raises(UnexpectedAlertPresentException):
