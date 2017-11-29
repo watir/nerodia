@@ -1,7 +1,6 @@
 import six
 
-from .html_elements import InputCollection
-from .input import Input
+from .html_elements import Input, InputCollection
 from ..exception import ObjectDisabledException
 from ..meta_elements import MetaHTMLElement
 

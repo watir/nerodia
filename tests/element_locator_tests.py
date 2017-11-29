@@ -135,7 +135,7 @@ class TestElementLocatorFindsSingleElement(object):
         expect_one.assert_called_once_with(By.XPATH, ".//a[normalize-space(@href)='foo']")
 
     def test_wraps_type_attribute_with_translate_for_upper_case_values(self, browser, expect_one):
-        from nerodia.elements.input import Input
+        from nerodia.elements.html_elements import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'file'}, Input.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//input[{}='file']".format(translated_type))
@@ -143,7 +143,7 @@ class TestElementLocatorFindsSingleElement(object):
     # uses the corresponding <label>'s @for attribute or parent::label when locating by label
     def test_uses_the_corresponding_label_for_attribute_for_parent_label_when_locating_by_label(
             self, browser, expect_one):
-        from nerodia.elements.input import Input
+        from nerodia.elements.html_elements import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'text', 'label': 'foo'}, Input.ATTRIBUTES)
         expect_one.assert_called_once()
@@ -231,7 +231,7 @@ class TestElementLocatorFindsSingleElement(object):
         assert locate_one(browser, selector) == elements[1]
 
     def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_one):
-        from nerodia.elements.input import Input
+        from nerodia.elements.html_elements import Input
         expect_one.return_value = element(mocker, values={'tag_name': 'div'})
         selector = {'tag_name': 'input', 'xpath': '//div'}
         assert locate_one(browser, selector, Input.ATTRIBUTES) is None
@@ -253,7 +253,7 @@ class TestElementLocatorFindsSingleElement(object):
         assert e.value.args[0] == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
 
     def test_raises_correct_exception_if_the_attribute_is_not_valid(self, browser, mocker, expect_all):
-        from nerodia.elements.input import Input
+        from nerodia.elements.html_elements import Input
         with pytest.raises(MissingWayOfFindingObjectException) as e:
             selector = {'tag_name': 'input', 'href': 'foo'}
             locate_one(browser, selector, Input.ATTRIBUTES)
