@@ -1,4 +1,5 @@
 import pytest
+from selenium.common.exceptions import UnexpectedAlertPresentException
 
 import nerodia
 from nerodia.wait.wait import TimeoutError
@@ -16,6 +17,8 @@ def cleanup_alert(browser):
 @pytest.mark.usefixtures('cleanup_alert')
 class TestAlertAPI(object):
     # TODO: xfail safari
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_returns_text_of_alert(self, browser):
         browser.button(id='alert').click()
         assert 'ok' in browser.alert.text
@@ -25,12 +28,16 @@ class TestAlertAPI(object):
     def test_returns_false_if_alert_is_not_present(self, browser):
         assert not browser.alert.exists
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=TimeoutError)
     def test_returns_true_if_alert_is_present(self, browser):
         browser.button(id='alert').click()
         browser.wait_until(lambda b: b.alert.exists, timeout=10)
 
     # ok
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_closes_alert_by_ok(self, browser):
         browser.button(id='alert').click()
         browser.alert.ok()
@@ -38,6 +45,8 @@ class TestAlertAPI(object):
 
     # close
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_closes_alert_by_close(self, browser):
         browser.button(id='alert').click()
         browser.alert.close()
@@ -64,6 +73,8 @@ class TestAlertAPI(object):
 
     # confirm
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_accepts_confirm(self, browser):
         browser.button(id='confirm').click()
         browser.alert.ok()
@@ -71,6 +82,8 @@ class TestAlertAPI(object):
 
     # close
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_cancels_confirm(self, browser):
         browser.button(id='confirm').click()
         browser.alert.close()
@@ -78,6 +91,8 @@ class TestAlertAPI(object):
 
     # prompt set
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_enters_text_into_prompt(self, browser):
         browser.button(id='prompt').click()
         browser.alert.set('My Name')
