@@ -17,4 +17,4 @@ class Font(HTMLElement):
 
         browser.font().size    #=> 12
         """
-        self.attribute_value('size')
+        return self.attribute_value('size')
