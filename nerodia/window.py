@@ -6,8 +6,9 @@ from .wait.wait import Waitable, TimeoutError
 
 
 class Window(Waitable):
-    def __init__(self, driver, selector):
-        self.driver = driver
+    def __init__(self, browser, selector):
+        self.browser = browser
+        self.driver = browser.driver
         self.selector = selector
         self.original = self._current_window
         self.window_handle = None
@@ -150,6 +151,8 @@ class Window(Waitable):
 
     def close(self):
         """ Closes the window """
+        if self == self.browser.original_window:
+            self.browser._original_window = None
         if self._current_window == self.handle:
             self.driver.close()
         else:
@@ -185,6 +188,8 @@ class Window(Waitable):
         browser.window(title='closeable window').use()
         :rtype: Window
         """
+        if self.browser.original_window is None:
+            self.browser._original_window = self
         self.wait_for_exists()
         self.driver.switch_to.window(self.handle)
         return self

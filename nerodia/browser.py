@@ -43,6 +43,7 @@ class Browser(Container, HasWindow, Waitable):
         self.current_frame = None
         self.closed = False
         self.default_context = True
+        self._original_window = None
 
     @property
     def wd(self):

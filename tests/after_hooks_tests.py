@@ -40,7 +40,7 @@ class TestAfterHooksDelete(object):
 class TestAfterHooksRun(object):
     @staticmethod
     def cleanup(browser, method):
-        browser.window(index=0).use()
+        browser.original_window.use()
         browser.after_hooks.delete(method)
 
     def test_runs_after_hooks_after_browser_goto(self, browser, page):
