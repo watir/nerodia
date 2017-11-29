@@ -257,6 +257,11 @@ class FormCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
+class TableCollection(HTMLElementCollection):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
 class TableCellCollection(HTMLElementCollection):
     pass
 

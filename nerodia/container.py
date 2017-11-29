@@ -919,7 +919,7 @@ class Container(object):
         return Table(self, dict(self._extract_selector(*args, **kwargs), tag_name='table'))
 
     def tables(self, *args, **kwargs):
-        from .elements.table import TableCollection
+        from .elements.html_elements import TableCollection
         return TableCollection(self, dict(self._extract_selector(*args, **kwargs),
                                           tag_name='table'))
 
