@@ -49,8 +49,8 @@ class TestAdjacentFollowingSibling(object):
         assert isinstance(browser.div(id='first_sibling').following_sibling(tag_name='div'), Div)
 
     def test_accepts_class_name_argument(self, browser):
-        assert browser.div(id='first_sibling').following_sibling(class_name='b').id == \
-               'second_sibling'
+        exp = 'second_sibling'
+        assert browser.div(id='first_sibling').following_sibling(class_name='b').id == exp
 
     def test_accepts_index_and_tag_name_arguments(self, browser):
         assert browser.div(id='first_sibling').following_sibling(tag_name='div',
@@ -59,8 +59,8 @@ class TestAdjacentFollowingSibling(object):
             browser.div(id='first_sibling').following_sibling(tag_name='div', index=1), Div)
 
     def test_accepts_text_as_regexp(self, browser):
-        assert browser.div(id='first_sibling').following_sibling(text=re.compile('t')).id == \
-               'third_sibling'
+        exp = 'third_sibling'
+        assert browser.div(id='first_sibling').following_sibling(text=re.compile('t')).id == exp
 
     def test_accepts_text_as_string(self, browser):
         assert browser.div(id='first_sibling').following_sibling(text='text').id == 'third_sibling'
@@ -91,7 +91,7 @@ class TestAdjacentFollowingSiblings(object):
     def test_accepts_class_name_argument_for_multiple_classes(self, browser):
         assert len(browser.div(id='second_sibling').following_siblings(class_name=['a', 'b'])) == 1
         assert isinstance(browser.div(id='second_sibling').
-                          following_siblings(class_name=['a','b'])[0], Div)
+                          following_siblings(class_name=['a', 'b'])[0], Div)
 
 
 class TestAdjacentPreviousSibling(object):
@@ -109,8 +109,8 @@ class TestAdjacentPreviousSibling(object):
         assert isinstance(browser.div(id='third_sibling').previous_sibling(tag_name='div'), Div)
 
     def test_accepts_class_name_argument(self, browser):
-        assert browser.div(id='third_sibling').previous_sibling(class_name='a').id == \
-               'between_siblings2'
+        exp = 'between_siblings2'
+        assert browser.div(id='third_sibling').previous_sibling(class_name='a').id == exp
 
     def test_accepts_index_and_tag_name_arguments(self, browser):
         assert browser.div(id='third_sibling').previous_sibling(tag_name='div',
@@ -137,9 +137,9 @@ class TestAdjacentPreviousSiblings(object):
                           Div)
 
     def test_accepts_class_name_argument(self, browser):
+        exp = 'between_siblings1'
         assert len(browser.div(id='second_sibling').previous_siblings(class_name='a')) == 1
-        assert browser.div(id='second_sibling').previous_siblings(class_name='a')[0].id == \
-               'between_siblings1'
+        assert browser.div(id='second_sibling').previous_siblings(class_name='a')[0].id == exp
 
 
 class TestAdjacentChild(object):

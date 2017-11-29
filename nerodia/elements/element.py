@@ -425,7 +425,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         else:
             klass = nerodia.element_class_for(tag) or HTMLElement
 
-        return klass(self.query_scope, selector=dict(self.selector, element= self.wd))
+        return klass(self.query_scope, selector=dict(self.selector, element=self.wd))
 
     @property
     def browser(self):
