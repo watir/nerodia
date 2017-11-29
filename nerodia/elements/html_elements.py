@@ -277,11 +277,6 @@ class TableHeaderCellCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class TableDataCell(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class TableDataCellCollection(HTMLElementCollection):
     pass
 

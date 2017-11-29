@@ -40,6 +40,10 @@ class TestTdClick(object):
         browser.td(id='t2_r1_c1').click()
         assert 'td' in messages.list
 
+    def test_gets_the_colspan_attribute(self, browser):
+        assert browser.td(id='colspan_2').colspan == 2
+        assert browser.td(id='no_colspan').colspan == 1
+
 
 class TestTdAttributes(object):
     def test_returns_the_text_inside_the_td(self, browser):
@@ -48,5 +52,23 @@ class TestTdAttributes(object):
 
 
 def test_finds_all_attribute_methods(browser):
-    assert hasattr(browser.td(index=0), 'class_name')
-    assert hasattr(browser.td(index=0), 'id')
+    assert hasattr(browser.td(index=0), 'text')
+    assert hasattr(browser.td(index=0), 'colspan')
+
+
+class TestTdOther(object):
+    def test_returns_the_corresponding_column_header(self, browser):
+        td = browser.td(text='1 331').column_header
+        assert td.text == 'Income tax'
+
+    def test_returns_the_corresponding_sibling_cell_by_text(self, browser):
+        local_td = browser.td(text='1 331')
+        td = local_td.sibling_from_header(text='After income tax')
+
+        assert td.text == '4 532'
+
+    def test_returns_the_corresponding_sibling_cell_by_index(self, browser):
+        local_td = browser.td(text='1 331')
+        td = local_td.sibling_from_header(text=re.compile('tax'), index=2)
+
+        assert td.text == '4 532'

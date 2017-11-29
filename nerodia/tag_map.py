@@ -7,7 +7,7 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
     Heading, Head, HR, Html, Input, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
     OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
-    TableDataCell, Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
+    Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
     HTMLElementCollection, AreaCollection, AudioCollection, BaseCollection, QuoteCollection, \
     BodyCollection, BRCollection, ButtonCollection, CanvasCollection, TableCaptionCollection, \
     TableColCollection, DataCollection, DataListCollection, ModCollection, DetailsCollection, \
@@ -28,6 +28,7 @@ from .elements.list import OList, UList
 from .elements.option import Option
 from .elements.select import Select
 from .elements.table import Table
+from .elements.table_cell import TableDataCell
 from .elements.table_row import TableRow
 from .elements.table_section import TableSection
 from .elements.text_area import TextArea
