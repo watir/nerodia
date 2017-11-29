@@ -172,7 +172,7 @@ class ElementCollection(object):
         from .elements.svg_elements import SVGElementCollection
         from .elements.html_elements import HTMLElementCollection
         name = self.__class__.__name__.replace('Collection', '')
-        element_module = re.sub(r'^(\w+)([A-Z]{1}\w+)$', r'\1_\2'.lower(), name).lower()
+        element_module = re.sub(r'([A-Z]{1})', r'_\1', name)[1:].lower()
         if element_module == 'frame':  # special cases
             element_module = 'i_frame'
         try:

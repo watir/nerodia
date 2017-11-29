@@ -28,7 +28,7 @@ from .elements.list import OList, UList
 from .elements.option import Option
 from .elements.select import Select
 from .elements.table import Table
-from .elements.table_cell import TableDataCell
+from .elements.table_data_cell import TableDataCell
 from .elements.table_row import TableRow
 from .elements.table_section import TableSection
 from .elements.text_area import TextArea

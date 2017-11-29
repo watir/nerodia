@@ -43,9 +43,3 @@ class TableCell(HTMLElement):
         opt['tag_name'] = header_type
 
         return nerodia.tag_to_class[header_type](header_row, opt)
-
-
-@six.add_metaclass(MetaHTMLElement)
-class TableDataCell(TableCell):
-    _attr_abbr = (str, 'abbr')
-    pass

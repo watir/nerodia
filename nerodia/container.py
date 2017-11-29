@@ -933,7 +933,7 @@ class Container(object):
                                                  tag_name='tbody'))
 
     def td(self, *args, **kwargs):
-        from .elements.table_cell import TableDataCell
+        from .elements.table_data_cell import TableDataCell
         return TableDataCell(self, dict(self._extract_selector(*args, **kwargs), tag_name='td'))
 
     def tds(self, *args, **kwargs):
