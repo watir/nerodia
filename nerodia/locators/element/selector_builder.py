@@ -216,6 +216,8 @@ class XPath(object):
             xpath += 'preceding-sibling::'
         elif adjacent == 'following':
             xpath += 'following-sibling::'
+        elif adjacent == 'child':
+            xpath += 'child::'
         return xpath
 
     def _build_class_match(self, value):
