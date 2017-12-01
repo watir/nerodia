@@ -7,6 +7,7 @@ from nerodia.exception import UnknownFrameException, UnknownObjectException
 pytestmark = pytest.mark.page('iframes.html')
 
 
+@pytest.mark.xfail_firefox(reason='bug yet to be entered with the new webdriver click')
 def test_handles_cross_iframe_javascript(browser):
     assert browser.iframe(id='iframe_1').text_field(name='senderElement').value == 'send_this_value'
     assert browser.iframe(id='iframe_2').text_field(name='recieverElement').value == 'old_value'

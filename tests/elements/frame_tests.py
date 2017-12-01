@@ -1,6 +1,7 @@
 from re import compile
 
 import pytest
+import six
 
 from nerodia.exception import UnknownFrameException, UnknownObjectException
 
@@ -88,7 +89,7 @@ class TestFrameOther(object):
     def test_can_access_the_frames_parent_element_after_use(self, browser):
         el = browser.frameset()
         el.frame().text_field().value
-        assert isinstance(el.attribute_value('cols'), str)
+        assert isinstance(el.attribute_value('cols'), six.text_type)
 
     def test_executes_the_given_javascript_in_the_specified_frame(self, browser):
         frame = browser.frame(index=0)

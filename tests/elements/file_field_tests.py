@@ -47,7 +47,7 @@ class TestFileFieldAttributes(object):
     def test_raises_correct_exception_for_class_name_if_the_file_field_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
-            browser.file_field(index=0).class_name
+            browser.file_field(index=1337).class_name
 
     # id
     def test_returns_the_id_if_the_file_field_exists_and_has_id(self, browser):
