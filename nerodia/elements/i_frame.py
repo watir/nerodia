@@ -33,13 +33,15 @@ class IFrame(HTMLElement):
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
+        self.locate()
+        other.locate()
         return self.wd == other.wd.wd if isinstance(other.wd, FramedDriver) else other.wd
 
     def switch_to(self):
         self.locate().switch()
 
     def assert_exists(self):
-        if self.element and not self.selector:
+        if self.el and not self.selector:
             raise UnknownFrameException(
                 'wrapping a Selenium element as a Frame is not currently supported')
         return super(IFrame, self).assert_exists()
