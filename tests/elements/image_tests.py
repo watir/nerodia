@@ -67,7 +67,6 @@ class TestImageAttributes(object):
     # src
     def test_returns_the_src_if_the_element_exists_and_has_src(self, browser):
         assert 'square.png' in browser.image(id='square').src
-        assert browser.image(title='Square').id == 'square'
 
     def test_returns_an_empty_string_if_the_image_exists_and_the_src_doesnt(self, browser):
         assert browser.image(index=0).src == ''
