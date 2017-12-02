@@ -527,9 +527,13 @@ class Container(object):
         from .elements.image import Image
         return Image(self, dict(self._extract_selector(*args, **kwargs), tag_name='img'))
 
+    image = img
+
     def imgs(self, *args, **kwargs):
         from .elements.html_elements import ImageCollection
         return ImageCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='img'))
+
+    images = imgs
 
     def input(self, *args, **kwargs):
         from .elements.html_elements import Input

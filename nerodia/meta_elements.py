@@ -70,6 +70,6 @@ def make_attr(typ, val):
 
     else:
         def attr_str(self):
-            return str(self.attribute_value(val))
+            return str(self.attribute_value(val) or '')
 
         return attr_str
