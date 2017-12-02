@@ -125,7 +125,11 @@ def messages(browser_manager):
 
         def __len__(self):
             return len(self.list)
-    yield Messages()
+
+        def __getitem__(self, item):
+            return self.list[item]
+
+    return Messages()
 
 
 @pytest.fixture(autouse=True, scope='session')
