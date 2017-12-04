@@ -54,17 +54,6 @@ class TestLabelAttributes(object):
         with pytest.raises(UnknownObjectException):
             browser.label(index=1337).id
 
-    # text
-    def test_returns_the_text_if_the_element_exists_and_has_text(self, browser):
-        assert browser.label(index=1).text == 'This is an labelerted text tag 2'
-
-    def test_returns_an_empty_string_if_the_label_exists_and_the_text_doesnt(self, browser):
-        assert browser.label(index=3).text == ''
-
-    def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.label(index=1337).text
-
 
 def test_finds_all_attribute_methods(browser):
     assert hasattr(browser.label(index=0), 'id')
