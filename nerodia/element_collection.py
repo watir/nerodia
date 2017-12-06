@@ -5,6 +5,10 @@ import re
 import nerodia
 
 
+MODULE_MAPPING = {'iframe': 'i_frame',
+                  'anchor': 'link'}
+
+
 class ElementCollection(object):
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -49,7 +53,7 @@ class ElementCollection(object):
         try:
             return self.to_list[idx]
         except IndexError:
-            return self._element_class(self.query_scope, dict(index=idx, **self.selector))
+            return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
     @property
     def is_empty(self):
@@ -173,8 +177,8 @@ class ElementCollection(object):
         from .elements.html_elements import HTMLElementCollection
         name = self.__class__.__name__.replace('Collection', '')
         element_module = re.sub(r'([A-Z]{1})', r'_\1', name)[1:].lower()
-        if element_module == 'frame':  # special cases
-            element_module = 'i_frame'
+        if element_module in list(MODULE_MAPPING):  # special cases
+            element_module = MODULE_MAPPING.get(element_module)
         try:
             module = import_module('nerodia.elements.{}'.format(element_module))
         except ImportError:
