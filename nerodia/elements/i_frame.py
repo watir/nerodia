@@ -1,8 +1,7 @@
 import six
 from selenium.common.exceptions import NoSuchFrameException
 
-from .html_elements import HTMLElement
-from ..element_collection import ElementCollection
+from .html_elements import HTMLElement, HTMLElementCollection
 from ..exception import UnknownFrameException
 from ..meta_elements import MetaHTMLElement
 
@@ -86,7 +85,7 @@ class IFrame(HTMLElement):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class IFrameCollection(ElementCollection):
+class IFrameCollection(HTMLElementCollection):
     pass
 
 

@@ -5,7 +5,7 @@ import re
 import nerodia
 
 
-MODULE_MAPPING = {'iframe': 'i_frame',
+MODULE_MAPPING = {'frame': 'i_frame',
                   'anchor': 'link'}
 
 
