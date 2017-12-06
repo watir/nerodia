@@ -10,7 +10,7 @@ class TestInses(object):
     def test_returns_the_correct_number_of_inses(self, browser):
         assert len(browser.inses()) == 5
 
-    def test_get_item_returns_the_image_at_the_given_index(self, browser):
+    def test_get_item_returns_the_ins_at_the_given_index(self, browser):
         assert browser.inses()[0].id == 'lead'
 
     def test_iterates_through_inses_correctly(self, browser):

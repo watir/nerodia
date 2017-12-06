@@ -11,7 +11,7 @@ class TestLabels(object):
     def test_returns_the_correct_number_of_labels(self, browser):
         assert len(browser.labels()) == 40
 
-    def test_get_item_returns_the_image_at_the_given_index(self, browser):
+    def test_get_item_returns_the_label_at_the_given_index(self, browser):
         assert browser.labels()[0].id == 'first_label'
 
     def test_iterates_through_labels_correctly(self, browser):

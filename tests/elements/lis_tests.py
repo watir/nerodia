@@ -11,7 +11,7 @@ class TestLis(object):
     def test_returns_the_correct_number_of_lis(self, browser):
         assert len(browser.lis()) == 18
 
-    def test_get_item_returns_the_image_at_the_given_index(self, browser):
+    def test_get_item_returns_the_li_at_the_given_index(self, browser):
         assert browser.lis()[4].id == 'non_link_1'
 
     def test_iterates_through_lis_correctly(self, browser):
