@@ -132,7 +132,7 @@ class SelectorBuilder(object):
     def _xpath_builder_class(self):
         try:
             mod = import_module(self.__module__)
-            return mod.XPath
+            return getattr(mod, 'XPath', XPath)
         except ImportError:
             return XPath
 
@@ -216,6 +216,8 @@ class XPath(object):
             xpath += 'preceding-sibling::'
         elif adjacent == 'following':
             xpath += 'following-sibling::'
+        elif adjacent == 'child':
+            xpath += 'child::'
         return xpath
 
     def _build_class_match(self, value):

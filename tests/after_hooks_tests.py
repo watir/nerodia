@@ -1,5 +1,9 @@
 import pytest
 
+from selenium.common.exceptions import UnexpectedAlertPresentException
+
+from nerodia.exception import UnknownObjectException
+
 
 class TestAfterHooksAdd(object):
     def test_raises_correct_exception_when_not_given_any_arguments(self, browser):
@@ -40,7 +44,7 @@ class TestAfterHooksDelete(object):
 class TestAfterHooksRun(object):
     @staticmethod
     def cleanup(browser, method):
-        browser.window(index=0).use()
+        browser.original_window.use()
         browser.after_hooks.delete(method)
 
     def test_runs_after_hooks_after_browser_goto(self, browser, page):
@@ -164,7 +168,8 @@ class TestAfterHooksRun(object):
         finally:
             self.cleanup(browser, hook)
 
-    # TODO: xfail firefox (https://bugzilla.mozilla.org/show_bug.cgi?id=1279211)
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnknownObjectException)
     def test_raises_correct_exception_when_running_error_checks_with_alert_present(self, browser, page):
         from selenium.common.exceptions import UnexpectedAlertPresentException
         with pytest.raises(UnexpectedAlertPresentException):
@@ -192,6 +197,8 @@ class TestAfterHooksRun(object):
             browser.alert.ok()
             self.cleanup(browser, hook)
 
+    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+                               raises=UnexpectedAlertPresentException)
     def test_does_not_raise_error_if_no_error_checks_are_defined_with_alert_present(self, browser, page):
         def hook(b):
             b.url

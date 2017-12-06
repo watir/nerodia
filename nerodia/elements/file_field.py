@@ -4,7 +4,7 @@ import six
 from os import path
 
 from .html_elements import InputCollection
-from .input import Input
+from .html_elements import Input
 from ..meta_elements import MetaHTMLElement
 
 
@@ -18,7 +18,23 @@ class FileField(Input):
         :raises: ENOENT
         """
         if not path.exists(filepath):
-            raise ENOENT
+            raise OSError(ENOENT, '{!r} does not exist.'.format(filepath))
+        self.value = filepath
+
+    @property
+    def value(self):
+        """
+        Gets teh value of the file field
+        :rtype: str
+        """
+        return self.attribute_value('value')
+
+    @value.setter
+    def value(self, filepath):
+        """
+        Set the file field to the given path
+        :param filepath: path to the file
+        """
         self._element_call(lambda: self.el.send_keys(filepath))
 
 

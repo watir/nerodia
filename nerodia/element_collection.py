@@ -5,6 +5,10 @@ import re
 import nerodia
 
 
+MODULE_MAPPING = {'frame': 'i_frame',
+                  'anchor': 'link'}
+
+
 class ElementCollection(object):
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -49,7 +53,7 @@ class ElementCollection(object):
         try:
             return self.to_list[idx]
         except IndexError:
-            return self._element_class(self.query_scope, dict(index=idx, **self.selector))
+            return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
     @property
     def is_empty(self):
@@ -76,7 +80,7 @@ class ElementCollection(object):
         :rtype: list[nerodia.elements.element.Element]
         """
         from .elements.html_elements import HTMLElement
-        from .elements.input import Input
+        from .elements.html_elements import Input
         dic = {}
         if not self.as_list:
             elements = []
@@ -97,7 +101,13 @@ class ElementCollection(object):
             self.as_list = elements
         return self.as_list
 
-    locate = to_list
+    def locate(self):
+        """
+        Locate all elements and return self
+        :rtype: ElementCollection
+        """
+        self.to_list
+        return self
 
     def __eq__(self, other):
         """
@@ -136,15 +146,18 @@ class ElementCollection(object):
 
     @property
     def _locator_class(self):
-        return self._import_module.Locator
+        from .locators.element.locator import Locator
+        return getattr(self._import_module, 'Locator', Locator)
 
     @property
     def _element_validator_class(self):
-        return self._import_module.Validator
+        from .locators.element.validator import Validator
+        return getattr(self._import_module, 'Validator', Validator)
 
     @property
     def _selector_builder_class(self):
-        return self._import_module.SelectorBuilder
+        from .locators.element.selector_builder import SelectorBuilder
+        return getattr(self._import_module, 'SelectorBuilder', SelectorBuilder)
 
     @property
     def _import_module(self):
@@ -163,9 +176,9 @@ class ElementCollection(object):
         from .elements.svg_elements import SVGElementCollection
         from .elements.html_elements import HTMLElementCollection
         name = self.__class__.__name__.replace('Collection', '')
-        element_module = re.sub(r'^(\w+)([A-Z]{1}\w+)$', r'\1_\2'.lower(), name).lower()
-        if element_module == 'frame':  # special cases
-            element_module = 'i_frame'
+        element_module = re.sub(r'([A-Z]{1})', r'_\1', name)[1:].lower()
+        if element_module in list(MODULE_MAPPING):  # special cases
+            element_module = MODULE_MAPPING.get(element_module)
         try:
             module = import_module('nerodia.elements.{}'.format(element_module))
         except ImportError:

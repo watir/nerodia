@@ -17,7 +17,7 @@ class SelectorBuilder(ElementSelectorBuilder):
         expressions = ['./tr']
 
         if self.query_scope.tag_name.lower() not in ['tbody', 'tfoot', 'thead']:
-            expressions += ['./body/tr', './thead/tr', './tfoot/tr']
+            expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
 
         attr_expr = self.xpath_builder.attribute_expression(None, selectors)
 

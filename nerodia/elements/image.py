@@ -17,12 +17,3 @@ class Image(HTMLElement):
 
         return self.driver.execute_script('return typeof arguments[0].naturalWidth != "undefined" '
                                           '&& arguments[0].naturalWidth > 0', self.el)
-
-    @property
-    def width(self):
-        """
-        Returns the image's width in pixels
-        :rtype: int
-        """
-        return self._element_call(
-            lambda: self.driver.execute_script('return arguments[0].width', self.el))

@@ -5,9 +5,9 @@ from .elements.d_list import DList
 from .elements.form import Form
 from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
-    Heading, Head, HR, Html, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
-    OList, OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
-    TableDataCell, Template, TableHeaderCell, Time, Title, Track, UList, Video, AnchorCollection, \
+    Heading, Head, HR, Html, Input, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
+    OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
+    Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
     HTMLElementCollection, AreaCollection, AudioCollection, BaseCollection, QuoteCollection, \
     BodyCollection, BRCollection, ButtonCollection, CanvasCollection, TableCaptionCollection, \
     TableColCollection, DataCollection, DataListCollection, ModCollection, DetailsCollection, \
@@ -19,17 +19,18 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
     OptGroupCollection, OptionCollection, OutputCollection, ParagraphCollection, ParamCollection, \
     PreCollection, ProgressCollection, ScriptCollection, SelectCollection, SourceCollection, \
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \
-    TableHeaderCellCollection, TimeCollection, TitleCollection, TableRowCollection, TrackCollection, \
-    UListCollection, VideoCollection
+    TableCollection, TableHeaderCellCollection, TableSectionCollection, TimeCollection, TitleCollection, \
+    TableRowCollection, TrackCollection, UListCollection, VideoCollection
 from .elements.i_frame import IFrame
 from .elements.image import Image
-from .elements.input import Input
 from .elements.link import Anchor
+from .elements.list import OList, UList
 from .elements.option import Option
 from .elements.select import Select
-from .elements.table import Table, TableCollection
+from .elements.table import Table
+from .elements.table_data_cell import TableDataCell
 from .elements.table_row import TableRow
-from .elements.table_section import TableSection, TableSectionCollection
+from .elements.table_section import TableSection
 from .elements.text_area import TextArea
 
 tag_to_class['a'] = Anchor

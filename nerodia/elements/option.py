@@ -23,7 +23,7 @@ class Option(HTMLElement):
         Returns True if the option is selected
         :rtype: bool
         """
-        return self._element_call(lambda: self.el.is_selected)
+        return self._element_call(lambda: self.el.is_selected())
 
     @property
     def text(self):

@@ -122,7 +122,14 @@ def messages(browser_manager):
         @property
         def list(self):
             return [el.text for el in browser_manager.browser.div(id='messages').divs()]
-    yield Messages()
+
+        def __len__(self):
+            return len(self.list)
+
+        def __getitem__(self, item):
+            return self.list[item]
+
+    return Messages()
 
 
 @pytest.fixture(autouse=True, scope='session')

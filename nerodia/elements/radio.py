@@ -1,7 +1,7 @@
 import six
 
 from .html_elements import InputCollection
-from .input import Input
+from .html_elements import Input
 from ..meta_elements import MetaHTMLElement
 
 
@@ -15,10 +15,14 @@ class Radio(Input):
         """
         return self._element_call(lambda: self.el.selected)
 
-    def set(self, value=True):
+    is_selected = is_set
+
+    def set(self):
         """ Selects the radio input """
         if not self.is_set:
             self.click()
+
+    select = set
 
 
 @six.add_metaclass(MetaHTMLElement)

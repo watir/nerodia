@@ -362,7 +362,7 @@ class Container(object):
                                               tag_name='input', type='file'))
 
     def font(self, *args, **kwargs):
-        from .elements.html_elements import Font
+        from .elements.font import Font
         return Font(self, dict(self._extract_selector(*args, **kwargs), tag_name='font'))
 
     def fonts(self, *args, **kwargs):
@@ -527,12 +527,16 @@ class Container(object):
         from .elements.image import Image
         return Image(self, dict(self._extract_selector(*args, **kwargs), tag_name='img'))
 
+    image = img
+
     def imgs(self, *args, **kwargs):
         from .elements.html_elements import ImageCollection
         return ImageCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='img'))
 
+    images = imgs
+
     def input(self, *args, **kwargs):
-        from .elements.input import Input
+        from .elements.html_elements import Input
         return Input(self, dict(self._extract_selector(*args, **kwargs), tag_name='input'))
 
     def inputs(self, *args, **kwargs):
@@ -680,7 +684,7 @@ class Container(object):
                                            tag_name='object'))
 
     def ol(self, *args, **kwargs):
-        from .elements.html_elements import OList
+        from .elements.list import OList
         return OList(self, dict(self._extract_selector(*args, **kwargs), tag_name='ol'))
 
     def ols(self, *args, **kwargs):
@@ -919,7 +923,7 @@ class Container(object):
         return Table(self, dict(self._extract_selector(*args, **kwargs), tag_name='table'))
 
     def tables(self, *args, **kwargs):
-        from .elements.table import TableCollection
+        from .elements.html_elements import TableCollection
         return TableCollection(self, dict(self._extract_selector(*args, **kwargs),
                                           tag_name='table'))
 
@@ -928,12 +932,12 @@ class Container(object):
         return TableSection(self, dict(self._extract_selector(*args, **kwargs), tag_name='tbody'))
 
     def tbodys(self, *args, **kwargs):
-        from .elements.table_section import TableSectionCollection
+        from .elements.html_elements import TableSectionCollection
         return TableSectionCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                  tag_name='tbody'))
 
     def td(self, *args, **kwargs):
-        from .elements.html_elements import TableDataCell
+        from .elements.table_data_cell import TableDataCell
         return TableDataCell(self, dict(self._extract_selector(*args, **kwargs), tag_name='td'))
 
     def tds(self, *args, **kwargs):
@@ -1040,7 +1044,7 @@ class Container(object):
                                                 tag_name='u'))
 
     def ul(self, *args, **kwargs):
-        from .elements.html_elements import UList
+        from .elements.list import UList
         return UList(self, dict(self._extract_selector(*args, **kwargs), tag_name='ul'))
 
     def uls(self, *args, **kwargs):

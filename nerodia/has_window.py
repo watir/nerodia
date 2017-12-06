@@ -11,7 +11,7 @@ class HasWindow(object):
 
         browser.windows(title='closeable window')
         """
-        all = [Window(self.driver, {'handle': handle}) for handle in self.driver.window_handles]
+        all = [Window(self, {'handle': handle}) for handle in self.driver.window_handles]
 
         if not args and not kwargs:
             return all
@@ -27,7 +27,22 @@ class HasWindow(object):
 
         browser.window(title='closeable window')
         """
-        return Window(self.driver, self._extract_selector(*args, **kwargs))
+        return Window(self, self._extract_selector(*args, **kwargs))
+
+    @property
+    def original_window(self):
+        """
+        Returns original window if defined, current window if not
+        :rtype: Window
+
+        :Example:
+
+        browser.window(title='closeable window').use()
+        browser.original_window.use()
+        """
+        if not self._original_window:
+            self._original_window = self.window()
+        return self._original_window
 
     # private
 

@@ -1,8 +1,7 @@
 import six
 from selenium.common.exceptions import NoSuchFrameException
 
-from .html_elements import HTMLElement
-from ..element_collection import ElementCollection
+from .html_elements import HTMLElement, HTMLElementCollection
 from ..exception import UnknownFrameException
 from ..meta_elements import MetaHTMLElement
 
@@ -33,13 +32,15 @@ class IFrame(HTMLElement):
     def __eq__(self, other):
         if not isinstance(other, self.__class__):
             return False
+        self.locate()
+        other.locate()
         return self.wd == other.wd.wd if isinstance(other.wd, FramedDriver) else other.wd
 
     def switch_to(self):
         self.locate().switch()
 
     def assert_exists(self):
-        if self.element and not self.selector:
+        if self.el and not self.selector:
             raise UnknownFrameException(
                 'wrapping a Selenium element as a Frame is not currently supported')
         return super(IFrame, self).assert_exists()
@@ -84,7 +85,7 @@ class IFrame(HTMLElement):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class IFrameCollection(ElementCollection):
+class IFrameCollection(HTMLElementCollection):
     pass
 
 

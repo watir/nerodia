@@ -69,7 +69,7 @@ class TestCheckboxAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_class_name(self, browser):
         assert browser.checkbox(id='new_user_interests_books').class_name == ''
 
-    def test_raises_correct_exception_for_idif_the_checkbox_doesnt_exist(self, browser):
+    def test_raises_correct_exception_for_class_name_if_the_checkbox_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(id='no_such_id').class_name

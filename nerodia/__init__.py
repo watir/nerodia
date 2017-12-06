@@ -1,6 +1,6 @@
-__version__ = '0.2.0'
-
 from .logger import Logger
+
+__version__ = '0.3.0'
 
 ttc = None
 

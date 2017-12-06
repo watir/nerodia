@@ -1,7 +1,7 @@
 import six
 
 from .html_elements import InputCollection
-from .input import Input
+from .html_elements import Input
 from ..meta_elements import MetaHTMLElement
 
 
@@ -14,6 +14,8 @@ class CheckBox(Input):
         :rtype: bool
         """
         return self._element_call(lambda: self.el.is_selected())
+
+    is_checked = is_set
 
     def set(self, value=True):
         """
@@ -32,8 +34,12 @@ class CheckBox(Input):
         """
         self._assert_enabled() if self.is_set == value else self.click()
 
+    check = set
+
     def clear(self):
         self.set(value=False)
+
+    uncheck = clear
 
 
 @six.add_metaclass(MetaHTMLElement)

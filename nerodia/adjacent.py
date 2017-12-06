@@ -1,6 +1,4 @@
 import re
-from copy import copy
-from inspect import stack
 
 
 class Adjacent(object):
@@ -73,6 +71,17 @@ class Adjacent(object):
         return self._xpath_adjacent(**dict(kwargs, adjacent='following', plural=True))
 
     next_siblings = following_siblings
+
+    def siblings(self, **kwargs):
+        """
+        Returns collection of sibling elements of current element, including the current element
+        :rtype: nerodia.element_collection.ElementCollection
+
+        :Example:
+
+        len(browser.text_field(name='new_user_first_name').siblings)    #=> 56
+        """
+        return self.parent().children(**kwargs)
 
     def child(self, **kwargs):
         """

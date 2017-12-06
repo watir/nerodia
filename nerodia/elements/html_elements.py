@@ -17,11 +17,6 @@ class HTMLElementCollection(ElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Font(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class FontCollection(HTMLElementCollection):
     pass
 
@@ -237,6 +232,11 @@ class ButtonCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
+class Input(HTMLElement):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
 class InputCollection(HTMLElementCollection):
     pass
 
@@ -257,6 +257,11 @@ class FormCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
+class TableCollection(HTMLElementCollection):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
 class TableCellCollection(HTMLElementCollection):
     pass
 
@@ -272,17 +277,17 @@ class TableHeaderCellCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class TableDataCell(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class TableDataCellCollection(HTMLElementCollection):
     pass
 
 
 @six.add_metaclass(MetaHTMLElement)
 class TableRowCollection(HTMLElementCollection):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class TableSectionCollection(HTMLElementCollection):
     pass
 
 
@@ -502,17 +507,7 @@ class LICollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class UList(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class UListCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class OList(HTMLElement):
     pass
 
 
