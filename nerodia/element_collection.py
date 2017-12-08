@@ -6,7 +6,8 @@ import nerodia
 
 
 MODULE_MAPPING = {'frame': 'i_frame',
-                  'anchor': 'link'}
+                  'anchor': 'link',
+                  'o_list': 'list'}
 
 
 class ElementCollection(object):
