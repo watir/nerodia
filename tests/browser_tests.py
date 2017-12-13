@@ -1,10 +1,10 @@
 import re
 
 import pytest
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 from nerodia.browser import Browser
 from nerodia.elements.html_elements import Body
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 BROWSERS = ['chrome',
             'firefox',
@@ -273,6 +273,23 @@ class TestBrowserInit(object):
         assert driver.__class__.__name__ == WebDriver.__name__
         assert driver.name == caps.get('browserName')
         assert isinstance(executor, RemoteConnection)
+
+    @pytest.mark.only(['firefox'])
+    def test_accepts_firefox_profile(self, browser_manager, webserver):
+        from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
+        home_page = webserver.path_for('special_chars.html')
+
+        profile = FirefoxProfile()
+        profile.set_preference('browser.startup.homepage', home_page)
+        profile.set_preference('browser.startup.page', 1)
+        kwargs = browser_manager.kwargs.copy()
+        kwargs['options'] = {'profile': profile}
+
+        new_browser = Browser(**kwargs)
+        try:
+            assert new_browser.url == home_page
+        finally:
+            new_browser.quit()
 
     def test_accepts_browser_options(self, browser_manager, mocker):
         from importlib import import_module

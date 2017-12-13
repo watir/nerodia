@@ -8,6 +8,8 @@ class Capabilities(object):
 
     def __init__(self, browser, **options):
         self.options = options.copy()
+        nerodia.logger.info('Creating Browser instance of {} with user provided options: '
+                            '{}'.format(browser, options))
 
         if browser == 'remote' and 'browser' in self.options:
             self.browser = self.options.pop('browser')
@@ -25,12 +27,12 @@ class Capabilities(object):
 
     @property
     def kwargs(self):
-        self._process_capabilities()
+        self._process_arguments()
         return self.selenium_opts
 
     # private
 
-    def _process_capabilities(self):
+    def _process_arguments(self):
         url = None
         port = self.options.pop('port', None)
         if port:
@@ -41,7 +43,9 @@ class Capabilities(object):
             self.selenium_opts['command_executor'] = url
 
         self._process_browser_options()
-        self._process_caps()
+        self._process_capabilities()
+        nerodia.logger.info('Creating Browser instance with Nerodia processed options: '
+                            '{}'.format(self.selenium_opts))
 
     def _process_browser_options(self):
         browser_options = self.options.pop('options', None)
@@ -132,7 +136,7 @@ class Capabilities(object):
             caps['safari.options'] = {'technologyPreview': opts.pop('technology_preview')}
             self.selenium_opts['desired_capabilities'] = caps
 
-    def _process_caps(self):
+    def _process_capabilities(self):
         caps = self.options.pop('desired_capabilities', None)
 
         if caps:

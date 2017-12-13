@@ -10,7 +10,7 @@ class TableCell(HTMLElement):
     @property
     def column_header(self):
         current_row = self.parent(tag_name='tr')
-        return self._header_row(current_row, index=len(self.previous_siblings()))
+        return self._header_row(current_row, index=len(self.previous_siblings())).text
 
     def sibling_from_header(self, **opt):
         current_row = self.parent(tag_name='tr')

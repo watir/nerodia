@@ -58,8 +58,8 @@ def test_finds_all_attribute_methods(browser):
 
 class TestTdOther(object):
     def test_returns_the_corresponding_column_header(self, browser):
-        td = browser.td(text='1 331').column_header
-        assert td.text == 'Income tax'
+        header = browser.td(text='1 331').column_header
+        assert header == 'Income tax'
 
     def test_returns_the_corresponding_sibling_cell_by_text(self, browser):
         local_td = browser.td(text='1 331')
