@@ -19,7 +19,7 @@ class TestOlExists(object):
         assert not browser.ol(id='no_such_id').exists
         assert not browser.ol(id=re.compile('no_such_id')).exists
         assert not browser.ol(text='no_such_text').exists
-        assert not browser.ol(text=re.compile('no_such_id')).exists
+        assert not browser.ol(text=re.compile('no_such_text')).exists
         assert not browser.ol(class_name='no_such_class').exists
         assert not browser.ol(class_name=re.compile('no_such_class')).exists
         assert not browser.ol(index=1337).exists
@@ -49,13 +49,13 @@ class TestOlAttributes(object):
             browser.ol(id='no_such_id').class_name
 
     # id
-    def test_returns_the_id_if_the_checkbox_exists_and_has_id(self, browser):
+    def test_returns_the_id_if_the_ol_exists_and_has_id(self, browser):
         assert browser.ol(class_name='chemistry').id == 'favorite_compounds'
 
-    def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_id(self, browser):
+    def test_returns_an_empty_string_if_the_ol_exists_and_has_no_id(self, browser):
         assert browser.ol(index=1).id == ''
 
-    def test_raises_correct_exception_for_id_if_the_checkbox_doesnt_exist(self, browser):
+    def test_raises_correct_exception_for_id_if_the_ol_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.ol(id='no_such_id').id
