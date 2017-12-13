@@ -1,7 +1,6 @@
 import six
 
-from .html_elements import InputCollection
-from .html_elements import Input
+from .html_elements import InputCollection, Input
 from ..meta_elements import MetaHTMLElement
 
 
@@ -13,7 +12,7 @@ class Radio(Input):
         Returns True if the element is selected
         :rtype: bool
         """
-        return self._element_call(lambda: self.el.selected)
+        return self._element_call(lambda: self.el.is_selected())
 
     is_selected = is_set
 
