@@ -53,13 +53,13 @@ class TestPAttributes(object):
             browser.p(id='no_such_id').class_name
 
     # id
-    def test_returns_the_id_if_the_checkbox_exists_and_has_id(self, browser):
-        assert browser.p(index=0).id == 'favorite_compounds'
+    def test_returns_the_id_if_the_p_exists_and_has_id(self, browser):
+        assert browser.p(index=0).id == 'lead'
 
     def test_returns_an_empty_string_if_the_p_exists_and_has_no_id(self, browser):
         assert browser.p(index=2).id == ''
 
-    def test_raises_correct_exception_for_id_if_the_checkbox_doesnt_exist(self, browser):
+    def test_raises_correct_exception_for_id_if_the_p_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.p(id='no_such_id').id
