@@ -1,13 +1,6 @@
 from importlib import import_module
 
-import re
-
 import nerodia
-
-
-MODULE_MAPPING = {'frame': 'i_frame',
-                  'anchor': 'link',
-                  'o_list': 'list'}
 
 
 class ElementCollection(object):
@@ -176,10 +169,9 @@ class ElementCollection(object):
     def _element_class(self):
         from .elements.svg_elements import SVGElementCollection
         from .elements.html_elements import HTMLElementCollection
-        name = self.__class__.__name__.replace('Collection', '')
-        element_module = re.sub(r'([A-Z]{1})', r'_\1', name)[1:].lower()
-        if element_module in list(MODULE_MAPPING):  # special cases
-            element_module = MODULE_MAPPING.get(element_module)
+        from .module_mapping import map_module
+        name = self.__class__.__name__
+        element_module = map_module(name)
         try:
             module = import_module('nerodia.elements.{}'.format(element_module))
         except ImportError:
@@ -189,5 +181,5 @@ class ElementCollection(object):
                 module = import_module('nerodia.elements.svg_elements')
             else:
                 raise TypeError(
-                    'element class for {} could not be determined'.format(self.__class__.__name__))
+                    'element class for {} could not be determined'.format(name))
         return getattr(module, name)

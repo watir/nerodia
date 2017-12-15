@@ -1,6 +1,6 @@
+import re
 from copy import copy
 
-import re
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
@@ -225,7 +225,8 @@ class Locator(object):
 
     def _label_from_text(self, label_exp):
         # TODO: this won't work correctly if @wd is a sub-element
-        elements = self.query_scope.wd.find_elements(tag_name='label')
+        from selenium.webdriver.common.by import By
+        elements = self.query_scope.wd.find_elements(By.TAG_NAME, 'label')
         return next((el for el in elements if self._matches_selector(el, {'text': label_exp})), None)
 
     def _matches_selector(self, element, selector):

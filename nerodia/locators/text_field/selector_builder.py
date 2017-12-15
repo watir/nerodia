@@ -1,5 +1,4 @@
 import logging
-
 import re
 
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder, \
@@ -30,7 +29,7 @@ class SelectorBuilder(ElementSelectorBuilder):
 
     @property
     def _negative_type_expr(self):
-        types = ['{}!={}'.format(XpathSupport.lower('@type'), typ) for
+        types = ['{}!={!r}'.format(XpathSupport.lower('@type'), typ) for
                  typ in TextField.NON_TEXT_TYPES]
         return ' and '.join(types)
 

@@ -11,8 +11,8 @@ class Locator(ElementLocator):
     # private
 
     def _wd_find_first_by(self, how, what):
-        if how == 'tag_name':
-            how, what = self.selector_builder._build_wd_selector({'how': what})
+        if how in ['tag_name', Locator.WD_FINDERS.get('tag_name')]:
+            how, what = self.selector_builder._build_wd_selector({'tag_name': what})
         return super(Locator, self)._wd_find_first_by(how, what)
 
     def _matches_selector(self, element, selector):
