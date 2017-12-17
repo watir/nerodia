@@ -285,7 +285,6 @@ textarea = [
     (str, 'wrap', 'wrap'),
     (str, 'type', 'type'),
     (str, 'defaultvalue', 'defaultValue'),
-    (str, 'value', 'value'),
     (int, 'textlength', 'textLength'),
     (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
