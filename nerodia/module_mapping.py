@@ -6,7 +6,6 @@ MODULE_MAPPING = {'frame': 'i_frame',
 
 
 def map_module(name):
-    name = name.replace('Collection', '')
     element_module = re.sub(r'([A-Z]{1})', r'_\1', name)[1:].lower()
     if element_module in list(MODULE_MAPPING):  # special cases
         return MODULE_MAPPING.get(element_module)

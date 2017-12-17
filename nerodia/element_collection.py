@@ -171,7 +171,7 @@ class ElementCollection(object):
         from .elements.svg_elements import SVGElementCollection
         from .elements.html_elements import HTMLElementCollection
         from .module_mapping import map_module
-        name = self.__class__.__name__
+        name = self.__class__.__name__.replace('Collection', '')
         element_module = map_module(name)
         try:
             module = import_module('nerodia.elements.{}'.format(element_module))
