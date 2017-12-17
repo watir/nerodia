@@ -155,7 +155,8 @@ class ElementCollection(object):
 
     @property
     def _import_module(self):
-        modules = [nerodia.locator_namespace.__name__, self._element_class_name.lower()]
+        from .module_mapping import map_module
+        modules = [nerodia.locator_namespace.__name__, map_module(self._element_class_name)]
         try:
             return import_module('{}.{}'.format(*modules))
         except ImportError:
