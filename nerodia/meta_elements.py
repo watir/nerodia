@@ -22,7 +22,7 @@ class MetaSVGElement(type):
 def create_attributes(name, parents, dct, generated):
     final_dict = {}
 
-    attrs = []
+    attrs = dct.get('ATTRIBUTES', [])
     for key, value in dct.items():
         if key.startswith('_attr'):
             attr_name = key.split('_attr_')[-1]
