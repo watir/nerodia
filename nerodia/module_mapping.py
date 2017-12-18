@@ -2,7 +2,8 @@ import re
 
 MODULE_MAPPING = {'frame': 'i_frame',
                   'anchor': 'link',
-                  'o_list': 'list'}
+                  'o_list': 'list',
+                  'u_list': 'list'}
 
 
 def map_module(name):
