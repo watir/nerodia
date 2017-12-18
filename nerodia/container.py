@@ -733,7 +733,8 @@ class Container(object):
 
     def params(self, *args, **kwargs):
         from .elements.html_elements import ParamCollection
-        return ParamCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='param'))
+        return ParamCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                          tag_name='param'))
 
     def pre(self, *args, **kwargs):
         from .elements.html_elements import Pre
@@ -977,7 +978,7 @@ class Container(object):
         return TableSection(self, dict(self._extract_selector(*args, **kwargs), tag_name='tfoot'))
 
     def tfoots(self, *args, **kwargs):
-        from .elements.table_section import TableSectionCollection
+        from .elements.html_elements import TableSectionCollection
         return TableSectionCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                  tag_name='tfoot'))
 
@@ -995,7 +996,7 @@ class Container(object):
         return TableSection(self, dict(self._extract_selector(*args, **kwargs), tag_name='thead'))
 
     def theads(self, *args, **kwargs):
-        from .elements.table_section import TableSectionCollection
+        from .elements.html_elements import TableSectionCollection
         return TableSectionCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                  tag_name='thead'))
 
