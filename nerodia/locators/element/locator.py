@@ -74,7 +74,7 @@ class Locator(object):
         if selector:  # Multiple attributes
             return None
 
-        element = self.query_scope.wd.find_element_by_id(attr_id)
+        element = self._locate_element('id', attr_id)
         if tag_name and not self.element_validator.validate(element, {'tag_name': tag_name}):
             return None
 
@@ -101,12 +101,12 @@ class Locator(object):
             # could build xpath/css for selector
             if idx is not None or visible is not None:
                 idx = idx or 0
-                elements = self.query_scope.wd.find_elements(*built_selector)
+                elements = self._locate_elements(*built_selector)
                 if visible is not None:
                     elements = [el for el in elements if visible == el.is_displayed()]
                 return elements[idx] if elements and idx < len(elements) else None
             else:
-                return self.query_scope.wd.find_element(*built_selector)
+                return self._locate_element(*built_selector)
         else:
             # can't use xpath, probably a regexp in there
             if idx is not None or visible is not None:
@@ -136,7 +136,7 @@ class Locator(object):
 
         built = self.selector_builder.build(selector)
         if built:
-            found = self.query_scope.wd.find_elements(*built)
+            found = self._locate_elements(*built)
         else:
             found = self._wd_find_by_regexp_selector(selector, 'select')
         if visible is not None:
@@ -146,7 +146,7 @@ class Locator(object):
 
     def _wd_find_all_by(self, how, what):
         if isinstance(what, str):
-            return self.query_scope.wd.find_elements(how, what)
+            return self._locate_elements(how, what)
         else:
             return [el for el in self._all_elements if what.search(self._fetch_value(el, how))]
 
@@ -164,17 +164,17 @@ class Locator(object):
 
     @property
     def _all_elements(self):
-        return self.query_scope.wd.find_elements(By.XPATH, './/*')
+        return self._locate_elements(By.XPATH, './/*')
 
     def _wd_find_first_by(self, how, what):
         if isinstance(what, str):
-            return self.query_scope.wd.find_element(how, what)
+            return self._locate_element(how, what)
         else:
             return next((x for x in self._all_elements if what.search(self._fetch_value(x, how))),
                         None)
 
     def _wd_find_by_regexp_selector(self, selector, method='find'):
-        query_scope = self.query_scope.wd
+        query_scope = self._ensure_scope_context
         rx_selector = self._delete_regexps_from(selector)
 
         if 'label' in rx_selector and self.selector_builder.should_use_label_element:
@@ -203,7 +203,7 @@ class Locator(object):
                 if predicates:
                     what = '({})[{}]'.format(what, ' and '.join(predicates))
 
-        elements = query_scope.find_elements(how, what)
+        elements = self._locate_elements(how, what, query_scope)
         if method == 'find':
             return next((el for el in elements if self._matches_selector(el, rx_selector)), None)
         elif method == 'select':
@@ -226,7 +226,7 @@ class Locator(object):
     def _label_from_text(self, label_exp):
         # TODO: this won't work correctly if @wd is a sub-element
         from selenium.webdriver.common.by import By
-        elements = self.query_scope.wd.find_elements(By.TAG_NAME, 'label')
+        elements = self._locate_elements(By.TAG_NAME, 'label')
         return next((el for el in elements if self._matches_selector(el, {'text': label_exp})), None)
 
     def _matches_selector(self, element, selector):
@@ -248,3 +248,18 @@ class Locator(object):
 
         return ['contains({}, {})'.format(lhs, XpathSupport.escape(group)) for
                 group in match.groups() if group]
+
+    @property
+    def _ensure_scope_context(self):
+        return self.query_scope.wd
+
+    def _locate_element(self, how, what):
+        return self.query_scope.wd.find_element(self._wd_finder(how), what)
+
+    def _locate_elements(self, how, what, scope=None):
+        if scope is None:
+            scope = self.query_scope.wd
+        return scope.find_elements(self._wd_finder(how), what)
+
+    def _wd_finder(self, how):
+        return self.WD_FINDERS.get(how, how)
