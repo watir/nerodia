@@ -1,7 +1,7 @@
 import six
 
 from .html_elements import InputCollection
-from .html_elements import Input
+from .input import Input
 from ..meta_elements import MetaHTMLElement
 
 

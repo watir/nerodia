@@ -232,11 +232,6 @@ class ButtonCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class Input(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class InputCollection(HTMLElementCollection):
     pass
 

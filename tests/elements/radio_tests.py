@@ -15,6 +15,8 @@ class TestRadioExist(object):
         assert browser.radio(name=compile(r'new_user_newsletter')).exists is True
         assert browser.radio(value='yes').exists is True
         assert browser.radio(value=compile(r'yes')).exists is True
+        assert browser.radio(text='Yes').exists is True
+        assert browser.radio(text=compile(r'Yes')).exists is True
         assert browser.radio(class_name='huge').exists is True
         assert browser.radio(class_name=compile(r'huge')).exists is True
         assert browser.radio(index=0).exists is True
@@ -97,6 +99,17 @@ class TestRadioAttributes(object):
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).name
+
+    # text
+    def test_returns_the_text_if_the_element_exists_and_has_text(self, browser):
+        assert browser.radio(id='new_user_newsletter_yes').text == 'Yes'
+
+    def test_returns_an_empty_string_if_the_element_exists_and_the_label_doesnt(self, browser):
+        assert browser.form(id='new_user').radio(index=2).text == ''
+
+    def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.radio(index=1337).text
 
     # title
     def test_returns_the_title_if_the_element_exists_and_has_title(self, browser):

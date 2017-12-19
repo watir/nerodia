@@ -43,6 +43,12 @@ def create_attributes(name, parents, dct, generated):
     for parent in parents:
         attrs.extend(getattr(parent, 'ATTRIBUTES', []))
 
+    # Some Elements may inherit methods from Super Elements that we don't want to be considered
+    # attributes
+    if '_not_attrs' in list(dct):
+        for not_attr in dct.get('_not_attrs'):
+            attrs.remove(not_attr)
+
     final_dict['ATTRIBUTES'] = list(set(attrs))
     return final_dict
 

@@ -1,11 +1,19 @@
 import six
 
-from .html_elements import InputCollection, Input
+from .html_elements import InputCollection
+from .input import Input
 from ..meta_elements import MetaHTMLElement
 
 
 @six.add_metaclass(MetaHTMLElement)
 class Radio(Input):
+    _not_attrs = ['label']
+
+    def __init__(self, *args, **kwargs):
+        super(Radio, self).__init__(*args, **kwargs)
+        if 'text' in self.selector:
+            self.selector['label'] = self.selector.pop('text')
+
     @property
     def is_set(self):
         """
@@ -22,6 +30,11 @@ class Radio(Input):
             self.click()
 
     select = set
+
+    @property
+    def text(self):
+        lab = self.label()
+        return lab.text if lab.exists else ''
 
 
 @six.add_metaclass(MetaHTMLElement)

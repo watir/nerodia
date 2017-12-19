@@ -120,6 +120,8 @@ class Locator(object):
 
     def _find_all_by_one(self):
         how, what = list(self.selector.items())[0]
+        if how == 'element':
+            return [what]
         self.selector_builder.check_type(how, what)
 
         if how in self.WD_FINDERS:

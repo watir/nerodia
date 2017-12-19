@@ -4,7 +4,7 @@ import six
 
 from .html_elements import InputCollection
 from .i_frame import IFrame
-from .html_elements import Input
+from .input import Input
 from .text_area import TextArea
 from ..browser import Browser
 from ..meta_elements import MetaHTMLElement

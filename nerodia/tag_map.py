@@ -5,7 +5,7 @@ from .elements.d_list import DList
 from .elements.form import Form
 from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
-    Heading, Head, HR, Html, Input, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
+    Heading, Head, HR, Html, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
     OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
     Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
     HTMLElementCollection, AreaCollection, AudioCollection, BaseCollection, QuoteCollection, \
@@ -23,9 +23,12 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
     TableRowCollection, TrackCollection, UListCollection, VideoCollection
 from .elements.i_frame import IFrame
 from .elements.image import Image
+from .elements.input import Input
 from .elements.link import Anchor
 from .elements.list import OList, UList
 from .elements.option import Option
+from .elements.radio import Radio, RadioCollection
+from .elements.radio_set import RadioSet
 from .elements.select import Select
 from .elements.table import Table
 from .elements.table_data_cell import TableDataCell
@@ -197,6 +200,9 @@ tag_to_class['progress'] = Progress
 tag_to_class['progress_collection'] = ProgressCollection
 tag_to_class['q'] = Quote
 tag_to_class['q_collection'] = QuoteCollection
+tag_to_class['radio'] = Radio
+tag_to_class['radio_collection'] = RadioCollection
+tag_to_class['radio_set'] = RadioSet
 tag_to_class['rp'] = HTMLElement
 tag_to_class['rp_collection'] = HTMLElementCollection
 tag_to_class['rt'] = HTMLElement

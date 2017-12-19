@@ -536,7 +536,7 @@ class Container(object):
     images = imgs
 
     def input(self, *args, **kwargs):
-        from .elements.html_elements import Input
+        from .elements.input import Input
         return Input(self, dict(self._extract_selector(*args, **kwargs), tag_name='input'))
 
     def inputs(self, *args, **kwargs):
@@ -770,6 +770,11 @@ class Container(object):
         from .elements.radio import RadioCollection
         return RadioCollection(self, dict(self._extract_selector(*args, **kwargs),
                                           tag_name='input', type='radio'))
+
+    def radio_set(self, *args, **kwargs):
+        from .elements.radio_set import RadioSet
+        return RadioSet(self, dict(self._extract_selector(*args, **kwargs),
+                                   tag_name='input', type='radio'))
 
     def rp(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement

@@ -519,7 +519,7 @@ class Element(Container, JSSnippet, JSExecution, Waitable, Adjacent):
 
     def wait_for_enabled(self):
         from .button import Button
-        from .html_elements import Input
+        from .input import Input
         from .option import Option
         from .select import Select
         if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
