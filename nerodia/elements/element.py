@@ -302,7 +302,8 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
 
         :Example:
 
-        browser.div(id='foo').outer_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
+        browser.div(id='shown').outer_html
+        #=> '<div id="shown"><div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div></div>'
         """
         return self._element_call(lambda: self._execute_js('getOuterHtml', self.el)).strip()
 
@@ -317,9 +318,24 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
 
         :Example:
 
-        browser.div(id='foo').inner_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
+        browser.div(id='shown').inner_html
+        #=> '<div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div>'
         """
         return self._element_call(lambda: self._execute_js('getInnerHtml', self.el)).strip()
+
+    @property
+    def inner_text(self):
+        """
+        Returns inner Text code of element
+
+        :rtype: str:
+
+        :Example:
+
+        browser.div(id: 'shown').inner_text
+        #=> "Not hidden"
+        """
+        return self._element_call(lambda: self._execute_js('getInnerText', self)).strip()
 
     def send_keys(self, *args):
         """

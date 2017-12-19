@@ -304,13 +304,16 @@ class TestElementFlash(object):
         assert h2.flash() == h2
 
 
-@pytest.mark.page('inner_outer.html')
-class TestElementInnerOutterHTML(object):
+@pytest.mark.page('non_control_elements.html')
+class TestElementInnerOutter(object):
+    def test_returns_inner_text_of_element(self, browser):
+        assert browser.div(id='shown').inner_text == 'Not hidden'
+
     def test_returns_inner_html_code_of_element(self, browser):
-        assert browser.div(id='foo').inner_html == '<a href="#">hello</a>'
+        assert browser.div(id='shown').inner_html == '<div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div>'
 
     def test_returns_outer_html_code_of_element(self, browser):
-        assert browser.div(id='foo').outer_html == '<div id="foo"><a href="#">hello</a></div>'
+        assert browser.div(id='shown').outer_html == '<div id="shown"><div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div></div>'
 
 
 class TestElementScrollIntoView(object):
