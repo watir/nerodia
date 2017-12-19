@@ -44,7 +44,7 @@ class Select(HTMLElement):
         :return: The text of the option selected. If multiple options match, returns the first match
         :rtype: str
         """
-        return self._select_by('text', term)
+        return self._select_by(term)
 
     def select_all(self, term):
         """
@@ -54,7 +54,7 @@ class Select(HTMLElement):
         :return: The text of the first option selected.
         :rtype: str
         """
-        return self._select_all_by('text', term)
+        return self._select_all_by(term)
 
     def select_value(self, value):
         """
@@ -62,7 +62,8 @@ class Select(HTMLElement):
         If this is a multi-select and several options match the value given, all will be selected
         :param value: string or regex to match against the option
         """
-        return self._select_by('value', value)
+        nerodia.logger.deprecate('#select_value', '#select')
+        return self._select_by(value)
 
     def is_selected(self, term):
         """
@@ -119,8 +120,8 @@ class Select(HTMLElement):
 
     # private
 
-    def _select_by(self, how, term):
-        found = self._find_options(how, term)
+    def _select_by(self, term):
+        found = self._find_options('value', term)
         if found:
             if len(found) > 1:
                 nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all')
@@ -128,11 +129,11 @@ class Select(HTMLElement):
 
         raise NoValueFoundException('{} not found in select list'.format(term))
 
-    def _select_all_by(self, how, term):
+    def _select_all_by(self, term):
         if not self.multiple:
             raise Error('you can only use #select_all on multi-selects')
 
-        found = self._find_options(how, term)
+        found = self._find_options('text', term)
         if found:
             return self._select_matching(found)
 
@@ -143,14 +144,14 @@ class Select(HTMLElement):
         found = []
 
         def func(sel):
-            elements = []
             if type(term) in types:
-                opt = {how: term}
-                elements.extend(sel.options(**opt))
-                if not list(elements):
-                    elements.extend(sel.options(label=term))
-                if elements:
-                    found.extend(elements)
+                collection = sel.options(value=term) if how == 'value' else []
+                if not list(collection):
+                    collection = sel.options(text=term)
+                if not list(collection):
+                    collection = sel.options(label=term)
+                if collection:
+                    found.append(collection)
                     return False
                 else:
                     return not found and nerodia.relaxed_locate
@@ -160,7 +161,7 @@ class Select(HTMLElement):
         try:
             Wait.until_not(func, object=self)
             if found:
-                return found
+                return found[0]
             raise NoValueFoundException('{} not found in select list'.format(term))
         except TimeoutError:
             raise NoValueFoundException('{} not found in select list'.format(term))
