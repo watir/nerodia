@@ -260,7 +260,7 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
 
         :Example:
 
-        browser.div(id='foo').select_text('hello')
+        browser.legend().select_text('information')
         """
         self._element_call(lambda: self._execute_js('selectText', self.el, string))
 
