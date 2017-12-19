@@ -176,8 +176,11 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         self._assert_is_element(other)
 
-        self._element_call(lambda: ActionChains(self.driver).drag_and_drop(self.el, other.wd)
-                           .perform(), self.wait_for_present)
+        value = self._element_call(lambda: ActionChains(self.driver)
+                                   .drag_and_drop(self.el, other.wd).perform(),
+                                   self.wait_for_present)
+        self.browser.after_hooks.run()
+        return value
 
     def drag_and_drop_by(self, xoffset, yoffset):
         """

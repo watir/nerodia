@@ -97,10 +97,12 @@ class Browser(Container, HasWindow, Waitable):
     def back(self):
         """ Navigates back in history """
         self.driver.back()
+        self.after_hooks.run()
 
     def forward(self):
         """ Navigates forward in history """
         self.driver.forward()
+        self.after_hooks.run()
 
     @property
     def url(self):
@@ -209,6 +211,7 @@ class Browser(Container, HasWindow, Waitable):
         from .elements.element import Element
         args = [e.wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
+        self.after_hooks.run()
 
         return self._wrap_elements_in(self, returned)
 
