@@ -11,7 +11,7 @@ from selenium.webdriver.common.action_chains import ActionChains
 import nerodia
 from nerodia.browser import Browser
 from ..adjacent import Adjacent
-from ..atoms import Atoms
+from ..js_snippet import JSSnippet
 from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
@@ -20,7 +20,7 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 from ..window import Dimension, Point
 
 
-class Element(Container, Atoms, Waitable, Adjacent):
+class Element(Container, JSSnippet, Waitable, Adjacent):
     ATTRIBUTES = []
 
     def __init__(self, query_scope, selector):
@@ -122,6 +122,16 @@ class Element(Container, Atoms, Waitable, Adjacent):
         self._element_call(method, self.wait_for_enabled)
         self.browser.after_hooks.run()
 
+    def js_click(self):
+        """
+        Simulates JavaScript click event on element.
+
+        :Example: Click an element
+        browser.element(name='new_user_button').js_click()
+        """
+        self.fire_event('click')
+        self.browser.after_hooks.run()
+
     def double_click(self):
         """
         Double clicks the element.
@@ -133,6 +143,16 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         self._element_call(lambda: ActionChains(self.driver).double_click(self.el)
                            .perform(), self.wait_for_present)
+        self.browser.after_hooks.run()
+
+    def js_double_click(self):
+        """
+        Simulates JavaScript double click event on element.
+
+        :Example: Click an element
+        browser.element(name='new_user_button').js_double_click()
+        """
+        self.fire_event('dblclick')
         self.browser.after_hooks.run()
 
     def right_click(self):
@@ -233,7 +253,16 @@ class Element(Container, Atoms, Waitable, Adjacent):
         return self
 
     def select_text(self, string):
-        self._element_call(lambda: self._execute_atom('selectText', self.el, string))
+        """
+        Selects text on page (as if dragging clicked mouse across provided text)
+
+        :param string: string to select
+
+        :Example:
+
+        browser.div(id='foo').select_text('hello')
+        """
+        self._element_call(lambda: self._execute_js('selectText', self.el, string))
 
     @property
     def value(self):
@@ -275,8 +304,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.div(id='foo').outer_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
-        return self._element_call(lambda: self._execute_atom('getOuterHtml',
-                                                             self.el)).strip()
+        return self._element_call(lambda: self._execute_js('getOuterHtml', self.el)).strip()
 
     html = outer_html
 
@@ -291,8 +319,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
 
         browser.div(id='foo').inner_html  #=> "<div id=\"foo\"><a href=\"#\">hello</a></div>"
         """
-        return self._element_call(lambda: self._execute_atom('getInnerHtml',
-                                                             self.el)).strip()
+        return self._element_call(lambda: self._execute_js('getInnerHtml', self.el)).strip()
 
     def send_keys(self, *args):
         """
@@ -336,7 +363,7 @@ class Element(Container, Atoms, Waitable, Adjacent):
         """
         event_name = sub(r'^on', '', str(event_name)).lower()
 
-        self._element_call(lambda: self._execute_atom('fireEvent', self.el, event_name))
+        self._element_call(lambda: self._execute_js('fireEvent', self.el, event_name))
 
     def scroll_into_view(self):
         """

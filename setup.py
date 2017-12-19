@@ -42,12 +42,8 @@ setup_args = {
                  'nerodia.locators.text_field',
                  'nerodia.wait'],
     'package_data': {
-        'nerodia.atoms': ['*.js']
+        'nerodia': ['js_snippets/*.js']
     },
-    'data_files': [('nerodia/atoms', ['nerodia/atoms/fireEvent.js']),
-                   ('nerodia/atoms', ['nerodia/atoms/getInnerHtml.js']),
-                   ('nerodia/atoms', ['nerodia/atoms/getOuterHtml.js']),
-                   ('nerodia/atoms', ['nerodia/atoms/selectText.js'])],
     'zip_safe': False
 }
 

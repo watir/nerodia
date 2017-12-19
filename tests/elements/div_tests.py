@@ -147,9 +147,35 @@ class TestDivManipulation(object):
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 
+    # js_click
+
+    def test_fires_events_when_js_clicked(self, browser):
+        assert not browser.div(id='best_language').text == 'Ruby!'
+        browser.div(id='best_language').js_click()
+        assert browser.div(id='best_language').text == 'Ruby!'
+
+    @pytest.mark.parametrize('selector',
+                             [{'id': 'no_such_id'},
+                              {'title': 'no_such_title'},
+                              {'index': 1337},
+                              {'xpath': "//div[@id='no_such_id']"}])
+    def test_raises_correct_exception_when_js_clicking_a_div_that_doesnt_exist(self, browser, selector):
+        from nerodia.exception import UnknownObjectException
+        with pytest.raises(UnknownObjectException):
+            browser.button(**selector).js_click()
+
+    # double_click
+
     @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/661')
     def test_double_click_fires_the_ondblclick_event(self, browser, messages):
         browser.div(id='html_test').double_click()
+        assert 'double clicked' in messages.list
+
+    # js_double_click
+
+    @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/661')
+    def test_js_double_click_fires_the_ondblclick_event(self, browser, messages):
+        browser.div(id='html_test').js_double_click()
         assert 'double clicked' in messages.list
 
     @pytest.mark.page('right_click.html')

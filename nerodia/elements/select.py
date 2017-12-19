@@ -3,7 +3,8 @@ import re
 import six
 
 import nerodia
-from nerodia.exception import Error, NoValueFoundException, UnknownObjectException
+from nerodia.exception import Error, NoValueFoundException, UnknownObjectException, \
+    ObjectDisabledException
 from nerodia.wait.wait import TimeoutError
 from .html_elements import HTMLElement
 from ..meta_elements import MetaHTMLElement
@@ -56,6 +57,20 @@ class Select(HTMLElement):
         """
         return self._select_all_by(term)
 
+    def js_select(self, term):
+        """
+        Uses JavaScript to select the option whose text matches the given string.
+        :param term: string or regex to match against the option
+        """
+        return self._js_select_by('text', term, 'single')
+
+    def js_select_all(self, term):
+        """
+        Uses JavaScript to select all options whose text matches the given string.
+        :param term: string or regex to match against the option
+        """
+        return self._js_select_by('text', term, 'multiple')
+
     def select_value(self, value):
         """
         Selects the option(s) whose value attribute matches the given string
@@ -64,6 +79,13 @@ class Select(HTMLElement):
         """
         nerodia.logger.deprecate('#select_value', '#select')
         return self._select_by(value)
+
+    def js_select_value(self, value):
+        """
+        Uses JavaScript to select the option whose value attribute matches the given string
+        :param value: string or regex to match against the option
+        """
+        return self._js_select_by('value', value, 'single')
 
     def is_selected(self, term):
         """
@@ -109,14 +131,7 @@ class Select(HTMLElement):
         Returns an array of currently selected options
         :rtype: list[nerodia.elements.option.Option]
         """
-        script = 'var result = [];' \
-                 'var options = arguments[0].options;' \
-                 'for (var i = 0; i < options.length; i++) {' \
-                 '  var option = options[i];' \
-                 '  if (option.selected) { result.push(option) }' \
-                 '}' \
-                 'return result;'
-        return self._element_call(lambda: self.query_scope.execute_script(script, self.el))
+        return self._element_call(lambda: self._execute_js('selectedOptions', self))
 
     # private
 
@@ -128,6 +143,37 @@ class Select(HTMLElement):
             return self._select_matching(found)
 
         raise NoValueFoundException('{} not found in select list'.format(term))
+
+    def _js_select_by(self, how, term, number):
+        if isinstance(term, re._pattern_type):
+            js_rx = term.pattern
+            js_rx = js_rx.replace('\\A', '^', 1)
+            js_rx = js_rx.replace('\\Z', '$', 1)
+            js_rx = js_rx.replace('\\z', '$', 1)
+            js_rx = re.sub(r'\(\?#.+\)', '', js_rx)
+            js_rx = re.sub(r'\(\?-\w+:', '(', js_rx)
+        elif type(term) in [six.text_type, six.binary_type]:
+            js_rx = term
+        else:
+            raise TypeError('expected String or Regexp, got {}'.format(term))
+
+        for way in ['text', 'label', 'value']:
+            self._element_call(lambda: self._execute_js('selectOptions{}'.format(way.capitalize()),
+                                                        self, js_rx, str(number)))
+            if self._is_matching_option(way, term):
+                return self.selected_options[0].text
+
+        raise NoValueFoundException('{} not found in select list'.format(term))
+
+    def _is_matching_option(self, how, what):
+        for opt in self.selected_options:
+            value = getattr(opt, how)
+            if (type(what) in [six.text_type, six.binary_type] and value == what) or \
+                    (type(what) not in [six.text_type, six.binary_type] and re.search(what, value)):
+                if opt.enabled:
+                    return True
+                raise ObjectDisabledException('option matching {} by {} on {}'
+                                              ' is disabled'.format(what, how, self))
 
     def _select_all_by(self, term):
         if not self.multiple:

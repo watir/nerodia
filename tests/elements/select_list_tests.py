@@ -220,59 +220,62 @@ class TestSelectListOther(object):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='new_user_country').is_selected('missing_option')
 
-    # select -- interacting with options
-    def test_selects_the_given_item_when_given_a_string(self, browser):
+
+class TestSelectListSelect(object):
+    # finding by value
+
+    def test_selects_an_option_by_value_with_a_string(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').select('2')
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['EN']
+
+    def test_selects_an_option_by_value_with_a_regexp(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').select(re.compile(r'[13]'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['Danish', 'NO']
+
+    # finding by text
+
+    def test_selects_an_option_by_text_with_a_string(self, browser):
         browser.select_list(name='new_user_country').select('Denmark')
         selected = browser.select_list(name='new_user_country').selected_options
         assert [opt.text for opt in selected] == ['Denmark']
 
-    def test_selects_options_by_label(self, browser):
-        browser.select_list(name='new_user_country').select('Germany')
-        selected = browser.select_list(name='new_user_country').selected_options
-        assert [opt.text for opt in selected] == ['Germany']
-
-    def test_selects_the_given_item_when_given_a_regexp(self, browser):
-        browser.select_list(name='new_user_country').select(re.compile('Denmark'))
+    def test_selects_an_option_by_text_with_a_regexp(self, browser):
+        browser.select_list(name='new_user_country').select(re.compile(r'Denmark'))
         selected = browser.select_list(name='new_user_country').selected_options
         assert [opt.text for opt in selected] == ['Denmark']
 
-    def test_selects_the_given_item_when_given_an_xpath(self, browser):
-        browser.select_list(xpath="//select[@name='new_user_country']").select('Denmark')
-        selected = browser.select_list(name='new_user_country').selected_options
-        assert [opt.text for opt in selected] == ['Denmark']
+    # finding by label
 
-    def test_selects_multiple_items_using_name_and_a_string(self, browser):
+    def test_selects_an_option_by_label_with_a_string(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').select('NO')
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['NO']
+
+    def test_selects_an_option_by_label_with_a_regexp(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').select(re.compile(r'^N'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['NO']
+
+    def test_selects_multiple_options_successiveley(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').select('Danish')
         browser.select_list(name='new_user_languages').select('Swedish')
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['Danish', 'Swedish']
 
-    def test_selects_multiple_items_using_name_and_a_regexp(self, browser):
-        browser.select_list(name='new_user_languages').clear()
-        browser.select_list(name='new_user_languages').select_all(re.compile('ish'))
-        selected = browser.select_list(name='new_user_languages').selected_options
-        assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish']
-
-    def test_selects_multiple_items_using_xpath(self, browser):
-        browser.select_list(xpath="//select[@name='new_user_languages']").clear()
-        browser.select_list(xpath="//select[@name='new_user_languages']").\
-            select_all(re.compile('ish'))
-        selected = browser.select_list(xpath="//select[@name='new_user_languages']")\
-            .selected_options
-        assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish']
-
     def test_selects_empty_options(self, browser):
         browser.select_list(id='delete_user_username').select('')
-        selected = browser.select_list(id='delete_user_username').selected_options
+        selected = browser.select_list(name='delete_user_username').selected_options
         assert [opt.text for opt in selected] == ['']
 
     def test_returns_the_value_selected(self, browser):
         assert browser.select_list(name='new_user_languages').select('Danish') == 'Danish'
-
-    def test_returns_the_first_matching_value_if_there_are_multiple_matches(self, browser):
-        value = browser.select_list(name='new_user_languages').select_all(re.compile('ish'))
-        assert value == 'Danish'
 
     def test_fires_onchange_event_when_selecting_an_item(self, browser, messages):
         browser.select_list(id='new_user_languages').select('Danish')
@@ -285,6 +288,14 @@ class TestSelectListOther(object):
 
         browser.select_list(id='new_user_languages').select('English')
         assert len(messages) == 3
+
+    def test_an_empty_string_when_selecting_an_option_that_disappears_when_selected(self, browser):
+        assert browser.select_list(id='obsolete').select('sweden') == ''
+
+    def test_selects_options_with_a_single_quoted_value(self, browser):
+        browser.select_list(id='single-quote').select("'foo'")
+        selected = browser.select_list(id='single-quote').selected_options
+        assert [opt.text for opt in selected] == ["'foo'"]
 
     @pytest.mark.skipif('nerodia.relaxed_locate is False',
                         reason='only applicable when relaxed locating')
@@ -318,21 +329,103 @@ class TestSelectListOther(object):
         with pytest.raises(TypeError):
             browser.select_list(name='new_user_languages').select([])
 
-    def test_select_value_selects_the_item_by_value_string(self, browser):
+
+class TestSelectListJsSelect(object):
+    # finding by value
+
+    def test_js_selects_an_option_by_value_with_a_string(self, browser):
         browser.select_list(name='new_user_languages').clear()
-        browser.select_list(name='new_user_languages').select_value('2')
+        browser.select_list(name='new_user_languages').js_select('2')
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['EN']
 
-    def test_select_value_selects_the_item_by_value_regexp(self, browser):
+    def test_js_selects_an_option_by_value_with_a_regexp(self, browser):
         browser.select_list(name='new_user_languages').clear()
-        browser.select_list(name='new_user_languages').select_value(re.compile('[13]'))
+        browser.select_list(name='new_user_languages').js_select(re.compile(r'2'))
         selected = browser.select_list(name='new_user_languages').selected_options
-        assert [opt.text for opt in selected] == ['Danish', 'NO']
+        assert [opt.text for opt in selected] == ['EN']
 
-    def test_raises_correct_exception_for_select_value_if_the_option_doesnt_exist(self, browser):
+    # finding by text
+
+    def test_js_selects_an_option_by_text_with_a_string(self, browser):
+        browser.select_list(name='new_user_country').js_select('Denmark')
+        selected = browser.select_list(name='new_user_country').selected_options
+        assert [opt.text for opt in selected] == ['Denmark']
+
+    def test_js_selects_an_option_by_text_with_a_regexp(self, browser):
+        browser.select_list(name='new_user_country').js_select(re.compile(r'Denmark'))
+        selected = browser.select_list(name='new_user_country').selected_options
+        assert [opt.text for opt in selected] == ['Denmark']
+
+    # finding by label
+
+    def test_js_selects_an_option_by_label_with_a_string(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select('NO')
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['NO']
+
+    def test_js_selects_an_option_by_label_with_a_regexp(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select(re.compile(r'NO'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['NO']
+
+    def test_js_selects_multiple_options_successiveley(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select('Danish')
+        browser.select_list(name='new_user_languages').js_select('Swedish')
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['Danish', 'Swedish']
+
+    def test_js_selects_empty_options(self, browser):
+        browser.select_list(id='delete_user_username').js_select('')
+        selected = browser.select_list(name='delete_user_username').selected_options
+        assert [opt.text for opt in selected] == ['']
+
+    def test_returns_the_value_js_selected(self, browser):
+        assert browser.select_list(name='new_user_languages').js_select('Danish') == 'Danish'
+
+    def test_js_selects_options_with_a_single_quoted_value(self, browser):
+        browser.select_list(id='single-quote').js_select("'foo'")
+        selected = browser.select_list(id='single-quote').selected_options
+        assert [opt.text for opt in selected] == ["'foo'"]
+
+    def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):
         with pytest.raises(NoValueFoundException):
-            browser.select_list(name='new_user_languages').select_value('no_such_option')
+            browser.select_list(name='new_user_country').js_select('missing_option')
         with pytest.raises(NoValueFoundException):
-            browser.select_list(name='new_user_languages').\
-                select_value(re.compile('no_such_option'))
+            browser.select_list(name=re.compile('new_user_country')).js_select('missing_option')
+
+    def test_raises_correct_exception_if_the_option_is_disabled(self, browser):
+        from nerodia.exception import ObjectDisabledException
+        with pytest.raises(ObjectDisabledException):
+            browser.select_list(name='new_user_languages').js_select('Russian')
+
+    def test_raises_correct_exception_if_argument_is_not_a_string_regexp_numeric(self, browser):
+        with pytest.raises(TypeError):
+            browser.select_list(name='new_user_languages').js_select([])
+
+
+class TestSelectListJsSelectAll(object):
+    def test_selects_multiple_options_based_on_value(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select_all(re.compile(r'\d+'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['Danish', 'EN', 'NO', 'Russian']
+
+    def test_selects_multiple_options_based_on_text(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select_all(re.compile(r'ish'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish']
+
+    def test_selects_multiple_options_based_on_labels(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select_all(re.compile(r'NO|EN'))
+        selected = browser.select_list(name='new_user_languages').selected_options
+        assert [opt.text for opt in selected] == ['EN', 'NO']
+
+    def test_returns_the_first_matching_value_if_there_are_multiple_matches(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        assert browser.select_list(name='new_user_languages').js_select_all(re.compile(r'ish')) == 'Danish'

@@ -268,3 +268,33 @@ class TestTextFieldSet(object):
     def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').set('secret')
+
+
+class TestTextFieldJsSet(object):
+    def test_sets_the_value_of_the_element(self, browser):
+        browser.text_field(id='new_user_email').js_set('Hello Cruel World')
+        assert browser.text_field(id='new_user_email').value == 'Hello Cruel World'
+
+    def test_sets_the_value_of_a_textarea_element(self, browser):
+        browser.textarea(id='delete_user_comment').js_set('Hello Cruel World')
+        assert browser.textarea(id='delete_user_comment').value == 'Hello Cruel World'
+
+    def test_fires_events(self, browser):
+        browser.text_field(id='new_user_username').js_set('Hello World')
+        assert browser.span(id='current_length').text == '11'
+
+    def test_sets_the_value_of_a_password_field(self, browser):
+        browser.text_field(name='new_user_password').js_set('secret')
+        assert browser.text_field(name='new_user_password').value == 'secret'
+
+    def test_sets_the_value_when_accessed_through_the_enclosing_form(self, browser):
+        browser.form(id='new_user').text_field(name='new_user_password').js_set('secret')
+        assert browser.form(id='new_user').text_field(name='new_user_password').value == 'secret'
+
+    def test_is_able_to_set_multi_byte_characters(self, browser):
+        browser.text_field(name='new_user_occupation').js_set('ĳĳ')
+        assert browser.text_field(name='new_user_occupation').value == 'ĳĳ'
+
+    def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.text_field(id='no_such_id').js_set('secret')
