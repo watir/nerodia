@@ -1,18 +1,19 @@
 from importlib import import_module
 
+import six
 from selenium.webdriver.remote.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
+from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
 import nerodia
 from .after_hooks import AfterHooks
 from .alert import Alert
+from .capabilities import Capabilities
 from .container import Container
 from .cookies import Cookies
 from .exception import Error, NoMatchingWindowFoundException
 from .has_window import HasWindow
 from .wait.wait import Waitable
-import six
-from .capabilities import Capabilities
 
 try:
     from urlparse import urlparse
@@ -38,6 +39,9 @@ class Browser(Container, HasWindow, Waitable):
         else:
             raise TypeError('A browser name or WebDriver instance must be supplied, '
                             'got {}'.format(type(browser)))
+
+        if 'listener' in kwargs:
+            self.driver = EventFiringWebDriver(self.driver, kwargs.get('listener'))
 
         self.after_hooks = AfterHooks(self)
         self.current_frame = None

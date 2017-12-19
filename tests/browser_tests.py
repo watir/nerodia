@@ -316,6 +316,18 @@ class TestBrowserInit(object):
         new_browser = Browser(browser.wd)
         assert new_browser.wd == browser.wd
 
+    def test_takes_listener_as_argument(self, browser_manager):
+        from selenium.webdriver.support.abstract_event_listener import AbstractEventListener
+        from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
+        ael = AbstractEventListener()
+        new_browser = None
+        try:
+            new_browser = Browser(**dict(browser_manager.kwargs, listener=ael))
+            assert isinstance(new_browser.wd, EventFiringWebDriver)
+        finally:
+            if new_browser:
+                new_browser.quit()
+
 
 @pytest.mark.page('definition_lists.html')
 class TestBrowserElementWrap(object):
