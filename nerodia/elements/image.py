@@ -15,5 +15,4 @@ class Image(HTMLElement):
         if not self.complete:
             return False
 
-        return self.driver.execute_script('return typeof arguments[0].naturalWidth != "undefined" '
-                                          '&& arguments[0].naturalWidth > 0', self.el)
+        return self._element_call(lambda: self._execute_js('isImageLoaded', self.el))

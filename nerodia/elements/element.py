@@ -1,7 +1,6 @@
 from importlib import import_module
 from inspect import stack
 from re import search, sub
-from time import sleep
 
 from selenium.common.exceptions import InvalidElementStateException, \
     StaleElementReferenceException, \
@@ -11,16 +10,17 @@ from selenium.webdriver.common.action_chains import ActionChains
 import nerodia
 from nerodia.browser import Browser
 from ..adjacent import Adjacent
-from ..js_snippet import JSSnippet
 from ..container import Container
 from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
     UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
+from ..js_execution import JSExecution
+from ..js_snippet import JSSnippet
 from ..locators.element.selector_builder import SelectorBuilder
 from ..wait.wait import TimeoutError, Wait, Waitable
 from ..window import Dimension, Point
 
 
-class Element(Container, JSSnippet, Waitable, Adjacent):
+class Element(Container, JSSnippet, JSExecution, Waitable, Adjacent):
     ATTRIBUTES = []
 
     def __init__(self, query_scope, selector):
@@ -218,40 +218,6 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
                            drag_and_drop_by_offset(self.el, xoffset, yoffset).perform(),
                            self.wait_for_present)
 
-    def flash(self, color='red', flashes=10, delay=0):
-        """
-        Flashes (change background color for a moment) element
-
-        :param color: what color to flash with
-        :type color: str
-        :param flashes: number of times element should be flashed
-        :type flashes: int
-        :param delay: how long to wait between flashes
-        :type delay: int or float
-
-        :Example:
-
-        browser.text_field(name='new_user_first_name').flash()
-        browser.text_field(name='new_user_first_name').flash(color='green', flashes=3, delay=0.05)
-        browser.text_field(name='new_user_first_name').flash(color='yellow')
-        browser.text_field(name='new_user_first_name').flash(flashes=4)
-        browser.text_field(name='new_user_first_name').flash(delay=0.1)
-        """
-        background_color = self.style('backgroundColor')
-        element_color = self.driver.execute_script('arguments[0].style.backgroundColor',
-                                                   self.el)
-
-        for n in range(flashes):
-            nextcolor = color if n % 2 == 0 else background_color
-            self.driver.execute_script("arguments[0].style.backgroundColor = "
-                                       "'{}'".format(nextcolor), self.el)
-            sleep(delay)
-
-        self.driver.execute_script("arguments[0].style.backgroundColor = "
-                                   "'{}'".format(element_color), self.el)
-
-        return self
-
     def select_text(self, string):
         """
         Selects text on page (as if dragging clicked mouse across provided text)
@@ -293,50 +259,6 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
 
     attribute = attribute_value
 
-    @property
-    def outer_html(self):
-        """
-        Returns outer (inner + element itself) HTML code of element
-
-        :rtype: str
-
-        :Example:
-
-        browser.div(id='shown').outer_html
-        #=> '<div id="shown"><div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div></div>'
-        """
-        return self._element_call(lambda: self._execute_js('getOuterHtml', self.el)).strip()
-
-    html = outer_html
-
-    @property
-    def inner_html(self):
-        """
-        Returns inner HTML code of element
-
-        :rtype: str
-
-        :Example:
-
-        browser.div(id='shown').inner_html
-        #=> '<div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div>'
-        """
-        return self._element_call(lambda: self._execute_js('getInnerHtml', self.el)).strip()
-
-    @property
-    def inner_text(self):
-        """
-        Returns inner Text code of element
-
-        :rtype: str:
-
-        :Example:
-
-        browser.div(id: 'shown').inner_text
-        #=> "Not hidden"
-        """
-        return self._element_call(lambda: self._execute_js('getInnerText', self)).strip()
-
     def send_keys(self, *args):
         """
         Sends sequence of keystrokes to the element
@@ -347,14 +269,6 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
         browser.text_field(name='new_user_first_name').send_keys('nerodia')
         """
         return self._element_call(lambda: self.el.send_keys(*args), self.wait_for_writable)
-
-    def focus(self):
-        """
-        Focuses the element
-        Note that Firefox queues focus events until the window actually has focus
-        """
-        self._element_call(lambda: self.driver.execute_script('return arguments[0].focus()',
-                                                              self.el))
 
     @property
     def focused(self):
@@ -558,10 +472,6 @@ class Element(Container, JSSnippet, Waitable, Adjacent):
         :rtype: nerodia.browser.Browser
         """
         return self.query_scope.browser
-
-    def execute_script(self, script, *args):
-        """ Delegates script execution to Browser or IFrame """
-        self.query_scope.execute_script(script, *args)
 
     @property
     def stale(self):

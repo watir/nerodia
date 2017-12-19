@@ -28,7 +28,7 @@ class UserEditable(object):
         """
         from nerodia.exception import Error
         self.set(value[0])
-        self.execute_script('arguments[0].value = arguments[1]', self, value[:-1])
+        self._element_call(lambda: self._execute_js('setValue', self.el, value[:-1]))
         self.append(value[-1])
         if self.value != value:
             raise Error('js_set value does not match expected input')

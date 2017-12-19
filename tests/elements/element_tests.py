@@ -306,6 +306,9 @@ class TestElementFlash(object):
 
 @pytest.mark.page('non_control_elements.html')
 class TestElementInnerOutter(object):
+    def test_returns_text_content_of_element(self, browser):
+        assert browser.div(id='shown').text_content == 'Not shownNot hidden'
+
     def test_returns_inner_text_of_element(self, browser):
         assert browser.div(id='shown').inner_text == 'Not hidden'
 
