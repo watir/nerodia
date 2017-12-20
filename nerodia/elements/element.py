@@ -602,8 +602,8 @@ class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
                                       'disabled'.format(nerodia.default_timeout, self))
 
     def _raise_present(self):
-        raise ObjectReadOnlyException('element located, but timed out after {} seconds, waiting '
-                                      'for {} to be present'.format(nerodia.default_timeout, self))
+        raise UnknownObjectException('element located, but timed out after {} seconds, waiting '
+                                     'for {} to be present'.format(nerodia.default_timeout, self))
 
     @property
     def _unknown_exception(self):
@@ -665,30 +665,34 @@ class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
             from ..wait.timer import Timer
             nerodia.logger.info(info)
             Wait.timer = Timer(timeout=nerodia.default_timeout)
-
         try:
-            exist_check()
-            return method()
-        except StaleElementReferenceException:
-            exist_check()
-            return method()
-        except (ElementNotVisibleException, ElementNotInteractableException):
-            if (Wait.timer.remaining_time <= 0) or \
-                    (exist_check in [self.wait_for_present, self.wait_for_enabled]):
-                self._raise_present()
-            return method()
-        except InvalidElementStateException as e:
-            if (Wait.timer.remaining_time <= 0) or \
-                    (exist_check in [self.wait_for_writable, self.wait_for_enabled]) or \
-                    ('user-editable' in e.msg):
-                self._raise_disabled()
-            return method()
-        except NoSuchWindowException:
-            raise NoMatchingWindowFoundException('browser window was closed')
+            return self._element_call_check(exist_check, method)
         finally:
             nerodia.logger.info('<- `{}#{}` has been completed'.format(self, caller))
             if not already_locked:
                 Wait.timer.reset()
+
+    def _element_call_check(self, exist_check, method):
+        while True:
+            try:
+                exist_check()
+                return method()
+            except StaleElementReferenceException:
+                exist_check()
+                return method()
+            except (ElementNotVisibleException, ElementNotInteractableException):
+                if (Wait.timer.remaining_time <= 0) or \
+                        (exist_check not in [self.wait_for_present, self.wait_for_enabled]):
+                    self._raise_present()
+                continue
+            except InvalidElementStateException as e:
+                if (Wait.timer.remaining_time <= 0) or \
+                        (exist_check in [self.wait_for_writable, self.wait_for_enabled]) or \
+                        ('user-editable' in e.msg):
+                    self._raise_disabled()
+                continue
+            except NoSuchWindowException:
+                raise NoMatchingWindowFoundException('browser window was closed')
 
     def __getattribute__(self, name):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, name):

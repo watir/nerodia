@@ -170,19 +170,23 @@ class TestAfterHooksRun(object):
 
     @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
                                raises=UnknownObjectException)
-    def test_raises_correct_exception_when_running_error_checks_with_alert_present(self, browser, page):
-        from selenium.common.exceptions import UnexpectedAlertPresentException
-        with pytest.raises(UnexpectedAlertPresentException):
-            def hook(b):
-                b.url
+    @pytest.mark.page('alerts.html')
+    @pytest.mark.quits_browser
+    def test_does_not_run_error_checks_with_alert_present(self, browser):
+        result = []
 
-            try:
-                browser.after_hooks.add(method=hook)
-                browser.goto(page.url('alerts.html'))
-                browser.button(id='alert').click()
-            finally:
-                browser.alert.ok()
-                self.cleanup(browser, hook)
+        def hook(b):
+            result.append(b.title == 'Alerts')
+        browser.after_hooks.add(method=hook)
+
+        try:
+            browser.button(id='alert').click()
+            assert not result
+
+            browser.alert.ok()
+            assert result
+        finally:
+            self.cleanup(browser, hook)
 
     def test_does_not_raise_error_when_running_error_checks_using_after_hooks_without_with_alert_present(self, browser, page):
         def hook(b):

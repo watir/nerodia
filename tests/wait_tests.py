@@ -3,11 +3,12 @@ from time import time
 import pytest
 
 import nerodia
+from nerodia.exception import UnknownObjectException, ObjectDisabledException
 from nerodia.wait.wait import Wait, TimeoutError, Timer
 
 
 @pytest.fixture
-def default_timeout_handling(browser):
+def default_timeout_handling():
     orig_timeout = nerodia.default_timeout
     nerodia.default_timeout = 1
     yield
@@ -101,6 +102,23 @@ class TestWaitDefaultTimer(object):
             assert Wait.timer == timer
         finally:
             Wait.timer = Timer()
+
+
+@pytest.mark.skipif('not nerodia.relaxed_locate', reason='only applicable when relaxed locating')
+@pytest.mark.page('wait.html')
+class TestAutomaticWait(object):
+    def test_clicking_automatically_waits_until_the_element_appears(self, browser):
+        browser.link(id='show_bar').click()
+        browser.div(id='bar').click()
+        assert browser.div(id='bar').text == 'changed'
+
+    def test_raises_exception_if_the_element_doesnt_appear(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.div(id='bar').click()
+
+    def test_raises_exception_if_the_element_doesnt_become_enabled(self, browser):
+        with pytest.raises(ObjectDisabledException):
+            browser.button(id='btn').click()
 
 
 @pytest.mark.skipif('nerodia.relaxed_locate',

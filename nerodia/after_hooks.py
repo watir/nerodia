@@ -54,7 +54,7 @@ class AfterHooks(object):
 
     def run(self):
         """ Runs after hooks """
-        if self.after_hooks and self.browser.window().present:
+        if self.after_hooks and self.browser.window().present and not self.browser.alert.exists:
             for hook in self.after_hooks:
                 hook(self.browser)
 

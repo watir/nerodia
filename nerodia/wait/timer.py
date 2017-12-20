@@ -4,7 +4,6 @@ from time import sleep, time
 class Timer(object):
     def __init__(self, timeout=None):
         self.end_time = self._current_time() + timeout if timeout else None
-        self.remaining_time = self.end_time - self._current_time() if self.end_time else None
 
     def wait(self, timeout, method, interval=0, object=None, expected=True):
         """
@@ -28,6 +27,10 @@ class Timer(object):
                 return True
             sleep(interval)
         return False
+
+    @property
+    def remaining_time(self):
+        return self.end_time - self._current_time() if self.end_time else 0
 
     def reset(self):
         self.end_time = None
