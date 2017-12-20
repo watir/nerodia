@@ -522,11 +522,12 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         from .input import Input
         from .option import Option
         from .select import Select
-        if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
-            return self.wait_for_exists()
-
         if not nerodia.relaxed_locate:
             return self._assert_enabled()
+
+        self.wait_for_exists()
+        if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
+            return
 
         try:
             self.wait_until(lambda e: e.enabled)
