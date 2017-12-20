@@ -7,8 +7,6 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class CheckBox(Input):
-    _not_attrs = ['label']
-
     @property
     def is_set(self):
         """

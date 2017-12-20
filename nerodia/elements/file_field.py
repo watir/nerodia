@@ -10,8 +10,6 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class FileField(Input):
-    _not_attrs = ['label']
-
     def set(self, filepath):
         """
         Set the file field to the given path

@@ -7,8 +7,6 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class Radio(Input):
-    _not_attrs = ['label']
-
     def __init__(self, *args, **kwargs):
         super(Radio, self).__init__(*args, **kwargs)
         if 'text' in self.selector:
