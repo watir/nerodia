@@ -22,7 +22,7 @@ class Locator(object):
     }
 
     # Regular expressions that can be reliably converted to xpath `contains`
-    # expressions in order to optimize the .
+    # expressions in order to optimize the locator.
     CONVERTABLE_REGEXP = re.compile(r'\A'
                                     r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
                                     r'[^|]*?'  # do not try to convert expressions with alternates

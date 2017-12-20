@@ -1,9 +1,9 @@
 from importlib import import_module
 
-import nerodia
+from .locators.class_helpers import ClassHelpers
 
 
-class ElementCollection(object):
+class ElementCollection(ClassHelpers):
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
         self.selector = selector
@@ -137,34 +137,6 @@ class ElementCollection(object):
         if not self.els:
             self.els = locator.locate_all()
         return self.els
-
-    @property
-    def _locator_class(self):
-        from .locators.element.locator import Locator
-        return getattr(self._import_module, 'Locator', Locator)
-
-    @property
-    def _element_validator_class(self):
-        from .locators.element.validator import Validator
-        return getattr(self._import_module, 'Validator', Validator)
-
-    @property
-    def _selector_builder_class(self):
-        from .locators.element.selector_builder import SelectorBuilder
-        return getattr(self._import_module, 'SelectorBuilder', SelectorBuilder)
-
-    @property
-    def _import_module(self):
-        from .module_mapping import map_module
-        modules = [nerodia.locator_namespace.__name__, map_module(self._element_class_name)]
-        try:
-            return import_module('{}.{}'.format(*modules))
-        except ImportError:
-            return import_module('{}.element'.format(*modules[:1]))
-
-    @property
-    def _element_class_name(self):
-        return self._element_class.__name__
 
     @property
     def _element_class(self):

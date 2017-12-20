@@ -1,4 +1,3 @@
-from importlib import import_module
 from inspect import stack
 from re import search, sub
 
@@ -15,12 +14,13 @@ from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException,
     UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
 from ..js_execution import JSExecution
 from ..js_snippet import JSSnippet
+from ..locators.class_helpers import ClassHelpers
 from ..locators.element.selector_builder import SelectorBuilder
 from ..wait.wait import TimeoutError, Wait, Waitable
 from ..window import Dimension, Point
 
 
-class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
+class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacent):
     ATTRIBUTES = []
 
     def __init__(self, query_scope, selector):
@@ -609,34 +609,6 @@ class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
     def _unknown_exception(self):
         return UnknownObjectException
 
-    @property
-    def _locator_class(self):
-        from ..locators.element.locator import Locator
-        return getattr(self._import_module, 'Locator', Locator)
-
-    @property
-    def _element_validator_class(self):
-        from ..locators.element.validator import Validator
-        return getattr(self._import_module, 'Validator', Validator)
-
-    @property
-    def _selector_builder_class(self):
-        from ..locators.element.selector_builder import SelectorBuilder
-        return getattr(self._import_module, 'SelectorBuilder', SelectorBuilder)
-
-    @property
-    def _import_module(self):
-        from ..module_mapping import map_module
-        modules = [nerodia.locator_namespace.__name__, map_module(self._element_class_name)]
-        try:
-            return import_module('{}.{}'.format(*modules))
-        except ImportError:
-            return import_module('{}.element'.format(*modules[:1]))
-
-    @property
-    def _element_class_name(self):
-        return self.__class__.__name__
-
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
         self.assert_exists()
@@ -685,10 +657,9 @@ class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
                         (exist_check not in [self.wait_for_present, self.wait_for_enabled]):
                     self._raise_present()
                 continue
-            except InvalidElementStateException as e:
+            except InvalidElementStateException:
                 if (Wait.timer.remaining_time <= 0) or \
-                        (exist_check in [self.wait_for_writable, self.wait_for_enabled]) or \
-                        ('user-editable' in e.msg):
+                        (exist_check in [self.wait_for_writable, self.wait_for_enabled]):
                     self._raise_disabled()
                 continue
             except NoSuchWindowException:
