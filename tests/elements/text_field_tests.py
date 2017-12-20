@@ -265,6 +265,14 @@ class TestTextFieldSet(object):
         browser.text_field(name='new_user_occupation').set('ĳĳ')
         assert browser.text_field(name='new_user_occupation').value == 'ĳĳ'
 
+    def test_sets_the_value_to_a_concatenation_of_multiple_arguments(self, browser):
+        browser.text_field(id='new_user_email').set('Bye', 'Cruel', 'World')
+        assert browser.text_field(id='new_user_email').value == 'ByeCruelWorld'
+
+    def test_sets_the_value_to_blank_when_no_arguments_are_provided(self, browser):
+        browser.text_field(id='new_user_email').set()
+        assert browser.text_field(id='new_user_email').value == ''
+
     def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').set('secret')
@@ -294,6 +302,14 @@ class TestTextFieldJsSet(object):
     def test_is_able_to_set_multi_byte_characters(self, browser):
         browser.text_field(name='new_user_occupation').js_set('ĳĳ')
         assert browser.text_field(name='new_user_occupation').value == 'ĳĳ'
+
+    def test_sets_the_value_to_a_concatenation_of_multiple_arguments(self, browser):
+        browser.text_field(id='new_user_email').js_set('Bye', 'Cruel', 'World')
+        assert browser.text_field(id='new_user_email').value == 'ByeCruelWorld'
+
+    def test_sets_the_value_to_blank_when_no_arguments_are_provided(self, browser):
+        browser.text_field(id='new_user_email').js_set()
+        assert browser.text_field(id='new_user_email').value == ''
 
     def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):

@@ -610,6 +610,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def _unknown_exception(self):
         return UnknownObjectException
 
+    @property
+    def _element_class(self):
+        return self.__class__
+
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
         self.assert_exists()
@@ -650,6 +654,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             try:
                 exist_check()
                 return method()
+            except self._unknown_exception as e:
+                msg = str(e)
+                if len(self.query_scope.iframes()) > 0:
+                    msg += '. Maybe look in an iframe?'
+                raise self._unknown_exception(msg)
             except StaleElementReferenceException:
                 exist_check()
                 return method()

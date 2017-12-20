@@ -261,6 +261,10 @@ class TestElementExist(object):
         with pytest.raises(ValueError):
             browser.div(css='div', class_name='foo').exists
 
+    def test_finds_element_by_selenium_name_locator(self, browser):
+        assert browser.element(name='new_user_first_name').exists
+        assert browser.element(name=compile(r'new_user_first_name')).exists
+
 
 @pytest.mark.page('keylogger.html')
 class TestElementSendKeys(object):

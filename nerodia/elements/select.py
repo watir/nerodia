@@ -37,39 +37,39 @@ class Select(HTMLElement):
         """
         return self.option(text=term).exists or self.option(label=term).exists
 
-    def select(self, term):
+    def select(self, *terms):
         """
         Select the option whose text or label matches the given string
         If this is a multi-select and several options match the value given, all will be selected
-        :param term: string or regex to match against the option
+        :param terms: string or regex or list to match against the option
         :return: The text of the option selected. If multiple options match, returns the first match
         :rtype: str
         """
-        return self._select_by(term)
+        return [self._select_by(t) for t in self._flatten(terms)][0]
 
-    def select_all(self, term):
+    def select_all(self, *terms):
         """
         Select all the options whose text or label matches the given string
         If this is a multi-select and several options match the value given, all will be selected
-        :param term: string or regex to match against the option
+        :param term: string or regex or list to match against the option
         :return: The text of the first option selected.
         :rtype: str
         """
-        return self._select_all_by(term)
+        return [self._select_all_by(t) for t in self._flatten(terms)][0]
 
-    def js_select(self, term):
+    def js_select(self, *terms):
         """
         Uses JavaScript to select the option whose text matches the given string.
-        :param term: string or regex to match against the option
+        :param term: string or regex or list to match against the option
         """
-        return self._js_select_by('text', term, 'single')
+        return [self._js_select_by(t, 'single') for t in self._flatten(terms)][0]
 
-    def js_select_all(self, term):
+    def js_select_all(self, *terms):
         """
         Uses JavaScript to select all options whose text matches the given string.
-        :param term: string or regex to match against the option
+        :param term: string or regex or list to match against the option
         """
-        return self._js_select_by('text', term, 'multiple')
+        return [self._js_select_by(t, 'multiple') for t in self._flatten(terms)][0]
 
     def select_value(self, value):
         """
@@ -85,7 +85,7 @@ class Select(HTMLElement):
         Uses JavaScript to select the option whose value attribute matches the given string
         :param value: string or regex to match against the option
         """
-        return self._js_select_by('value', value, 'single')
+        return self._js_select_by(value, 'single')
 
     def is_selected(self, term):
         """
@@ -144,7 +144,7 @@ class Select(HTMLElement):
 
         raise NoValueFoundException('{} not found in select list'.format(term))
 
-    def _js_select_by(self, how, term, number):
+    def _js_select_by(self, term, number):
         if isinstance(term, re._pattern_type):
             js_rx = term.pattern
             js_rx = js_rx.replace('\\A', '^', 1)
@@ -228,3 +228,12 @@ class Select(HTMLElement):
             return re.search(exp, element.value) is not None
         else:
             raise Error('unknown how: {}'.format(how))
+
+    @staticmethod
+    def _flatten(term):
+        for x in term:
+            if isinstance(x, list):
+                for y in x:
+                    yield y
+            else:
+                yield x

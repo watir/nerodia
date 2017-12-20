@@ -1,6 +1,7 @@
 import re
 from copy import copy
 
+import six
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
@@ -84,7 +85,7 @@ class Locator(object):
         how, what = list(self.selector.items())[0]
         self.selector_builder.check_type(how, what)
 
-        if how in self.WD_FINDERS:
+        if self._wd_is_supported(how, what):
             return self._wd_find_first_by(self.WD_FINDERS.get(how), what)
         else:
             return self._find_first_by_multiple()
@@ -121,7 +122,7 @@ class Locator(object):
             return [what]
         self.selector_builder.check_type(how, what)
 
-        if how in self.WD_FINDERS:
+        if self._wd_is_supported(how, what):
             return self._wd_find_all_by(self.WD_FINDERS.get(how), what)
         else:
             return self._find_all_by_multiple()
@@ -271,3 +272,13 @@ class Locator(object):
 
     def _wd_finder(self, how):
         return self.WD_FINDERS.get(how, how)
+
+    def _wd_is_supported(self, how, what):
+        if how not in self.WD_FINDERS:
+            return False
+        if type(what) not in [six.text_type, six.binary_type, re._pattern_type]:
+            return False
+        if how in ['class', 'class_name'] and type(what) in [six.text_type, six.binary_type] \
+                and ' ' in what:
+            return False
+        return True

@@ -108,6 +108,18 @@ class TestElementLocatorFindsSingleElement(object):
         locate_one(browser, ['data_view', False])
         expect_one.assert_called_once_with(By.XPATH, ".//*[not(@data-view)]")
 
+    def test_handles_selector_with_class_attribute_presense(self, browser, expect_one):
+        locate_one(browser, {'class_name': True})
+        expect_one.assert_called_once_with(By.XPATH, ".//*[@class]")
+
+    def test_handles_selector_with_multiple_classes_in_list(self, browser, expect_one):
+        locate_one(browser, {'class_name': ['a', 'b']})
+        expect_one.assert_called_once_with(By.XPATH, ".//*[(contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b '))]")
+
+    def test_handles_selector_with_multiple_classes_in_string(self, browser, expect_one):
+        locate_one(browser, {'class_name': 'a b'})
+        expect_one.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a b ')]")
+
     # with special cased selectors
 
     def test_normalizes_space_for_text(self, browser, expect_one):
@@ -282,6 +294,22 @@ class TestElementLocatorFindsSeveralElements(object):
     def test_handles_selector_with_tag_name_and_single_attribute(self, browser, expect_all):
         locate_all(browser, {'tag_name': 'div', 'dir': 'foo'})
         expect_all.assert_called_once_with(By.XPATH, ".//div[@dir='foo']")
+
+    def test_handles_selector_with_tag_name_and_multiple_attributes(self, browser, expect_all):
+        locate_all(browser, ['tag_name', 'div', 'dir', 'foo', 'title', 'bar'])
+        expect_all.assert_called_once_with(By.XPATH, ".//div[@dir='foo' and @title='bar']")
+
+    def test_handles_selector_with_class_attribute_presense(self, browser, expect_all):
+        locate_all(browser, {'class_name': True})
+        expect_all.assert_called_once_with(By.XPATH, ".//*[@class]")
+
+    def test_handles_selector_with_multiple_classes_in_list(self, browser, expect_all):
+        locate_all(browser, {'class_name': ['a', 'b']})
+        expect_all.assert_called_once_with(By.XPATH, ".//*[(contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b '))]")
+
+    def test_handles_selector_with_multiple_classes_in_string(self, browser, expect_all):
+        locate_all(browser, {'class_name': 'a b'})
+        expect_all.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a b ')]")
 
     # with regexp selectors
 

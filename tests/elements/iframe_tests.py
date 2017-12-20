@@ -125,6 +125,11 @@ class TestIFrameOther(object):
         browser.iframe(index=0).text_field(name='senderElement').set('new value')
         assert browser.iframe(index=0).text_field(name='senderElement').value == 'new value'
 
+    def test_will_suggest_looking_in_an_iframe_when_iframes_exist(self, browser):
+        with pytest.raises(UnknownObjectException) as e:
+            browser.text_field(name='senderElement').set('no')
+        assert 'Maybe look in an iframe?' in e.value.args[0]
+
     def test_executes_the_given_javascript_in_the_specified_iframe(self, browser):
         iframe = browser.iframe(index=0)
         assert iframe.div(id='set_by_js').text == ""
