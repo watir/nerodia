@@ -1,15 +1,23 @@
+.. image:: https://img.shields.io/pypi/v/nerodia.svg
+    :target: https://pypi.python.org/pypi/nerodia
+
+.. image:: https://img.shields.io/pypi/pyversions/nerodia.svg
+    :target: https://pypi.python.org/pypi/nerodia
+
 .. image:: https://travis-ci.org/watir/nerodia.svg?branch=master
     :target: https://travis-ci.org/watir/nerodia
 
+-----
+
 Introduction
-==============
+============
 Nerodia is a Python port of the Watir ruby gem. https://github.com/watir/watir
 
 Supported Python Versions
 =========================
 
 * Python 2.7
-* Python 3.3+
+* Python 3.4+
 
 Installing
 ==========
