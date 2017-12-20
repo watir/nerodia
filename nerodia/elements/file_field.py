@@ -1,7 +1,7 @@
 from errno import ENOENT
+from os import path
 
 import six
-from os import path
 
 from .html_elements import InputCollection
 from .input import Input
@@ -10,6 +10,8 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class FileField(Input):
+    _not_attrs = ['label']
+
     def set(self, filepath):
         """
         Set the file field to the given path

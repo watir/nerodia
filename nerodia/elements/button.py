@@ -12,6 +12,7 @@ class Button(Input):
 
     This class covers both <button> and <input type="submit|reset|image|button" /> elements
     """
+    _not_attrs = ['label']
 
     VALID_TYPES = ['button', 'reset', 'submit', 'image']
 

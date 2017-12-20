@@ -20,7 +20,7 @@ from ..wait.wait import TimeoutError, Wait, Waitable
 from ..window import Dimension, Point
 
 
-class Element(Container, JSSnippet, JSExecution, Waitable, Adjacent):
+class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
     ATTRIBUTES = []
 
     def __init__(self, query_scope, selector):

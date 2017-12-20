@@ -12,6 +12,7 @@ from ..meta_elements import MetaHTMLElement
 
 @six.add_metaclass(MetaHTMLElement)
 class TextField(TextArea, Input):
+    _not_attrs = ['label']
     NON_TEXT_TYPES = ['file', 'radio', 'checkbox', 'submit', 'reset', 'image', 'button', 'hidden',
                       'range', 'color']
 
