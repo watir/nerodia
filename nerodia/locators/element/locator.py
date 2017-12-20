@@ -99,22 +99,19 @@ class Locator(object):
 
         if built_selector:
             # could build xpath/css for selector
-            if idx is not None or visible is not None:
+            # (idx is not None and idx != 0)
+            if idx or visible is not None:
                 idx = idx or 0
                 elements = self._locate_elements(*built_selector)
-                if visible is not None:
-                    elements = [el for el in elements if visible == el.is_displayed()]
-                return elements[idx] if elements and idx < len(elements) else None
+                return self._filter_elements(elements, visible, idx, 'single')
             else:
                 return self._locate_element(*built_selector)
         else:
             # can't use xpath, probably a regexp in there
-            if idx is not None or visible is not None:
-                idx = idx or 0
+            # (idx is not None and idx != 0)
+            if idx or visible is not None:
                 elements = self._wd_find_by_regexp_selector(selector, 'select')
-                if visible is not None:
-                    elements = [el for el in elements if visible == el.is_displayed()]
-                return elements[idx] if elements else None
+                return self._filter_elements(elements, visible, idx, 'single')
             else:
                 return self._wd_find_by_regexp_selector(selector, 'find')
 
@@ -141,10 +138,7 @@ class Locator(object):
             found = self._locate_elements(*built)
         else:
             found = self._wd_find_by_regexp_selector(selector, 'select')
-        if visible is not None:
-            return [el for el in found if visible == el.is_displayed()]
-        else:
-            return found
+        return self._filter_elements(found, visible, None, 'multiple')
 
     def _wd_find_all_by(self, how, what):
         if isinstance(what, str):
@@ -206,10 +200,22 @@ class Locator(object):
                     what = '({})[{}]'.format(what, ' and '.join(predicates))
 
         elements = self._locate_elements(how, what, query_scope)
+        return self._filter_elements_by_regex(elements, rx_selector, method)
+
+    def _filter_elements(self, elements, visible, idx, number):
+        if visible is not None:
+            elements = [el for el in elements if visible == el.is_displayed()]
+        if number == 'single':
+            idx = idx or 0
+            return elements[idx] if elements and idx < len(elements) else None
+        else:
+            return elements
+
+    def _filter_elements_by_regex(self, elements, selector, method):
         if method == 'find':
-            return next((el for el in elements if self._matches_selector(el, rx_selector)), None)
+            return next((el for el in elements if self._matches_selector(el, selector)), None)
         elif method == 'select':
-            return [el for el in elements if self._matches_selector(el, rx_selector)]
+            return [el for el in elements if self._matches_selector(el, selector)]
         else:
             return None
 

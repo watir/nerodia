@@ -153,7 +153,7 @@ class Select(HTMLElement):
             js_rx = re.sub(r'\(\?#.+\)', '', js_rx)
             js_rx = re.sub(r'\(\?-\w+:', '(', js_rx)
         elif type(term) in [six.text_type, six.binary_type]:
-            js_rx = term
+            js_rx = '^{}$'.format(term)
         else:
             raise TypeError('expected String or Regexp, got {}'.format(term))
 

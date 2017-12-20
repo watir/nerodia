@@ -1,25 +1,23 @@
-from copy import copy
-
 import six
 
 from .html_elements import InputCollection
 from .i_frame import IFrame
 from .input import Input
-from .text_area import TextArea
 from ..browser import Browser
 from ..meta_elements import MetaHTMLElement
+from ..user_editable import UserEditable
 
 
 @six.add_metaclass(MetaHTMLElement)
-class TextField(TextArea, Input):
+class TextField(UserEditable, Input):
     NON_TEXT_TYPES = ['file', 'radio', 'checkbox', 'submit', 'reset', 'image', 'button', 'hidden',
                       'range', 'color']
 
     @property
     def selector_string(self):
-        selector = copy(self.selector)
+        selector = self.selector.copy()
         selector['type'] = '(any text type)'
-        selector['tag_name'] = 'input or textarea'
+        selector['tag_name'] = 'input'
 
         if isinstance(self.query_scope, Browser) or isinstance(self.query_scope, IFrame):
             return super(TextField, self).selector_string

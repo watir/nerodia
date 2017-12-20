@@ -573,9 +573,9 @@ class Element(JSExecution, Container, JSSnippet, Waitable, Adjacent):
         self.query_scope._ensure_context()
 
         element_validator = self._element_validator_class()
-        selector_builder = self._selector_builder_class(self.query_scope, self.selector,
+        selector_builder = self._selector_builder_class(self.query_scope, self.selector.copy(),
                                                         self.ATTRIBUTES)
-        locator = self._locator_class(self.query_scope, self.selector, selector_builder,
+        locator = self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
                                       element_validator)
 
         self.el = locator.locate()

@@ -391,6 +391,13 @@ class TestSelectListJsSelect(object):
         selected = browser.select_list(id='single-quote').selected_options
         assert [opt.text for opt in selected] == ["'foo'"]
 
+    def test_selects_exact_matches_when_using_string(self, browser):
+        browser.select_list(name='new_user_languages').clear()
+        browser.select_list(name='new_user_languages').js_select('Latin')
+        selected_options = [el.text for el in browser.select_list(name='new_user_languages').selected_options]
+        assert 'Azeri - Latin' not in selected_options
+        assert 'Latin' in selected_options
+
     def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):
         with pytest.raises(NoValueFoundException):
             browser.select_list(name='new_user_country').js_select('missing_option')

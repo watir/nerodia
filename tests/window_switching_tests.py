@@ -308,6 +308,7 @@ class TestWindowRect(object):
 
     @pytest.mark.skipif(os.environ.get('CI') == 'true',
                         reason='Maximize command does not work on Travis')
+    @pytest.mark.quits_browser
     def test_should_maximize_the_window(self, browser):
         initial_size = browser.window().size
         browser.window().resize_to(initial_size.width, initial_size.height - 20)
