@@ -1,4 +1,4 @@
-from selenium.webdriver import DesiredCapabilities
+from selenium.webdriver import DesiredCapabilities, ChromeOptions, FirefoxOptions
 
 import nerodia
 
@@ -61,19 +61,15 @@ class Capabilities(object):
                 self._process_remote_options(browser_options)
 
     def _process_chrome_options(self, opts):
-        from selenium.webdriver.chrome.options import Options
-        if isinstance(opts, Options):
+        if isinstance(opts, ChromeOptions):
             options = opts
         else:
-            options = Options()
+            options = ChromeOptions()
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
-            # TODO: update this after next selenium py release, there is a headless convenience
-            # method
             if 'headless' in opts:
-                options.add_argument('--headless')
-                options.add_argument('--disable-gpu')
+                options.set_headless()
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary_location = opts.pop('binary') or opts.pop('binary_location')
             if 'debugger_address' in opts:
@@ -87,14 +83,13 @@ class Capabilities(object):
             if 'experimental_options' in opts:
                 for name, value in opts.pop('experimental_options').items():
                     options.add_experimental_option(name, value)
-        self.selenium_opts['chrome_options'] = options
+        self.selenium_opts['options'] = options
 
     def _process_firefox_options(self, opts):
-        from selenium.webdriver.firefox.options import Options
-        if isinstance(opts, Options):
+        if isinstance(opts, FirefoxOptions):
             options = opts
         else:
-            options = Options()
+            options = FirefoxOptions()
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
@@ -109,7 +104,7 @@ class Capabilities(object):
                 options.profile = opts.pop('profile')
             if 'log_level' in opts:
                 options.log.level = opts.pop('log_level')
-        self.selenium_opts['firefox_options'] = options
+        self.selenium_opts['options'] = options
 
     def _process_safari_options(self, opts):
         if 'technology_preview' in opts:
@@ -118,14 +113,19 @@ class Capabilities(object):
 
     def _process_remote_options(self, opts):
         if self.browser == 'chrome' and self.options.pop('headless', None):
-            # TODO: update this after next selenium py release, options classes will be able to be
-            # passed through remote
-            args = self.options.pop('args', [])
             if 'desired_capabilities' in opts:
                 caps = opts.pop('desired_capabilities')
             else:
                 caps = DesiredCapabilities.CHROME.copy()
-            caps['goog:chromeOptions'] = {'args': args + ['--headless', '--disable-gpu']}
+            self._process_chrome_options(opts)
+            self.selenium_opts['desired_capabilities'] = caps
+
+        if self.browser == 'firefox' and self.options.pop('headless', None):
+            if 'desired_capabilities' in opts:
+                caps = opts.pop('desired_capabilities')
+            else:
+                caps = DesiredCapabilities.FIREFOX.copy()
+            self._process_firefox_options(opts)
             self.selenium_opts['desired_capabilities'] = caps
 
         if self.browser == 'safari' and self.options.pop('technology_preview', None):
