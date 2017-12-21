@@ -82,12 +82,14 @@ class TestOptionSelect(object):
         browser.select_list(name='new_user_country').option(text='Sweden').select()
         assert browser.select_list(name='new_user_country').option(text='Sweden').is_selected
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_does_not_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.option(text='no_such_text').select()
         with pytest.raises(UnknownObjectException):
             browser.option(text=compile(r'missing')).select()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_does_not_exist_within_select_list(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='new_user_country').option(text='no_such_text').select()

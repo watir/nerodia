@@ -32,6 +32,7 @@ class TestElementEnabled(object):
     def test_returns_false_if_the_element_is_disabled(self, browser):
         assert not browser.element(name='new_user_submit_disabled').enabled
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_correct_exception_if_the_element_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):

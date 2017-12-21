@@ -50,6 +50,7 @@ class TestLabelAttributes(object):
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.label(index=0).id == 'first_label'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.label(index=1337).id

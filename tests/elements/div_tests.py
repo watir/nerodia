@@ -2,6 +2,8 @@ from re import compile
 
 import pytest
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('non_control_elements.html')
 
 
@@ -57,8 +59,8 @@ class TestDivAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(**selector).class_name
 
@@ -74,8 +76,8 @@ class TestDivAttributes(object):
                              [{'id': 'no_such_id'},
                               {'title': 'no_such_title'},
                               {'index': 1337}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(**selector).id
 
@@ -93,8 +95,8 @@ class TestDivAttributes(object):
     def test_returns_an_empty_string_if_element_exists_but_style_doesnt(self, browser):
         assert browser.div(id='promo').style() == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_element_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.div(id='no_such_id').style()
 
@@ -116,8 +118,8 @@ class TestDivAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text
 
@@ -142,8 +144,8 @@ class TestDivManipulation(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_clicking_a_div_that_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 
@@ -159,8 +161,8 @@ class TestDivManipulation(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//div[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_js_clicking_a_div_that_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).js_click()
 

@@ -49,6 +49,7 @@ class TestLiAttributes(object):
     def test_returns_an_empty_string_if_the_li_exists_and_the_class_name_doesnt(self, browser):
         assert browser.li(index=0).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.li(index=1337).class_name
@@ -60,6 +61,7 @@ class TestLiAttributes(object):
     def test_returns_an_empty_string_if_the_li_exists_and_the_id_doesnt(self, browser):
         assert browser.li(index=0).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.li(index=1337).id
@@ -71,6 +73,7 @@ class TestLiAttributes(object):
     def test_returns_an_empty_string_if_the_li_exists_and_the_title_doesnt(self, browser):
         assert browser.li(index=0).title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.li(index=1337).title
@@ -82,6 +85,7 @@ class TestLiAttributes(object):
     def test_returns_an_empty_string_if_the_li_exists_and_the_text_doesnt(self, browser):
         assert browser.li(index=0).text == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.li(index=1337).text

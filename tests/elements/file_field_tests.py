@@ -3,6 +3,8 @@ from re import compile
 
 import pytest
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -44,8 +46,8 @@ class TestFileFieldAttributes(object):
     def test_returns_the_class_name_if_the_file_field_exists_and_has_class_name(self, browser):
         assert browser.file_field(index=0).class_name == 'portrait'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_file_field_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.file_field(index=1337).class_name
 
@@ -53,8 +55,8 @@ class TestFileFieldAttributes(object):
     def test_returns_the_id_if_the_file_field_exists_and_has_id(self, browser):
         assert browser.file_field(index=0).id == 'new_user_portrait'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_file_field_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.file_field(index=1337).id
 
@@ -62,8 +64,8 @@ class TestFileFieldAttributes(object):
     def test_returns_the_name_if_the_file_field_exists_and_has_name(self, browser):
         assert browser.file_field(index=0).name == 'new_user_portrait'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_file_field_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.file_field(index=1337).name
 
@@ -75,8 +77,8 @@ class TestFileFieldAttributes(object):
     def test_returns_the_type_if_the_file_field_exists(self, browser):
         assert browser.file_field(index=0).type == 'file'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_file_field_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.file_field(index=1337).type
 

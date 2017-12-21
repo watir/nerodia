@@ -56,6 +56,7 @@ class TestLinkAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
         assert browser.link(index=0).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.link(index=1337).class_name
@@ -67,6 +68,7 @@ class TestLinkAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_href_doesnt(self, browser):
         assert browser.link(index=0).href == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_href_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.link(index=1337).href
@@ -78,6 +80,7 @@ class TestLinkAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_id_doesnt(self, browser):
         assert browser.link(index=0).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.link(index=1337).id
@@ -89,6 +92,7 @@ class TestLinkAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_title_doesnt(self, browser):
         assert browser.link(index=0).title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.link(index=1337).title
@@ -116,6 +120,7 @@ class TestLinkManipulation(object):
         browser.link(index=2).click()
         assert 'User administration' in browser.text
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_click_if_the_link_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.link(index=1337).click()

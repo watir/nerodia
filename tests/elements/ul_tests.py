@@ -43,6 +43,7 @@ class TestUlAttributes(object):
     def test_returns_an_empty_string_if_the_ul_exists_and_has_no_class_name(self, browser):
         assert browser.ul(index=1).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_ul_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
@@ -55,6 +56,7 @@ class TestUlAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_id(self, browser):
         assert browser.ul(index=1).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_checkbox_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):

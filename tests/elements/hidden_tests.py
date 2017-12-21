@@ -2,6 +2,8 @@ from re import compile
 
 import pytest
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -48,8 +50,8 @@ class TestHiddenAttributes(object):
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.hidden(index=1).id == 'new_user_interests_dolls'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.hidden(index=1337).id
 
@@ -57,8 +59,8 @@ class TestHiddenAttributes(object):
     def test_returns_the_name_if_the_element_exists_and_has_name(self, browser):
         assert browser.hidden(index=1).name == 'new_user_interests'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.hidden(index=1337).name
 
@@ -66,8 +68,8 @@ class TestHiddenAttributes(object):
     def test_returns_the_type_if_the_element_exists(self, browser):
         assert browser.hidden(index=1).type == 'hidden'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_element_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.hidden(index=1337).type
 
@@ -75,8 +77,8 @@ class TestHiddenAttributes(object):
     def test_returns_the_value_if_the_element_exists(self, browser):
         assert browser.hidden(index=1).value == 'dolls'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_element_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.hidden(index=1337).type
 

@@ -58,6 +58,7 @@ class TestRadioSetAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_name_doesnt(self, browser):
         assert browser.radio_set(id='new_user_newsletter_absolutely').name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).name
@@ -71,6 +72,7 @@ class TestRadioSetAttributes(object):
     def test_returns_the_type_if_the_element_exists_and_has_type(self, browser):
         assert browser.radio_set(index=0).type == 'radio'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).type
@@ -79,6 +81,7 @@ class TestRadioSetAttributes(object):
     def test_returns_the_value_if_the_element_exists_and_has_value(self, browser):
         assert browser.radio_set(id='new_user_newsletter_yes').value == 'yes'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).value
@@ -87,6 +90,7 @@ class TestRadioSetAttributes(object):
     def test_returns_the_text_if_the_element_exists_and_has_text(self, browser):
         assert browser.radio_set(id='new_user_newsletter_yes').text == 'Yes'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).text
@@ -114,6 +118,7 @@ class TestRadioSetAccess(object):
         assert browser.radio_set(id='new_user_newsletter_none').enabled is False
         assert browser.radio_set(xpath="//input[@id='new_user_newsletter_none']").enabled is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).enabled
@@ -128,6 +133,7 @@ class TestRadioSetAccess(object):
         assert browser.radio_set(id='new_user_newsletter_none').disabled is True
         assert browser.radio_set(xpath="//input[@id='new_user_newsletter_none']").disabled is True
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_disabled_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(index=1337).disabled
@@ -152,6 +158,7 @@ class TestRadioSetRadio(object):
     def test_does_not_exist_when_using_bad_locator(self, browser):
         assert not browser.radio_set(id='new_user_newsletter_yes').radio(id='new_user_newsletter_not_there').exists
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_it_specifies_the_wrong_name(self, browser):
         radio_set = browser.radio_set(id='new_user_newsletter_yes')
         with pytest.raises(UnknownObjectException):
@@ -180,6 +187,7 @@ class TestRadioSetRadios(object):
     def test_returns_empty_collection_if_specified_radio_does_not_exist(self, browser):
         assert len(browser.radio_set(id='new_user_newsletter_yes').radios(id='new_user_newsletter_not_there')) == 0
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_it_specifies_the_wrong_name(self, browser):
         radio_set = browser.radio_set(id='new_user_newsletter_yes')
         with pytest.raises(UnknownObjectException):
@@ -187,6 +195,7 @@ class TestRadioSetRadios(object):
 
 
 class TestRadioSetSelected(object):
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_it_the_radio_set_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(name='no_such_name').selected
@@ -212,6 +221,7 @@ class TestRadioSetIsSelected(object):
     def test_returns_false_if_the_given_radio_is_not_selected_by_text(self, browser):
         assert browser.radio_set(id='new_user_newsletter_no').is_selected('Probably') is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_is_selected_if_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(id='new_user_newsletter_yes').is_selected('missing_option')
@@ -265,6 +275,7 @@ class TestRadioSetIsSelect(object):
     def test_returns_the_text_of_the_selected_radio(self, browser):
         assert browser.radio_set(id='new_user_newsletter_yes').select('No') == 'No'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(id='new_user_newsletter_yes').select('missing_option')

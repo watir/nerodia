@@ -1,6 +1,8 @@
 import pytest
 from re import compile
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('non_control_elements.html')
 
 
@@ -47,8 +49,8 @@ class TestDeleteAttributes(object):
     def test_returns_an_empty_string_if_element_exists_but_class_name_doesnt(self, browser):
         assert browser.delete(index=2).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(id='no_such_id').class_name
 
@@ -63,8 +65,8 @@ class TestDeleteAttributes(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'index': 1337}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).id
 
@@ -79,8 +81,8 @@ class TestDeleteAttributes(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'xpath': "//del[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).title
 
@@ -95,8 +97,8 @@ class TestDeleteAttributes(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'xpath': "//del[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text
 
@@ -120,7 +122,7 @@ class TestDeleteManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'title': 'no_such_title'}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_element_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).click()

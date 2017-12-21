@@ -1,6 +1,8 @@
 import pytest
 from re import compile
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -69,8 +71,8 @@ class TestCheckboxAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_class_name(self, browser):
         assert browser.checkbox(id='new_user_interests_books').class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(id='no_such_id').class_name
 
@@ -81,8 +83,8 @@ class TestCheckboxAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_id(self, browser):
         assert browser.checkbox(index=1).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).id
 
@@ -93,8 +95,8 @@ class TestCheckboxAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_name(self, browser):
         assert browser.checkbox(id='new_user_interests_food').name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).name
 
@@ -105,8 +107,8 @@ class TestCheckboxAttributes(object):
     def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_title(self, browser):
         assert browser.checkbox(id='new_user_interests_books').title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).title
 
@@ -114,8 +116,8 @@ class TestCheckboxAttributes(object):
     def test_returns_the_type_if_the_checkbox_exists(self, browser):
         assert browser.checkbox(index=0).type == 'checkbox'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).type
 
@@ -123,8 +125,8 @@ class TestCheckboxAttributes(object):
     def test_returns_the_value_if_the_checkbox_exists(self, browser):
         assert browser.checkbox(id='new_user_interests_books').value == 'books'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_checkbox_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).value
 
@@ -151,8 +153,8 @@ class TestCheckboxEnabled(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'xpath': "//input[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).enabled
 
@@ -163,8 +165,8 @@ class TestCheckboxEnabled(object):
     def test_returns_false_if_the_checkbox_is_enabled(self, browser):
         assert not browser.checkbox(id='new_user_interests_books').disabled
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_disabled_if_the_checkbox_button_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(index=1337).disabled
 
@@ -191,8 +193,8 @@ class TestCheckboxManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).clear()
 
@@ -215,8 +217,8 @@ class TestCheckboxManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_set_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).set()
 
@@ -245,7 +247,7 @@ class TestCheckboxManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'name': 'no_such_name'},
                               {'xpath': "//input[@id='no_such_name']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_is_set_if_the_checkbox_button_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.checkbox(**selector).is_set

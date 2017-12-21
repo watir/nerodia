@@ -74,6 +74,7 @@ class TestRadioAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
         assert browser.radio(id='new_user_newsletter_no').class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).class_name
@@ -85,6 +86,7 @@ class TestRadioAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_id_doesnt(self, browser):
         assert browser.radio(index=2).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).id
@@ -96,6 +98,7 @@ class TestRadioAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_name_doesnt(self, browser):
         assert browser.radio(id='new_user_newsletter_absolutely').name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).name
@@ -107,6 +110,7 @@ class TestRadioAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_label_doesnt(self, browser):
         assert browser.form(id='new_user').radio(index=2).text == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).text
@@ -118,6 +122,7 @@ class TestRadioAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_title_doesnt(self, browser):
         assert browser.radio(id='new_user_newsletter_yes').title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).title
@@ -126,6 +131,7 @@ class TestRadioAttributes(object):
     def test_returns_the_type_if_the_element_exists_and_has_type(self, browser):
         assert browser.radio(index=0).type == 'radio'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).type
@@ -135,6 +141,7 @@ class TestRadioAttributes(object):
     def test_returns_the_value_if_the_element_exists_and_has_value(self, browser):
         assert browser.radio(id='new_user_newsletter_yes').value == 'yes'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.radio(index=1337).value

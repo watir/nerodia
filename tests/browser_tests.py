@@ -238,6 +238,7 @@ class TestBrowserBackForth(object):
         assert browser.url == urls[2]
 
     @pytest.mark.page('plain_text')
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_trying_to_access_dom_elements_on_plain_text_page(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):

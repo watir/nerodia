@@ -49,6 +49,7 @@ class TestInsAttributes(object):
     def test_returns_an_empty_string_if_the_ins_exists_and_the_class_name_doesnt(self, browser):
         assert browser.ins(index=2).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.ins(index=1337).class_name
@@ -60,6 +61,7 @@ class TestInsAttributes(object):
     def test_returns_an_empty_string_if_the_ins_exists_and_the_id_doesnt(self, browser):
         assert browser.ins(index=2).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.ins(index=1337).id
@@ -71,6 +73,7 @@ class TestInsAttributes(object):
     def test_returns_an_empty_string_if_the_ins_exists_and_the_title_doesnt(self, browser):
         assert browser.ins(index=2).title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.ins(index=1337).title
@@ -82,6 +85,7 @@ class TestInsAttributes(object):
     def test_returns_an_empty_string_if_the_ins_exists_and_the_text_doesnt(self, browser):
         assert browser.ins(index=3).text == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.ins(index=1337).text
@@ -100,6 +104,7 @@ class TestInsClick(object):
         browser.ins(class_name='footer').click()
         assert 'Javascript' in browser.ins(class_name='footer').text
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_click_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.ins(id='no_such_id').click()

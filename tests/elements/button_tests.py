@@ -1,6 +1,8 @@
 import pytest
 from re import compile
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -97,8 +99,8 @@ class TestButtonAttributes(object):
         assert browser.button(index=1).id == 'new_user_reset'
         assert browser.button(index=2).id == 'new_user_button'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(index=1337).id
 
@@ -108,8 +110,8 @@ class TestButtonAttributes(object):
         assert browser.button(index=1).name == 'new_user_reset'
         assert browser.button(index=2).name == 'new_user_button'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').name
 
@@ -118,8 +120,8 @@ class TestButtonAttributes(object):
         # varies between browsers
         assert 'images/button.png' in browser.button(name='new_user_image').src
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_src_if_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').src
 
@@ -131,8 +133,8 @@ class TestButtonAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_attribute_doesnt_exist(self, browser):
         assert browser.button(id='new_user_submit').style() == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_style_if_the_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').style()
 
@@ -149,8 +151,8 @@ class TestButtonAttributes(object):
         assert browser.button(index=1).type == 'reset'
         assert browser.button(index=2).type == 'button'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').type
 
@@ -160,8 +162,8 @@ class TestButtonAttributes(object):
         assert browser.button(index=1).value == 'Reset'
         assert browser.button(index=2).value == 'Button'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_button_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').value
 
@@ -172,8 +174,8 @@ class TestButtonAttributes(object):
         assert browser.button(index=2).text == 'Button'
         assert browser.button(index=3).text == 'Preview'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').text
 
@@ -197,8 +199,8 @@ class TestButtonEnabled(object):
     def test_returns_false_if_the_button_is_disabled(self, browser):
         assert not browser.button(name='new_user_submit_disabled').enabled
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_the_button_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').enabled
 
@@ -214,8 +216,8 @@ class TestButtonEnabled(object):
     def test_returns_true_when_button_is_disabled(self, browser):
         assert browser.button(name='new_user_submit_disabled').disabled
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_disabled_if_the_button_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').disabled
 
@@ -233,8 +235,8 @@ class TestButtonManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'value': 'no_such_value'},
                               {'id': 'no_such_id'}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_clicking_a_button_that_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 

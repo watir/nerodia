@@ -101,12 +101,20 @@ def page(browser_manager, webserver):
 
 
 @pytest.fixture(autouse=True)
-def browser_guard(request, page, browser_manager):
+def browser_guard(request, browser_manager):
     only = request.node.get_marker('only')
     if only:
         browsers = list(only.args[0])
         if browser_manager.name not in browsers:
             pytest.skip('Test only covers browsers: {!r}'.format(browsers))
+
+
+@pytest.fixture(scope='function')
+def quick_timeout():
+    orig_timeout = nerodia.default_timeout
+    nerodia.default_timeout = 0
+    yield
+    nerodia.default_timeout = orig_timeout
 
 
 @pytest.fixture(autouse=True)

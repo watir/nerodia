@@ -46,6 +46,7 @@ class TestHnAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
         assert browser.h2(index=0).class_name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.h2(id='no_such_id').class_name
@@ -57,6 +58,7 @@ class TestHnAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_id_doesnt(self, browser):
         assert browser.h3(index=0).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.h1(id='no_such_id').id
@@ -70,6 +72,7 @@ class TestHnAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_text_doesnt(self, browser):
         assert browser.h6(id='empty_header').text == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.h1(id='no_such_id').text

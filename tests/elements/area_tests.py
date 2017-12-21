@@ -54,6 +54,7 @@ class TestAreaId(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},
                               {'index': 1337}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_area_doesnt_exist(self, browser, selector):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):

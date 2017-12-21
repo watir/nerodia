@@ -172,6 +172,7 @@ class TestAfterHooksRun(object):
                                raises=UnknownObjectException)
     @pytest.mark.page('alerts.html')
     @pytest.mark.quits_browser
+    @pytest.mark.usefixtures('quick_timeout')
     def test_does_not_run_error_checks_with_alert_present(self, browser):
         result = []
 

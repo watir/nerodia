@@ -113,6 +113,7 @@ class TestIFrameOther(object):
         with pytest.raises(UnknownFrameException):
             browser.iframe(name='iframe1').iframe(name='no_such_name').id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_element_inside_an_existing_iframe(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.iframe(index=1).p(index=1337).id
@@ -125,10 +126,10 @@ class TestIFrameOther(object):
         browser.iframe(index=0).text_field(name='senderElement').set('new value')
         assert browser.iframe(index=0).text_field(name='senderElement').value == 'new value'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_will_suggest_looking_in_an_iframe_when_iframes_exist(self, browser):
-        with pytest.raises(UnknownObjectException) as e:
+        with pytest.raises(UnknownObjectException, match=r'.*Maybe look in an iframe?.*'):
             browser.text_field(name='senderElement').set('no')
-        assert 'Maybe look in an iframe?' in e.value.args[0]
 
     def test_executes_the_given_javascript_in_the_specified_iframe(self, browser):
         iframe = browser.iframe(index=0)

@@ -74,6 +74,7 @@ class TestFrameOther(object):
         with pytest.raises(UnknownFrameException):
             browser.frame(name='frame1').frame(name='no_such_name').id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_element_inside_an_existing_frame(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.frame(index=1).p(index=1337).id

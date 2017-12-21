@@ -59,6 +59,7 @@ class TestSelectListAttributes(object):
     def test_returns_the_class_name_if_the_select_list_exists_and_has_class_name(self, browser):
         assert browser.select_list(name='new_user_country').class_name == 'country'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='no_such_name').class_name
@@ -67,6 +68,7 @@ class TestSelectListAttributes(object):
     def test_returns_the_id_if_the_select_list_exists_and_has_id(self, browser):
         assert browser.select_list(index=0).id == 'new_user_country'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).id
@@ -75,6 +77,7 @@ class TestSelectListAttributes(object):
     def test_returns_the_name_if_the_select_list_exists_and_has_name(self, browser):
         assert browser.select_list(index=0).name == 'new_user_country'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).name
@@ -84,6 +87,7 @@ class TestSelectListAttributes(object):
         assert not browser.select_list(index=0).multiple
         assert browser.select_list(index=1).multiple
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_multiple_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).multiple
@@ -95,6 +99,7 @@ class TestSelectListAttributes(object):
         browser.select_list(index=0).select(re.compile('Sweden'))
         assert browser.select_list(index=0).value == '3'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).value
@@ -106,6 +111,7 @@ class TestSelectListAttributes(object):
         browser.select_list(index=0).select(re.compile('Sweden'))
         assert browser.select_list(index=0).text == 'Sweden'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).text
@@ -126,6 +132,7 @@ class TestSelectListAccess(object):
     def test_returns_false_if_the_select_list_is_disabled(self, browser):
         assert browser.select_list(name='new_user_role').enabled is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='no_such_name').enabled
@@ -137,6 +144,7 @@ class TestSelectListAccess(object):
     def test_returns_false_if_the_select_list_is_enabled(self, browser):
         assert browser.select_list(index=0).disabled is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_disabled_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(index=1337).disabled
@@ -157,6 +165,7 @@ class TestSelectListOther(object):
                                                  'United Kingdom', 'USA', 'Germany']
 
     # selected_options
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_selected_options_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='no_such_name').selected_options
@@ -178,6 +187,7 @@ class TestSelectListOther(object):
         opts = browser.select_list(name='new_user_country').selected_options
         assert [opt.text for opt in opts] == ['Norway']
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='no_such_name').clear()
@@ -216,6 +226,7 @@ class TestSelectListOther(object):
         browser.select_list(name='new_user_country').option(label='Germany').clear()
         assert browser.select_list(name='new_user_country').is_selected('Germany') is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_selected_if_the_select_list_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.select_list(name='new_user_country').is_selected('missing_option')

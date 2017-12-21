@@ -49,6 +49,7 @@ class TestImageAttributes(object):
     def test_returns_an_empty_string_if_the_image_exists_and_the_alt_doesnt(self, browser):
         assert browser.image(index=0).alt == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_alt_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).alt
@@ -60,6 +61,7 @@ class TestImageAttributes(object):
     def test_returns_an_empty_string_if_the_image_exists_and_the_id_doesnt(self, browser):
         assert browser.image(index=0).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).id
@@ -71,6 +73,7 @@ class TestImageAttributes(object):
     def test_returns_an_empty_string_if_the_image_exists_and_the_src_doesnt(self, browser):
         assert browser.image(index=0).src == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_src_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).src
@@ -82,6 +85,7 @@ class TestImageAttributes(object):
     def test_returns_an_empty_string_if_the_image_exists_and_the_title_doesnt(self, browser):
         assert browser.image(index=0).title == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).title
@@ -94,6 +98,7 @@ def test_finds_all_attribute_methods(browser):
     assert hasattr(browser.image(index=0), 'text')
 
 
+@pytest.mark.usefixtures('quick_timeout')
 def test_raises_correct_exception_when_the_image_doesnt_exist(browser):
     with pytest.raises(UnknownObjectException):
         browser.image(index=1337).click()
@@ -104,6 +109,7 @@ class TestImageOther(object):
     def test_returns_the_height_if_the_element_exists(self, browser):
         assert browser.image(id='square').height == 88
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_height_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).height
@@ -112,6 +118,7 @@ class TestImageOther(object):
     def test_returns_the_width_if_the_element_exists(self, browser):
         assert browser.image(id='square').width == 88
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_width_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).width
@@ -125,6 +132,7 @@ class TestImageOther(object):
     def test_returns_false_if_the_image_has_not_been_loaded(self, browser):
         assert browser.image(id='no_such_file').loaded is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_loaded_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.image(index=1337).loaded

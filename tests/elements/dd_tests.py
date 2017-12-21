@@ -1,6 +1,8 @@
 import pytest
 from re import compile
 
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('definition_lists.html')
 
 
@@ -41,8 +43,8 @@ class TestDdAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).class_name
 
@@ -58,8 +60,8 @@ class TestDdAttributes(object):
                              [{'id': 'no_such_id'},
                               {'title': 'no_such_title'},
                               {'index': 1337}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).id
 
@@ -81,8 +83,8 @@ class TestDdAttributes(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).text
 
@@ -109,8 +111,8 @@ class TestButtonManipulation(object):
                               {'title': 'no_such_title'},
                               {'index': 1337},
                               {'xpath': "//dd[@id='no_such_id']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_element_doesnt_exist(self, browser, selector):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.dd(**selector).click()
 

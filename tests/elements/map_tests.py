@@ -45,6 +45,7 @@ class TestMapAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_id_doesnt(self, browser):
         assert browser.map(index=1).id == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.map(index=1337).id
@@ -56,6 +57,7 @@ class TestMapAttributes(object):
     def test_returns_an_empty_string_if_the_element_exists_and_the_name_doesnt(self, browser):
         assert browser.map(index=1).name == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.map(index=1337).name

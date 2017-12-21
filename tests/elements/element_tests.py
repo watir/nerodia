@@ -4,6 +4,7 @@ from re import compile
 import pytest
 from selenium.webdriver.common.keys import Keys
 
+from nerodia.exception import UnknownObjectException
 from nerodia.window import Point, Dimension
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
@@ -16,8 +17,8 @@ class TestElementInit(object):
         assert browser.checkbox(name='new_user_interests',
                                 title='Dancing is fun!').value == 'dancing'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_with_a_sane_error_message_when_given_a_dict_of_how_what_arguments(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=100, name='foo').id
 
@@ -153,13 +154,13 @@ class TestElementVisibility(object):
     def test_returns_true_if_the_element_is_visible(self, browser):
         assert browser.text_field(id='new_user_email').visible
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').visible
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_is_stale(self, browser, mocker):
-        from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
             wd_element = browser.text_field(id='new_user_email').wd
 

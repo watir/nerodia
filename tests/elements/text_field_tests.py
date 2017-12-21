@@ -81,6 +81,7 @@ class TestTextFieldAttributes(object):
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.text_field(index=4).id == 'new_user_occupation'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_id_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).id
@@ -89,6 +90,7 @@ class TestTextFieldAttributes(object):
     def test_returns_the_name_if_the_element_exists_and_has_name(self, browser):
         assert browser.text_field(index=3).name == 'new_user_email_confirm'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_name_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).name
@@ -97,6 +99,7 @@ class TestTextFieldAttributes(object):
     def test_returns_the_title_if_the_element_exists_and_has_title(self, browser):
         assert browser.text_field(id='new_user_code').title == 'Your personal code'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_title_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).title
@@ -111,6 +114,7 @@ class TestTextFieldAttributes(object):
     def returns_text_if_the_type_attribute_does_not_exist(self, browser):
         assert browser.text_field(id='new_user_first_name').type == 'text'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_type_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).type
@@ -122,6 +126,7 @@ class TestTextFieldAttributes(object):
         assert browser.text_field(name=compile(r'new_user_occupation',
                                                flags=IGNORECASE)).value == 'Developer'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_value_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).value
@@ -146,6 +151,7 @@ class TestTextFieldAccessMethods(object):
     def test_returns_false_for_disabled_text_fields(self, browser):
         assert browser.text_field(name='new_user_species').enabled is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).enabled
@@ -158,6 +164,7 @@ class TestTextFieldAccessMethods(object):
     def test_returns_false_for_enabled_text_fields(self, browser):
         assert browser.text_field(index=0).disabled is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_disabled_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).disabled
@@ -171,6 +178,7 @@ class TestTextFieldAccessMethods(object):
     def test_returns_false_for_writable_text_fields(self, browser):
         assert browser.text_field(name='new_user_email').readonly is False
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_readonly_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).readonly
@@ -200,6 +208,7 @@ class TestTextFieldAccessMethods(object):
         with pytest.raises(ObjectDisabledException):
             browser.text_field(name='new_user_species').append('Append This')
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_append_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(name='no_such_name').append('Append This')
@@ -212,6 +221,7 @@ class TestTextFieldAccessMethods(object):
         browser.textarea(id='delete_user_comment').clear()
         assert browser.textarea(id='delete_user_comment').value == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').clear()
@@ -235,6 +245,7 @@ class TestTextFieldAccessMethods(object):
         browser.textarea(id='delete_user_comment').value = 'Hello Cruel World'
         assert browser.textarea(id='delete_user_comment').value == 'Hello Cruel World'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_element_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(name='no_such_name').clear()
@@ -273,6 +284,7 @@ class TestTextFieldSet(object):
         browser.text_field(id='new_user_email').set()
         assert browser.text_field(id='new_user_email').value == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').set('secret')
@@ -311,6 +323,7 @@ class TestTextFieldJsSet(object):
         browser.text_field(id='new_user_email').js_set()
         assert browser.text_field(id='new_user_email').value == ''
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_set_if_the_object_doesnt_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').js_set('secret')
