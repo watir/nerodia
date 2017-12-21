@@ -309,7 +309,7 @@ class TestBrowserInit(object):
 
         kwargs = {}
         kwargs[key] = caps
-        kwargs['{}_options'.format(browser_name)] = opts
+        kwargs['options'] = opts
         mock.assert_called_once_with(**kwargs)
 
     def test_takes_driver_instance_as_argument(self, browser):

@@ -439,12 +439,6 @@ class TestSelectListJsSelect(object):
 
 
 class TestSelectListSelectAll(object):
-    def test_selects_multiple_options_based_on_value(self, browser):
-        browser.select_list(name='new_user_languages').clear()
-        browser.select_list(name='new_user_languages').select_all(re.compile(r'\d+'))
-        selected = browser.select_list(name='new_user_languages').selected_options
-        assert [opt.text for opt in selected] == ['Danish', 'EN', 'NO', 'Russian']
-
     def test_selects_multiple_options_based_on_text(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').select_all(re.compile(r'ish'))
@@ -457,13 +451,13 @@ class TestSelectListSelectAll(object):
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['EN', 'NO']
 
-    def test_selects_all_item_in_a_list(self, browser):
+    def test_selects_all_options_in_a_list(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').select_all([re.compile(r'ish'), re.compile(r'Latin')])
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish', 'Azeri - Latin', 'Latin']
 
-    def test_selects_all_item_in_a_parameter_list(self, browser):
+    def test_selects_all_options_in_a_parameter_list(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').select_all(re.compile(r'ish'), re.compile(r'Latin'))
         selected = browser.select_list(name='new_user_languages').selected_options
@@ -493,13 +487,13 @@ class TestSelectListJsSelectAll(object):
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['EN', 'NO']
 
-    def test_selects_all_item_in_a_list(self, browser):
+    def test_selects_all_options_in_a_list(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').js_select_all([re.compile(r'ish'), re.compile(r'Latin')])
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish', 'Azeri - Latin', 'Latin']
 
-    def test_selects_all_item_in_a_parameter_list(self, browser):
+    def test_selects_all_options_in_a_parameter_list(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').js_select_all(re.compile(r'ish'), re.compile(r'Latin'))
         selected = browser.select_list(name='new_user_languages').selected_options
