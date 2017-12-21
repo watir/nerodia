@@ -101,14 +101,17 @@ class TestIFrameOther(object):
         browser.iframes()[0].ps().locate()
         assert browser.h1s()[0].text == 'Iframes'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_elements_inside_non_existing_iframe(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.iframe(name='no_such_name').p(index=0).id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_iframe(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.iframe(name='no_such_name').id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_subiframe(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.iframe(name='iframe1').iframe(name='no_such_name').id

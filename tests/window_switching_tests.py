@@ -94,14 +94,17 @@ class TestBrowserWindow(object):
         with pytest.raises(ValueError):
             browser.window(name='foo')
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_no_window_matches_the_selector(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             browser.window(title='noop').use()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_no_window_at_given_index(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             browser.window(index=100).use()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_attempting_to_use_window_with_wrong_handle(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             browser.window(handle='bar').use()
@@ -220,6 +223,7 @@ class TestWindow(object):
     # use
 
     # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1223277
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_attempting_to_use_closed_referenced_window(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             original = browser.window()
@@ -228,6 +232,7 @@ class TestWindow(object):
             original.use()
 
     # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1223277
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_attempting_to_use_current_window_if_it_is_closed(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             browser.window(title='closeable window').use()

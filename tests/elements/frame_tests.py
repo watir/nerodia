@@ -62,14 +62,17 @@ class TestFrameOther(object):
         with pytest.raises(MissingWayOfFindingObjectException):
             browser.frame(no_such_how='some_value').exists
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_elements_inside_non_existing_frame(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.frame(name='no_such_name').p(index=0).id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_frame(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.frame(name='no_such_name').id
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_a_non_existing_subframe(self, browser):
         with pytest.raises(UnknownFrameException):
             browser.frame(name='frame1').frame(name='no_such_name').id
