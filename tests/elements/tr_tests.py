@@ -27,7 +27,7 @@ class TestTrExists(object):
 
 
 class TestTrClick(object):
-    @pytest.mark.only('safari')
+    @pytest.mark.only(['safari'])
     def test_fires_the_tables_onclick_event(self, browser, messages):
         browser.tr(id='inner_first').click()
         assert 'tr' in messages.list

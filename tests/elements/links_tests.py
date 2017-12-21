@@ -8,7 +8,7 @@ class TestLinks(object):
         assert browser.links(title='link_title_2').to_list == [browser.link(title='link_title_2')]
 
     def test_returns_the_correct_number_of_links(self, browser):
-        assert len(browser.links()) == 4
+        assert len(browser.links()) == 7
 
     def test_get_item_returns_the_link_at_the_given_index(self, browser):
         assert browser.links()[2].id == 'link_3'

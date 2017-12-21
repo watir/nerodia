@@ -8,7 +8,7 @@ class TestSpans(object):
         assert browser.spans(class_name='footer').to_list == [browser.span(class_name='footer')]
 
     def test_returns_the_correct_number_of_spans(self, browser):
-        assert len(browser.spans()) == 6
+        assert len(browser.spans()) == 7
 
     def test_get_item_returns_the_span_at_the_given_index(self, browser):
         assert browser.spans()[0].id == 'lead'
