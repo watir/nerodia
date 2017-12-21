@@ -69,6 +69,25 @@ class TestElementAriaAttributes(object):
         assert browser.p().aria_label == 'ruby-library'
 
 
+@pytest.mark.page('non_control_elements.html')
+class TestElementVisibleText(object):
+    def test_finds_elements_by_visible_text(self, browser):
+        assert browser.link(visible_text='all visible').exists is True
+        assert browser.link(visible_text=compile(r'all visible')).exists is True
+        assert browser.link(visible_text='some visible').exists is True
+        assert browser.link(visible_text=compile(r'some visible')).exists is True
+        assert browser.link(visible_text='none visible').exists is False
+        assert browser.link(visible_text=compile(r'none visible')).exists is False
+
+        assert browser.link(visible_text='Link 2', class_name='external').exists is True
+        assert browser.link(visible_text=compile(r'Link 2'), class_name='external').exists is True
+
+        assert browser.element(visible_text='all visible').exists is True
+        assert browser.element(visible_text=compile(r'all visible')).exists is True
+        assert browser.element(visible_text='some visible').exists is True
+        assert browser.element(visible_text=compile(r'some visible')).exists is True
+
+
 class TestElementWithoutTagName(object):
     def test_finds_an_element_without_arguments(self, browser):
         assert browser.element().exists
@@ -158,11 +177,11 @@ class TestElementVisibility(object):
             wd_element = browser.text_field(id='new_user_email').wd
 
             # simulate element going stale during lookup
-            mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_element')
-            mock.return_value = wd_element
+            mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_element').return_value = wd_element
+            mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_elements').side_effect = [[wd_element], [], []]
             browser.refresh()
 
-            browser.text_field(id='new_user_email').visible
+            browser.text_field(css='#new_user_email').visible
 
     def test_returns_true_if_the_element_has_visibility_style_visible_even_if_parent_has_hidden(self, browser):
         assert browser.div(id='visible_child').visible

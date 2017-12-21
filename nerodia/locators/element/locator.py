@@ -1,11 +1,11 @@
 import re
 from copy import copy
 
-import six
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
 import nerodia
+from .validator import Validator
 from ...exception import Error
 from ...xpath_support import XpathSupport
 
@@ -40,119 +40,91 @@ class Locator(object):
 
     def locate(self):
         try:
-            e = self._by_id()  # short-circuit if :id is given
-            if e:
-                return e
-
-            if len(self.selector) == 1:
-                element = self._find_first_by_one()
-            else:
-                element = self._find_first_by_multiple()
-
-            # Validation not necessary if Nerodia builds the xpath
-
-            if 'xpath' not in list(self.selector) and 'css' not in list(self.selector):
-                return element
-
-            if element:
-                return self.element_validator.validate(element, self.selector)
+            elements = self._using_selenium('first')
+            return elements if elements else self._using_nerodia('first')
         except (NoSuchElementException, StaleElementReferenceException):
             return None
 
     def locate_all(self):
-        if len(self.selector) == 1:
-            return self._find_all_by_one()
-        else:
-            return self._find_all_by_multiple()
+        if 'element' in self.selector:
+            return [self.selector.get('element')]
+
+        elements = self._using_selenium('all')
+        return elements if elements else self._using_nerodia('all')
 
     # private
 
-    def _by_id(self):
+    def _using_selenium(self, filter='first'):
         selector = copy(self.selector)
-        attr_id = selector.pop('id', None)
-        if not isinstance(attr_id, str) or selector.get('adjacent'):
-            return None
-        tag_name = selector.pop('tag_name', None)
-        if selector:  # Multiple attributes
-            return None
+        tag_name = selector.get('tag_name')
+        if len(selector) > 1:
+            selector.pop('tag_name', None)
 
-        element = self._locate_element('id', attr_id)
-        if tag_name and not self.element_validator.validate(element, {'tag_name': tag_name}):
-            return None
-
-        return element
-
-    def _find_first_by_one(self):
-        how, what = list(self.selector.items())[0]
-        self.selector_builder.check_type(how, what)
-
-        if self._wd_is_supported(how, what):
-            return self._wd_find_first_by(self.WD_FINDERS.get(how), what)
-        else:
-            return self._find_first_by_multiple()
-
-    def _find_first_by_multiple(self):
-        selector = self.selector_builder.normalized_selector
-
-        idx = selector.pop('index', None) if not selector.get('adjacent') else None
-        visible = selector.pop('visible', None)
-
-        built_selector = self.selector_builder.build(selector)
-
-        if built_selector:
-            # could build xpath/css for selector
-            # (idx is not None and idx != 0)
-            if idx or visible is not None:
-                idx = idx or 0
-                elements = self._locate_elements(*built_selector)
-                return self._filter_elements(elements, visible, idx, 'single')
+        for sel in self.WD_FINDERS:
+            value = selector.pop(sel, None)
+            if not value:
+                continue
+            if not (len(selector) == 0 and self._wd_is_supported(sel, value)):
+                return
+            if filter == 'all':
+                found = self._locate_elements(sel, value)
+                elements = self._filter_elements_by_locator(found, tag_name=tag_name, filter=filter)
+                return [el for el in elements if el is not None]
             else:
-                return self._locate_element(*built_selector)
-        else:
-            # can't use xpath, probably a regexp in there
-            # (idx is not None and idx != 0)
-            if idx or visible is not None:
-                elements = self._wd_find_by_regexp_selector(selector, 'select')
-                return self._filter_elements(elements, visible, idx, 'single')
-            else:
-                return self._wd_find_by_regexp_selector(selector, 'find')
+                found = self._locate_element(sel, value)
+                if sel != 'tag_name' and tag_name and not self._validate([found], tag_name):
+                    return None
+                return found
 
-    def _find_all_by_one(self):
-        how, what = list(self.selector.items())[0]
-        if how == 'element':
-            return [what]
-        self.selector_builder.check_type(how, what)
-
-        if self._wd_is_supported(how, what):
-            return self._wd_find_all_by(self.WD_FINDERS.get(how), what)
-        else:
-            return self._find_all_by_multiple()
-
-    def _find_all_by_multiple(self):
+    def _using_nerodia(self, filter='first'):
         selector = self.selector_builder.normalized_selector
         visible = selector.pop('visible', None)
+        visible_text = selector.pop('visible_text', None)
+        tag_name = selector.get('tag_name')
+        validation_required = ('css' in selector or 'xpath' in selector) and tag_name
 
-        if 'index' in selector:
+        if 'index' in selector and filter == 'all':
             raise ValueError("can't locate all elements by index")
 
-        built = self.selector_builder.build(selector)
-        if built:
-            found = self._locate_elements(*built)
-        else:
-            found = self._wd_find_by_regexp_selector(selector, 'select')
-        return self._filter_elements(found, visible, None, 'multiple')
+        idx = selector.pop('index', None) if not selector.get('adjacent') else None
+        built_selector = self.selector_builder.build(selector)
 
-    def _wd_find_all_by(self, how, what):
-        if isinstance(what, nerodia._str_types):
-            return self._locate_elements(how, what)
+        needs_filtering = idx or \
+            visible is not None \
+            or visible_text is not None or \
+            validation_required or \
+            filter == 'all'
+
+        if needs_filtering:
+            matching = self._matching_elements(built_selector, selector)
+            return self._filter_elements_by_locator(matching, visible, visible_text, idx,
+                                                    tag_name=tag_name, filter=filter)
+        elif built_selector:
+            return self._locate_element(*built_selector)
         else:
-            return [el for el in self._all_elements if what.search(self._fetch_value(el, how))]
+            return self._wd_find_by_regexp_selector(selector, 'first')
+
+    def _validate(self, elements, tag_name):
+        return all(self.element_validator.validate(el, {'tag_name': tag_name})
+                   for el in elements if el is not None)
+
+    def _matching_elements(self, built_selector, selector=None):
+        found = self._locate_elements(*built_selector) if built_selector \
+            else self._wd_find_by_regexp_selector(selector, 'all')
+        return found or []
 
     def _fetch_value(self, element, how):
         if how == 'text':
             from nerodia.elements.element import Element
-            return Element(self.query_scope, {'element': element})._execute_js('getTextContent',
-                                                                               element).strip()
+            vis = element.text
+            all = Element(self.query_scope,
+                          {'element': element})._execute_js('getTextContent', element).strip()
+            if all != vis:
+                nerodia.logger.deprecate("'text' locator with RegExp values to find elements "
+                                         "based on only visible text", 'visible_text')
+            return vis
+        elif how == 'visible_text':
+            return element.text
         elif how == 'tag_name':
             return element.tag_name.lower()
         elif how == 'href':
@@ -165,14 +137,7 @@ class Locator(object):
     def _all_elements(self):
         return self._locate_elements(By.XPATH, './/*')
 
-    def _wd_find_first_by(self, how, what):
-        if isinstance(what, str):
-            return self._locate_element(how, what)
-        else:
-            return next((x for x in self._all_elements if what.search(self._fetch_value(x, how))),
-                        None)
-
-    def _wd_find_by_regexp_selector(self, selector, method='find'):
+    def _wd_find_by_regexp_selector(self, selector, filter):
         query_scope = self._ensure_scope_context
         rx_selector = self._delete_regexps_from(selector)
 
@@ -203,24 +168,29 @@ class Locator(object):
                     what = '({})[{}]'.format(what, ' and '.join(predicates))
 
         elements = self._locate_elements(how, what, query_scope)
-        return self._filter_elements_by_regex(elements, rx_selector, method)
+        return self._filter_elements_by_regex(elements, rx_selector, filter)
 
-    def _filter_elements(self, elements, visible, idx, number):
+    def _filter_elements_by_locator(self, elements, visible=None, visible_text=None, idx=None,
+                                    tag_name=None, filter='first'):
         if visible is not None:
             elements = [el for el in elements if visible == el.is_displayed()]
-        if number == 'single':
+        if visible_text is not None:
+            elements = [el for el in elements
+                        if Validator.match_str_or_regex(visible_text, el.text)]
+        if tag_name is not None:
+            elements = [el for el in elements
+                        if self.element_validator.validate(el, {'tag_name': tag_name})]
+        if filter == 'first':
             idx = idx or 0
             return elements[idx] if elements and idx < len(elements) else None
         else:
             return elements
 
-    def _filter_elements_by_regex(self, elements, selector, method):
-        if method == 'find':
+    def _filter_elements_by_regex(self, elements, selector, filter):
+        if filter == 'first':
             return next((el for el in elements if self._matches_selector(el, selector)), None)
-        elif method == 'select':
-            return [el for el in elements if self._matches_selector(el, selector)]
         else:
-            return None
+            return [el for el in elements if self._matches_selector(el, selector)]
 
     @staticmethod
     def _delete_regexps_from(selector):
@@ -241,7 +211,8 @@ class Locator(object):
         return next((el for el in elements if self._matches_selector(el, {'text': label_exp})), None)
 
     def _matches_selector(self, element, selector):
-        return all(what.search(self._fetch_value(element, how)) for how, what in selector.items())
+        return all(Validator.match_str_or_regex(what, self._fetch_value(element, how))
+                   for how, what in selector.items())
 
     @property
     def _can_convert_regexp_to_contains(self):
@@ -264,23 +235,23 @@ class Locator(object):
     def _ensure_scope_context(self):
         return self.query_scope.wd
 
-    def _locate_element(self, how, what):
-        return self.query_scope.wd.find_element(self._wd_finder(how), what)
+    def _locate_element(self, how, what, scope=None):
+        scope = scope or self.query_scope.wd
+        return scope.find_element(self._wd_finder(how), what)
 
     def _locate_elements(self, how, what, scope=None):
-        if scope is None:
-            scope = self.query_scope.wd
+        scope = scope or self.query_scope.wd
         return scope.find_elements(self._wd_finder(how), what)
 
     def _wd_finder(self, how):
         return self.WD_FINDERS.get(how, how)
 
     def _wd_is_supported(self, how, what):
-        if how not in self.WD_FINDERS:
+        if type(what) not in nerodia._str_types:
             return False
-        if type(what) not in [six.text_type, six.binary_type, re._pattern_type]:
+        if how in ['class', 'class_name'] and ' ' in what:
             return False
-        if how in ['class', 'class_name'] and type(what) in [six.text_type, six.binary_type] \
-                and ' ' in what:
-            return False
+        for loc in ['partial_link_text', 'link_text', 'link']:
+            if how == loc:
+                nerodia.logger.deprecate(loc, 'visible_text')
         return True

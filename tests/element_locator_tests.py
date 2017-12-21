@@ -119,6 +119,37 @@ class TestElementLocatorFindsSingleElement(object):
         locate_one(browser, {'class_name': 'a b'})
         expect_one.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a b ')]")
 
+    def test_handles_selector_with_tag_name_and_xpath(self, browser, mocker, expect_one, expect_all):
+        div1 = element(mocker, values={'tag_name': 'div'}, attrs={'class_name': 'foo'})
+        span = element(mocker, values={'tag_name': 'span'}, attrs={'class_name': 'foo'})
+        div2 = element(mocker, values={'tag_name': 'div'}, attrs={'class_name': 'foo'})
+
+        expect_one.return_value = div1
+        expect_all.return_value = [div1, span, div2]
+
+        selector = {'xpath': './/*[@class="foo"]', 'tag_name': 'span'}
+        result = locate_one(browser, selector)
+
+        expect_one.assert_called_once_with(By.XPATH, './/*[@class="foo"]')
+        expect_all.assert_called_once_with(By.XPATH, './/*[@class="foo"]')
+
+        assert result.tag_name == 'span'
+
+    def test_handles_custom_attributes(self, browser, mocker, expect_one, expect_all):
+        div1 = element(mocker, values={'tag_name': 'div'}, attrs={'custom_attribute': 'foo'})
+        span = element(mocker, values={'tag_name': 'span'}, attrs={'custom_attribute': 'foo'})
+        div2 = element(mocker, values={'tag_name': 'div'}, attrs={'custom_attribute': 'foo'})
+
+        expect_one.return_value = span
+        expect_all.return_value = [div1, span, div2]
+
+        selector = {'custom_attribute': 'foo', 'tag_name': 'span'}
+        result = locate_one(browser, selector)
+
+        expect_one.assert_called_once_with(By.XPATH, ".//span[@custom-attribute='foo']")
+
+        assert result.tag_name == 'span'
+
     # with special cased selectors
 
     def test_normalizes_space_for_text(self, browser, expect_one):
@@ -128,10 +159,6 @@ class TestElementLocatorFindsSingleElement(object):
     def test_translates_caption_to_text(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'caption': 'foo'})
         expect_one.assert_called_once_with(By.XPATH, ".//div[normalize-space()='foo']")
-
-    def test_translates_class_name_to_class(self, browser, expect_one):
-        locate_one(browser, {'tag_name': 'div', 'class_name': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[contains(concat(' ', @class, ' '), ' foo ')]")
 
     def test_handles_data_attributes(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'data_name': 'foo'})
@@ -245,9 +272,10 @@ class TestElementLocatorFindsSingleElement(object):
         selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
         assert locate_one(browser, selector) == elements[1]
 
-    def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_one):
+    def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_one, expect_all):
         from nerodia.elements.input import Input
         expect_one.return_value = element(mocker, values={'tag_name': 'div'})
+        expect_all.return_value = [element(mocker, values={'tag_name': 'div'})]
         selector = {'tag_name': 'input', 'xpath': '//div'}
         assert locate_one(browser, selector, Input.ATTRIBUTES) is None
 
@@ -273,10 +301,11 @@ class TestElementLocatorFindsSeveralElements(object):
     # by delegating to Selenium
 
     @pytest.mark.parametrize('finder', Locator.WD_FINDERS.items())
-    def test_delegates_to_seleniums_locators(self, browser, finder, expect_all):
+    def test_delegates_to_seleniums_locators(self, browser, mocker, expect_all, finder):
         arg, str = finder
         locate_all(browser, {arg: 'bar'})
-        expect_all.assert_called_once_with(str, 'bar')
+        expect_all.return_value = [element(mocker, values={'tag_name': 'div'})]
+        assert expect_all.call_args_list[0][0] == (str, 'bar')
 
     # with an empty selector
 

@@ -1,19 +1,13 @@
 from copy import copy
 
 from ..element.locator import Locator as ElementLocator
-from ...elements.text_field import TextField
 
 
 class Locator(ElementLocator):
-    def locate_all(self):
-        return self._find_all_by_multiple()
-
     # private
 
-    def _wd_find_first_by(self, how, what):
-        if how in ['tag_name', Locator.WD_FINDERS.get('tag_name')]:
-            how, what = self.selector_builder._build_wd_selector({'tag_name': what})
-        return super(Locator, self)._wd_find_first_by(how, what)
+    def _using_selenium(self, *args):
+        return None  # force using Nerodia
 
     def _matches_selector(self, element, selector):
         selector = copy(selector)
@@ -26,9 +20,3 @@ class Locator(ElementLocator):
                 selector[correct_key] = selector.pop(key)
 
         return super(Locator, self)._matches_selector(element, selector)
-
-    def _by_id(self):
-        element = super(Locator, self)._by_id()
-
-        if element and element.get_attribute('type') not in TextField.NON_TEXT_TYPES:
-            return element

@@ -41,6 +41,9 @@ class SelectorBuilder(object):
         elif how == 'visible':
             if not isinstance(what, bool):
                 raise TypeError('expected {}, got {!r}:{}'.format(bool, what, what.__class__))
+        elif how == 'visible_text':
+            if type(what) not in [six.text_type, six.binary_type, re._pattern_type]:
+                raise TypeError('expected str or regexp, got {}')
         else:
             if isinstance(what, list) and how != 'class_name':
                 raise TypeError("only 'class_name' locator can have a value of a list")
@@ -67,7 +70,7 @@ class SelectorBuilder(object):
 
     def _normalize_selector(self, how, what):
         if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'label', 'css', 'visible',
-                   'adjacent']:
+                   'visible_text', 'adjacent']:
             # include 'class' since the valid attribute is 'class_name'
             return [how, what]
         elif how == 'class_name':

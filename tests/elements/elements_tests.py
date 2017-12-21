@@ -1,5 +1,7 @@
 import pytest
 
+from re import compile
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -23,3 +25,13 @@ def test_returns_false_if_the_two_collections_are_not_the_same(browser):
 
     assert a != b
     assert not a.eql(b)
+
+
+@pytest.mark.page('non_control_elements.html')
+def test_finds_elements_by_visible_text(browser):
+    assert len(browser.links(visible_text='all visible')) == 1
+    assert len(browser.links(visible_text=compile(r'all visible'))) == 1
+    assert len(browser.links(visible_text='some visible')) == 1
+    assert len(browser.links(visible_text=compile(r'some visible'))) == 1
+    assert len(browser.links(visible_text='none visible')) == 0
+    assert len(browser.links(visible_text=compile(r'none visible'))) == 0

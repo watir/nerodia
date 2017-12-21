@@ -14,7 +14,7 @@ class TestDivExist(object):
         assert browser.div(title='Header and primary navigation').exists
         assert browser.div(title=compile(r'Header and primary navigation')).exists
         assert browser.div(text='Not shownNot hidden').exists
-        assert browser.div(text=compile(r'Not shownNot hidden')).exists
+        assert browser.div(text=compile(r'Not hidden')).exists
         assert browser.div(class_name='profile').exists
         assert browser.div(class_name=compile(r'profile')).exists
         assert browser.div(index=0).exists
@@ -82,6 +82,10 @@ class TestDivAttributes(object):
     def test_should_take_all_conditions_into_account_when_locating_by_id(self, browser):
         assert browser.div(id='multiple', class_name='bar').class_name == 'bar'
 
+    @pytest.mark.page('multiple_ids.html')
+    def test_should_find_the_id_with_the_correct_tag_name(self, browser):
+        assert browser.span(id='multiple').class_name == 'foobar'
+
     # style
 
     # TODO: xfail IE
@@ -119,6 +123,11 @@ class TestDivAttributes(object):
     def test_raises_correct_exception_for_text_if_element_does_not_exist(self, browser, selector):
         with pytest.raises(UnknownObjectException):
             browser.delete(**selector).text
+
+    # custom attributes
+
+    def test_returns_the_custom_attribute_if_the_element_exists(self, browser):
+        assert browser.div(custom_attribute='custom').attribute_value('custom-attribute') == 'custom'
 
 
 def test_finds_all_attribute_methods(browser):

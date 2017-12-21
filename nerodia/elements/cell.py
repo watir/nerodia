@@ -13,8 +13,8 @@ class Cell(TableCell):
 @six.add_metaclass(MetaHTMLElement)
 class CellCollection(TableCellCollection):
     @property
-    def elements(self):
+    def _elements(self):
         # we do this craziness since the xpath used will find direct child rows
         # before any rows inside thead/tbody/tfoot...
-        elements = super(CellCollection, self).els
+        elements = super(CellCollection, self)._elements
         return sorted(elements, key=lambda e: int(e.get_attribute('cellIndex')))
