@@ -5,7 +5,7 @@ from re import compile, IGNORECASE
 
 import pytest
 
-from nerodia.exception import UnknownObjectException
+from nerodia.exception import UnknownObjectException, ObjectReadOnlyException
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
@@ -183,8 +183,8 @@ class TestTextFieldAccessMethods(object):
         with pytest.raises(UnknownObjectException):
             browser.text_field(index=1337).readonly
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_sending_keys_to_readonly_element(self, browser):
-        from nerodia.exception import ObjectReadOnlyException
         with pytest.raises(ObjectReadOnlyException):
             browser.text_field(id='new_user_code').set('foo')
 
@@ -198,11 +198,12 @@ class TestTextFieldAccessMethods(object):
         browser.text_field(name='new_user_occupation').append(' ĳĳ')
         assert browser.text_field(name='new_user_occupation').value == 'Developer ĳĳ'
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_append_if_the_object_is_readonly(self, browser):
-        from nerodia.exception import ObjectReadOnlyException
         with pytest.raises(ObjectReadOnlyException):
             browser.text_field(id='new_user_code').append('Append This')
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_append_if_the_object_is_disabled(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
@@ -226,8 +227,8 @@ class TestTextFieldAccessMethods(object):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').clear()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_object_is_readonly(self, browser):
-        from nerodia.exception import ObjectReadOnlyException
         with pytest.raises(ObjectReadOnlyException):
             browser.text_field(id='new_user_code').clear()
 

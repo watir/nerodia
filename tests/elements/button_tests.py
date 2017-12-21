@@ -204,6 +204,7 @@ class TestButtonEnabled(object):
         with pytest.raises(UnknownObjectException):
             browser.button(name='no_such_name').enabled
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_enabled_if_disabled_button_is_clicked(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
@@ -240,6 +241,7 @@ class TestButtonManipulation(object):
         with pytest.raises(UnknownObjectException):
             browser.button(**selector).click()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_clicking_a_disabled_button(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):

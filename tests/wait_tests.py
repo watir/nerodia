@@ -116,6 +116,7 @@ class TestAutomaticWait(object):
         with pytest.raises(UnknownObjectException):
             browser.div(id='bar').click()
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_exception_if_the_element_doesnt_become_enabled(self, browser):
         with pytest.raises(ObjectDisabledException):
             browser.button(id='btn').click()

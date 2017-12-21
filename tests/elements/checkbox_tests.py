@@ -176,6 +176,7 @@ class TestCheckboxManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'new_user_interests_dentistry'},
                               {'xpath': "//input[@id='new_user_interests_dentistry']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_clear_if_the_checkbox_is_disabled(self, browser, selector):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
@@ -225,6 +226,7 @@ class TestCheckboxManipulation(object):
     @pytest.mark.parametrize('selector',
                              [{'id': 'new_user_interests_dentistry'},
                               {'xpath': "//input[@id='new_user_interests_dentistry']"}])
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_set_if_the_checkbox_is_disabled(self, browser, selector):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):

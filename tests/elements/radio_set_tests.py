@@ -282,6 +282,7 @@ class TestRadioSetIsSelect(object):
         with pytest.raises(UnknownObjectException):
             browser.radio_set(id='new_user_newsletter_yes').select(compile(r'missing_option'))
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_is_disabled(self, browser):
         with pytest.raises(ObjectDisabledException):
             browser.radio_set(id='new_user_newsletter_none').select('None')

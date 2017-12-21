@@ -337,12 +337,14 @@ class TestSelectListSelect(object):
         finally:
             nerodia.default_timeout = start_timeout
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):
         with pytest.raises(NoValueFoundException):
             browser.select_list(name='new_user_country').select('missing_option')
         with pytest.raises(NoValueFoundException):
             browser.select_list(name=re.compile('new_user_country')).select('missing_option')
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_is_disabled(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
@@ -433,12 +435,14 @@ class TestSelectListJsSelect(object):
         assert 'Azeri - Latin' not in selected_options
         assert 'Latin' in selected_options
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):
         with pytest.raises(NoValueFoundException):
             browser.select_list(name='new_user_country').js_select('missing_option')
         with pytest.raises(NoValueFoundException):
             browser.select_list(name=re.compile('new_user_country')).js_select('missing_option')
 
+    @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_is_disabled(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):

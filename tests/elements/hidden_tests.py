@@ -83,6 +83,7 @@ class TestHiddenAttributes(object):
             browser.hidden(index=1337).type
 
 
+@pytest.mark.usefixtures('quick_timeout')
 def test_raises_correct_exception_when_attempting_to_click(browser):
     from nerodia.exception import ObjectDisabledException
     with pytest.raises(ObjectDisabledException):
