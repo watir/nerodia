@@ -253,5 +253,5 @@ class Locator(object):
             return False
         for loc in ['partial_link_text', 'link_text', 'link']:
             if how == loc:
-                nerodia.logger.deprecate(loc, 'visible_text')
+                nerodia.logger.deprecate(':{} locator'.format(loc), 'visible_text')
         return True
