@@ -119,7 +119,7 @@ class Locator(object):
             vis = element.text
             all = Element(self.query_scope,
                           {'element': element})._execute_js('getTextContent', element).strip()
-            if all != vis:
+            if all != vis.strip():
                 nerodia.logger.deprecate("'text' locator with RegExp values to find elements "
                                          "based on only visible text", 'visible_text')
             return vis
