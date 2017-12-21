@@ -68,6 +68,8 @@ class Locator(object):
                 return
             if filter == 'all':
                 found = self._locate_elements(sel, value)
+                if sel == 'tag_name':
+                    return found
                 elements = self._filter_elements_by_locator(found, tag_name=tag_name, filter=filter)
                 return [el for el in elements if el is not None]
             else:

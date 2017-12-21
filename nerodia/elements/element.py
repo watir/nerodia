@@ -413,7 +413,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         try:
             return self.visible
-        except UnknownObjectException:
+        except (UnknownObjectException, UnknownFrameException):
             return False
 
     def style(self, prop=None):

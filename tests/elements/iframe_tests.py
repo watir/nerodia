@@ -66,6 +66,9 @@ class TestIFrameExist(object):
     def test_returns_true_if_an_element_exists_in_a_frame_generated_in_a_collection(self, browser):
         assert browser.body().iframes()[0].div().exists is True
 
+    def test_returns_false_for_sub_element_of_a_non_existing_frame(self, browser):
+        assert browser.iframe(id='no_such_id').element().exists is False
+
 
 class TestIFrameOther(object):
     @pytest.mark.page('nested_iframes.html')
@@ -82,6 +85,14 @@ class TestIFrameOther(object):
 
     def test_handles_all_locators_for_element_which_does_not_exist(self, browser):
         assert browser.iframe(index=0).div(id='invalid').exists is False
+
+    # present
+
+    def test_returns_true_if_the_iframe_is_present(self, browser):
+        assert browser.iframe(id='iframe_1').present is True
+
+    def test_returns_false_if_the_iframe_is_not_present(self, browser):
+        assert browser.iframe(id='no_such_id').present is False
 
     def test_switches_between_iframe_and_parent_when_needed(self, browser):
         for element in browser.iframe(id='iframe_1').elements():
