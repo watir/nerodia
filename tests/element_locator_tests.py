@@ -297,7 +297,13 @@ class TestElementLocatorFindsSeveralElements(object):
 
     def test_handles_selector_with_tag_name_and_multiple_attributes(self, browser, expect_all):
         locate_all(browser, ['tag_name', 'div', 'dir', 'foo', 'title', 'bar'])
-        expect_all.assert_called_once_with(By.XPATH, ".//div[@dir='foo' and @title='bar']")
+        expect_all.assert_called_once()
+        by, selector = expect_all.call_args[0]
+        assert by == 'xpath'
+        assert '//div' in selector
+        assert 'and' in selector
+        assert "@dir='foo'" in selector
+        assert "@title='bar'" in selector
 
     def test_handles_selector_with_class_attribute_presense(self, browser, expect_all):
         locate_all(browser, {'class_name': True})
