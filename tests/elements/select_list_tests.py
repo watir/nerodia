@@ -344,7 +344,7 @@ class TestSelectListSelect(object):
         with pytest.raises(NoValueFoundException):
             browser.select_list(name=re.compile('new_user_country')).select('missing_option')
 
-    @pytest.mark.usefixtures('quick_timeout')
+    # This test doesn't like quick timeout
     def test_raises_correct_exception_if_the_option_is_disabled(self, browser):
         from nerodia.exception import ObjectDisabledException
         with pytest.raises(ObjectDisabledException):
