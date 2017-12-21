@@ -13,8 +13,8 @@ class TestDivExist(object):
         assert browser.div(id=compile(r'header')).exists
         assert browser.div(title='Header and primary navigation').exists
         assert browser.div(title=compile(r'Header and primary navigation')).exists
-        assert browser.div(text='This is a footer.').exists
-        assert browser.div(text=compile(r'This is a footer\.')).exists
+        assert browser.div(text='Not shownNot hidden').exists
+        assert browser.div(text=compile(r'Not shownNot hidden')).exists
         assert browser.div(class_name='profile').exists
         assert browser.div(class_name=compile(r'profile')).exists
         assert browser.div(index=0).exists

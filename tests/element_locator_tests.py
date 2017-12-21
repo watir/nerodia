@@ -225,6 +225,9 @@ class TestElementLocatorFindsSingleElement(object):
         assert locate_one(browser, selector) == el2
 
     def test_handles_label_regexp_selector(self, browser, mocker, expect_all):
+        fetch_mock = mocker.patch('nerodia.locators.element.locator.Locator._fetch_value')
+        fetch_mock.side_effect = ['foo', 'foob']
+
         label1 = element(mocker, values={'tag_name': 'label', 'text': 'foo'}, attrs={'for': 'bar'})
         label2 = element(mocker, values={'tag_name': 'label', 'text': 'foob'}, attrs={'for': 'baz'})
         div = element(mocker, values={'tag_name': 'div'})

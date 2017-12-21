@@ -148,10 +148,11 @@ class Locator(object):
         else:
             return [el for el in self._all_elements if what.search(self._fetch_value(el, how))]
 
-    @staticmethod
-    def _fetch_value(element, how):
+    def _fetch_value(self, element, how):
         if how == 'text':
-            return element.text
+            from nerodia.elements.element import Element
+            return Element(self.query_scope, {'element': element})._execute_js('getTextContent',
+                                                                               element).strip()
         elif how == 'tag_name':
             return element.tag_name.lower()
         elif how == 'href':
