@@ -5,6 +5,7 @@ import six
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
+import nerodia
 from ...exception import Error
 from ...xpath_support import XpathSupport
 
@@ -142,7 +143,7 @@ class Locator(object):
         return self._filter_elements(found, visible, None, 'multiple')
 
     def _wd_find_all_by(self, how, what):
-        if isinstance(what, str):
+        if isinstance(what, nerodia._str_types):
             return self._locate_elements(how, what)
         else:
             return [el for el in self._all_elements if what.search(self._fetch_value(el, how))]

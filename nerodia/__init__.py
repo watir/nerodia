@@ -1,3 +1,5 @@
+import six
+
 from .logger import Logger
 
 __version__ = '0.5.0'
@@ -33,6 +35,12 @@ locator_namespace = locators
 #
 
 logger = Logger()
+
+#
+# For py2/py3 compatibility
+#
+
+_str_types = (six.binary_type, six.text_type)
 
 
 def element_class_for(tag_name):
