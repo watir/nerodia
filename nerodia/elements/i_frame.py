@@ -67,7 +67,6 @@ class IFrame(HTMLElement):
         from .element import Element
         args = [e.wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
-        self.browser.after_hooks.run()
 
         return self.browser._wrap_elements_in(self, returned)
 

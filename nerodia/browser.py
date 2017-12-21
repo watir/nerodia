@@ -215,7 +215,6 @@ class Browser(Container, HasWindow, Waitable):
         from .elements.element import Element
         args = [e.wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
-        self.after_hooks.run()
 
         return self._wrap_elements_in(self, returned)
 
