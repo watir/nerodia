@@ -37,11 +37,6 @@ class TestTableHeaderExist(object):
         with pytest.raises(TypeError):
             browser.thead(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.thead(no_such_how='some_value').exists
-
 
 class TestTableHeaderOther(object):
     # get_item

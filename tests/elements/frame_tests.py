@@ -57,11 +57,6 @@ class TestFrameOther(object):
         with pytest.raises(TypeError):
             browser.frame(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.frame(no_such_how='some_value').exists
-
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_accessing_elements_inside_non_existing_frame(self, browser):
         with pytest.raises(UnknownFrameException):

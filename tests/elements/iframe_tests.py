@@ -80,11 +80,6 @@ class TestIFrameOther(object):
         with pytest.raises(TypeError):
             browser.iframe(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.iframe(no_such_how='some_value').exists
-
     def test_handles_all_locators_for_element_which_does_not_exist(self, browser):
         assert browser.iframe(index=0).div(id='invalid').exists is False
 

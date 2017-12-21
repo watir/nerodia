@@ -79,13 +79,6 @@ class TestElementWithoutTagName(object):
     def test_finds_an_element_by_arbitrary_attribute(self, browser):
         assert browser.element(title='no title').exists
 
-    def test_raises_correct_exception_if_the_attribute_is_invalid_for_the_element_type(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.element(foo='no title').exists
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.element(value=compile(r'')).exists
-
     def test_finds_several_elements_by_xpath(self, browser):
         assert len(browser.elements(xpath="//a")) == 1
 

@@ -18,10 +18,10 @@ class IFrame(HTMLElement):
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope,
                                                         selector, self.ATTRIBUTES)
-        locator = self._locator_class(self.query_scope, selector, selector_builder,
-                                      element_validator)
+        self.locator = self._locator_class(self.query_scope, selector, selector_builder,
+                                           element_validator)
 
-        element = locator.locate()
+        element = self.locator.locate()
         if not element:
             raise self._unknown_exception(
                 'unable to locate {} using {}'.format(self.selector['tag_name'],

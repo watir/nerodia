@@ -29,11 +29,6 @@ class TestTableExists(object):
         with pytest.raises(TypeError):
             browser.table(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.table(no_such_how='some_value').exists
-
 
 class TestTableOther(object):
     def test_returns_a_two_dimensional_array_string_representation_of_the_table(self, browser):

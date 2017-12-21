@@ -35,11 +35,6 @@ class TestLiExist(object):
         with pytest.raises(TypeError):
             browser.li(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.li(no_such_how='some_value').exists
-
 
 class TestLiAttributes(object):
     # class_name

@@ -31,6 +31,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self.el = selector.pop('element', None)
         self.selector = selector
         self.keyword = None
+        self.locator = None
 
     @property
     def exists(self):
@@ -576,10 +577,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         element_validator = self._element_validator_class()
         selector_builder = self._selector_builder_class(self.query_scope, self.selector.copy(),
                                                         self.ATTRIBUTES)
-        locator = self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
-                                      element_validator)
+        self.locator = self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
+                                           element_validator)
 
-        self.el = locator.locate()
+        self.el = self.locator.locate()
         return self.el
 
     @property
@@ -657,7 +658,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             except self._unknown_exception as e:
                 msg = str(e)
                 if len(self.query_scope.iframes()) > 0:
-                    msg += '. Maybe look in an iframe?'
+                    msg += '; Maybe look in an iframe?'
+                custom_attributes = self.locator.selector_builder.custom_attributes
+                if custom_attributes:
+                    msg += '; Nerodia treated {!r} as a non-HTML compliant attribute, ' \
+                           'ensure that was intended'.format(custom_attributes)
                 raise self._unknown_exception(msg)
             except StaleElementReferenceException:
                 exist_check()

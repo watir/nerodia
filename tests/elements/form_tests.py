@@ -36,11 +36,6 @@ class TestFormExist(object):
         with pytest.raises(TypeError):
             browser.form(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.form(no_such_how='some_value').exists
-
 
 class TestFormSubmit(object):
     def test_submits_the_form(self, browser):

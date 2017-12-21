@@ -4,7 +4,6 @@ import pytest
 from selenium.webdriver.common.by import By
 
 from nerodia.elements.html_elements import HTMLElement
-from nerodia.exception import MissingWayOfFindingObjectException
 from nerodia.locators.element import Validator, SelectorBuilder
 from nerodia.locators.element.locator import Locator
 
@@ -267,13 +266,6 @@ class TestElementLocatorFindsSingleElement(object):
             locate_one(browser, selector)
         expected = SelectorBuilder.VALID_WHATS + [int]
         assert e.value.args[0] == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
-
-    def test_raises_correct_exception_if_the_attribute_is_not_valid(self, browser, mocker, expect_all):
-        from nerodia.elements.input import Input
-        with pytest.raises(MissingWayOfFindingObjectException) as e:
-            selector = {'tag_name': 'input', 'href': 'foo'}
-            locate_one(browser, selector, Input.ATTRIBUTES)
-        assert e.value.args[0] == "invalid attribute: {}".format('href')
 
 
 class TestElementLocatorFindsSeveralElements(object):

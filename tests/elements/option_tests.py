@@ -59,11 +59,6 @@ class TestOptionExist(object):
         with pytest.raises(TypeError):
             browser.select_list(name='new_user_country').option(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.option(no_such_how='some_value').exists
-
 
 class TestOptionSelect(object):
     def test_selects_the_chosen_option(self, browser):

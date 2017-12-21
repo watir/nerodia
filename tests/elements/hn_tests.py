@@ -32,11 +32,6 @@ class TestHnExist(object):
         with pytest.raises(TypeError):
             browser.h1(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.h1(no_such_how='some_value').exists
-
 
 class TestHnAttributes(object):
     # class

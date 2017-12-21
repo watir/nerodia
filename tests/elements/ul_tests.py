@@ -29,11 +29,6 @@ class TestUlExists(object):
         with pytest.raises(TypeError):
             browser.ul(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.ul(no_such_how='some_value').exists
-
 
 class TestUlAttributes(object):
     # class_name

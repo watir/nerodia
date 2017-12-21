@@ -37,11 +37,6 @@ class TestTbodyExist(object):
         with pytest.raises(TypeError):
             browser.tbody(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.tbody(no_such_how='some_value').exists
-
 
 class TestTbodyOther(object):
     def test_finds_the_first_row_matching_the_selector(self, browser):

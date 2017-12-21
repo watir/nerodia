@@ -7,7 +7,6 @@ import re
 from selenium.webdriver.common.by import By
 
 import nerodia
-from ...exception import MissingWayOfFindingObjectException
 from ...xpath_support import XpathSupport
 
 STRING_TYPES = [six.text_type, six.binary_type]
@@ -21,6 +20,7 @@ class SelectorBuilder(object):
         self.query_scope = query_scope  # either element or browser
         self.selector = selector
         self.valid_attributes = valid_attributes
+        self.custom_attributes = []
 
     @property
     def normalized_selector(self):
@@ -75,13 +75,13 @@ class SelectorBuilder(object):
         elif how == 'caption':
             return ['text', what]
         else:
-            self._assert_valid_as_attribute(how)
+            self._check_custom_attribute(how)
             return [how, what]
 
-    def _assert_valid_as_attribute(self, attribute):
+    def _check_custom_attribute(self, attribute):
         if self._is_valid_attribute(attribute) or self.WILDCARD_ATTRIBUTE.search(attribute):
             return None
-        raise MissingWayOfFindingObjectException('invalid attribute: {}'.format(attribute))
+        self.custom_attributes.append(attribute)
 
     def _given_xpath_or_css(self, selector):
         xpath = selector.pop('xpath', None)

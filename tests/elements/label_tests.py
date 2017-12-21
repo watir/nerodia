@@ -34,11 +34,6 @@ class TestLabelExist(object):
         with pytest.raises(TypeError):
             browser.label(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.label(no_such_how='some_value').exists
-
 
 def test_fires_the_onclick_event(browser, messages):
     browser.label(id='first_label').click()

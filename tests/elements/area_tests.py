@@ -38,11 +38,6 @@ class TestAreaExist(object):
         with pytest.raises(TypeError):
             browser.area(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.area(no_such_how='some_value').exists
-
 
 class TestAreaId(object):
     def test_returns_the_id_attribute(self, browser):

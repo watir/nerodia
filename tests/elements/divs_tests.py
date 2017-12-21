@@ -8,7 +8,7 @@ def test_returns_the_matching_elements(browser):
 
 
 def test_returns_the_number_of_divs(browser):
-    assert len(browser.divs()) == 14
+    assert len(browser.divs()) == 15
 
 
 def test_returns_the_div_at_the_given_index(browser):

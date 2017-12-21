@@ -25,11 +25,6 @@ class TestTrExists(object):
         with pytest.raises(TypeError):
             browser.tr(id=3.14).exists
 
-    def test_raises_correct_exception_when_how_argument_is_invalid(self, browser):
-        from nerodia.exception import MissingWayOfFindingObjectException
-        with pytest.raises(MissingWayOfFindingObjectException):
-            browser.tr(no_such_how='some_value').exists
-
 
 class TestTrClick(object):
     @pytest.mark.only('safari')

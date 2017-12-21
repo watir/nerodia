@@ -18,10 +18,6 @@ class NoValueFoundException(Error):
     pass
 
 
-class MissingWayOfFindingObjectException(Error):
-    pass
-
-
 class UnknownCellException(Error):
     pass
 
