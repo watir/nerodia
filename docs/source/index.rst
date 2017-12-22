@@ -1,20 +1,31 @@
-.. Nerodia documentation master file, created by
-   sphinx-quickstart on Fri Dec 22 09:34:48 2017.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+.. image:: https://img.shields.io/pypi/v/nerodia.svg
+    :target: https://pypi.python.org/pypi/nerodia
 
-Welcome to Nerodia's documentation!
-===================================
+.. image:: https://img.shields.io/pypi/pyversions/nerodia.svg
+    :target: https://pypi.python.org/pypi/nerodia
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+.. image:: https://travis-ci.org/watir/nerodia.svg?branch=master
+    :target: https://travis-ci.org/watir/nerodia
 
+-----
 
+Introduction
+============
+Nerodia is a Python port of the Watir ruby gem. https://github.com/watir/watir
 
-Indices and tables
-==================
+Supported Python Versions
+=========================
 
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`
+* Python 2.7
+* Python 3.4+
+
+Installing
+==========
+
+If you have `pip <https://pip.pypa.io/>`_ on your system, you can simply install or upgrade::
+
+    pip install -U nerodia
+
+Alternately, you can download the source distribution from `PyPI <http://pypi.python.org/pypi/nerodia>`_ (e.g. nerodia-1.0.0.tar.gz), unarchive it, and run::
+
+    python setup.py install
