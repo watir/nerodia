@@ -29,10 +29,3 @@ If you have `pip <https://pip.pypa.io/>`_ on your system, you can simply install
 Alternately, you can download the source distribution from `PyPI <http://pypi.python.org/pypi/nerodia>`_ (e.g. nerodia-1.0.0.tar.gz), unarchive it, and run::
 
     python setup.py install
-
-Contents:
- 
-.. toctree::
-   :maxdepth: 2
- 
-   modules.rst
