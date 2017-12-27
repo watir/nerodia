@@ -33,4 +33,4 @@ Alternately, you can download the source distribution from `PyPI <http://pypi.py
 API Documentation
 =================
 
-For specific documentation of Nerodia's API, please see the :doc:`./api`
+For specific documentation of Nerodia's API, please see the Nerodia Documentation (provide link)
