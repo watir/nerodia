@@ -1,4 +1,4 @@
-:orphan:
+.. _api-documentation:
 
 ======================
 Nerodia API Documentation
