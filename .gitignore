@@ -1,5 +1,7 @@
 .idea
+.vscode
 venv
 venv3
 venv36
 *.pyc
+docs/build/**/*
