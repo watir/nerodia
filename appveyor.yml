@@ -17,5 +17,11 @@ install:
 build_script:
   - python setup.py install
 
+before_test:
+ - curl -fsS -o C:\Tools\WebDriver\IEServerDriver.exe https://github.com/SeleniumHQ/selenium/raw/master/cpp/prebuilt/Win32/Release/IEDriverServer.exe
+ - chromedriver.exe --version
+ - geckodriver.exe --version
+ - IEDriverServer.exe --version
+
 test_script:
   - tox
