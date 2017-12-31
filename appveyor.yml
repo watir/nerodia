@@ -2,6 +2,9 @@ clone_script:
 - cmd: git clone -q --recursive --branch=%APPVEYOR_REPO_BRANCH% https://github.com/%APPVEYOR_REPO_NAME%.git %APPVEYOR_BUILD_FOLDER%
 - cmd: git checkout -qf %APPVEYOR_REPO_COMMIT%
 
+image:
+- Visual Studio 2017
+
 environment:
   matrix:
     - PYTHON: "C:\\Python27"
@@ -18,10 +21,9 @@ build_script:
   - python setup.py install
 
 before_test:
- - curl -fsS -o C:\Tools\WebDriver\IEServerDriver.exe https://github.com/SeleniumHQ/selenium/raw/master/cpp/prebuilt/Win32/Release/IEDriverServer.exe
  - chromedriver.exe --version
  - geckodriver.exe --version
  - IEDriverServer.exe --version
 
 test_script:
-  - tox
+  - tox -e py27-ie
