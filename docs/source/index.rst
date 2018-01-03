@@ -7,6 +7,10 @@
 .. image:: https://travis-ci.org/watir/nerodia.svg?branch=master
     :target: https://travis-ci.org/watir/nerodia
 
+.. image:: https://ci.appveyor.com/api/projects/status/7go9s2tmp2av08sa?svg=true
+    :target: https://ci.appveyor.com/api/projects/status/7go9s2tmp2av08sa?svg=true
+
+
 -----
 
 Introduction
@@ -33,4 +37,4 @@ Alternately, you can download the source distribution from `PyPI <http://pypi.py
 API Documentation
 =================
 
-For specific documentation of Nerodia's API, :ref:`please see the Nerodia Documentation <api-documentation>`
+For specific documentation of Nerodia's API, `please see the Nerodia Documentation <http://nerodia.readthedocs.io/en/latest/>`.
