@@ -10,6 +10,7 @@ class Cookies(object):
     def to_list(self):
         """
         Returns array of cookies
+
         :rtype: list[dict]
 
         :Example:
@@ -67,6 +68,7 @@ class Cookies(object):
     def save(self, file='.cookies'):
         """
         Save cookies to file
+
         :param file: file path
 
         :Example:
@@ -79,6 +81,7 @@ class Cookies(object):
     def load(self, file='.cookies'):
         """
         Loads cookies from file
+
         :param file: file path
 
         :Example:

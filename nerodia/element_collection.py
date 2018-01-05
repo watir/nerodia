@@ -71,6 +71,7 @@ class ElementCollection(ClassHelpers):
     def to_list(self):
         """
         This collection as a list
+
         :rtype: list[nerodia.elements.element.Element]
         """
         from .elements.html_elements import HTMLElement
@@ -98,6 +99,7 @@ class ElementCollection(ClassHelpers):
     def locate(self):
         """
         Locate all elements and return self
+
         :rtype: ElementCollection
         """
         self.to_list
