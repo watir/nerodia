@@ -57,6 +57,8 @@ class Capabilities(object):
                 self._process_firefox_options(browser_options)
             elif self.selenium_browser == 'safari':
                 self._process_safari_options(browser_options)
+            elif self.selenium_browser == 'ie':
+                self._process_ie_options(browser_options)
             elif self.selenium_browser == 'remote':
                 self._process_remote_options(browser_options)
 
@@ -110,6 +112,17 @@ class Capabilities(object):
         if 'technology_preview' in opts:
             self.selenium_opts['executable_path'] = \
                 '/Applications/Safari Technology Preview.app/Contents/MacOS/safaridriver'
+
+    def _process_ie_options(self, opts):
+        from selenium.webdriver.ie.options import Options
+        if isinstance(opts, Options):
+            options = opts
+        else:
+            options = Options()
+            if 'args' in opts:
+                for arg in opts.pop('args'):
+                    options.add_argument(arg)
+        self.selenium_opts['options'] = options
 
     def _process_remote_options(self, opts):
         if self.browser == 'chrome' and self.options.pop('headless', None):

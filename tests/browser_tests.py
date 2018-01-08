@@ -65,6 +65,7 @@ class TestBrowserAttributes(object):
 
     # status
 
+    @pytest.mark.xfail_ie(reason='setting window.status does not work')
     @pytest.mark.page('non_control_elements.html')
     def test_returns_the_current_value_of_window_status(self, browser):
         """
@@ -80,7 +81,10 @@ class TestBrowserAttributes(object):
     # name
 
     def test_returns_browser_name(self, browser, bkwargs):
-        assert browser.name == bkwargs.get('browser')
+        name = bkwargs.get('browser')
+        if name == 'ie':
+            name = 'internet explorer'
+        assert browser.name == name
 
     # text
 
@@ -261,12 +265,11 @@ class TestBrowserInit(object):
 
         assert insecure is True
 
-    def test_remote_when_passed_url_arg(self, browser):
+    def test_remote_when_passed_url_arg(self, browser, browser_manager):
         from selenium.webdriver.remote.webdriver import RemoteConnection, WebDriver
-        browser_name = browser.name
-        caps_name = 'internetexplorer' if browser_name == 'internet explorer'else browser_name
+        caps_name = 'internetexplorer' if browser.name == 'internet explorer'else browser_name
         caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
-        browser = Browser(browser_name, desired_capabilities=caps)
+        browser = Browser(browser_manager.name, desired_capabilities=caps)
         driver = browser.wd
         executor = driver.command_executor
         browser.quit()
@@ -300,7 +303,7 @@ class TestBrowserInit(object):
 
         mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(browser_name))
 
-        caps_name = 'internetexplorer' if browser_name == 'ie'else browser_name
+        caps_name = 'internetexplorer' if browser_name == 'ie' else browser_name
         caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
 
         browser = Browser(browser_name, options=opts)
