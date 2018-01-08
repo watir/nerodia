@@ -1,7 +1,6 @@
+.cache
 .idea
 .vscode
-venv
-venv3
-venv36
+venv*
 *.pyc
 docs/build/**/*
