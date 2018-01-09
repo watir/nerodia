@@ -1,3 +1,7 @@
+import tempfile
+from json import load
+from os import path
+
 import pytest
 
 
@@ -42,7 +46,6 @@ class TestBrowserCookies(object):
     def test_returns_none_if_there_is_no_cookie_with_such_name(self, browser):
         assert browser.cookies['non_monster'] is None
 
-    # TODO: xfail IE
     def test_adds_a_cookie(self, browser, page, bkwargs):
         # Use temp browser for safari
         temp_browser = browser.__class__(**bkwargs)
@@ -54,33 +57,33 @@ class TestBrowserCookies(object):
         finally:
             temp_browser.close()
 
-    # TODO: xfail IE
     def test_removes_a_cookie(self, browser):
         browser.cookies.delete('monster')
         verify_cookies_count(browser, 0)
 
-    # TODO: xfail IE, safari
+    # TODO: xfail safari
     def test_clears_all_cookies(self, browser):
         browser.cookies.add('foo', 'bar')
         verify_cookies_count(browser, 2)
         browser.cookies.clear()
         verify_cookies_count(browser, 0)
 
-    # TODO: xfail IE
-    def test_saves_cookies_to_file(self, browser, temp_file):
-        from json import load
-        browser.cookies.save(temp_file.name)
-        assert load(temp_file) == browser.cookies.to_list
+    def test_saves_cookies_to_file(self, browser):
+        filename = path.join(tempfile.gettempdir(), 'temp.cookies')
+        browser.cookies.save(filename)
+        with open(filename, 'r+') as cookies:
+            assert load(cookies) == browser.cookies.to_list
 
-    # TODO: xfail IE
-    def test_loads_cookies_from_file(self, browser, temp_file):
-        from json import load
-        browser.cookies.save(temp_file.name)
+    def test_loads_cookies_from_file(self, browser):
+        filename = path.join(tempfile.gettempdir(), 'temp.cookies')
+        browser.cookies.save(filename)
         browser.cookies.clear()
-        browser.cookies.load(temp_file.name)
+        browser.cookies.load(filename)
 
         expected = browser.cookies.to_list
-        actual = load(temp_file)
+        with open(filename, 'r+') as cookies:
+            actual = load(cookies)
+
         # https://code.google.com/p/selenium/issues/detail?id=6834
         for each in expected:
             each.pop('expires', None)
