@@ -1,6 +1,10 @@
 import logging
-import nerodia
+import tempfile
+from os import path
+
 import pytest
+
+import nerodia
 
 
 @pytest.fixture
@@ -39,30 +43,32 @@ def test_outputs_to_stdout_by_default(caplog):
     assert 'warning_message' in caplog.text
 
 
-def test_allows_to_output_to_file(temp_file):
-    nerodia.logger.filename = temp_file.name
+def test_allows_to_output_to_file():
+    filename = path.join(tempfile.gettempdir(), 'log.tmp')
+    nerodia.logger.filename = filename
     nerodia.logger.warn('warning_message1')
-    with open(temp_file.name) as f:
+    with open(filename) as f:
         text = f.read()
     assert 'warning_message1' in text
 
     nerodia.logger.warn('warning_message2')
-    with open(temp_file.name) as f:
+    with open(filename) as f:
         text = f.read()
     assert 'warning_message2' in text
 
 
-def test_allows_sopping_output_to_file(temp_file):
-    nerodia.logger.filename = temp_file.name
+def test_allows_stopping_output_to_file():
+    filename = path.join(tempfile.gettempdir(), 'log.tmp')
+    nerodia.logger.filename = filename
     nerodia.logger.warn('warning_message1')
-    with open(temp_file.name) as f:
+    with open(filename) as f:
         text = f.read()
     assert 'warning_message1' in text
 
     nerodia.logger.filename = None
 
     nerodia.logger.warn('warning_message2')
-    with open(temp_file.name) as f:
+    with open(filename) as f:
         text = f.read()
     assert 'warning_message2' not in text
 
