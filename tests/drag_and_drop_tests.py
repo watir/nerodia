@@ -32,6 +32,7 @@ class TestElementDragAndDrop(object):
         assert droppable.text == 'Dropped!'
 
     @pytest.mark.xfail_firefox
+    @pytest.mark.xfail_ie
     @pytest.mark.quits_browser
     def test_can_drag_and_drop_an_element_onto_another_when_draggable_is_out_of_viewport(self, browser, draggable, droppable):
         reposition(browser, 'draggable')

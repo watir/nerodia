@@ -51,6 +51,7 @@ class TestElementExists(object):
         assert not browser.span(id='text').exists
 
 
+@pytest.mark.xfail_ie(reason='currently IE throws NoSuchElementException instead of Stale')
 @pytest.mark.page('removed_element.html')
 class TestElementCall(object):
     def test_handles_exceptions_when_taking_an_action_on_an_element_that_goes_stale_during_execution(self, browser, mocker):
