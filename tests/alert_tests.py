@@ -32,7 +32,7 @@ class TestAlertAPI(object):
                                raises=TimeoutError)
     def test_returns_true_if_alert_is_present(self, browser):
         browser.button(id='alert').click()
-        browser.wait_until(lambda b: b.alert.exists, timeout=10)
+        browser.alert.wait_for_exists()
 
     # ok
 
