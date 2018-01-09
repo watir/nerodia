@@ -1,6 +1,6 @@
 import logging
+import os
 import tempfile
-from os import path
 
 import pytest
 
@@ -13,6 +13,14 @@ def default_logging_handling(browser):
     yield
     nerodia.logger.level = orig
     nerodia.logger.filename = None
+
+
+@pytest.fixture
+def filepath():
+    filepath = os.path.join(tempfile.gettempdir(), 'log.tmp')
+    yield filepath
+    if os.path.isfile(filepath):
+        os.remove(filepath)
 
 
 def test_logs_warnings_by_default():
@@ -43,32 +51,31 @@ def test_outputs_to_stdout_by_default(caplog):
     assert 'warning_message' in caplog.text
 
 
-def test_allows_to_output_to_file():
-    filename = path.join(tempfile.gettempdir(), 'log.tmp')
-    nerodia.logger.filename = filename
+def test_allows_to_output_to_file(filepath):
+    nerodia.logger.filename = filepath
     nerodia.logger.warn('warning_message1')
-    with open(filename) as f:
+    with open(filepath) as f:
         text = f.read()
     assert 'warning_message1' in text
 
     nerodia.logger.warn('warning_message2')
-    with open(filename) as f:
+    with open(filepath) as f:
         text = f.read()
+    nerodia.logger.filename = None  # close file
     assert 'warning_message2' in text
 
 
-def test_allows_stopping_output_to_file():
-    filename = path.join(tempfile.gettempdir(), 'log.tmp')
-    nerodia.logger.filename = filename
+def test_allows_stopping_output_to_file(filepath):
+    nerodia.logger.filename = filepath
     nerodia.logger.warn('warning_message1')
-    with open(filename) as f:
+    with open(filepath) as f:
         text = f.read()
     assert 'warning_message1' in text
 
     nerodia.logger.filename = None
 
     nerodia.logger.warn('warning_message2')
-    with open(filename) as f:
+    with open(filepath) as f:
         text = f.read()
     assert 'warning_message2' not in text
 

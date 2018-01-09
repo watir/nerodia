@@ -1,6 +1,6 @@
+import os
 import tempfile
 from json import load
-from os import path
 
 import pytest
 
@@ -20,6 +20,14 @@ def clear_cookies(browser):
 @pytest.fixture
 def verify_cookie(browser):
     verify_cookies_count(browser, 1)
+
+
+@pytest.fixture
+def filepath():
+    filepath = os.path.join(tempfile.gettempdir(), 'temp.cookies')
+    yield filepath
+    if os.path.isfile(filepath):
+        os.remove(filepath)
 
 
 @pytest.mark.page('set_cookie/index.html')
@@ -68,20 +76,18 @@ class TestBrowserCookies(object):
         browser.cookies.clear()
         verify_cookies_count(browser, 0)
 
-    def test_saves_cookies_to_file(self, browser):
-        filename = path.join(tempfile.gettempdir(), 'temp.cookies')
-        browser.cookies.save(filename)
-        with open(filename, 'r+') as cookies:
+    def test_saves_cookies_to_file(self, browser, filepath):
+        browser.cookies.save(filepath)
+        with open(filepath, 'r+') as cookies:
             assert load(cookies) == browser.cookies.to_list
 
-    def test_loads_cookies_from_file(self, browser):
-        filename = path.join(tempfile.gettempdir(), 'temp.cookies')
-        browser.cookies.save(filename)
+    def test_loads_cookies_from_file(self, browser, filepath):
+        browser.cookies.save(filepath)
         browser.cookies.clear()
-        browser.cookies.load(filename)
+        browser.cookies.load(filepath)
 
         expected = browser.cookies.to_list
-        with open(filename, 'r+') as cookies:
+        with open(filepath, 'r+') as cookies:
             actual = load(cookies)
 
         # https://code.google.com/p/selenium/issues/detail?id=6834

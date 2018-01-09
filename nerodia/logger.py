@@ -25,6 +25,7 @@ class Logger(object):
     def filename(self, path):
         self._filename = path
         for hdlr in self._logger.handlers[:]:  # remove all old handlers
+            hdlr.close()
             self._logger.removeHandler(hdlr)
 
         if path is not None:
