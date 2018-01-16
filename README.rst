@@ -38,3 +38,13 @@ API Documentation
 =================
 
 For specific documentation of Nerodia's API, `please see the Nerodia Documentation <http://nerodia.readthedocs.io/en/latest/>`_.
+
+Support
+=======
+
+Send a question to the `Nerodia-General <https://groups.google.com/forum/#!forum/nerodia-general>`_ mailing list on Google Groups. Please read these guidelines before posting.
+
+Join our Slack channel
+======================
+
+Slack has created a special slack server for the Selenium and Watir (including Nerodia) communities. You can join our Slack channel by sending Slack your email `here <http://seleniumhq.herokuapp.com/>`_. You will be sent an invitation with instructions on how to join.
