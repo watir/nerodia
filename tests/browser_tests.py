@@ -267,7 +267,7 @@ class TestBrowserInit(object):
 
     def test_remote_when_passed_url_arg(self, browser, browser_manager):
         from selenium.webdriver.remote.webdriver import RemoteConnection, WebDriver
-        caps_name = 'internetexplorer' if browser.name == 'internet explorer'else browser_name
+        caps_name = 'internetexplorer' if browser.name == 'internet explorer'else browser.name
         caps = getattr(DesiredCapabilities, caps_name.upper()).copy()
         browser = Browser(browser_manager.name, desired_capabilities=caps)
         driver = browser.wd
