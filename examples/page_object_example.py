@@ -30,7 +30,13 @@ class WatirPage(BasePage):
 """Sample code that should print out expected text."""
 w = WatirPage('chrome')
 w.goto()
-print(w.intro.text)
+assert 'Watir' in w.intro.text
 w.news.click()
-print(w.browser.text)
+assert 'Titus' in w.browser.text
 w.close()
+
+"""Example passing a Browser instance."""
+br = browser.Browser('chrome')
+w2 = WatirPage(br)
+w2.goto()
+w2.close()
