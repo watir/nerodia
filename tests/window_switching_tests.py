@@ -292,8 +292,8 @@ class TestWindowRect(object):
 
     def test_should_get_the_position_of_the_current_window(self, browser):
         pos = browser.window().position
-        assert pos.x >= 0
-        assert pos.y >= 0
+        assert pos.x >= -10
+        assert pos.y >= -10
 
     def test_should_resize_the_window(self, browser):
         initial_size = browser.window().size
