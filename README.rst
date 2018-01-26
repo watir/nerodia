@@ -34,10 +34,10 @@ Alternately, you can download the source distribution from `PyPI <http://pypi.py
 
     python setup.py install
 
-API Documentation
+Documentation
 =================
 
-For specific documentation of Nerodia's API, `please see the Nerodia Documentation <http://nerodia.readthedocs.io/en/latest/>`_.
+Documentation is `located on readthedocs <http://nerodia.readthedocs.io/en/latest/>`_.
 
 Support
 =======
