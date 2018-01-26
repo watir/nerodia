@@ -50,6 +50,8 @@ class Wait(object):
             return result
         raise TimeoutError(cls._message_for(timeout, message))
 
+    whilst = until_not
+
     @classmethod
     def _message_for(cls, timeout, message):
         err = 'timed out after {} seconds'.format(timeout)

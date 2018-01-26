@@ -58,6 +58,9 @@ class TestWaitWhile(object):
     def test_waits_while_the_method_returns_true(self):
         assert Wait.until_not(timeout=0.5, method=lambda: False)
 
+    def test_wait_until_not_alias(self):
+        assert Wait.whilst(timeout=0.5, method=lambda: False)
+
     def test_exeuctes_method_if_timeout_is_zero(self):
         assert Wait.until_not(timeout=0, method=lambda: False)
 
@@ -132,6 +135,14 @@ class TestElementWaitUntilEnabled(object):
         btn = browser.button(id='btn')
         btn.wait_until(timeout=2, method=lambda b: b.enabled).click()
         Wait.until_not(lambda: btn.enabled)
+        assert btn.disabled
+
+    def test_invokes_subsequent_method_calls_when_the_element_becomes_enabled_with_alias(self, browser):
+        browser.link(id='enable_btn').click()
+
+        btn = browser.button(id='btn')
+        btn.wait_until(timeout=2, method=lambda b: b.enabled).click()
+        Wait.whilst(lambda: btn.enabled)
         assert btn.disabled
 
     def test_times_out(self, browser):
