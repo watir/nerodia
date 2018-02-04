@@ -2,7 +2,7 @@ import six
 
 from .logger import Logger
 
-__version__ = '0.6.0'
+__version__ = '0.7.0'
 
 ttc = None
 
