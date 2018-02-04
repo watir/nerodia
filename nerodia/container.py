@@ -231,6 +231,26 @@ class Container(object):
         return DataListCollection(self, dict(self._extract_selector(*args, **kwargs),
                                              tag_name='datalist'))
 
+    def date_field(self, *args, **kwargs):
+        from .elements.date_field import DateField
+        return DateField(self, dict(self._extract_selector(*args, **kwargs), tag_name='input',
+                                    type='date'))
+
+    def date_fields(self, *args, **kwargs):
+        from .elements.date_field import DateFieldCollection
+        return DateFieldCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                              tag_name='input', type='date'))
+
+    def date_time_field(self, *args, **kwargs):
+        from .elements.date_time_field import DateTimeField
+        return DateTimeField(self, dict(self._extract_selector(*args, **kwargs), tag_name='input',
+                                        type='datetime-local'))
+
+    def date_time_fields(self, *args, **kwargs):
+        from .elements.date_time_field import DateTimeFieldCollection
+        return DateTimeFieldCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                                  tag_name='input', type='datetime-local'))
+
     def dd(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
         return HTMLElement(self, dict(self._extract_selector(*args, **kwargs), tag_name='dd'))

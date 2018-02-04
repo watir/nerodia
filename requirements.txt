@@ -1,5 +1,6 @@
 pytest
 pytest-instafail
 pytest-mock
+python-dateutil
 selenium
 six

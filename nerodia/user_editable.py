@@ -2,7 +2,7 @@ class UserEditable(object):
 
     def set(self, *args):
         """
-        Clear the element, the type in the given value
+        Clear the element, then type in the given value
         :param args: value to set the input to
         """
         def func():
