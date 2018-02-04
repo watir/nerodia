@@ -28,6 +28,7 @@ class TestDateTimeFieldExist(object):
     def test_returns_the_first_date_time_field_if_given_no_args(self, browser):
         assert browser.date_time_field().exists
 
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1424984')
     def test_respects_date_time_field_types(self, browser):
         assert browser.date_time_field().type == 'datetime-local'
 
@@ -73,6 +74,7 @@ class TestDateTimeFieldAttributes(object):
 
     # type
 
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1424984')
     def test_returns_the_type_attribute_if_element_exists(self, browser):
         assert browser.date_time_field(id='html5_datetime-local').type == 'datetime-local'
 
