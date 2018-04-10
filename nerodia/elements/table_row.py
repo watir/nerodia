@@ -14,7 +14,7 @@ class TableRow(CellContainer, HTMLElement):
 
         :Example:
 
-        row = browser.tr()
+        row = browser.tr(id='table_row')
         for cell in row:
             print(cell.text)
         """

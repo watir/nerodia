@@ -21,7 +21,7 @@ class DateTimeField(Input):
 
         :Example:
 
-        browser.date_time.set('2018/01/31 14:00')
+        browser.date_time_field(id='start_date').set('2018/01/31 14:00')
 
         """
         if isinstance(value, (float, int)):

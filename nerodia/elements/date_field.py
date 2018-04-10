@@ -21,7 +21,7 @@ class DateField(Input):
 
         :Example:
 
-        browser.date_time.set('2018/01/31')
+        browser.date_field(id='start_date').set('2018/01/31')
 
         """
         if isinstance(value, six.string_types):

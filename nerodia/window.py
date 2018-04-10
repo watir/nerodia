@@ -39,7 +39,7 @@ class Window(Waitable):
 
         :Example:
 
-        browser.window.size    #=> {width: 1600, height: 1200}
+        browser.window().size    #=> {width: 1600, height: 1200}
         """
         with self:
             size = self.driver.get_window_size()
@@ -53,7 +53,7 @@ class Window(Waitable):
 
         :Example:
 
-        browser.window.position    #=> {x: 92, y: 76}
+        browser.window().position    #=> {x: 92, y: 76}
         """
         with self:
             pos = self.driver.get_window_position()
@@ -67,7 +67,7 @@ class Window(Waitable):
 
         :Example:
 
-        browser.window.resize_to(1600, 1200)
+        browser.window().resize_to(1600, 1200)
         """
         size = {'width': width, 'height': height}
         with self:
@@ -82,7 +82,7 @@ class Window(Waitable):
 
         :Example:
 
-        browser.window.move_to(300, 200)
+        browser.window().move_to(300, 200)
         """
         point = {'x': x, 'y': y}
         with self:
@@ -95,7 +95,7 @@ class Window(Waitable):
 
         :Example:
 
-        browser.window.maximize()
+        browser.window().maximize()
         """
         with self:
             self.driver.maximize_window()

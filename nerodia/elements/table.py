@@ -15,7 +15,7 @@ class Table(RowContainer, HTMLElement):
 
         :Example:
 
-        table = browser.table()
+        table = browser.table(id='some_table')
         for row in table:
             print(row.text)
         """
