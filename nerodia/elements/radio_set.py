@@ -18,7 +18,7 @@ class RadioSet(object):
 
         :Example:
 
-        radio_set = browser.radio_set()
+        radio_set = browser.radio_set(id='some_radio_set')
         for radio in radio_set:
             print(radio.text)
         """
