@@ -57,6 +57,7 @@ install:
 before_script:
 - firefox --version
 - export GECKODRIVER_DOWNLOAD=`curl -s 'https://api.github.com/repos/mozilla/geckodriver/releases/latest' | python -c "import sys, json; r = json.load(sys.stdin); print([a for a in r['assets'] if 'linux64' in a['name']][0]['browser_download_url']);"`
+- echo $GECKODRIVER_DOWNLOAD
 - curl -L -o geckodriver.tar.gz $GECKODRIVER_DOWNLOAD
 - gunzip -c geckodriver.tar.gz | tar xopf -
 - chmod +x geckodriver && sudo mv geckodriver /usr/local/bin
