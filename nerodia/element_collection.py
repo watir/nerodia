@@ -1,5 +1,6 @@
 from importlib import import_module
 
+import nerodia
 from .locators.class_helpers import ClassHelpers
 
 
@@ -83,14 +84,13 @@ class ElementCollection(ClassHelpers):
                 element = self._element_class(self.query_scope, dict(self.selector, index=idx,
                                                                      element=e))
                 if element.__class__ in [HTMLElement, Input]:
-                    element = element.to_subtype()
-                    class_name = element.__class__.__name__
-                    dic[class_name] = dic.get(class_name, [])
-                    dic[class_name].append(element)
-                    idx = len(dic[class_name]) - 1
-                    new_selector = dict(self.selector, element=e, index=idx,
-                                        tag_name=element.tag_name)
-                    elements.append(element.__class__(self.query_scope, new_selector))
+                    tag_name = element.tag_name
+                    dic[tag_name] = dic.get(tag_name, 0)
+                    dic[tag_name] += 1
+                    kls = nerodia.tag_to_class.get(tag_name)
+                    new_selector = dict(self.selector, element=e, tag_name=tag_name,
+                                        index=dic[tag_name] - 1)
+                    elements.append(kls(self.query_scope, new_selector))
                 else:
                     elements.append(element)
             self.as_list = elements
