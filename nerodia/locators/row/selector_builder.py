@@ -1,5 +1,4 @@
 import logging
-
 import re
 
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
@@ -14,9 +13,10 @@ class SelectorBuilder(ElementSelectorBuilder):
         if not selectors.pop('tag_name', None):
             raise Error('internal error: no tag_name?!')
 
+        tag_name = self.query_scope.tag_name.lower()
         expressions = ['./tr']
 
-        if self.query_scope.tag_name.lower() not in ['tbody', 'tfoot', 'thead']:
+        if tag_name not in ['tbody', 'tfoot', 'thead']:
             expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
 
         attr_expr = self.xpath_builder.attribute_expression(None, selectors)
