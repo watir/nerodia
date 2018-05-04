@@ -69,12 +69,17 @@ class Browser(Container, HasWindow, Waitable):
         return b
 
     def __repr__(self):
-        if self.alert.exists:
-            return '#<{}:0x{:x} alert=True>'.format(self.__class__.__name__, self.__hash__() * 2)
-        else:
-            return '#<{}:0x{:x} url={!r} title={!r}>'.format(self.__class__.__name__,
-                                                             self.__hash__() * 2, self.url,
-                                                             self.title)
+        try:
+            if self.alert.exists:
+                return '#<{}:0x{:x} alert=True>'.format(self.__class__.__name__,
+                                                        self.__hash__() * 2)
+            else:
+                return '#<{}:0x{:x} url={!r} title={!r}>'.format(self.__class__.__name__,
+                                                                 self.__hash__() * 2, self.url,
+                                                                 self.title)
+        except:  # noqa
+            return '#<{}:0x{:x} closed={}>'.format(self.__class__.__name__, self.__hash__() * 2,
+                                                   self.closed)
 
     selector_string = __repr__
 
