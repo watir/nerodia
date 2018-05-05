@@ -252,6 +252,18 @@ class TestElementExistsAttributePresent(object):
         assert browser.p(class_name=False).exists
 
 
+@pytest.mark.page('data_attributes.html')
+class TestElementExistsIndex(object):
+    def test_finds_the_first_element_by_index_0(self, browser):
+        assert browser.element(index=0).tag_name == 'html'
+
+    def test_finds_the_second_element_by_index_1(self, browser):
+        assert browser.element(index=1).tag_name == 'head'
+
+    def test_finds_the_last_element_by_index_neg_1(self, browser):
+        assert browser.element(index=-1).tag_name == 'p'
+
+
 class TestElementExist(object):
     def test_doesnt_raise_when_called_on_nested_elements(self, browser):
         assert not browser.div(id='no_such_div').link(id='no_such_id').exists
