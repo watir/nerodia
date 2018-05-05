@@ -73,7 +73,7 @@ class Locator(object):
                 if sel == 'tag_name':
                     return found
                 filter_selector = {'tag_name': tag_name} if tag_name else {}
-                elements =  self._filter_elements(found, filter_selector, filter=filter)
+                elements = self._filter_elements(found, filter_selector, filter=filter)
                 return [el for el in elements if el is not None]
             else:
                 found = self._locate_element(sel, value)
@@ -189,7 +189,7 @@ class Locator(object):
             label = self._label_from_text(selector.pop('label', None))
             if not label:
                 return
-            _id = label.attribute('for')
+            _id = label.get_attribute('for')
             if _id:
                 selector['id'] = _id
                 return query_scope
