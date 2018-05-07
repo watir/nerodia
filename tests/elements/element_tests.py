@@ -172,16 +172,15 @@ class TestElementVisibility(object):
             browser.text_field(id='no_such_id').visible
 
     @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_if_the_element_is_stale(self, browser, mocker):
+    def test_raises_correct_exception_if_the_element_is_stale(self, browser):
+        element = browser.text_field(id='new_user_email')
+        element.exists
+
+        browser.refresh()
+
+        assert element.stale
         with pytest.raises(UnknownObjectException):
-            wd_element = browser.text_field(id='new_user_email').wd
-
-            # simulate element going stale during lookup
-            mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_element').return_value = wd_element
-            mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_elements').side_effect = [[wd_element], [], []]
-            browser.refresh()
-
-            browser.text_field(css='#new_user_email').visible
+            element.visible
 
     def test_returns_true_if_the_element_has_visibility_style_visible_even_if_parent_has_hidden(self, browser):
         assert browser.div(id='visible_child').visible

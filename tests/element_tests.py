@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 
@@ -13,15 +14,14 @@ class TestElementPresent(object):
     def test_returns_false_if_the_element_does_not_exist(self, browser):
         assert not browser.div(id='should-not-exist').present
 
-    def test_returns_false_if_the_element_is_stale(self, browser, mocker):
-        wd_element = browser.div(id='foo').wd
+    def test_returns_false_if_the_element_is_stale(self, browser):
+        element = browser.div(id='foo')
+        element.exists
 
-        # simulate element going stale during lookup
-        mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_element')
-        mock.return_value = wd_element
         browser.refresh()
 
-        assert not browser.div(id='foo').present
+        assert element.stale
+        assert not element.present
 
 
 @pytest.mark.page('forms_with_input_elements.html')
@@ -41,11 +41,14 @@ class TestElementEnabled(object):
 
 @pytest.mark.page('removed_element.html')
 class TestElementExists(object):
-    def test_relocates_element_from_a_collection_when_it_becomes_stale(self, browser):
+    def test_element_from_a_collection_returns_false_when_it_becomes_stale(self, browser):
         element = browser.divs(id='text')[0]
-        assert element.exists
+        element.exists
+
         browser.refresh()
-        assert element.exists
+
+        assert element.stale
+        assert not element.present
 
     def test_returns_false_when_tag_name_does_not_match_id(self, browser):
         assert not browser.span(id='text').exists
@@ -54,17 +57,13 @@ class TestElementExists(object):
 @pytest.mark.xfail_ie(reason='currently IE throws NoSuchElementException instead of Stale')
 @pytest.mark.page('removed_element.html')
 class TestElementCall(object):
-    def test_handles_exceptions_when_taking_an_action_on_an_element_that_goes_stale_during_execution(self, browser, mocker):
-        made = []
-
-        def make_stale():
-            if not made:
-                browser.refresh()
-                made.append(True)
-
+    def test_handles_exceptions_when_taking_an_action_on_a_stale_element(self, browser):
         element = browser.div(id='text')
-        mock = mocker.patch('nerodia.elements.element.Element.assert_element_found')
-        mock.side_effect = make_stale
+        element.exists
+
+        browser.refresh()
+
+        assert element.stale
         element.text
 
 

@@ -40,6 +40,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
+            if self.el and self.stale:
+                return False
             self.assert_exists()
             return True
         except (UnknownObjectException, UnknownFrameException):
@@ -392,7 +394,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
         :rtype: bool
         """
-        return self._element_call(lambda: self.el.is_displayed(), self.assert_exists)
+        try:
+            self.assert_exists()
+            return self.el.is_displayed()
+        except StaleElementReferenceException:
+            raise self._unknown_exception
 
     @property
     def enabled(self):
@@ -480,9 +486,17 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         Returns True if a previously located element is no longer attached to the DOM
         :rtype: bool
         """
+        if self.el is None:
+            raise Error('Can not check staleness of unused element')
+        if self.stale_in_context:
+            self.query_scope._ensure_context()
+            return self.stale_in_context
+        else:
+            return False
+
+    @property
+    def stale_in_context(self):
         try:
-            if self.el is None:
-                raise Error('Can not check staleness of unused element')
             self.el.is_enabled()  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
@@ -556,16 +570,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         Ensure that the element exists, making sure that it is not stale and located if necessary
         """
-        if self.el and not self.selector:
-            self.query_scope._ensure_context()
-            if self.stale:
-                self.reset()
-        elif self.el and not self.stale:
-            return
-        else:
-            self.el = self.locate()
-
-        self.assert_element_found()
+        if not self.el:
+            self.locate()
+        return self.assert_element_found()
 
     def assert_element_found(self):
         if self.el is None:
@@ -617,7 +624,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        self.assert_exists()
+        if not self.exists:
+            self.locate()
 
     def _is_attribute(self, attribute_name):
         return self.attribute_value(attribute_name) is not None
@@ -632,32 +640,47 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             raise TypeError('execpted nerodia.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
-    def _element_call(self, method, exist_check=None):
-        already_locked = Wait.timer.locked
-        exist_check = exist_check or self.wait_for_exists
+    def _element_call(self, method, precondition=None):
         caller = stack()[1][3]
-        info = '-> `{}#{}` after `#{}`'.format(self, caller, exist_check.__name__)
-        if Wait.timer.locked:
-            nerodia.logger.info(info + ' (as prerequisite for a previously specified execution)')
-        else:
+        already_locked = Wait.timer.locked
+        if not already_locked:
             from ..wait.timer import Timer
-            nerodia.logger.info(info)
             Wait.timer = Timer(timeout=nerodia.default_timeout)
         try:
-            return self._element_call_check(exist_check, method)
+            self._check_condition(precondition)
+            nerodia.logger.info('-> `Executing {}#{}`'.format(self, caller))
+            return self._element_call_check(precondition, method)
         finally:
-            nerodia.logger.info('<- `{}#{}` has been completed'.format(self, caller))
+            nerodia.logger.info('<- `Completed {}#{}`'.format(self, caller))
             if not already_locked:
                 Wait.timer.reset()
 
-    def _element_call_check(self, exist_check, method):
+    def _check_condition(self, condition):
+        nerodia.logger.info('<- `Verifying precondition {}#{}`'.format(self, condition))
+        try:
+            if not condition:
+                self.assert_exists()
+            else:
+                condition()
+            nerodia.logger.info('<- `Verified precondition '
+                                '{}#{!r}`'.format(self, condition or 'assert_exists'))
+        except self._unknown_exception:
+            if condition is None:
+                nerodia.logger.info('<- `Unable to satisfy precondition '
+                                    '{}#{}`'.format(self, condition))
+                self._check_condition(self.wait_for_exists)
+            else:
+                raise
+
+    def _element_call_check(self, precondition, method):
         while True:
             try:
-                exist_check()
                 return method()
             except self._unknown_exception as e:
+                if precondition is None:
+                    self._element_call(method, self.wait_for_exists)
                 msg = str(e)
-                if len(self.query_scope.iframes()) > 0:
+                if self.query_scope._ensure_context() and len(self.query_scope.iframes()) > 0:
                     msg += '; Maybe look in an iframe?'
                 custom_attributes = self.locator.selector_builder.custom_attributes
                 if custom_attributes:
@@ -665,16 +688,18 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                            'ensure that was intended'.format(custom_attributes)
                 raise self._unknown_exception(msg)
             except StaleElementReferenceException:
-                exist_check()
+                self.query_scope._ensure_context()
+                self.reset()
+                self._check_condition(precondition)
                 return method()
             except (ElementNotVisibleException, ElementNotInteractableException):
                 if (Wait.timer.remaining_time <= 0) or \
-                        (exist_check not in [self.wait_for_present, self.wait_for_enabled]):
+                        (precondition not in [self.wait_for_present, self.wait_for_enabled]):
                     self._raise_present()
                 continue
             except InvalidElementStateException:
                 if (Wait.timer.remaining_time <= 0) or \
-                        (exist_check in [self.wait_for_writable, self.wait_for_enabled]):
+                        (precondition in [self.wait_for_writable, self.wait_for_enabled]):
                     self._raise_disabled()
                 continue
             except NoSuchWindowException:

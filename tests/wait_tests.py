@@ -223,6 +223,8 @@ class TestElementWaitUntilNotPresent(object):
 
     def test_does_not_error_when_element_goes_stale(self, browser):
         element = browser.div(id='foo')
+        element.exists
+
         browser.link(id='hide_foo').click()
         element.wait_until_not_present(timeout=1)
 
