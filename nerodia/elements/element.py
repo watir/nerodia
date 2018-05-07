@@ -682,7 +682,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                 msg = str(e)
                 if self.query_scope._ensure_context() and len(self.query_scope.iframes()) > 0:
                     msg += '; Maybe look in an iframe?'
-                custom_attributes = self.locator.selector_builder.custom_attributes
+                custom_attributes = []
+                if self.locator:
+                    custom_attributes = self.locator.selector_builder.custom_attributes
                 if custom_attributes:
                     msg += '; Nerodia treated {!r} as a non-HTML compliant attribute, ' \
                            'ensure that was intended'.format(custom_attributes)
