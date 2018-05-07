@@ -647,9 +647,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             from ..wait.timer import Timer
             Wait.timer = Timer(timeout=nerodia.default_timeout)
         try:
-            self._check_condition(precondition)
-            nerodia.logger.info('-> `Executing {}#{}`'.format(self, caller))
-            return self._element_call_check(precondition, method)
+            return self._element_call_check(precondition, method, caller)
         finally:
             nerodia.logger.info('<- `Completed {}#{}`'.format(self, caller))
             if not already_locked:
@@ -672,9 +670,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             else:
                 raise
 
-    def _element_call_check(self, precondition, method):
+    def _element_call_check(self, precondition, method, caller):
+        nerodia.logger.info('-> `Executing {}#{}`'.format(self, caller))
         while True:
             try:
+                self._check_condition(precondition)
                 return method()
             except self._unknown_exception as e:
                 if precondition is None:

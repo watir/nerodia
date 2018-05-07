@@ -39,7 +39,7 @@ class DateTimeField(Input):
 
         date_time_string = value.strftime('%Y-%m-%dT%H:%M')
         self._element_call(lambda: self._execute_js('setValue', self.el, date_time_string),
-                           exist_check=self.wait_for_writable)
+                           precondition=self.wait_for_writable)
 
     set = js_set
 

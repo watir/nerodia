@@ -262,7 +262,8 @@ class Browser(Container, HasWindow, Waitable):
             raise Error('browser was closed')
         if not self.default_context:
             self.driver.switch_to.default_content()
-            self.default_context = True
+        self.default_context = True
+        return self.default_context
 
     @staticmethod
     def _wrap_elements_in(scope, obj):
