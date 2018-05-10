@@ -380,10 +380,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     @property
     def wd(self):
         from .i_frame import FramedDriver
-        if isinstance(self.el, FramedDriver):
-            return self.driver
         if self.el is None:
             self.assert_exists()
+        if isinstance(self.el, FramedDriver):
+            return self.driver
         return self.el
 
     @property
@@ -572,20 +572,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         if not self.el:
             self.locate()
-        return self.assert_element_found()
-
-    def assert_element_found(self):
         if self.el is None:
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
     def locate(self):
-        self.query_scope._ensure_context()
-
-        element_validator = self._element_validator_class()
-        selector_builder = self._selector_builder_class(self.query_scope, self.selector.copy(),
-                                                        self.ATTRIBUTES)
-        self.locator = self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
-                                           element_validator)
+        self.locator = self._build_locator()
 
         self.el = self.locator.locate()
         return self.el

@@ -59,7 +59,7 @@ def expect_all(mocker):
 class TestElementLocatorFindsSingleElement(object):
     # by delegating to Selenium
 
-    @pytest.mark.parametrize('finder', Locator.WD_FINDERS.items())
+    @pytest.mark.parametrize('finder', Locator.W3C_FINDERS.items())
     def test_delegates_to_seleniums_locators(self, browser, finder, expect_one):
         arg, str = finder
         locate_one(browser, {arg: 'bar'})
@@ -119,18 +119,16 @@ class TestElementLocatorFindsSingleElement(object):
         locate_one(browser, {'class_name': 'a b'})
         expect_one.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a b ')]")
 
-    def test_handles_selector_with_tag_name_and_xpath(self, browser, mocker, expect_one, expect_all):
+    def test_handles_selector_with_tag_name_and_xpath(self, browser, mocker, expect_all):
         div1 = element(mocker, values={'tag_name': 'div'}, attrs={'class_name': 'foo'})
         span = element(mocker, values={'tag_name': 'span'}, attrs={'class_name': 'foo'})
         div2 = element(mocker, values={'tag_name': 'div'}, attrs={'class_name': 'foo'})
 
-        expect_one.return_value = div1
         expect_all.return_value = [div1, span, div2]
 
         selector = {'xpath': './/*[@class="foo"]', 'tag_name': 'span'}
         result = locate_one(browser, selector)
 
-        expect_one.assert_called_once_with(By.XPATH, './/*[@class="foo"]')
         expect_all.assert_called_once_with(By.XPATH, './/*[@class="foo"]')
 
         assert result.tag_name == 'span'
@@ -262,7 +260,7 @@ class TestElementLocatorFindsSingleElement(object):
         selector = {'tag_name': 'div', 'label': re.compile(r'oob')}
         assert locate_one(browser, selector) == div
 
-    def test_returns_none_when_no_label_matching_the_regexp_is_found(self, browser, mocker, expect_all):
+    def test_returns_none_when_no_label_matching_the_regexp_is_found(self, browser, expect_all):
         expect_all.return_value = []
         selector = {'tag_name': 'div', 'label': re.compile(r'foo')}
         assert locate_one(browser, selector) is None
@@ -273,9 +271,8 @@ class TestElementLocatorFindsSingleElement(object):
         selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
         assert locate_one(browser, selector) == elements[1]
 
-    def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_one, expect_all):
+    def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_all):
         from nerodia.elements.input import Input
-        expect_one.return_value = element(mocker, values={'tag_name': 'div'})
         expect_all.return_value = [element(mocker, values={'tag_name': 'div'})]
         selector = {'tag_name': 'input', 'xpath': '//div'}
         assert locate_one(browser, selector, Input.ATTRIBUTES) is None
@@ -301,7 +298,7 @@ class TestElementLocatorFindsSeveralElements(object):
 
     # by delegating to Selenium
 
-    @pytest.mark.parametrize('finder', Locator.WD_FINDERS.items())
+    @pytest.mark.parametrize('finder', Locator.W3C_FINDERS.items())
     def test_delegates_to_seleniums_locators(self, browser, mocker, expect_all, finder):
         arg, str = finder
         locate_all(browser, {arg: 'bar'})

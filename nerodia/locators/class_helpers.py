@@ -33,3 +33,12 @@ class ClassHelpers(object):
     @property
     def _element_class_name(self):
         return self._element_class.__name__
+
+    def _build_locator(self):
+        self.query_scope._ensure_context()
+
+        element_validator = self._element_validator_class()
+        selector_builder = self._selector_builder_class(self.query_scope, self.selector.copy(),
+                                                        self.ATTRIBUTES)
+        return self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
+                                   element_validator)
