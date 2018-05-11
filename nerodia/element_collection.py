@@ -10,6 +10,8 @@ class ElementCollection(ClassHelpers):
         self.selector = selector
         self.as_list = []
         self.els = []
+        self.locator = None
+        self.elements = None
 
     def __iter__(self):
         """
@@ -45,10 +47,7 @@ class ElementCollection(ClassHelpers):
         :return: instance of Element subclass
         :rtype: nerodia.elements.element.Element
         """
-        try:
-            return self.to_list[idx]
-        except IndexError:
-            return self._element_class(self.query_scope, dict(self.selector, index=idx))
+        return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
     @property
     def is_empty(self):
@@ -128,17 +127,11 @@ class ElementCollection(ClassHelpers):
 
     @property
     def _elements(self):
-        self.query_scope._ensure_context()
-
-        element_validator = self._element_validator_class()
-        selector_builder = self._selector_builder_class(self.query_scope, self.selector,
-                                                        self._element_class.ATTRIBUTES)
-        locator = self._locator_class(self.query_scope, self.selector, selector_builder,
-                                      element_validator)
-
-        if not self.els:
-            self.els = locator.locate_all()
-        return self.els
+        if self.locator is None:
+            self.locator = self._build_locator()
+        if self.elements is None:
+            self.elements = self.locator.locate_all()
+        return self.elements
 
     @property
     def _element_class(self):

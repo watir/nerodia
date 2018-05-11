@@ -27,6 +27,24 @@ class TestRelaxedLocate(object):
             element.click()
         assert time() - start > timeout
 
+    def test_raises_exception_after_timing_out_on_element_parent_never_present(self, browser):
+        timeout = 2
+        nerodia.default_timeout = timeout
+        with pytest.raises(UnknownObjectException):
+            element = browser.link(id='not_there')
+            start = time()
+            element.element().click()
+        assert time() - start > timeout
+
+    def test_raises_exception_after_timing_out_on_element_from_collection_parent_never_present(self, browser):
+        timeout = 2
+        nerodia.default_timeout = timeout
+        with pytest.raises(UnknownObjectException):
+            element = browser.link(id='not_there')
+            start = time()
+            element.elements()[2].click()
+        assert time() - start > timeout
+
     def test_does_not_wait_on_element_that_is_already_present(self, browser):
         nerodia.default_timeout = 5
         element = browser.link()
