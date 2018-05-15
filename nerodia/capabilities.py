@@ -48,19 +48,18 @@ class Capabilities(object):
                             '{}'.format(self.selenium_opts))
 
     def _process_browser_options(self):
-        browser_options = self.options.pop('options', None)
+        browser_options = self.options.pop('options', {})
 
-        if browser_options:
-            if self.selenium_browser == 'chrome':
-                self._process_chrome_options(browser_options)
-            elif self.selenium_browser == 'firefox':
-                self._process_firefox_options(browser_options)
-            elif self.selenium_browser == 'safari':
-                self._process_safari_options(browser_options)
-            elif self.selenium_browser == 'ie':
-                self._process_ie_options(browser_options)
-            elif self.selenium_browser == 'remote':
-                self._process_remote_options(browser_options)
+        if self.selenium_browser == 'chrome':
+            self._process_chrome_options(browser_options)
+        elif self.selenium_browser == 'firefox':
+            self._process_firefox_options(browser_options)
+        elif self.selenium_browser == 'safari':
+            self._process_safari_options(browser_options)
+        elif self.selenium_browser == 'ie':
+            self._process_ie_options(browser_options)
+        elif self.selenium_browser == 'remote':
+            self._process_remote_options(browser_options)
 
     def _process_chrome_options(self, opts):
         if isinstance(opts, ChromeOptions):
@@ -70,7 +69,7 @@ class Capabilities(object):
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
-            if 'headless' in opts:
+            if 'headless' in opts or 'headless' in self.options:
                 options.set_headless()
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary_location = opts.pop('binary') or opts.pop('binary_location')
@@ -95,6 +94,8 @@ class Capabilities(object):
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
+            if 'headless' in opts or 'headless' in self.options:
+                options.set_headless()
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary = opts.pop('binary') or opts.pop('binary_location')
             if 'prefs' in opts:
