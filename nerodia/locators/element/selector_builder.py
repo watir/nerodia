@@ -1,9 +1,8 @@
 import logging
+import re
 from importlib import import_module
 
 import six
-
-import re
 from selenium.webdriver.common.by import By
 
 import nerodia
@@ -182,7 +181,7 @@ class XPath(object):
 
     # TODO: Get rid of building
     def equal_pair(self, building, key, value):
-        if key == 'class':
+        if key in ['class', 'class_name']:
             if ' ' in value.strip():
                 nerodia.logger.deprecate("using the 'class_name' locator to locate multiple "
                                          "classes with a str value", "use a list instead")
