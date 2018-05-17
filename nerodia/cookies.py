@@ -6,6 +6,23 @@ class Cookies(object):
     def __init__(self, driver):
         self.driver = driver
 
+    def __iter__(self):
+        """
+        Yields each cookie in cookie collection
+
+        :rtype: iter
+
+        :Example:
+
+        list(browser.cookies)
+        #=> [{name: 'my_session', value: 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain: 'mysite.com'}]
+        """
+        cookies = self.driver.get_cookies()
+        for cookie in cookies:
+            expire = cookie.get('expires')
+            cookie['expires'] = self._to_time(expire) if expire else None
+            yield cookie
+
     @property
     def to_list(self):
         """
@@ -18,11 +35,9 @@ class Cookies(object):
         browser.cookies.to_list
         #=> [{name: 'my_session', value: 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain: 'mysite.com'}]
         """
-        cookies = self.driver.get_cookies()
-        for cookie in cookies:
-            expire = cookie.get('expires')
-            cookie['expires'] = self._to_time(expire) if expire else None
-        return cookies
+        import nerodia
+        nerodia.logger.deprecate('to_list', 'list(self)')
+        return list(self)
 
     def __getitem__(self, name):
         """
@@ -35,7 +50,7 @@ class Cookies(object):
         browser.cookies['my_session']
         #=> {name: 'my_session', value: 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain: 'mysite.com'}
         """
-        return next((c for c in self.to_list if c.get('name') == name), None)
+        return next((c for c in self if c.get('name') == name), None)
 
     def add(self, name, value, **kwargs):
         """
@@ -76,7 +91,7 @@ class Cookies(object):
         browser.cookies.save('.cookies')
         """
         with open(file, 'w') as f:
-            dump(self.to_list, f, indent=4)
+            dump(list(self), f, indent=4)
 
     def load(self, file='.cookies'):
         """

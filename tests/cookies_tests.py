@@ -6,7 +6,7 @@ import pytest
 
 
 def verify_cookies_count(browser, size):
-    cookies = browser.cookies.to_list
+    cookies = list(browser.cookies)
     assert len(cookies) == size, 'expected {} cookies, ' \
                                  'got {}: {}'.format(size, len(cookies), cookies)
 
@@ -36,10 +36,10 @@ class TestBrowserCookies(object):
     def test_gets_an_empty_list_of_cookies(self, browser, page):
         browser.goto(page.url('collections.html'))
         browser.cookies.clear()
-        assert browser.cookies.to_list == []
+        assert list(browser.cookies) == []
 
     def test_gets_any_cookies_set(self, browser):
-        cookie = browser.cookies.to_list[0]
+        cookie = list(browser.cookies)[0]
         assert cookie.get('name') == 'monster'
         assert cookie.get('value') == '1'
 
@@ -79,14 +79,14 @@ class TestBrowserCookies(object):
     def test_saves_cookies_to_file(self, browser, filepath):
         browser.cookies.save(filepath)
         with open(filepath, 'r+') as cookies:
-            assert load(cookies) == browser.cookies.to_list
+            assert load(cookies) == list(browser.cookies)
 
     def test_loads_cookies_from_file(self, browser, filepath):
         browser.cookies.save(filepath)
         browser.cookies.clear()
         browser.cookies.load(filepath)
 
-        expected = browser.cookies.to_list
+        expected = list(browser.cookies)
         with open(filepath, 'r+') as cookies:
             actual = load(cookies)
 
