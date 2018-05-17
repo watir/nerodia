@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('definition_lists.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.dds(text='11 years').to_list == [browser.dd(text='11 years')]
+    assert list(browser.dds(text='11 years')) == [browser.dd(text='11 years')]
 
 
 def test_returns_the_number_of_dds(browser):

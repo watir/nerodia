@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestPres(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.pres(class_name='c-plus-plus').to_list == [browser.pre(class_name='c-plus-plus')]
+        assert list(browser.pres(class_name='c-plus-plus')) == [browser.pre(class_name='c-plus-plus')]
 
     def test_returns_the_correct_number_of_pres(self, browser):
         assert len(browser.pres()) == 7

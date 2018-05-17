@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.deletes(class_name='lead').to_list == [browser.delete(class_name='lead')]
+    assert list(browser.deletes(class_name='lead')) == [browser.delete(class_name='lead')]
 
 
 def test_returns_the_number_of_deletes(browser):

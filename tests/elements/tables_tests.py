@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTables(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.tables(rules='groups').to_list == [browser.table(rules='groups')]
+        assert list(browser.tables(rules='groups')) == [browser.table(rules='groups')]
 
     def test_returns_the_number_of_tables(self, browser):
         assert len(browser.tables()) == 4

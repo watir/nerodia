@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTbodys(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.tbodys(id='first').to_list == [browser.tbody(id='first')]
+        assert list(browser.tbodys(id='first')) == [browser.tbody(id='first')]
 
     def test_returns_the_correct_number_of_tbodys(self, browser):
         assert len(browser.tbodys()) == 5

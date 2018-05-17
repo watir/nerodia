@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.ems(class_name='important-class').to_list == [
+    assert list(browser.ems(class_name='important-class')) == [
         browser.em(class_name='important-class')]
 
 

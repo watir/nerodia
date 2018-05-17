@@ -102,7 +102,7 @@ class Adjacent(object):
         :Example:
 
         browser.select_list(id='new_user_languages').children == \
-            browser.select_list(id='new_user_languages').options.to_list    #=> True
+            list(browser.select_list(id='new_user_languages').options)    #=> True
         """
         if 'index' in kwargs:
             raise ValueError('#children can not take an index value')

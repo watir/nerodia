@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.checkboxes(value='books').to_list == [browser.checkbox(value='books')]
+    assert list(browser.checkboxes(value='books')) == [browser.checkbox(value='books')]
 
 
 def test_returns_the_number_of_buttons(browser):

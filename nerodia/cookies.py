@@ -25,18 +25,8 @@ class Cookies(object):
 
     @property
     def to_list(self):
-        """
-        Returns array of cookies
-
-        :rtype: list[dict]
-
-        :Example:
-
-        browser.cookies.to_list
-        #=> [{name: 'my_session', value: 'BAh7B0kiD3Nlc3Npb25faWQGOgZFRkk', domain: 'mysite.com'}]
-        """
         import nerodia
-        nerodia.logger.deprecate('to_list', 'list(self)')
+        nerodia.logger.deprecate('Cookies.to_list', 'list(self)')
         return list(self)
 
     def __getitem__(self, name):

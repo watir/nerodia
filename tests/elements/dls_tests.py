@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('definition_lists.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.dls(title='experience').to_list == [browser.dl(title='experience')]
+    assert list(browser.dls(title='experience')) == [browser.dl(title='experience')]
 
 
 def test_returns_the_number_of_divs(browser):

@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestOls(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.ols(class_name='chemistry').to_list == [browser.ol(class_name='chemistry')]
+        assert list(browser.ols(class_name='chemistry')) == [browser.ol(class_name='chemistry')]
 
     def test_returns_the_correct_number_of_ols(self, browser):
         assert len(browser.ols()) == 2

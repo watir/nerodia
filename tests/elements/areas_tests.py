@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('images.html')
 
 
 def test_returns_the_matching_elements(browser, page):
-    assert browser.areas(alt="Tables").to_list == [browser.area(alt="Tables")]
+    assert list(browser.areas(alt="Tables")) == [browser.area(alt="Tables")]
 
 
 def test_returns_the_number_of_areas(browser, page):

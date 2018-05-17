@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestLinks(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.links(title='link_title_2').to_list == [browser.link(title='link_title_2')]
+        assert list(browser.links(title='link_title_2')) == [browser.link(title='link_title_2')]
 
     def test_returns_the_correct_number_of_links(self, browser):
         assert len(browser.links()) == 7

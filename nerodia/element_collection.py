@@ -1,4 +1,5 @@
 from importlib import import_module
+from itertools import islice
 
 import nerodia
 from .locators.class_helpers import ClassHelpers
@@ -8,7 +9,7 @@ class ElementCollection(ClassHelpers):
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
         self.selector = selector
-        self.as_list = []
+        self.generator = ()
         self.els = []
         self.locator = None
         self.elements = None
@@ -25,32 +26,49 @@ class ElementCollection(ClassHelpers):
         for div in divs:
              print(div.text)
         """
-        for e in self.to_list:
-            yield e
+        from .elements.html_elements import HTMLElement
+        from .elements.input import Input
+        dic = {}
+        for idx, e in enumerate(self._elements):
+            element = self._element_class(self.query_scope, dict(self.selector, index=idx,
+                                                                 element=e))
+            if element.__class__ in [HTMLElement, Input]:
+                tag_name = element.tag_name
+                dic[tag_name] = dic.get(tag_name, 0)
+                dic[tag_name] += 1
+                kls = nerodia.tag_to_class.get(tag_name)
+                new_selector = dict(self.selector, element=e, tag_name=tag_name,
+                                    index=dic[tag_name] - 1)
+                yield kls(self.query_scope, new_selector)
+            else:
+                yield element
 
     def __len__(self):
         """
         Returns the number of elements in the collection
         :rtype: int
         """
-        return len(self.to_list)
+        return len([_ for _ in self])
 
     def __getitem__(self, idx):
         """
         Get the element at the given index
 
-        HTMLElementCollection and InputCollection will not be lazy loaded in order
-        to load them as the desired type
+        Any call to an ElementCollection including an adjacent selector
+        can not be lazy loaded because it must store correct type
 
         :param idx: index of wanted element, 0-indexed
         :type idx: int
         :return: instance of Element subclass
         :rtype: nerodia.elements.element.Element
         """
-        from .elements.html_elements import HTMLElement
-        from .elements.input import Input
-        if self._element_class in [HTMLElement, Input]:
-            return self.to_list[idx]
+        if isinstance(idx, slice):
+            return list(islice(self, idx.start, idx.stop, idx.step))
+        elif 'adjacent' in self.selector:
+            try:
+                return list(islice(self, idx + 1))[idx]
+            except IndexError:
+                return self._element_class(self.query_scope, {'invalid_locator': True})
         else:
             return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
@@ -79,26 +97,8 @@ class ElementCollection(ClassHelpers):
 
         :rtype: list[nerodia.elements.element.Element]
         """
-        from .elements.html_elements import HTMLElement
-        from .elements.input import Input
-        dic = {}
-        if not self.as_list:
-            elements = []
-            for idx, e in enumerate(self._elements):
-                element = self._element_class(self.query_scope, dict(self.selector, index=idx,
-                                                                     element=e))
-                if element.__class__ in [HTMLElement, Input]:
-                    tag_name = element.tag_name
-                    dic[tag_name] = dic.get(tag_name, 0)
-                    dic[tag_name] += 1
-                    kls = nerodia.tag_to_class.get(tag_name)
-                    new_selector = dict(self.selector, element=e, tag_name=tag_name,
-                                        index=dic[tag_name] - 1)
-                    elements.append(kls(self.query_scope, new_selector))
-                else:
-                    elements.append(element)
-            self.as_list = elements
-        return self.as_list
+        nerodia.logger.deprecate('ElementCollection.to_list', 'list(self)')
+        return list(self)
 
     def locate(self):
         """
@@ -106,7 +106,7 @@ class ElementCollection(ClassHelpers):
 
         :rtype: ElementCollection
         """
-        self.to_list
+        list(self)
         return self
 
     def __eq__(self, other):
@@ -124,7 +124,7 @@ class ElementCollection(ClassHelpers):
         browser.select_list(name=;new_user_role').options == \
             browser.select_list(id='new_user_languages').options   #=> false
         """
-        return self.to_list == other.to_list
+        return list(self) == list(other)
 
     eql = __eq__
 

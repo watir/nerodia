@@ -47,6 +47,7 @@ class TestAdjacentSiblings(object):
 
     def test_accepts_class_name_argument(self, browser):
         siblings = browser.div(id='second_sibling').siblings(class_name='b')
+        assert isinstance(siblings[0], Div)
         assert len(siblings) == 2
         assert all(isinstance(sibling, Div) for sibling in siblings)
 
@@ -65,7 +66,7 @@ class TestAdjacentFollowingSibling(object):
             tag_name='div').id == 'second_sibling'
         assert isinstance(browser.div(id='first_sibling').following_sibling(tag_name='div'), Div)
 
-    def test_accepts_class_name_argument(self, browser):
+    def test_accepts_class_name_argument_for_single_class(self, browser):
         exp = 'second_sibling'
         assert browser.div(id='first_sibling').following_sibling(class_name='b').id == exp
 
@@ -101,7 +102,7 @@ class TestAdjacentFollowingSiblings(object):
                           Div)
 
     def test_accepts_class_name_argument(self, browser):
-        assert len(browser.div(id='second_sibling').following_siblings(class_name='b')) == 1
+        # assert len(browser.div(id='second_sibling').following_siblings(class_name='b')) == 1
         assert isinstance(browser.div(id='second_sibling').following_siblings(class_name='b')[0],
                           Div)
 

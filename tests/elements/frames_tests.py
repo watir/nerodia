@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('frames.html')
 
 class TestFrames(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.frames(name='frame2').to_list == [browser.frame(name='frame2')]
+        assert list(browser.frames(name='frame2')) == [browser.frame(name='frame2')]
 
     def test_returns_the_correct_number_of_frames(self, browser):
         assert len(browser.frames()) == 2

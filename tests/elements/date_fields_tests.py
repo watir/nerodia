@@ -6,7 +6,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.date_fields(name='html5_date').to_list == [browser.date_field(name='html5_date')]
+    assert list(browser.date_fields(name='html5_date')) == [browser.date_field(name='html5_date')]
 
 
 def test_returns_the_number_of_date_fields(browser):

@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestFileFields(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.file_fields(class_name='portrait').to_list == \
+        assert list(browser.file_fields(class_name='portrait')) == \
             [browser.file_field(class_name='portrait')]
 
     def test_returns_the_correct_number_of_file_fields(self, browser):

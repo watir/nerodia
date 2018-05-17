@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTds(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.tds(headers='before_tax').to_list == [browser.td(headers='before_tax')]
+        assert list(browser.tds(headers='before_tax')) == [browser.td(headers='before_tax')]
 
     def test_iterates_through_all_cells_on_the_page_correctly(self, browser):
         count = 0

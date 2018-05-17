@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTableHeaders(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.theads(id='tax_headers').to_list == [browser.thead(id='tax_headers')]
+        assert list(browser.theads(id='tax_headers')) == [browser.thead(id='tax_headers')]
 
     def test_returns_the_correct_number_of_theads(self, browser):
         assert len(browser.theads()) == 1

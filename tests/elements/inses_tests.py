@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestInses(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.inses(class_name='lead').to_list == [browser.ins(class_name='lead')]
+        assert list(browser.inses(class_name='lead')) == [browser.ins(class_name='lead')]
 
     def test_returns_the_correct_number_of_inses(self, browser):
         assert len(browser.inses()) == 5

@@ -7,7 +7,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestForms(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.forms(method='post').to_list == [browser.form(method='post')]
+        assert list(browser.forms(method='post')) == [browser.form(method='post')]
 
     def test_returns_the_correct_number_of_forms(self, browser):
         assert len(browser.forms()) == 2

@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTableFooters(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.tfoots(id='tax_totals').to_list == [browser.tfoot(id='tax_totals')]
+        assert list(browser.tfoots(id='tax_totals')) == [browser.tfoot(id='tax_totals')]
 
     def test_returns_the_correct_number_of_tfoots(self, browser):
         assert len(browser.tfoots()) == 1

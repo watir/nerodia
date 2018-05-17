@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestSpans(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.spans(class_name='footer').to_list == [browser.span(class_name='footer')]
+        assert list(browser.spans(class_name='footer')) == [browser.span(class_name='footer')]
 
     def test_returns_the_correct_number_of_spans(self, browser):
         assert len(browser.spans()) == 7

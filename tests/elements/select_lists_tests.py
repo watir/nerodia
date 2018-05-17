@@ -13,7 +13,7 @@ pytestmark = [pytest.mark.page('forms_with_input_elements.html'),
 
 class TestSelectLists(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.select_lists(name='delete_user_username').to_list == \
+        assert list(browser.select_lists(name='delete_user_username')) == \
             [browser.select_list(name='delete_user_username')]
 
     def test_returns_the_correct_number_of_select_lists_on_the_page(self, browser):

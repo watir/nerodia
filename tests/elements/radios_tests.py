@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestRadios(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.radios(value='yes').to_list == [browser.radio(value='yes')]
+        assert list(browser.radios(value='yes')) == [browser.radio(value='yes')]
 
     def test_returns_the_correct_number_of_radios(self, browser):
         assert len(browser.radios()) == 7

@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestMetas(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.metas(name='description').to_list == [browser.meta(name='description')]
+        assert list(browser.metas(name='description')) == [browser.meta(name='description')]
 
     def test_returns_the_correct_number_of_metas(self, browser):
         assert len(browser.metas()) == 2

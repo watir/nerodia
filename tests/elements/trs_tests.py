@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('tables.html')
 
 class TestTrs(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.trs(id='outer_second').to_list == [browser.tr(id='outer_second')]
+        assert list(browser.trs(id='outer_second')) == [browser.tr(id='outer_second')]
 
     def test_returns_the_correct_number_of_cells_table_context(self, browser):
         assert len(browser.table(id='inner').trs()) == 1

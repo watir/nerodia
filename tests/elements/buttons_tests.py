@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.buttons(name='new_user_button').to_list == [
+    assert list(browser.buttons(name='new_user_button')) == [
         browser.button(name='new_user_button')]
 
 

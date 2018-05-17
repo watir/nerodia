@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('images.html')
 
 class TestImages(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.images(alt='circle').to_list == [browser.image(alt='circle')]
+        assert list(browser.images(alt='circle')) == [browser.image(alt='circle')]
 
     def test_returns_the_correct_number_of_images(self, browser):
         assert len(browser.images()) == 10

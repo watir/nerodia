@@ -36,7 +36,7 @@ class Table(RowContainer, HTMLElement):
         headers = [cell.text for cell in header_row.ths()]
         result = []
 
-        for row in all_rows.to_list[1:]:
+        for row in list(all_rows)[1:]:
             self._cell_size_check(header_row, row)
             result.append(dict(zip(headers, [cell.text for cell in row.cells()])))
         return result

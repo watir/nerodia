@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestPs(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.ps(class_name='lead').to_list == [browser.p(class_name='lead')]
+        assert list(browser.ps(class_name='lead')) == [browser.p(class_name='lead')]
 
     def test_returns_the_correct_number_of_ps(self, browser):
         assert len(browser.ps()) == 5

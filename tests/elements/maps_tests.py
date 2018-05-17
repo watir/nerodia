@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('images.html')
 
 class TestMaps(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.maps(name='triangle_map').to_list == [browser.map(name='triangle_map')]
+        assert list(browser.maps(name='triangle_map')) == [browser.map(name='triangle_map')]
 
     def test_returns_the_correct_number_of_maps(self, browser):
         assert len(browser.maps()) == 2

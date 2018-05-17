@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('iframes.html')
 
 class TestIFrames(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.iframes(id='iframe_2').to_list == [browser.iframe(id='iframe_2')]
+        assert list(browser.iframes(id='iframe_2')) == [browser.iframe(id='iframe_2')]
 
     def test_matches_equality_of_iframe_with_that_from_a_collection(self, browser):
         assert browser.iframes()[-1] == browser.iframe(id='iframe_2')

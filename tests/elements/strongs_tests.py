@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestStrongs(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.strongs(class_name='descartes').to_list == [browser.strong(class_name='descartes')]
+        assert list(browser.strongs(class_name='descartes')) == [browser.strong(class_name='descartes')]
 
     def test_returns_the_correct_number_of_strongs(self, browser):
         assert len(browser.strongs()) == 2

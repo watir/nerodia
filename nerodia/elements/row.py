@@ -16,11 +16,36 @@ class RowCollection(TableRowCollection):
         self.list = None
         super(RowCollection, self).__init__(*args, **kwargs)
 
+    def __iter__(self):
+        """
+        Yields each row in collection
+
+        :rtype: iter
+
+        :Example:
+
+        rows = browser.rows(class='kls')
+        for row in rows:
+             print(row.text)
+        """
+        # we do this craziness since the xpath used will find direct child rows
+        # before any rows inside thead/tbody/tfoot...
+        if not self.list:
+            self._get_list()
+        for item in self.list:
+            yield item
+
     @property
     def to_list(self):
         # we do this craziness since the xpath used will find direct child rows
         # before any rows inside thead/tbody/tfoot...
+        import nerodia
+        nerodia.logger.deprecate('RowCollection.to_list', 'list(RowCollection)')
+        return list(self)
+
+    # private
+
+    def _get_list(self):
         if not self.list:
-            elements = super(RowCollection, self).to_list
+            elements = list(super(RowCollection, self).__iter__())
             self.list = sorted(elements, key=lambda e: int(e.attribute_value('rowIndex')))
-        return self.list

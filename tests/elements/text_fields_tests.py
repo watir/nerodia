@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestTextFields(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.text_fields(name='new_user_email').to_list == [browser.text_field(name='new_user_email')]
+        assert list(browser.text_fields(name='new_user_email')) == [browser.text_field(name='new_user_email')]
 
     def test_returns_the_correct_number_of_text_fields(self, browser):
         assert len(browser.text_fields()) == 17

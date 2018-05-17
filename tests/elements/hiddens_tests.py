@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestHiddens(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.hiddens(value='dolls').to_list == [browser.hidden(value='dolls')]
+        assert list(browser.hiddens(value='dolls')) == [browser.hidden(value='dolls')]
 
     def test_returns_the_correct_number_of_hiddens(self, browser):
         assert len(browser.hiddens()) == 2

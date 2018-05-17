@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestHns(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.h1s(class_name='primary').to_list == [browser.h1(class_name='primary')]
+        assert list(browser.h1s(class_name='primary')) == [browser.h1(class_name='primary')]
 
     def test_returns_the_correct_number_of_hns(self, browser):
         assert len(browser.h2s()) == 9

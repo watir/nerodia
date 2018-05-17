@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestLabels(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.labels('for', 'new_user_first_name').to_list == \
+        assert list(browser.labels('for', 'new_user_first_name')) == \
             [browser.label('for', 'new_user_first_name')]
 
     def test_returns_the_correct_number_of_labels(self, browser):

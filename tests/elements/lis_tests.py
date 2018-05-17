@@ -5,7 +5,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 class TestLis(object):
     def test_with_selectors_returns_the_matching_elements(self, browser):
-        assert browser.lis(class_name='nonlink').to_list == \
+        assert list(browser.lis(class_name='nonlink')) == \
             [browser.li(class_name='nonlink')]
 
     def test_returns_the_correct_number_of_lis(self, browser):

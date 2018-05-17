@@ -4,7 +4,7 @@ pytestmark = pytest.mark.page('non_control_elements.html')
 
 
 def test_returns_the_matching_elements(browser):
-    assert browser.divs(id='header').to_list == [browser.div(id='header')]
+    assert list(browser.divs(id='header')) == [browser.div(id='header')]
 
 
 def test_returns_the_number_of_divs(browser):
