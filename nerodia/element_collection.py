@@ -39,15 +39,20 @@ class ElementCollection(ClassHelpers):
         """
         Get the element at the given index
 
-        Also note that because of lazy loading, this will return an Element instance even if
-        the index is out of bounds
+        HTMLElementCollection and InputCollection will not be lazy loaded in order
+        to load them as the desired type
 
         :param idx: index of wanted element, 0-indexed
         :type idx: int
         :return: instance of Element subclass
         :rtype: nerodia.elements.element.Element
         """
-        return self._element_class(self.query_scope, dict(self.selector, index=idx))
+        from .elements.html_elements import HTMLElement
+        from .elements.input import Input
+        if self._element_class in [HTMLElement, Input]:
+            return self.to_list[idx]
+        else:
+            return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
     @property
     def is_empty(self):
