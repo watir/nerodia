@@ -36,7 +36,7 @@ class ElementCollection(ClassHelpers):
                 tag_name = element.tag_name
                 dic[tag_name] = dic.get(tag_name, 0)
                 dic[tag_name] += 1
-                kls = nerodia.tag_to_class.get(tag_name)
+                kls = nerodia.element_class_for(tag_name)
                 new_selector = dict(self.selector, element=e, tag_name=tag_name,
                                     index=dic[tag_name] - 1)
                 yield kls(self.query_scope, new_selector)
