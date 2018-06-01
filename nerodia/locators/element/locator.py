@@ -100,14 +100,7 @@ class Locator(object):
 
     def _fetch_value(self, element, how):
         if how == 'text':
-            from nerodia.elements.element import Element
-            vis = element.text
-            all = Element(self.query_scope,
-                          {'element': element})._execute_js('getTextContent', element).strip()
-            if all != vis.strip():
-                nerodia.logger.deprecate("'text' locator with RegExp values to find elements "
-                                         "based on only visible text", 'visible_text')
-            return vis
+            return element.text
         elif how == 'visible':
             return element.is_displayed()
         elif how == 'visible_text':
@@ -215,7 +208,20 @@ class Locator(object):
             else:
                 return Validator.match_str_or_regex(what, self._fetch_value(element, how))
 
-        return all(check_match(how, what) for how, what in selector.items())
+        matches = all(check_match(how, what) for how, what in selector.items())
+
+        text_selector = selector.get('text')
+        if text_selector is not None:
+            from nerodia.elements.element import Element
+            text_content = Element(self.query_scope, {'element': element}).\
+                _execute_js('getTextContent', element).strip()
+            text_content_matches = Validator.match_str_or_regex(text_selector, text_content)
+            if matches != text_content_matches:
+                nerodia.logger.deprecate(':text locator with RegExp: {!r} matched an element with '
+                                         'hidden text'.format(text_selector.pattern),
+                                         'visible_text')
+
+        return matches
 
     @property
     def _can_convert_regexp_to_contains(self):

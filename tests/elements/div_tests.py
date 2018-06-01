@@ -137,6 +137,26 @@ def test_finds_all_attribute_methods(browser):
     assert hasattr(browser.div(index=0), 'text')
 
 
+class TestDivDeprecationWarnings(object):
+    def test_does_not_throw_deprecation_when_still_matched_by_text_content(self, browser, caplog):
+        browser.div(text=compile(r'some visible')).exists
+        assert 'DEPRECATION' not in caplog.text
+
+    def test_throws_deprecation_when_no_longer_matched_by_text_content(self, browser, caplog):
+        browser.div(text=compile(r'some visible$')).exists
+        assert ':text locator with RegExp: {!r} matched an element with hidden text is ' \
+               'deprecated. Use visible_text instead.'.format('some visible$') in caplog.text
+
+    def test_trows_deprecation_when_begins_to_be_matched_by_text_content(self, browser, caplog):
+        browser.div(text=compile(r'some hidden')).exists
+        assert ':text locator with RegExp: {!r} matched an element with hidden text is ' \
+               'deprecated. Use visible_text instead.'.format('some hidden') in caplog.text
+
+    def test_does_not_throw_deprecation_when_still_not_matched_by_text_content(self, browser, caplog):
+        browser.div(text=compile(r'does_not_exist')).exists
+        assert 'DEPRECATION' not in caplog.text
+
+
 class TestDivManipulation(object):
     # click
 
