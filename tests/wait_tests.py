@@ -175,6 +175,10 @@ class TestElementWaitUntilPresent(object):
         browser.link(id='show_bar').click()
         browser.div(id='bar').wait_until_present(timeout=5)
 
+    def test_waits_until_the_element_reappears(self, browser):
+        browser.link(id='readd_bar').click()
+        browser.div(id='bar').wait_until_present()
+
     def test_times_out_if_the_element_doesnt_appear(self, browser):
         message = 'timed out after 1 seconds, waiting for true condition on present'
         with pytest.raises(TimeoutError) as e:

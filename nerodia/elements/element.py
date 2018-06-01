@@ -398,6 +398,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self.assert_exists()
             return self.el.is_displayed()
         except StaleElementReferenceException:
+            self.reset()
             raise self._unknown_exception
 
     @property
