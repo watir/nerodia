@@ -258,6 +258,8 @@ class TestElementLocatorFindsSingleElement(object):
         expect_all.side_effect = [[label1, label2], [div]]
         expect_one.return_value = div
         selector = {'tag_name': 'div', 'label': re.compile(r'oob')}
+        mock = mocker.patch('nerodia.elements.element.Element').return_value
+        mock._execute_js.side_effect = 'oob'
         assert locate_one(browser, selector) == div
 
     def test_returns_none_when_no_label_matching_the_regexp_is_found(self, browser, expect_all):
