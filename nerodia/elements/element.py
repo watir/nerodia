@@ -548,9 +548,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         try:
             self.wait_until(lambda e: e.enabled)
         except TimeoutError:
-            raise ObjectDisabledException('element present, but timed out after {} seconds, '
-                                          'waiting for {} to be '
-                                          'enabled'.format(nerodia.default_timeout, self))
+            self._raise_disabled()
 
     def wait_for_writable(self):
         self.wait_for_exists()
@@ -598,9 +596,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                                       'readonly'.format(nerodia.default_timeout, self))
 
     def _raise_disabled(self):
-        raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
-                                      'seconds, waiting for {} to not be '
-                                      'disabled'.format(nerodia.default_timeout, self))
+        raise ObjectReadOnlyException('element present, but timed out after {} '
+                                      'seconds, waiting for {} to be '
+                                      'enabled'.format(nerodia.default_timeout, self))
 
     def _raise_present(self):
         raise UnknownObjectException('element located, but timed out after {} seconds, waiting '
