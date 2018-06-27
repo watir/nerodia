@@ -52,10 +52,12 @@ class ElementCollection(ClassHelpers):
 
     def __getitem__(self, idx):
         """
-        Get the element at the given index
+        Get the element at the given index or slice
 
         Any call to an ElementCollection including an adjacent selector
         can not be lazy loaded because it must store correct type
+
+        Slices can only be lazy loaded if the indices are positive
 
         :param idx: index of wanted element, 0-indexed
         :type idx: int
@@ -63,7 +65,10 @@ class ElementCollection(ClassHelpers):
         :rtype: nerodia.elements.element.Element
         """
         if isinstance(idx, slice):
-            return list(islice(self, idx.start, idx.stop, idx.step))
+            if idx.start < 0 or idx.stop < 0:
+                return list(self)[idx.start:idx.stop]
+            else:
+                return list(islice(self, idx.start, idx.stop, idx.step))
         elif 'adjacent' in self.selector:
             try:
                 return list(islice(self, idx + 1))[idx]
