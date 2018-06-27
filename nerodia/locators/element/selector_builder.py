@@ -184,7 +184,8 @@ class XPath(object):
         if key in ['class', 'class_name']:
             if ' ' in value.strip():
                 nerodia.logger.deprecate("using the 'class_name' locator to locate multiple "
-                                         "classes with a str value", "use a list instead")
+                                         "classes with a str value (i.e. {!r})".format(value),
+                                         "list (e.g. {!r})".format(value.split()))
             return self._build_class_match(value)
         elif key == 'label' and self.should_use_label_element:
             # we assume 'label' means a corresponding label element, not the attribute
