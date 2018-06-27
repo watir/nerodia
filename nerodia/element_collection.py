@@ -65,7 +65,7 @@ class ElementCollection(ClassHelpers):
         :rtype: nerodia.elements.element.Element
         """
         if isinstance(idx, slice):
-            if idx.start < 0 or idx.stop < 0:
+            if idx.start and idx.start < 0 or idx.stop and idx.stop < 0:
                 return list(self)[idx.start:idx.stop]
             else:
                 return list(islice(self, idx.start, idx.stop, idx.step))
