@@ -23,6 +23,16 @@ class TestElementPresent(object):
         assert element.stale
         assert not element.present
 
+    def test_returns_true_the_second_time_if_the_element_is_stale(self, browser):
+        element = browser.div(id='foo')
+        element.exists
+
+        browser.refresh()
+
+        assert element.stale
+        assert not element.present
+        assert element.present
+
 
 @pytest.mark.page('forms_with_input_elements.html')
 class TestElementEnabled(object):
