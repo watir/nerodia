@@ -599,7 +599,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                                       'readonly'.format(nerodia.default_timeout, self))
 
     def _raise_disabled(self):
-        raise ObjectReadOnlyException('element present, but timed out after {} '
+        raise ObjectDisabledException('element present, but timed out after {} '
                                       'seconds, waiting for {} to be '
                                       'enabled'.format(nerodia.default_timeout, self))
 
