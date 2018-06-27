@@ -1,6 +1,6 @@
+import os
 import re
 
-import os
 import pytest
 
 from nerodia.exception import NoMatchingWindowFoundException

@@ -1,5 +1,6 @@
-import pytest
 from re import compile
+
+import pytest
 
 pytestmark = pytest.mark.page('images.html')
 

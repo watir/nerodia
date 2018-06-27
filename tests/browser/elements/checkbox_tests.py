@@ -1,5 +1,6 @@
-import pytest
 from re import compile
+
+import pytest
 
 from nerodia.exception import UnknownObjectException
 

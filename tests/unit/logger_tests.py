@@ -8,7 +8,7 @@ import nerodia
 
 
 @pytest.fixture
-def default_logging_handling(browser):
+def default_logging_handling():
     orig = nerodia.logger.level
     yield
     nerodia.logger.level = orig

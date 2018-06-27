@@ -1,6 +1,6 @@
-import pytest
-
 from re import compile
+
+import pytest
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
