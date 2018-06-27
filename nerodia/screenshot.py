@@ -1,7 +1,18 @@
+from selenium.webdriver import Remote
+
+import nerodia
+
+
 class Screenshot(object):
 
-    def __init__(self, driver):
-        self.driver = driver
+    def __init__(self, browser):
+        if isinstance(browser, Remote):
+            nerodia.logger.deprecate('Initializing `Screenshot` with a `selenium.webdriver` '
+                                     'instance', 'a `watir.browser` instance')
+            self.driver = browser
+        else:
+            self.browser = browser
+            self.driver = browser.wd
 
     def save(self, path):
         """

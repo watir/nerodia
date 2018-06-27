@@ -233,7 +233,7 @@ class Browser(Container, HasWindow, Waitable):
         :rtype: nerodia.screenshot.Screenshot
         """
         from .screenshot import Screenshot
-        return Screenshot(self.driver)
+        return Screenshot(self)
 
     @property
     def exist(self):
