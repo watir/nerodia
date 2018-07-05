@@ -14,9 +14,12 @@ _version:
   two: &two
     language: python
     python: "2.7"
-  three: &three
+  three: &threesix
     language: python
     python: "3.6"
+  three: &three
+    language: python
+    python: "3.7"
 
 _browsers:
   firefox: &firefox-latest
@@ -48,14 +51,21 @@ matrix:
     <<: *firefox-nightly
   - env: TOXENV=flake8
     <<: *three
-  - env: TOXENV=py36-unit
+  - env: TOXENV=py37-unit
     <<: *three
-  - env: TOXENV=py36-chrome
+  - env: TOXENV=py37-chrome
     <<: *three
     <<: *chrome
-  - env: TOXENV=py36-firefox
+  - env: TOXENV=py37-firefox
     <<: *three
     <<: *firefox-nightly
+  - env: TOXENV=flake8
+    <<: *threesix
+  - env: TOXENV=py36-unit
+    <<: *threesix
+  - env: TOXENV=py36-chrome
+    <<: *threesix
+    <<: *chrome
 before_install:
 - chmod +x ./travis.sh
 install:
