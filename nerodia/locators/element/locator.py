@@ -11,6 +11,11 @@ from .validator import Validator
 from ...exception import Error
 from ...xpath_support import XpathSupport
 
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
+
 
 class Locator(object):
     W3C_FINDERS = {
@@ -163,7 +168,7 @@ class Locator(object):
         # TODO: Identify Regexp that can have an exact equivalent using XPath contains (ie would
         # not require filtering) vs approximations (ie would still require filtering)
         for how, what in self.normalized_selector.copy().items():
-            if isinstance(what, re._pattern_type):
+            if isinstance(what, Pattern):
                 self.filter_selector[how] = self.normalized_selector.pop(how, None)
 
         if self.normalized_selector.get('index') is not None and \
@@ -179,7 +184,7 @@ class Locator(object):
         return self.filter_selector
 
     def _process_label(self):
-        if isinstance(self.normalized_selector.get('label'), re._pattern_type) and \
+        if isinstance(self.normalized_selector.get('label'), Pattern) and \
                 self.selector_builder.should_use_label_element:
 
             label = self._label_from_text

@@ -8,11 +8,16 @@ from selenium.webdriver.common.by import By
 import nerodia
 from ...xpath_support import XpathSupport
 
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
+
 STRING_TYPES = [six.text_type, six.binary_type]
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [list, re._pattern_type, bool] + STRING_TYPES
+    VALID_WHATS = [list, Pattern, bool] + STRING_TYPES
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
     def __init__(self, query_scope, selector, valid_attributes):
@@ -41,7 +46,7 @@ class SelectorBuilder(object):
             if not isinstance(what, bool):
                 raise TypeError('expected {}, got {!r}:{}'.format(bool, what, what.__class__))
         elif how == 'visible_text':
-            if type(what) not in [six.text_type, six.binary_type, re._pattern_type]:
+            if type(what) not in [six.text_type, six.binary_type, Pattern]:
                 raise TypeError('expected str or regexp, got {}')
         else:
             if isinstance(what, list) and how != 'class_name':
@@ -109,7 +114,7 @@ class SelectorBuilder(object):
         return [how, what]
 
     def _build_wd_selector(self, selectors):
-        if any(isinstance(val, re._pattern_type) for val in selectors.values()):
+        if any(isinstance(val, Pattern) for val in selectors.values()):
             return None
         return self._build_xpath(selectors)
 

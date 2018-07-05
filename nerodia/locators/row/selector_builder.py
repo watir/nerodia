@@ -1,13 +1,17 @@
 import logging
-import re
 
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 from ...exception import Error
 
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
+
 
 class SelectorBuilder(ElementSelectorBuilder):
     def _build_wd_selector(self, selectors):
-        if any(isinstance(val, re._pattern_type) for val in selectors.values()):
+        if any(isinstance(val, Pattern) for val in selectors.values()):
             return None
 
         if not selectors.pop('tag_name', None):

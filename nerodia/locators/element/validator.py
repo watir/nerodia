@@ -1,4 +1,7 @@
-import re
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
 
 
 class Validator(object):
@@ -16,7 +19,7 @@ class Validator(object):
 
     @staticmethod
     def match_str_or_regex(str_or_regex, term):
-        if isinstance(str_or_regex, re._pattern_type) and str_or_regex.search(term):
+        if isinstance(str_or_regex, Pattern) and str_or_regex.search(term):
             return True
         elif str_or_regex == term:
             return True

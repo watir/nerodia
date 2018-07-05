@@ -10,6 +10,11 @@ from .html_elements import HTMLElement
 from ..meta_elements import MetaHTMLElement
 from ..wait.wait import Wait
 
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
+
 
 @six.add_metaclass(MetaHTMLElement)
 class Select(HTMLElement):
@@ -145,7 +150,7 @@ class Select(HTMLElement):
         raise NoValueFoundException('{} not found in select list'.format(term))
 
     def _js_select_by(self, term, number):
-        if isinstance(term, re._pattern_type):
+        if isinstance(term, Pattern):
             js_rx = term.pattern
             js_rx = js_rx.replace('\\A', '^', 1)
             js_rx = js_rx.replace('\\Z', '$', 1)
@@ -186,7 +191,7 @@ class Select(HTMLElement):
         raise NoValueFoundException('{} not found in select list'.format(term))
 
     def _find_options(self, how, term):
-        types = [six.text_type, six.binary_type, int, re._pattern_type]
+        types = [six.text_type, six.binary_type, int, Pattern]
         found = []
 
         def func(sel):

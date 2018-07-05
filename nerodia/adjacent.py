@@ -1,4 +1,7 @@
-import re
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
 
 
 class Adjacent(object):
@@ -118,7 +121,7 @@ class Adjacent(object):
         index = kwargs.pop('index', None)
         tag_name = kwargs.get('tag_name')
 
-        if not (plural or any(isinstance(val, re._pattern_type) for val in kwargs.values())):
+        if not (plural or any(isinstance(val, Pattern) for val in kwargs.values())):
             kwargs['index'] = index or 0
 
         if not plural and tag_name:
