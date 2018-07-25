@@ -1,6 +1,7 @@
 import re
 
 import pytest
+from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
 from nerodia.elements.html_elements import HTMLElement
@@ -266,6 +267,22 @@ class TestElementLocatorFindsSingleElement(object):
         expect_all.return_value = []
         selector = {'tag_name': 'div', 'label': re.compile(r'foo')}
         assert locate_one(browser, selector) is None
+
+    def test_relocates_an_element_that_goes_stale_during_filtering(self, browser, mocker, expect_all):
+        element1a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        element1a.get_attribute.side_effect = StaleElementReferenceException
+        element1b = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        element2 = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+
+        elements1 = [element1a, element2.copy()]
+        elements2 = [element1b, element2.copy()]
+
+        expect_all.side_effect = [elements1, elements2]
+        assert locate_one(browser, {'class_name': re.compile(r'foo')}) == elements2[0]
+
+
+
+
 
     def test_finds_all_if_index_is_given(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'})] * 2

@@ -1,6 +1,7 @@
 import re
 from copy import copy
 from itertools import islice
+from time import sleep
 
 import six
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
@@ -94,8 +95,19 @@ class Locator(object):
             what = self._add_regexp_predicates(what)
 
         if filter == 'all' or len(self.filter_selector) > 0:
-            elements = self._locate_elements(how, what, self.driver_scope) or []
-            return self._filter_elements(elements, filter=filter)
+            retries = 0
+            while True:
+                try:
+                    elements = self._locate_elements(how, what, self.driver_scope) or []
+                    return self._filter_elements(elements, filter=filter)
+                except StaleElementReferenceException:
+                    retries += 1
+                    sleep(0.5)
+                    if retries < 2:
+                        continue
+                    target = 'element collection' if filter == 'all' else 'element'
+                    raise Error('Unable to locate {} from {} due to changing '
+                                'page'.format(target, self.selector))
         else:
             return self._locate_element(how, what, self.driver_scope)
 
