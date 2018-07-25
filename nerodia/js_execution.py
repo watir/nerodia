@@ -78,7 +78,7 @@ class JSExecution(object):
         if not isinstance(color, list):
             colors = [color]
         else:
-            colors = color.copy()
+            colors = color[:]
         colors.append(background_color)
 
         for next_color in colors * flashes:
