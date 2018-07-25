@@ -1,6 +1,8 @@
 import re
 from time import sleep
 
+import nerodia
+
 
 class JSExecution(object):
     def execute_script(self, script, *args):
@@ -27,12 +29,14 @@ class JSExecution(object):
         event_name = re.sub(r'^on', '', event_name).lower()
         return self._element_call(lambda: self._execute_js('fireEvent', self, event_name))
 
-    def flash(self, color='red', flashes=10, delay=0.05):
+    def flash(self, preset='default', color='red', flashes=10, delay=0.05):
         """
         Flashes (change background color to a new color and back a few times) element
 
-        :param color: what color to flash with
-        :type color: str
+        :param preset: choice from preset values
+        :type param: str:
+        :param color: what color or colors to flash with
+        :type color: str or list
         :param flashes: number of times element should be flashed
         :type flashes: int
         :param delay: how long to wait between flashes
@@ -48,14 +52,37 @@ class JSExecution(object):
         browser.li(id='non_link_1').flash(flashes=4)
         browser.li(id='non_link_1').flash(delay=0.1)
         """
+        presets = {
+            'fast': {'delay': 0.04},
+            'slow': {'delay': 0.2},
+            'long': {'flashes': 5, 'delay': 0.5},
+            'rainbow': {'flashes': 5, 'color': ['red', 'orange', 'yellow', 'green', 'blue',
+                                                'indigo', 'violet']}
+        }
+        # TODO: remove this sooner than later
+        if preset in presets:
+            return self.flash(**presets[preset])
+        elif isinstance(color, int):
+            nerodia.logger.deprecate('Using color as first argument to #flash',
+                                     'Specify with keyword or add preset')
+            if isinstance(flashes, float):
+                delay = flashes
+            flashes = color
+            color = preset
+
         background_color = self.style('background-color')
         original_color = background_color
         if not background_color:
             background_color = 'white'
 
-        for n in range(flashes * 2):
-            nextcolor = color if n % 2 == 0 else background_color
-            self._element_call(lambda: self._execute_js('backgroundColor', self.el, nextcolor))
+        if not isinstance(color, list):
+            colors = [color]
+        else:
+            colors = color.copy()
+        colors.append(background_color)
+
+        for next_color in colors * flashes:
+            self._element_call(lambda: self._execute_js('backgroundColor', self.el, next_color))
             sleep(delay)
 
         self._element_call(lambda: self._execute_js('backgroundColor', self.el, original_color))

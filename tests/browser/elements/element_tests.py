@@ -332,11 +332,21 @@ class TestElementFlash(object):
         assert h2.flash() == h2
 
     def test_should_keep_the_element_background_color_after_flashing(self, browser):
-        h2 = browser.h2(text='Add user')
         h1 = browser.h1(text='User administration')
+        h2 = browser.h2(text='Add user')
 
-        assert h2.style('background-color') == h2.flash().style('background-color')
-        assert h1.style('background-color') == h1.flash().style('background-color')
+        assert h2.style('background-color') == \
+               h2.flash('rainbow', flashes=2).style('background-color')
+        assert h1.style('background-color') == h1.flash(flashes=2).style('background-color')
+
+    def test_should_respond_to_preset_flashes_like_fast_and_slow(self, browser):
+        h1 = browser.h1(text='User administration')
+        h2 = browser.h2(text='Add user')
+
+        assert h1.flash('rainbow') == h1
+        assert h2.flash('slow') == h2
+        assert h1.flash('fast') == h1
+        assert h2.flash('long') == h2
 
 
 @pytest.mark.page('non_control_elements.html')
