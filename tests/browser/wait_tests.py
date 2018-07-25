@@ -54,12 +54,12 @@ class TestElementWaitUntilEnabled(object):
         assert btn.disabled
 
     def test_times_out(self, browser):
-        repr = "#<Button: located: False; {'tag_name': 'button', 'id': 'btn'}>"
-        message = 'timed out after 1 seconds, waiting for true condition on {}'.format(repr)
+        message_parts = ['timed out after 1 seconds, waiting for true condition on',
+                         '#<Button: located: True;', "'tag_name': 'button'", "'id': 'btn'"]
         element = browser.button(id='btn')
         with pytest.raises(TimeoutError) as e:
             element.wait_until(timeout=1, method=lambda e: e.enabled).click()
-        assert e.value.args[0] == message
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_responds_to_element_methods(self, browser):
         element = browser.button().wait_until(method=lambda _: True)
@@ -88,10 +88,11 @@ class TestElementWaitUntilPresent(object):
         browser.div(id='bar').wait_until_present()
 
     def test_times_out_if_the_element_doesnt_appear(self, browser):
-        message = 'timed out after 1 seconds, waiting for true condition on present'
+        message_parts = ['timed out after 1 seconds, waiting for true condition on',
+                         '#<Div: located: True;', "'id': 'bar'", "'tag_name': 'div'"]
         with pytest.raises(TimeoutError) as e:
             browser.div(id='bar').wait_until_present(timeout=1)
-        assert e.value.args[0] == message
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_users_provided_interval(self, browser, mocker):
         mock = mocker.patch('nerodia.elements.html_elements.Div.present',
@@ -111,17 +112,11 @@ class TestElementWaitUntilNotPresent(object):
         browser.div(id='foo').wait_until_not_present(timeout=2)
 
     def test_times_out_if_the_element_doesnt_disappear(self, browser):
-        element = "#<Div: located: False;"
-        tag = "'tag_name': 'div'"
-        id = "'id': 'foo'"
-        message = 'timed out after 1 seconds, waiting for false condition on'
+        message_parts = ['timed out after 1 seconds, waiting for false condition on',
+                         '#<Div: located: True;', "'tag_name': 'div'", "'id': 'foo'"]
         with pytest.raises(TimeoutError) as e:
             browser.div(id='foo').wait_until_not_present(timeout=1)
-        error = e.value.args[0]
-        assert element in error
-        assert tag in error
-        assert id in error
-        assert message in error
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_users_provided_interval(self, browser, mocker):
         mock = mocker.patch('nerodia.elements.html_elements.Div.present',

@@ -134,9 +134,7 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
-        message = 'waiting for true condition on present'
-        return self.wait_until(method=lambda x: x.present, timeout=timeout, message=message,
-                               interval=interval)
+        return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
 
     def wait_until_not_present(self, timeout=None, interval=None):
         """
