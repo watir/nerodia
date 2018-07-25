@@ -144,7 +144,7 @@ class TestCheckboxEnabled(object):
 
     def test_returns_false_if_the_checkbox_button_is_disabled(self, browser):
         assert not browser.checkbox(id='new_user_interests_dentistry').enabled
-        assert not browser.checkbox('xpath', "//input[@id='new_user_interests_dentistry']").enabled
+        assert not browser.checkbox(xpath="//input[@id='new_user_interests_dentistry']").enabled
 
     @pytest.mark.parametrize('selector',
                              [{'id': 'no_such_id'},

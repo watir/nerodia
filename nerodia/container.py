@@ -1,3 +1,6 @@
+import nerodia
+
+
 class Container(object):
     def element(self, *args, **kwargs):
         from .elements.html_elements import HTMLElement
@@ -11,11 +14,14 @@ class Container(object):
 
     def _extract_selector(self, *args, **kwargs):
         if args and len(args) == 2:
+            nerodia.logger.deprecate('Using ordered parameters to locate elements '
+                                     '({}, {})'.format(*args), '{{{}={}}}'.format(*args),
+                                     ids='selector_parameters')
             return {args[0]: args[1]}
         elif not args:
             return kwargs
 
-        raise ValueError('expected kwargs dict or (how, what), got {}'.format(kwargs))
+        raise ValueError('expected kwargs dict, got {}'.format(kwargs))
 
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
