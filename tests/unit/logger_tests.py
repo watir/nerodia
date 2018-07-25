@@ -47,18 +47,18 @@ def test_allows_setting_level_by_string():
 
 
 def test_outputs_to_stdout_by_default(caplog):
-    nerodia.logger.warn('warning_message')
+    nerodia.logger.warning('warning_message')
     assert 'warning_message' in caplog.text
 
 
 def test_allows_to_output_to_file(filepath):
     nerodia.logger.filename = filepath
-    nerodia.logger.warn('warning_message1')
+    nerodia.logger.warning('warning_message1')
     with open(filepath) as f:
         text = f.read()
     assert 'warning_message1' in text
 
-    nerodia.logger.warn('warning_message2')
+    nerodia.logger.warning('warning_message2')
     with open(filepath) as f:
         text = f.read()
     nerodia.logger.filename = None  # close file
@@ -67,14 +67,14 @@ def test_allows_to_output_to_file(filepath):
 
 def test_allows_stopping_output_to_file(filepath):
     nerodia.logger.filename = filepath
-    nerodia.logger.warn('warning_message1')
+    nerodia.logger.warning('warning_message1')
     with open(filepath) as f:
         text = f.read()
     assert 'warning_message1' in text
 
     nerodia.logger.filename = None
 
-    nerodia.logger.warn('warning_message2')
+    nerodia.logger.warning('warning_message2')
     with open(filepath) as f:
         text = f.read()
     assert 'warning_message2' not in text
@@ -83,3 +83,23 @@ def test_allows_stopping_output_to_file(filepath):
 def test_allows_to_deprecate_functionality(caplog):
     nerodia.logger.deprecate('#old', '#new')
     assert '[DEPRECATION] #old is deprecated. Use #new instead.' in caplog.text
+
+
+def test_allows_to_selectively_ignore_deprecations(caplog):
+    nerodia.logger.ignore('old deprecated')
+    nerodia.logger.deprecate('#old', '#new', ignores=['old deprecated'])
+    assert '#old' not in caplog.text
+    assert '#new' not in caplog.text
+
+
+def test_allows_to_selectively_ignore_warnings(caplog):
+    nerodia.logger.ignore('spam')
+    nerodia.logger.warning('WARNING HAM', ignores=['spam'])
+    assert 'WARNING HAM' not in caplog.text
+
+
+def test_allows_to_ignore_all_deprecation_notices(caplog):
+    nerodia.logger.ignore('deprecations')
+    nerodia.logger.deprecate('#old', '#new')
+    assert '#old' not in caplog.text
+    assert '#new' not in caplog.text
