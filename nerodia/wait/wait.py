@@ -26,7 +26,7 @@ class Wait(object):
         result = cls._run_with_timer(timeout, interval, method, object, until=True)
         if result:
             return result
-        raise TimeoutError(cls._message_for(timeout, message))
+        raise TimeoutError(cls._message_for(timeout, object, message))
 
     @classmethod
     def until_not(cls, method=None, timeout=None, message=None, interval=None, object=None):
@@ -48,12 +48,14 @@ class Wait(object):
         result = cls._run_with_timer(timeout, interval, method, object, until=False)
         if result:
             return result
-        raise TimeoutError(cls._message_for(timeout, message))
+        raise TimeoutError(cls._message_for(timeout, object, message))
 
     whilst = until_not
 
     @classmethod
-    def _message_for(cls, timeout, message):
+    def _message_for(cls, timeout, object, message):
+        if callable(message):
+            message = message(object)
         err = 'timed out after {} seconds'.format(timeout)
         if message:
             err += ', {}'.format(message)
@@ -86,7 +88,10 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until(lambda x: x.present).click
         """
-        message = message or 'waiting for true condition on {}'.format(self)
+        if not message:
+            def msg(obj):
+                return 'waiting for true condition on {}'.format(obj)
+            message = msg
         if object is None:
             object = self
         Wait.until(method=method, timeout=timeout, message=message, interval=interval,
@@ -108,7 +113,10 @@ class Waitable(object):
 
         browser.wait_while(lambda x: not x.exists, timeout=2)
         """
-        message = message or 'waiting for false condition on {}'.format(self)
+        if not message:
+            def msg(obj):
+                return 'waiting for false condition on {}'.format(obj)
+            message = msg
         if object is None:
             object = self
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
