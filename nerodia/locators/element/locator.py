@@ -141,8 +141,14 @@ class Locator(object):
 
         self.normalized_selector = self.selector_builder.normalized_selector
 
+        label_key = None
         if 'label' in self.normalized_selector:
-            self._process_label()
+            label_key = 'label'
+        elif 'visible_label' in self.normalized_selector:
+            label_key = 'visible_label'
+
+        if label_key:
+            self._process_label(label_key)
             if self.normalized_selector is None:
                 return None
 
@@ -183,11 +189,11 @@ class Locator(object):
 
         return self.filter_selector
 
-    def _process_label(self):
-        if isinstance(self.normalized_selector.get('label'), Pattern) and \
+    def _process_label(self, label_key):
+        if isinstance(self.normalized_selector.get(label_key), Pattern) and \
                 self.selector_builder.should_use_label_element:
 
-            label = self._label_from_text
+            label = self._label_from_text(label_key)
             if not label:
                 self.normalized_selector = None
                 return None
@@ -198,13 +204,14 @@ class Locator(object):
             else:
                 self.driver_scope = label
 
-    @property
-    def _label_from_text(self):
+    def _label_from_text(self, label_key):
         # TODO: this won't work correctly if @wd is a sub-element
         # TODO: figure out how to do this with find_element
-        label_text = self.normalized_selector.pop('label', None)
+        label_text = self.normalized_selector.pop(label_key, None)
+        locator_key = label_key.replace('label', 'text')
         elements = self._locate_elements('tag_name', 'label', self.driver_scope)
-        return next((e for e in elements if self._matches_selector(e, {'text': label_text})), None)
+        return next((e for e in elements if self._matches_selector(e, {locator_key: label_text})),
+                    None)
 
     def _matches_selector(self, element, selector):
         def check_match(how, what):
@@ -222,9 +229,10 @@ class Locator(object):
                 _execute_js('getTextContent', element).strip()
             text_content_matches = Validator.match_str_or_regex(text_selector, text_content)
             if matches != text_content_matches:
-                nerodia.logger.deprecate(':text locator with RegExp: {!r} matched an element with '
-                                         'hidden text'.format(text_selector.pattern),
-                                         'visible_text')
+                key = 'text' if 'text' in self.selector else 'label'
+                nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} matched an element '
+                                         'with hidden text'.format(key, text_selector.pattern),
+                                         'visible_{}'.format(key))
 
         return matches
 

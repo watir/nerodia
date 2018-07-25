@@ -28,6 +28,8 @@ class TestTextFieldExist(object):
         assert browser.text_field(label=compile(r'(Last|First) name')).exists is True
         assert browser.text_field(label='Without for').exists is True
         assert browser.text_field(label=compile(r'Without for')).exists is True
+        assert browser.text_field(label='With hidden text').exists is True
+        assert browser.text_field(visible_label=compile(r'With text')).exists is True
 
     def test_returns_the_first_text_field_if_given_no_args(self, browser):
         assert browser.text_field().exists
@@ -62,6 +64,8 @@ class TestTextFieldExist(object):
         assert browser.text_field(xpath="//input[@id='no_such_id']").exists is False
         assert browser.text_field(label='bad_label').exists is False
         assert browser.text_field(label=compile(r'bad_label')).exists is False
+        assert browser.text_field(label='With text').exists is False
+        assert browser.text_field(visible_label=compile(r'With hidden text')).exists is False
 
         # input type='hidden' should not be found by #text_field
         assert browser.text_field(id='new_user_interests_dolls').exists is False
