@@ -27,7 +27,7 @@ class JSExecution(object):
         event_name = re.sub(r'^on', '', event_name).lower()
         return self._element_call(lambda: self._execute_js('fireEvent', self, event_name))
 
-    def flash(self, color='red', flashes=5, delay=0.2):
+    def flash(self, color='red', flashes=10, delay=0.05):
         """
         Flashes (change background color to a new color and back a few times) element
 
@@ -48,16 +48,17 @@ class JSExecution(object):
         browser.li(id='non_link_1').flash(flashes=4)
         browser.li(id='non_link_1').flash(delay=0.1)
         """
-        background_color = self.style('backgroundColor')
-        element_color = self._element_call(lambda: self._execute_js('backgroundColor',
-                                                                    self.el)).strip()
+        background_color = self.style('background-color')
+        original_color = background_color
+        if not background_color:
+            background_color = 'white'
 
         for n in range(flashes * 2):
             nextcolor = color if n % 2 == 0 else background_color
             self._element_call(lambda: self._execute_js('backgroundColor', self.el, nextcolor))
             sleep(delay)
 
-        self._element_call(lambda: self._execute_js('backgroundColor', self.el, element_color))
+        self._element_call(lambda: self._execute_js('backgroundColor', self.el, original_color))
 
         return self
 

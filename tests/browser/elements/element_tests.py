@@ -331,6 +331,13 @@ class TestElementFlash(object):
         h2 = browser.h2(text='Add user')
         assert h2.flash() == h2
 
+    def test_should_keep_the_element_background_color_after_flashing(self, browser):
+        h2 = browser.h2(text='Add user')
+        h1 = browser.h1(text='User administration')
+
+        assert h2.style('background-color') == h2.flash().style('background-color')
+        assert h1.style('background-color') == h1.flash().style('background-color')
+
 
 @pytest.mark.page('non_control_elements.html')
 class TestElementInnerOutter(object):
