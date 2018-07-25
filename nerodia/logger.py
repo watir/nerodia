@@ -33,8 +33,9 @@ class Logger(object):
             fileh = logging.FileHandler(path, 'a')
             self._logger.addHandler(fileh)
 
-    def ignore(self, _id):
-        self._ignored.append(_id)
+    def ignore(self, *ids):
+        for _id in ids:
+            self._ignored.append(_id)
 
     def warning(self, msg, ids=None, *args, **kwargs):
         ids = ids or []

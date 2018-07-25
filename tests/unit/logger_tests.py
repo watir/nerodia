@@ -103,3 +103,12 @@ def test_allows_to_ignore_all_deprecation_notices(caplog):
     nerodia.logger.deprecate('#old', '#new')
     assert '#old' not in caplog.text
     assert '#new' not in caplog.text
+
+
+def test_allows_to_ignore_multiple_ids(caplog):
+    nerodia.logger.ignore('spam', 'ham')
+    nerodia.logger.warning('WARNING SPAM', ids=['spam'])
+    nerodia.logger.warning('WARNING HAM', ids=['ham'])
+    assert 'WARNING HAM' not in caplog.text
+    assert 'WARNING SPAM' not in caplog.text
+
