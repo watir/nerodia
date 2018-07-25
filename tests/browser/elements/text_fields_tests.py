@@ -8,7 +8,7 @@ class TestTextFields(object):
         assert list(browser.text_fields(name='new_user_email')) == [browser.text_field(name='new_user_email')]
 
     def test_returns_the_correct_number_of_text_fields(self, browser):
-        assert len(browser.text_fields()) == 17
+        assert len(browser.text_fields()) == 18
 
     def test_get_item_returns_the_text_field_at_the_given_index(self, browser):
         assert browser.text_fields()[0].id == 'new_user_first_name'

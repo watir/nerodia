@@ -232,8 +232,9 @@ class Locator(object):
             text_content_matches = Validator.match_str_or_regex(text_selector, text_content)
             if matches != text_content_matches:
                 key = 'text' if 'text' in self.selector else 'label'
-                nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} matched an element '
-                                         'with hidden text'.format(key, text_selector.pattern),
+                nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
+                                         'that includes hidden '
+                                         'text'.format(key, text_selector.pattern),
                                          'visible_{}'.format(key))
 
         return matches

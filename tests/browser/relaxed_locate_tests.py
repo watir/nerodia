@@ -59,6 +59,13 @@ class TestRelaxedLocate(object):
         element.click()
         assert time() - start < 3
 
+    def test_waits_to_not_be_readonly(self, browser):
+        assert browser.text_field(id='writable').readonly is True
+        start_time = time()
+        browser.link(id='make-writable').click()
+        browser.text_field(id='writable').set('foo')
+        assert time() - start_time > 2
+
     def test_ensures_all_checks_happen_once_even_if_time_has_expired(self, browser):
         nerodia.default_timeout = -1
         browser.link().click()

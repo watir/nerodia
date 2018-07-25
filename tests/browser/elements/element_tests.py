@@ -109,7 +109,7 @@ class TestElementWithoutTagName(object):
         assert browser.field_set().element(id='first_label').exists
 
     def test_finds_several_elements_from_an_elements_subtree(self, browser):
-        assert len(browser.fieldset().elements(xpath=".//label")) == 21
+        assert len(browser.fieldset().elements(xpath=".//label")) == 22
 
 
 class TestElementSubtype(object):

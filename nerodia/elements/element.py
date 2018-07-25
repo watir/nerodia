@@ -398,7 +398,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self.assert_exists()
             return self.el.is_displayed()
         except StaleElementReferenceException:
-            nerodia.logger.deprecate('Checking `#present is False` '
+            nerodia.logger.deprecate('Checking `#visible` or `#present is False` '
                                      'to determine StaleElementReferenceException',
                                      '`#stale is True`')
             self.reset()
@@ -689,12 +689,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                 return method()
             except (ElementNotVisibleException, ElementNotInteractableException):
                 if (Wait.timer.remaining_time <= 0) or \
-                        (precondition not in [self.wait_for_present, self.wait_for_enabled]):
+                        (precondition not in [self.wait_for_present, self.wait_for_enabled,
+                                              self.wait_for_writable]):
                     self._raise_present()
                 continue
             except InvalidElementStateException:
                 if (Wait.timer.remaining_time <= 0) or \
-                        (precondition in [self.wait_for_writable, self.wait_for_enabled]):
+                        (precondition in [self.wait_for_writable, self.wait_for_enabled,
+                                          self.wait_for_writable]):
                     self._raise_disabled()
                 continue
             except NoSuchWindowException:

@@ -196,7 +196,6 @@ class TestTextFieldAccessMethods(object):
     def test_raises_correct_exception_if_sending_keys_to_readonly_element(self, browser):
         with pytest.raises(ObjectReadOnlyException):
             browser.text_field(id='new_user_code').set('foo')
-
     # append
 
     def test_appends_the_text_to_the_text_field(self, browser):
