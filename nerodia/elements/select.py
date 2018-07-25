@@ -82,7 +82,7 @@ class Select(HTMLElement):
         If this is a multi-select and several options match the value given, all will be selected
         :param value: string or regex to match against the option
         """
-        nerodia.logger.deprecate('#select_value', '#select')
+        nerodia.logger.deprecate('#select_value', '#select', ids=['select_value'])
         return self._select_by(value)
 
     def js_select_value(self, value):
@@ -144,7 +144,8 @@ class Select(HTMLElement):
         found = self._find_options('value', term)
         if found:
             if len(found) > 1:
-                nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all')
+                nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all',
+                                         ids=['select_by'])
             return self._select_matching(found)
 
         raise NoValueFoundException('{} not found in select list'.format(term))

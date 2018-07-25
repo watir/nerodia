@@ -98,8 +98,8 @@ class Alert(Waitable):
             return self.wait_until(lambda a: a.exists, message='waiting for alert')
         except TimeoutError:
             if nerodia.default_timeout != 0:
-                nerodia.logger.warn('This code has slept for the duration of the default timeout '
-                                    'waiting for an Alert to exist. If the test is still passing, '
-                                    'consider using Alert#exists? instead of rescuing '
-                                    'UnknownObjectException')
+                msg = 'This code has slept for the duration of the default timeout waiting for ' \
+                      'an Alert to exist. If the test is still passing, consider using ' \
+                      'Alert#exists? instead of rescuing UnknownObjectException'
+                nerodia.logger.warning(msg, ids=['wait_for_alert'])
             raise UnknownObjectException('unable to locate alert')

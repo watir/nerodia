@@ -247,7 +247,8 @@ class Locator(object):
                 nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
                                          'that includes hidden '
                                          'text'.format(key, text_selector.pattern),
-                                         'visible_{}'.format(key))
+                                         'visible_{}'.format(key),
+                                         ids=['visible_text'])
 
         return matches
 

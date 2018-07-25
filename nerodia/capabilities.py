@@ -155,7 +155,8 @@ class Capabilities(object):
 
         if caps:
             nerodia.logger.warn('You can now pass values directly into nerodia.browser.Browser '
-                                'without needing to use desired_capabilities')
+                                'without needing to use desired_capabilities',
+                                ids=['use_capabilities'])
             self.selenium_opts.update(self.options)
         else:
             from selenium.webdriver.common.desired_capabilities import DesiredCapabilities

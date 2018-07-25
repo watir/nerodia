@@ -8,7 +8,8 @@ class Screenshot(object):
     def __init__(self, browser):
         if isinstance(browser, Remote):
             nerodia.logger.deprecate('Initializing `Screenshot` with a `selenium.webdriver` '
-                                     'instance', 'a `watir.browser` instance')
+                                     'instance', 'a `nerodia.browser` instance',
+                                     ids=['screenshot_driver'])
             self.driver = browser
         else:
             self.browser = browser

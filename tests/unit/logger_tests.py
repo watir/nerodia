@@ -87,14 +87,14 @@ def test_allows_to_deprecate_functionality(caplog):
 
 def test_allows_to_selectively_ignore_deprecations(caplog):
     nerodia.logger.ignore('old deprecated')
-    nerodia.logger.deprecate('#old', '#new', ignores=['old deprecated'])
+    nerodia.logger.deprecate('#old', '#new', ids=['old deprecated'])
     assert '#old' not in caplog.text
     assert '#new' not in caplog.text
 
 
 def test_allows_to_selectively_ignore_warnings(caplog):
     nerodia.logger.ignore('spam')
-    nerodia.logger.warning('WARNING HAM', ignores=['spam'])
+    nerodia.logger.warning('WARNING HAM', ids=['spam'])
     assert 'WARNING HAM' not in caplog.text
 
 

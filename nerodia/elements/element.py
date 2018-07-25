@@ -399,8 +399,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             return self.el.is_displayed()
         except StaleElementReferenceException:
             nerodia.logger.deprecate('Checking `#visible` or `#present is False` '
-                                     'to determine StaleElementReferenceException',
-                                     '`#stale is True`')
+                                     'to determine a stale element',
+                                     '`#stale is True`', ids=['stale_visible'])
             self.reset()
             raise self._unknown_exception
 

@@ -33,27 +33,27 @@ class Logger(object):
             fileh = logging.FileHandler(path, 'a')
             self._logger.addHandler(fileh)
 
-    def ignore(self, ign):
-        self._ignored.append(ign)
+    def ignore(self, _id):
+        self._ignored.append(_id)
 
-    def warning(self, msg, ignores=None, *args, **kwargs):
-        ignores = ignores or []
-        if ignores:
-            message = '[{}]'.format(', '.join(ignores))
+    def warning(self, msg, ids=None, *args, **kwargs):
+        ids = ids or []
+        if ids:
+            message = '[{}]'.format(', '.join(ids))
         else:
             message = ''
         message += msg
-        if len(set(self._ignored).intersection(ignores)) == 0:
+        if len(set(self._ignored).intersection(ids)) == 0:
             self._logger.warning(message, *args, **kwargs)
 
     warn = warning
 
-    def deprecate(self, old, new, ignores=None):
-        ignores = ignores or []
-        if 'deprecations' in self._ignored or set(self._ignored).intersection(ignores):
+    def deprecate(self, old, new, ids=None):
+        ids = ids or []
+        if 'deprecations' in self._ignored or set(self._ignored).intersection(ids):
             return
-        if ignores:
-            message = '[{}]'.format(', '.join(ignores))
+        if ids:
+            message = '[{}]'.format(', '.join(ids))
         else:
             message = ''
         self.warning('[DEPRECATION] {}{} is deprecated. Use {} instead.'.format(message, old, new))
