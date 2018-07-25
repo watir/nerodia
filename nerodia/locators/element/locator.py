@@ -190,8 +190,10 @@ class Locator(object):
         return self.filter_selector
 
     def _process_label(self, label_key):
-        if isinstance(self.normalized_selector.get(label_key), Pattern) and \
-                self.selector_builder.should_use_label_element:
+        regexp = isinstance(self.normalized_selector.get(label_key), Pattern)
+
+        if (regexp or label_key == 'visible_label') and \
+            self.selector_builder.should_use_label_element:
 
             label = self._label_from_text(label_key)
             if not label:
