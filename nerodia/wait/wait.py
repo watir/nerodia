@@ -134,6 +134,16 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
+        from nerodia.elements.element import Element
+        if isinstance(self, Element):
+            def func(e):
+                e.reset()
+                return e.present
+            return self.wait_until(method=func, timeout=timeout, interval=interval)
+
+        nerodia.logger.deprecate('{}#wait_until_present'.format(self.__class__.__name__),
+                                 '{}#wait_until(method=lambda e: e.present)',
+                                 ids=['wait_until_present'])
         return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
 
     def wait_until_not_present(self, timeout=None, interval=None):
@@ -145,16 +155,19 @@ class Waitable(object):
         :type interval: float
         :Example:
 
-        browser.text_field(name='abrakadbra').wait_while_present
+        browser.text_field(name='abrakadbra').wait_until_not_present
         """
+        from nerodia.elements.element import Element
+        if isinstance(self, Element):
+            def func(e):
+                e.reset()
+                return e.present
+            return self.wait_until_not(method=func, timeout=timeout, interval=interval)
 
-        def method(arg):
-            from nerodia.elements.element import Element
-            if isinstance(arg, Element):
-                arg.reset()
-            return arg.present
-
-        return self.wait_until_not(method=method, timeout=timeout, interval=interval)
+        nerodia.logger.deprecate('{}#wait_until_not_present'.format(self.__class__.__name__),
+                                 '{}#wait_until_not(method=lambda e: e.present)',
+                                 ids=['wait_until_not_present'])
+        return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval)
 
 
 class TimeoutError(Exception):

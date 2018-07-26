@@ -81,13 +81,12 @@ class TestBrowserWindow(object):
         browser.window(index=1).use()
         assert re.search(r'window_switching\.html', original.url)
 
-    # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1223277
     def test_executes_within_window_context(self, browser):
         with browser.window(title='closeable window') as window:
             link = browser.link(id='close')
             assert link.exists
             link.click()
-            window.wait_until_not_present()
+            window.wait_until_not(method=lambda w: w.present)
         assert len(browser.windows()) == 1
 
     def test_raises_correct_exception_if_the_window_selector_is_invalid(self, browser):
