@@ -336,7 +336,7 @@ class TestElementFlash(object):
         h2 = browser.h2(text='Add user')
 
         assert h2.style('background-color') == \
-               h2.flash('rainbow', flashes=2).style('background-color')
+            h2.flash('rainbow', flashes=2).style('background-color')
         assert h1.style('background-color') == h1.flash(flashes=2).style('background-color')
 
     def test_should_respond_to_preset_flashes_like_fast_and_slow(self, browser):

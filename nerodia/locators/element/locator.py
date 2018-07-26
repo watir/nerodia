@@ -205,7 +205,7 @@ class Locator(object):
         regexp = isinstance(self.normalized_selector.get(label_key), Pattern)
 
         if (regexp or label_key == 'visible_label') and \
-            self.selector_builder.should_use_label_element:
+                self.selector_builder.should_use_label_element:
 
             label = self._label_from_text(label_key)
             if not label:

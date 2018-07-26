@@ -280,10 +280,6 @@ class TestElementLocatorFindsSingleElement(object):
         expect_all.side_effect = [elements1, elements2]
         assert locate_one(browser, {'class_name': re.compile(r'foo')}) == elements2[0]
 
-
-
-
-
     def test_finds_all_if_index_is_given(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'})] * 2
         expect_all.return_value = elements

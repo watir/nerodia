@@ -111,4 +111,3 @@ def test_allows_to_ignore_multiple_ids(caplog):
     nerodia.logger.warning('WARNING HAM', ids=['ham'])
     assert 'WARNING HAM' not in caplog.text
     assert 'WARNING SPAM' not in caplog.text
-
