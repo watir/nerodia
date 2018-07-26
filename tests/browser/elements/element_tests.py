@@ -140,14 +140,12 @@ class TestElementSubtype(object):
         from nerodia.elements.html_elements import Div
         assert isinstance(browser.element(xpath="//*[@id='messages']").to_subtype(), Div)
 
-# TODO: re-enable when JS calls are updated
-# see https://github.com/watir/watir/commit/26fe1fa78147d9056fa3c40b5ef98fb3212a52f3
-# class TestElementFocus(object):
-#     def test_fires_the_onfocus_event_for_the_given_element(self, browser):
-#         tf = browser.text_field(id='new_user_occupation')
-#         assert tf.value == 'Developer'
-#         tf.focus()
-#         assert browser.div(id='onfocus_test').text == 'changed by onfocus event'
+class TestElementFocus(object):
+    def test_fires_the_onfocus_event_for_the_given_element(self, browser):
+        tf = browser.text_field(id='new_user_occupation')
+        assert tf.value == 'Developer'
+        tf.focus()
+        assert browser.div(id='onfocus_test').text == 'changed by onfocus event'
 
     # TODO: xfail edge?
     def test_knows_if_the_element_is_focused(self, browser):
@@ -163,13 +161,15 @@ class TestElementFireEvent(object):
 
 
 class TestElementVisibility(object):
-    def test_returns_true_if_the_element_is_visible(self, browser):
+    def test_returns_true_if_the_element_is_visible(self, browser, caplog):
         assert browser.text_field(id='new_user_email').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
     @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
+    def test_raises_correct_exception_if_the_element_does_not_exist(self, browser, caplog):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_is_stale(self, browser):
@@ -182,20 +182,24 @@ class TestElementVisibility(object):
         with pytest.raises(UnknownObjectException):
             element.visible
 
-    def test_returns_true_if_the_element_has_visibility_style_visible_even_if_parent_has_hidden(self, browser):
+    def test_returns_true_if_the_element_has_visibility_style_visible_even_if_parent_has_hidden(self, browser, caplog):
         assert browser.div(id='visible_child').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
     def test_returns_false_if_the_element_is_input_element_where_type_eq_hidden(self, browser):
         assert not browser.hidden(id='new_user_interests_dolls').visible
 
-    def test_returns_false_if_the_element_has_display_style_none(self, browser):
+    def test_returns_false_if_the_element_has_display_style_none(self, browser, caplog):
         assert not browser.div(id='changed_language').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
-    def test_returns_false_if_the_element_has_visibility_style_hidden(self, browser):
+    def test_returns_false_if_the_element_has_visibility_style_hidden(self, browser, caplog):
         assert not browser.div(id='wants_newsletter').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
-    def test_returns_false_if_one_of_the_parent_elements_is_hidden(self, browser):
+    def test_returns_false_if_one_of_the_parent_elements_is_hidden(self, browser, caplog):
         assert not browser.div(id='hidden_parent').visible
+        assert 'WARNING  [visible_element]' in caplog.text
 
 
 @pytest.mark.page('class_locator.html')

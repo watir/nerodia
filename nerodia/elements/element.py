@@ -395,11 +395,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
+            nerodia.logger.warning('#visible behavior will be changing slightly, consider '
+                                   'switching to #present (more details: '
+                                   'http://watir.com/element-existentialism/',
+                                   ids=['visible_element'])
             self.assert_exists()
             return self.el.is_displayed()
         except StaleElementReferenceException:
-            nerodia.logger.deprecate('Checking `#visible` or `#present is False` '
-                                     'to determine a stale element',
+            nerodia.logger.deprecate('Checking `#visible is False` to determine a stale element',
                                      '`#stale is True`', ids=['stale_visible'])
             self.reset()
             raise self._unknown_exception
@@ -422,7 +425,13 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
-            return self.visible
+            self.assert_exists()
+            return self.el.is_displayed()
+        except StaleElementReferenceException:
+            nerodia.logger.deprecate('Checking `#present is False` to determine a stale element',
+                                     '`#stale is True`', ids=['stale_present'])
+            self.reset()
+            return False
         except (UnknownObjectException, UnknownFrameException):
             return False
 
@@ -524,10 +533,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                                           'located'.format(nerodia.default_timeout, self))
 
     def wait_for_present(self):
-        if not nerodia.relaxed_locate:
-            return self.visible
-        if self.present:
-            return True
+        pres = self.present
+        if not nerodia.relaxed_locate or pres:
+            return pres
 
         try:
             if not isinstance(self.query_scope, Browser):
