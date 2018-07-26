@@ -34,5 +34,8 @@ logger = Logger()
 _str_types = (six.binary_type, six.text_type)
 
 
+from . import tag_map
+
+
 def element_class_for(tag_name):
     return tag_to_class.get(tag_name)

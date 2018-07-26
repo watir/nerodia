@@ -140,6 +140,7 @@ class TestElementSubtype(object):
         from nerodia.elements.html_elements import Div
         assert isinstance(browser.element(xpath="//*[@id='messages']").to_subtype(), Div)
 
+
 class TestElementFocus(object):
     def test_fires_the_onfocus_event_for_the_given_element(self, browser):
         tf = browser.text_field(id='new_user_occupation')
