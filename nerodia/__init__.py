@@ -2,7 +2,7 @@ import six
 
 from .logger import Logger
 
-__version__ = '0.8.0'
+__version__ = '0.9.0'
 
 ttc = None
 
@@ -34,7 +34,7 @@ logger = Logger()
 _str_types = (six.binary_type, six.text_type)
 
 
-from . import tag_map
+from . import tag_map  # noqa
 
 
 def element_class_for(tag_name):
