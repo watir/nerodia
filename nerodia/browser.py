@@ -6,6 +6,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
 import nerodia
+from . import locators
 from .after_hooks import AfterHooks
 from .alert import Alert
 from .capabilities import Capabilities
@@ -48,6 +49,19 @@ class Browser(Container, HasWindow, Waitable):
         self.closed = False
         self.default_context = True
         self._original_window = None
+        self._locator_namespace = locators
+
+    @property
+    def locator_namespace(self):
+        """
+        Whether the locators should be used from a different namespace. Defaults to nerodia.locators
+        :return:
+        """
+        return self._locator_namespace
+
+    @locator_namespace.setter
+    def locator_namespace(self, namespace):
+        self._locator_namespace = namespace
 
     @property
     def wd(self):

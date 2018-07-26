@@ -1,7 +1,5 @@
 from importlib import import_module
 
-import nerodia
-
 
 class ClassHelpers(object):
     # private
@@ -24,7 +22,7 @@ class ClassHelpers(object):
     @property
     def _import_module(self):
         from ..module_mapping import map_module
-        modules = [nerodia.locator_namespace.__name__, map_module(self._element_class_name)]
+        modules = [self.browser.locator_namespace.__name__, map_module(self._element_class_name)]
         try:
             return import_module('{}.{}'.format(*modules))
         except ImportError:

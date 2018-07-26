@@ -21,15 +21,6 @@ relaxed_locate = True
 
 default_timeout = 30
 
-from . import locators, tag_map  # noqa
-
-#
-# Whether the locators should be used from a different namespace.
-# Defaults to nerodia.locators.
-#
-
-locator_namespace = locators
-
 #
 # Custom logger
 #

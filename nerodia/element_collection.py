@@ -114,6 +114,15 @@ class ElementCollection(ClassHelpers):
         list(self)
         return self
 
+    @property
+    def browser(self):
+        """
+        Returns the browser of the current query_scope
+
+        :rtype: nerodia.browser.Browser
+        """
+        return self.query_scope.browser
+
     def __eq__(self, other):
         """
         Returns true if two element collections are equal.
