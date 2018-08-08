@@ -12,9 +12,9 @@ class TestWebDriverArgs(object):
         Browser(driver, url='spam')
         mock.assert_called_once()
         assert mock.call_args_list[0][1].get('command_executor') == \
-               Capabilities.DEFAULT_URL.format(port)
+            Capabilities.DEFAULT_URL.format(port)
 
-    def test_can_pass_port(self, mocker, driver):
+    def test_can_pass_url(self, mocker, driver):
         from selenium.webdriver import DesiredCapabilities
         name = driver.upper() if driver != 'ie' else 'INTERNETEXPLORER'
         caps = getattr(DesiredCapabilities, name)
@@ -23,7 +23,7 @@ class TestWebDriverArgs(object):
         mock.assert_called_once()
         assert mock.call_args_list[0][1].get('command_executor') == 'spam'
         assert mock.call_args_list[0][1]['desired_capabilities'].get('browserName') == \
-               caps['browserName']
+            caps['browserName']
 
     def test_can_pass_executable_path(self, mocker, driver):
         mock = mocker.patch('selenium.webdriver.{}.webdriver.WebDriver'.format(driver))
