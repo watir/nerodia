@@ -43,4 +43,5 @@ class TestElementDragAndDrop(object):
         assert droppable.text == 'Drop here'
         y = 150 if browser.wd.w3c else 50
         draggable.drag_and_drop_by(200, y)
+        droppable.wait_until(lambda e: e.text == 'Dropped!', timeout=2)
         assert droppable.text == 'Dropped!'
