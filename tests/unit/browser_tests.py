@@ -9,7 +9,7 @@ class TestWebDriverArgs(object):
     def test_can_pass_port(self, mocker, driver):
         mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver')
         port = 5678
-        Browser(driver, url='spam')
+        Browser(driver, port=port)
         mock.assert_called_once()
         assert mock.call_args_list[0][1].get('command_executor') == \
             Capabilities.DEFAULT_URL.format(port)

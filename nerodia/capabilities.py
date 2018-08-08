@@ -18,7 +18,7 @@ class Capabilities(object):
         else:
             self.browser = browser
 
-        if browser == 'remote' or options.get('url'):
+        if browser == 'remote' or options.get('url') or options.get('port'):
             self.selenium_browser = 'remote'
         else:
             self.selenium_browser = browser
