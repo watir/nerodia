@@ -42,6 +42,10 @@ class Capabilities(object):
         if url:
             self.selenium_opts['command_executor'] = url
 
+        executable_path = self.options.pop('executable_path', None)
+        if executable_path:
+            self.selenium_opts['executable_path'] = executable_path
+
         self._process_browser_options()
         self._process_capabilities()
         nerodia.logger.info('Creating Browser instance with Nerodia processed options: '
