@@ -69,8 +69,8 @@ class Capabilities(object):
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
-            if 'headless' in opts or 'headless' in self.options:
-                options.set_headless()
+            if opts.pop('headless', None) or self.options.pop('headless', None):
+                options.headless = True
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary_location = opts.pop('binary') or opts.pop('binary_location')
             if 'debugger_address' in opts:
@@ -94,8 +94,8 @@ class Capabilities(object):
             if 'args' in opts:
                 for arg in opts.pop('args'):
                     options.add_argument(arg)
-            if 'headless' in opts or 'headless' in self.options:
-                options.set_headless()
+            if opts.pop('headless', None) or self.options.pop('headless', None):
+                options.headless = True
             if 'binary' in opts or 'binary_location' in opts:
                 options.binary = opts.pop('binary') or opts.pop('binary_location')
             if 'prefs' in opts:
