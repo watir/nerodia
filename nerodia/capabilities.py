@@ -126,28 +126,29 @@ class Capabilities(object):
         self.selenium_opts['options'] = options
 
     def _process_remote_options(self, opts):
-        if self.browser == 'chrome' and self.options.pop('headless', None):
-            if 'desired_capabilities' in opts:
-                caps = opts.pop('desired_capabilities')
-            else:
-                caps = DesiredCapabilities.CHROME.copy()
+        if self.browser == 'chrome':
+            caps = opts.pop('desired_capabilities', DesiredCapabilities.CHROME.copy())
             self._process_chrome_options(opts)
             self.selenium_opts['desired_capabilities'] = caps
 
-        if self.browser == 'firefox' and self.options.pop('headless', None):
-            if 'desired_capabilities' in opts:
-                caps = opts.pop('desired_capabilities')
-            else:
-                caps = DesiredCapabilities.FIREFOX.copy()
+        if self.browser == 'firefox':
+            caps = opts.pop('desired_capabilities', DesiredCapabilities.FIREFOX.copy())
             self._process_firefox_options(opts)
             self.selenium_opts['desired_capabilities'] = caps
 
-        if self.browser == 'safari' and self.options.pop('technology_preview', None):
-            if 'desired_capabilities' in opts:
-                caps = opts.pop('desired_capabilities')
-            else:
-                caps = DesiredCapabilities.SAFARI.copy()
-            caps['safari.options'] = {'technologyPreview': opts.pop('technology_preview')}
+        if self.browser == 'safari':
+            caps = opts.pop('desired_capabilities', DesiredCapabilities.SAFARI.copy())
+            if 'technology_preview' in opts:
+                caps['safari.options'] = {'technologyPreview': opts.pop('technology_preview')}
+            self.selenium_opts['desired_capabilities'] = caps
+
+        if self.browser == 'ie':
+            caps = opts.pop('desired_capabilities', DesiredCapabilities.INTERNETEXPLORER.copy())
+            self._process_ie_options(opts)
+            self.selenium_opts['desired_capabilities'] = caps
+
+        if self.browser == 'edge':
+            caps = opts.pop('desired_capabilities', DesiredCapabilities.EDGE.copy())
             self.selenium_opts['desired_capabilities'] = caps
 
     def _process_capabilities(self):

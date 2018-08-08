@@ -32,8 +32,9 @@ class Browser(Container, HasWindow, Waitable):
         :param kwargs: kwargs passed to the underlying driver
         """
         if isinstance(browser, six.string_types[0]):
-            module = import_module('selenium.webdriver.{}.webdriver'.format(browser.lower()))
             caps = Capabilities(browser, **kwargs)
+            module = import_module('selenium.webdriver.{}'
+                                   '.webdriver'.format(caps.selenium_browser.lower()))
             self.driver = module.WebDriver(**caps.kwargs)
         elif isinstance(browser, WebDriver):
             self.driver = browser
