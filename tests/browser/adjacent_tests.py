@@ -20,6 +20,10 @@ class TestAdjacentParent(object):
         assert browser.div(id='first_sibling').parent(tag_name='div').id == 'parent'
         assert isinstance(browser.div(id='first_sibling').parent(tag_name='div'), Div)
 
+    def test_accepts_custom_tag_name_argument(self, browser):
+        assert browser.div(id='regular_child').parent(tag_name='grandelement').id == 'custom_grandparent'
+        assert isinstance(browser.div(id='regular_child').parent(tag_name='grandelement'), HTMLElement)
+
     def test_accepts_class_name_argurment(self, browser):
         assert browser.div(id='first_sibling').parent(class_name='parent').id == 'parent_span'
 
@@ -44,6 +48,11 @@ class TestAdjacentSiblings(object):
         siblings = browser.div(id='second_sibling').siblings(tag_name='div')
         assert len(siblings) == 3
         assert all(isinstance(sibling, Div) for sibling in siblings)
+
+    def test_accepts_custom_tag_name_argument(self, browser):
+        siblings = browser.div(id='regular_child').siblings(tag_name='childelement')
+        assert len(siblings) == 3
+        assert all(isinstance(sibling, HTMLElement) for sibling in siblings)
 
     def test_accepts_class_name_argument(self, browser):
         siblings = browser.div(id='second_sibling').siblings(class_name='b')
@@ -173,6 +182,10 @@ class TestAdjacentChild(object):
         assert browser.div(id='parent').child(tag_name='span').id == 'between_siblings1'
         assert isinstance(browser.div(id='parent').child(tag_name='span'), Span)
 
+    def test_accepts_custom_tag_name_argument(self, browser):
+        assert browser.element(id='custom_parent').child(tag_name='childelement').id == 'custom_child'
+        assert isinstance(browser.element(id='custom_parent').child(tag_name='childelement'), HTMLElement)
+
     def test_accepts_class_name_argument(self, browser):
         assert browser.div(id='parent').child(class_name='b').id == 'second_sibling'
 
@@ -196,6 +209,11 @@ class TestAdjacentChildren(object):
         children = browser.div(id='parent').children(tag_name='div')
         assert len(children) == 3
         assert all(isinstance(child, Div) for child in children)
+
+    def test_accepts_custom_tag_name_argument(self, browser):
+        children = browser.element(id='custom_parent').children(tag_name='childelement')
+        assert len(children) == 3
+        assert all(isinstance(child, HTMLElement) for child in children)
 
     def test_accepts_class_name_argument(self, browser):
         children = browser.div(id='parent').children(class_name='b')

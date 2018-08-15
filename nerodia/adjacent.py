@@ -125,11 +125,12 @@ class Adjacent(object):
             kwargs['index'] = index or 0
 
         if not plural and tag_name:
-            klass = nerodia.tag_to_class.get(tag_name)
+            klass = nerodia.element_class_for(tag_name)
         elif not plural:
             klass = HTMLElement
         elif tag_name:
-            klass = nerodia.tag_to_class.get('{}_collection'.format(tag_name))
+            klass = nerodia.element_class_for('{}_collection'.format(tag_name),
+                                              HTMLElementCollection)
         else:
             klass = HTMLElementCollection
 

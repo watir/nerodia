@@ -37,5 +37,6 @@ _str_types = (six.binary_type, six.text_type)
 from . import tag_map  # noqa
 
 
-def element_class_for(tag_name):
-    return tag_to_class.get(tag_name)
+def element_class_for(tag_name, default=None):
+    from .elements.html_elements import HTMLElement
+    return tag_to_class.get(tag_name, default or HTMLElement)
