@@ -1,5 +1,12 @@
+import re
+
 import nerodia
 from .timer import Timer
+
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
 
 
 class Wait(object):
@@ -73,7 +80,8 @@ class Wait(object):
 
 
 class Waitable(object):
-    def wait_until(self, method=None, timeout=None, message=None, interval=None, object=None):
+    def wait_until(self, method=None, timeout=None, message=None, interval=None, object=None,
+                   **kwargs):
         """
         Waits until the condition is True
         :param method: method to run, typically lambda
@@ -87,6 +95,7 @@ class Waitable(object):
         :Example:
 
         browser.text_field(name='new_user_first_name').wait_until(lambda x: x.present).click
+        browser.text_field(name='new_user_first_name').wait_until(name='new_user_first_name').click
         """
         if not message:
             def msg(obj):
@@ -94,11 +103,18 @@ class Waitable(object):
             message = msg
         if object is None:
             object = self
+
+        if method and kwargs:
+            raise ValueError('Unknown keyword(s): {}'.format(kwargs.keys()))
+        if not method:
+            method = self._create_closure(kwargs)
+
         Wait.until(method=method, timeout=timeout, message=message, interval=interval,
                    object=object)
         return self
 
-    def wait_until_not(self, method=None, timeout=None, message=None, interval=None, object=None):
+    def wait_until_not(self, method=None, timeout=None, message=None, interval=None, object=None,
+                       **kwargs):
         """
         Waits while the condition is True
         :param method: method to run, typically lambda
@@ -111,7 +127,8 @@ class Waitable(object):
         :type interval: float
         :Example:
 
-        browser.wait_while(lambda x: not x.exists, timeout=2)
+        browser.wait_until_not(lambda x: not x.exists, timeout=2)]
+        browser.wait_until_not(title='no')
         """
         if not message:
             def msg(obj):
@@ -119,6 +136,12 @@ class Waitable(object):
             message = msg
         if object is None:
             object = self
+
+        if method and kwargs:
+            raise ValueError('Unknown keyword(s): {}'.format(kwargs.keys()))
+        if not method:
+            method = self._create_closure(kwargs, until=False)
+
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
                        object=object)
         return self
@@ -168,6 +191,26 @@ class Waitable(object):
                                  '{}#wait_until_not(method=lambda e: e.present)',
                                  ids=['wait_until_not_present'])
         return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval)
+
+    def _create_closure(self, obj, until=True):
+        from ..elements.element import Element
+
+        def check(key):
+            expected = obj.get(key)
+            if isinstance(self, Element) and not hasattr(self, key):
+                actual = self.get_attribute(key)
+            else:
+                attr = getattr(self, key)
+                actual = attr() if callable(attr) else attr
+            if isinstance(expected, Pattern):
+                return re.search(expected, actual) is not None
+            else:
+                return expected == actual
+
+        def func(*args):
+            truthy = all if until else any
+            return truthy(check(key) for key in obj.keys())
+        return func
 
 
 class TimeoutError(Exception):

@@ -1,3 +1,4 @@
+import re
 from time import time
 
 import pytest
@@ -13,6 +14,12 @@ def default_timeout_handling():
     nerodia.default_timeout = 1
     yield
     nerodia.default_timeout = orig_timeout
+
+
+@pytest.fixture
+def refresh_before(browser):
+    browser.refresh()
+    yield
 
 
 @pytest.mark.skipif('not nerodia.relaxed_locate', reason='only applicable when relaxed locating')
@@ -169,6 +176,50 @@ class TestElementWaitUntil(object):
         element = browser.div(id='bar')
         element.wait_until(interval=0.1, method=lambda _: True)
 
+    # Keyword
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_text_keyword(self, browser):
+        element = browser.div(id='bar')
+        browser.link(id='show_bar').click()
+        element.wait_until(text='bar')
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_regexp_value(self, browser):
+        element = browser.div(id='bar')
+        browser.link(id='show_bar').click()
+        element.wait_until(style=re.compile(r'block'))
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_multiple_keywords(self, browser):
+        element = browser.div(id='bar')
+        browser.link(id='show_bar').click()
+        element.wait_until(text='bar', style=re.compile(r'block'))
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_custom_keyword(self, browser):
+        element = browser.div(id='bar')
+        browser.link(id='show_bar').click()
+        element.wait_until(custom='bar')
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_single_keyword_not_met(self, browser):
+        element = browser.div(id='bar')
+        with pytest.raises(TimeoutError):
+            element.wait_until(id='foo')
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_one_of_multiple_keywords_not_met(self, browser):
+        element = browser.div(id='bar')
+        with pytest.raises(TimeoutError):
+            element.wait_until(id='foo', text='foo')
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_a_custom_keyword_not_met(self, browser):
+        element = browser.div(id='bar')
+        with pytest.raises(TimeoutError):
+            element.wait_until(custom='foo')
+
 
 @pytest.mark.page('wait.html')
 class TestElementWaitUntilNot(object):
@@ -197,6 +248,51 @@ class TestElementWaitUntilNot(object):
     def test_accepts_just_an_interval_parameter_with_method(self, browser):
         element = browser.div(id='foo')
         element.wait_until_not(interval=0.1, method=lambda _: False)
+
+    # Keyword
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_text_keyword(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        element.wait_until_not(text='foo')
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_regexp_value(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        element.wait_until_not(style=re.compile(r'block'))
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_multiple_keywords(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        element.wait_until_not(text='bar', style=re.compile(r'block'))
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_custom_keyword(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        element.wait_until_not(custom='bar')
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_single_keyword_not_met(self, browser):
+        element = browser.div(id='foo')
+        with pytest.raises(TimeoutError):
+            element.wait_until_not(id='foo')
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_one_of_multiple_keywords_not_met(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        with pytest.raises(TimeoutError):
+            element.wait_until_not(id='foo', style=re.compile(r'block'))
+
+    @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
+    def test_times_out_when_a_custom_keyword_not_met(self, browser):
+        element = browser.div(id='foo')
+        with pytest.raises(TimeoutError):
+            element.wait_until_not(custom='')
 
 
 @pytest.mark.page('wait.html')

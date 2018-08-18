@@ -258,7 +258,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         return self._element_call(lambda: self.el.get_attribute(attribute_name))
 
-    get_attriubte = attribute_value
+    get_attribute = attribute_value
 
     attribute = attribute_value
 
