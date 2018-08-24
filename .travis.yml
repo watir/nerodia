@@ -74,5 +74,3 @@ before_script:
 - ./travis.sh
 script:
 - tox
-- python examples/basic_script.py
-
