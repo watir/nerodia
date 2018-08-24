@@ -24,7 +24,7 @@ class WatirPage(BasePage):
         super(WatirPage, self).__init__(browser)
         self.url = 'www.watir.com'
         self.intro = self.browser.div(class_name='intro')
-        self.news = self.browser.link(href='/blog')
+        self.news = self.browser.link(href='/blog/')
 
 
 """Sample code that should print out expected text."""
