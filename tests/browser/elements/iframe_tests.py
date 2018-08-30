@@ -51,7 +51,7 @@ class TestIFrameExist(object):
         assert browser.iframe().element(css='#no_such_id').exists is False
         assert browser.iframe().element(id='no_such_id').exists is False
 
-    def test_returns_true_if_an_element_outside_an_iframe_exists_after_checking_For_one_inside_that_does_exist(self, browser):
+    def test_returns_true_if_an_element_outside_an_iframe_exists_after_checking_for_one_inside_that_does_exist(self, browser):
         existing_element = browser.element(css='#iframe_1')
         assert existing_element.exists is True
         assert browser.iframe().element(css='#senderElement').exists is True

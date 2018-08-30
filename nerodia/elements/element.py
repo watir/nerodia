@@ -502,11 +502,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         if self.el is None:
             raise Error('Can not check staleness of unused element')
-        if self.stale_in_context:
-            self.query_scope._ensure_context()
-            return self._stale or self.stale_in_context
-        else:
-            return False
+        self.query_scope._ensure_context()
+        return self._stale or self.stale_in_context
 
     @property
     def stale_in_context(self):
