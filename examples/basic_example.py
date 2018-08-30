@@ -1,19 +1,25 @@
 """Basic script showing how Nerodia works."""
 from nerodia.browser import Browser
 
-br = Browser(browser='firefox')
 
-br.goto("https://watir.com")
+def run():
+    br = Browser(browser='chrome')
 
-# Check that "Titus" is somewhere in the page text
-assert "Watir" in br.text
+    br.goto("https://watir.com")
 
-# Check "open source" is in the intro
-intro_text = br.div(class_name='intro').text
-assert "open source" in intro_text
+    # Check that "Titus" is somewhere in the page text
+    assert "Watir" in br.text
 
-# Check that the page is correct via the URL
-br.link(text='Guides').click()
-assert 'watir.com/guides/' in br.url
+    # Check "open source" is in the intro
+    intro_text = br.div(class_name='intro').text
+    assert "open source" in intro_text
 
-br.close()
+    # Check that the page is correct via the URL
+    br.link(text='Guides').click()
+    assert 'watir.com/guides/' in br.url
+
+    br.close()
+
+
+if __name__ == '__main__':
+    run()

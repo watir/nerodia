@@ -27,16 +27,21 @@ class WatirPage(BasePage):
         self.news = self.browser.link(href='/blog/')
 
 
-"""Sample code that should print out expected text."""
-w = WatirPage('chrome')
-w.goto()
-assert 'Watir' in w.intro.text
-w.news.click()
-assert 'Titus' in w.browser.text
-w.close()
+def run():
+    """Sample code that should print out expected text."""
+    w = WatirPage('chrome')
+    w.goto()
+    assert 'Watir' in w.intro.text
+    w.news.click()
+    assert 'Titus' in w.browser.text
+    w.close()
 
-"""Example passing a Browser instance."""
-br = browser.Browser('chrome')
-w2 = WatirPage(br)
-w2.goto()
-w2.close()
+    """Example passing a Browser instance."""
+    br = browser.Browser('chrome')
+    w2 = WatirPage(br)
+    w2.goto()
+    w2.close()
+
+
+if __name__ == '__main__':
+    run()

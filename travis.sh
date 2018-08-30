@@ -10,7 +10,7 @@ then
     gunzip -c geckodriver.tar.gz | tar xopf -
     chmod +x geckodriver && sudo mv geckodriver /usr/local/bin
     geckodriver --version
-elif [[ "$TOXENV" =~ chrome$ ]]
+elif [[ "$TOXENV" =~ (examples|chrome)$ ]]
 then
     export CHROMEDRIVER_VERSION=`curl -s http://chromedriver.storage.googleapis.com/LATEST_RELEASE`
     curl -L -O "http://chromedriver.storage.googleapis.com/${CHROMEDRIVER_VERSION}/chromedriver_linux64.zip"

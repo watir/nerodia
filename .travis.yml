@@ -59,6 +59,9 @@ matrix:
   - env: TOXENV=py37-firefox
     <<: *three
     <<: *firefox-nightly
+  - env: TOXENV=py37-example
+    <<: *three
+    <<: *chrome
   - env: TOXENV=flake8
     <<: *threesix
   - env: TOXENV=py36-unit
