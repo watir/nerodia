@@ -68,6 +68,10 @@ def browser_manager(bkwargs):
 
 @pytest.fixture(scope='function')
 def browser(request, browser_manager):
+    """
+    Function fixture for Browser instance
+    :rtype: nerodia.browser.Browser
+    """
     # conditionally mark tests as expected to fail based on driver
     request.node._evalxfail = request.node._evalxfail or MarkEvaluator(
         request.node, 'xfail_{}'.format(browser_manager.name))
