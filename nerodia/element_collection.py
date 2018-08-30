@@ -10,9 +10,9 @@ class ElementCollection(ClassHelpers):
         self.query_scope = query_scope
         self.selector = selector
         self.generator = ()
-        self.els = []
         self.locator = None
         self.elements = None
+        self._els = []
 
     def __iter__(self):
         """
@@ -48,7 +48,8 @@ class ElementCollection(ClassHelpers):
         Returns the number of elements in the collection
         :rtype: int
         """
-        return len([_ for _ in self])
+        self._els = self._els or [_ for _ in self]
+        return len(self._els)
 
     def __getitem__(self, idx):
         """
@@ -74,6 +75,8 @@ class ElementCollection(ClassHelpers):
                 return list(islice(self, idx + 1))[idx]
             except IndexError:
                 return self._element_class(self.query_scope, {'invalid_locator': True})
+        elif self._els and idx > 0 and len(self._els) > idx:
+            return self._els[idx]
         else:
             return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
@@ -111,7 +114,7 @@ class ElementCollection(ClassHelpers):
 
         :rtype: ElementCollection
         """
-        list(self)
+        self.els = list(self)
         return self
 
     @property

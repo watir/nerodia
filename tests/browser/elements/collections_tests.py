@@ -44,3 +44,30 @@ def test_locates_elements(browser, mocker):
     mock.return_value = []
     spans = browser.span(id='a_span').spans()
     assert spans == []
+
+
+@pytest.mark.page('collections.html')
+def test_lazy_loads_collections_referenced_with_getitem(browser, mocker):
+    mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_elements')
+    browser.spans()[3]
+    assert not mock.called
+
+
+@pytest.mark.page('collections.html')
+def test_does_not_relocate_collections_when_previously_evaluated(browser, mocker):
+    elements = browser.spans()
+    list(elements)
+
+    mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.find_elements')
+
+    elements[1].id
+    assert not mock.called
+
+
+@pytest.mark.page('collections.html')
+def test_relocates_cached_elements_that_go_stale(browser):
+    elements = browser.spans()
+    list(elements)
+
+    browser.refresh()
+    assert elements[1].stale
