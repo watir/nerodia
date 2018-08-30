@@ -17,11 +17,7 @@ class SelectorBuilder(ElementSelectorBuilder):
         if not selectors.pop('tag_name', None):
             raise Error('internal error: no tag_name?!')
 
-        tag_name = self.query_scope.tag_name.lower()
-        expressions = ['./tr']
-
-        if tag_name not in ['tbody', 'tfoot', 'thead']:
-            expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
+        expressions = self._generate_expressions(self.query_scope.tag_name.lower())
 
         attr_expr = self.xpath_builder.attribute_expression(None, selectors)
 
@@ -33,3 +29,10 @@ class SelectorBuilder(ElementSelectorBuilder):
         logging.debug({'build_wd_selector': xpath})
 
         return ['xpath', xpath]
+
+    def _generate_expressions(self, tag_name):
+        expressions = ['./tr']
+
+        if tag_name not in ['tbody', 'tfoot', 'thead']:
+            expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
+        return expressions
