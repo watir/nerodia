@@ -137,13 +137,24 @@ class Locator(object):
             if idx < 0:
                 elements.reverse()
                 idx = abs(idx) - 1
+
+            counter = 0
             # Generator + slice to avoid fetching values for elements that will be discarded
-            matches = (el for el in elements if self._matches_selector(el, selector))
+            matches = []
+            for element in elements:
+                counter += 1
+                if self._matches_selector(element, selector):
+                    matches.append(element)
             try:
-                return list(islice(matches, idx + 1))[idx]
+                val = list(islice(matches, idx + 1))[idx]
+                nerodia.logger.debug('Filtered through {} elements to locate '
+                                     '{}'.format(counter, selector))
+                return val
             except IndexError:
                 return None
         else:
+            nerodia.logger.debug('Iterated through {} elements to locate all '
+                                 '{}'.format(len(elements), selector))
             return [el for el in elements if self._matches_selector(el, selector)]
 
     def _create_normalized_selector(self, filter):
