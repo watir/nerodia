@@ -37,16 +37,33 @@ class TestElementPresent(object):
 @pytest.mark.page('forms_with_input_elements.html')
 class TestElementEnabled(object):
     def test_returns_true_if_the_element_is_enabled(self, browser):
-        assert browser.element(name='new_user_submit').enabled
+        assert browser.button(name='new_user_submit').enabled
 
     def test_returns_false_if_the_element_is_disabled(self, browser):
-        assert not browser.element(name='new_user_submit_disabled').enabled
+        assert not browser.button(name='new_user_submit_disabled').enabled
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_correct_exception_if_the_element_doesnt_exist(self, browser):
         from nerodia.exception import UnknownObjectException
         with pytest.raises(UnknownObjectException):
-            browser.element(name='no_such_name').enabled
+            browser.button(name='no_such_name').enabled
+
+
+@pytest.mark.page('forms_with_input_elements.html')
+class TestElementStale(object):
+    def test_returns_true_if_the_element_is_stale(self, browser):
+        element = browser.button(name='new_user_submit_disabled')
+        element.exists
+
+        browser.refresh()
+
+        assert element.stale
+
+    def test_returns_false_if_the_element_is_not_stale(self, browser):
+        element = browser.button(name='new_user_submit_disabled')
+        element.exists
+
+        assert not element.stale
 
 
 @pytest.mark.page('removed_element.html')

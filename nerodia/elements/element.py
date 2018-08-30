@@ -32,6 +32,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self.selector = selector
         self.keyword = None
         self.locator = None
+        self._stale = None
 
     @property
     def exists(self):
@@ -503,7 +504,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             raise Error('Can not check staleness of unused element')
         if self.stale_in_context:
             self.query_scope._ensure_context()
-            return self.stale_in_context
+            return self._stale or self.stale_in_context
         else:
             return False
 
@@ -513,6 +514,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self.el.is_enabled()  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
+            self._stale = True
             return True
 
     def reset(self):
