@@ -26,13 +26,6 @@ class Select(HTMLElement):
         for option in self.selected_options:
             option.click()
 
-    def options(self, *args, **kwargs):
-        """ Gets all the options in the select list
-        :rtype: list[nerodia.elements.option.Option]
-        """
-        return self._element_call(lambda: super(Select, self).options(*args, **kwargs),
-                                  self.wait_for_present)
-
     def includes(self, term):
         """
         Returns True if the select list has at least one option where text or label matches the
