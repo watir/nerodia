@@ -33,7 +33,7 @@ class ElementCollection(ClassHelpers):
             element = self._element_class(self.query_scope, dict(self.selector, index=idx,
                                                                  element=e))
             if element.__class__ in [HTMLElement, Input]:
-                tag_name = element.tag_name
+                tag_name = self.selector.get('tag_name', element.tag_name)
                 dic[tag_name] = dic.get(tag_name, 0)
                 dic[tag_name] += 1
                 kls = nerodia.element_class_for(tag_name)
