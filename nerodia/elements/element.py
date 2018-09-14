@@ -1,4 +1,4 @@
-from inspect import stack
+from inspect import getmembers, isfunction, stack
 from re import search, sub
 
 from selenium.common.exceptions import InvalidElementStateException, \
@@ -16,6 +16,7 @@ from ..js_execution import JSExecution
 from ..js_snippet import JSSnippet
 from ..locators.class_helpers import ClassHelpers
 from ..locators.element.selector_builder import SelectorBuilder
+from ..user_editable import UserEditable
 from ..wait.wait import TimeoutError, Wait, Waitable
 from ..window import Dimension, Point
 
@@ -712,5 +713,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def __getattribute__(self, name):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, name):
             return self.attribute_value(name.replace('_', '-'))
+        elif name in (_[0] for _ in getmembers(UserEditable, predicate=isfunction)) and \
+                self.content_editable:
+            import types
+            self._content_editable = True
+            setattr(self, name, types.MethodType(getattr(UserEditable, name), self))
+            return object.__getattribute__(self, name)
         else:
             return object.__getattribute__(self, name)

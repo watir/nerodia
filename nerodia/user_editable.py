@@ -1,3 +1,6 @@
+from nerodia.exception import Error
+
+
 class UserEditable(object):
 
     def set(self, *args):
@@ -27,20 +30,27 @@ class UserEditable(object):
         :param value: value to set the input to
         """
         from nerodia.exception import Error
-        value = ''.join(args)
-        if value:
-            self.set(value[0])
-            if len(value) > 1:
-                self._element_call(lambda: self._execute_js('setValue', self.el, value[:-1]))
-                self.append(value[-1])
-        if self.value != value:
-            raise Error('js_set value does not match expected input')
+        input_value = ''.join(args)
+        if input_value:
+            self.set(input_value[0])
+            if getattr(self, '_content_editable', None):
+                return self._set_content_editable(*args)
+            if len(input_value) > 1:
+                self._element_call(lambda: self._execute_js('setValue', self.el, input_value[:-1]))
+                self.append(input_value[-1])
+        value = self.value
+        if value != input_value:
+            raise Error('#js_set value: {!r} does not match expected input: '
+                        '{!r}'.format(value, input_value))
 
     def append(self, *args):
         """
         Appends the given value to the text in the text field
         :param args: value to add to the input
         """
+        if getattr(self, '_content_editable', None):
+            raise NotImplementedError('#append method is not supported with contenteditable '
+                                      'element')
         self.send_keys(*args)
 
     def clear(self):
@@ -49,3 +59,14 @@ class UserEditable(object):
         :return:
         """
         self._element_call(lambda: self.el.clear(), self.wait_for_writable)
+
+    # private
+
+    def _set_content_editable(self, *args):
+        input_text = ''.join(args)
+        self._element_call(lambda: self._execute_js('setText', self.el, input_text))
+        text = self.text
+        if text == input_text:
+            return
+        raise Error('#js_set text: {!r} does not match expected input: '
+                    '{!r}'.format(text, input_text))
