@@ -610,6 +610,7 @@ class Unknown(HTMLElement):
 class UnknownCollection(HTMLElementCollection):
     pass
 
+
 @six.add_metaclass(MetaHTMLElement)
 class Font(HTMLElement):
     pass
@@ -618,4 +619,3 @@ class Font(HTMLElement):
 @six.add_metaclass(MetaHTMLElement)
 class TableCell(HTMLElement):
     pass
-

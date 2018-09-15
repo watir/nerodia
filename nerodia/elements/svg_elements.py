@@ -86,16 +86,6 @@ class ViewCollection(SVGElementCollection):
 
 
 @six.add_metaclass(MetaSVGElement)
-class Cursor(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class CursorCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
 class Pattern(SVGElement):
     pass
 
@@ -402,64 +392,4 @@ class Path(SVGElement):
 
 @six.add_metaclass(MetaSVGElement)
 class PathCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Hatchpath(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class HatchpathCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Hatch(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class HatchCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Meshpatch(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class MeshpatchCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Meshrow(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class MeshrowCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Solidcolor(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class SolidcolorCollection(SVGElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class Mesh(SVGElement):
-    pass
-
-
-@six.add_metaclass(MetaSVGElement)
-class MeshCollection(SVGElementCollection):
     pass

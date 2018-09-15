@@ -10,8 +10,6 @@ class Container(object):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, self._extract_selector(*args, **kwargs))
 
-    # private
-
     def _extract_selector(self, *args, **kwargs):
         if args and len(args) == 2:
             nerodia.logger.deprecate('Using ordered parameters to locate elements '
@@ -587,15 +585,6 @@ class Container(object):
         return HTMLElementCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                 tag_name='kbd'))
 
-    def keygen(self, *args, **kwargs):
-        from .elements.html_elements import Keygen
-        return Keygen(self, dict(self._extract_selector(*args, **kwargs), tag_name='keygen'))
-
-    def keygens(self, *args, **kwargs):
-        from .elements.html_elements import KeygenCollection
-        return KeygenCollection(self, dict(self._extract_selector(*args, **kwargs),
-                                           tag_name='keygen'))
-
     def label(self, *args, **kwargs):
         from .elements.html_elements import Label
         return Label(self, dict(self._extract_selector(*args, **kwargs), tag_name='label'))
@@ -647,23 +636,6 @@ class Container(object):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                 tag_name='mark'))
-
-    def menu(self, *args, **kwargs):
-        from .elements.html_elements import Menu
-        return Menu(self, dict(self._extract_selector(*args, **kwargs), tag_name='menu'))
-
-    def menus(self, *args, **kwargs):
-        from .elements.html_elements import MenuCollection
-        return MenuCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='menu'))
-
-    def menuitem(self, *args, **kwargs):
-        from .elements.html_elements import MenuItem
-        return MenuItem(self, dict(self._extract_selector(*args, **kwargs), tag_name='menuitem'))
-
-    def menuitems(self, *args, **kwargs):
-        from .elements.html_elements import MenuItemCollection
-        return MenuItemCollection(self, dict(self._extract_selector(*args, **kwargs),
-                                             tag_name='menuitem'))
 
     def meta(self, *args, **kwargs):
         from .elements.html_elements import Meta
@@ -1109,3 +1081,201 @@ class Container(object):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, dict(self._extract_selector(*args, **kwargs),
                                                 tag_name='wbr'))
+
+    # SVG
+
+    def circle(self, *args, **kwargs):
+        from .elements.svg_elements import Circle
+        return Circle(self, dict(self._extract_selector(*args, **kwargs), tag_name='circle'))
+
+    def circles(self, *args, **kwargs):
+        from .elements.svg_elements import CircleCollection
+        return CircleCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                           tag_name='circle'))
+
+    def defs(self, *args, **kwargs):
+        from .elements.svg_elements import Defs
+        return Defs(self, dict(self._extract_selector(*args, **kwargs), tag_name='defs'))
+
+    def defss(self, *args, **kwargs):
+        from .elements.svg_elements import DefsCollection
+        return DefsCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='defs'))
+
+    def desc(self, *args, **kwargs):
+        from .elements.svg_elements import Desc
+        return Desc(self, dict(self._extract_selector(*args, **kwargs), tag_name='desc'))
+
+    def descs(self, *args, **kwargs):
+        from .elements.svg_elements import DescCollection
+        return DescCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='desc'))
+
+    def ellipse(self, *args, **kwargs):
+        from .elements.svg_elements import Ellipse
+        return Ellipse(self, dict(self._extract_selector(*args, **kwargs), tag_name='ellipse'))
+
+    def ellipses(self, *args, **kwargs):
+        from .elements.svg_elements import EllipseCollection
+        return EllipseCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                            tag_name='ellipse'))
+
+    def foreign_object(self, *args, **kwargs):
+        from .elements.svg_elements import ForeignObject
+        return ForeignObject(self, dict(self._extract_selector(*args, **kwargs),
+                                        tag_name='foreignObject'))
+
+    def foreign_objects(self, *args, **kwargs):
+        from .elements.svg_elements import ForeignObjectCollection
+        return ForeignObjectCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                                  tag_name='foreignObject'))
+
+    def g(self, *args, **kwargs):
+        from .elements.svg_elements import G
+        return G(self, dict(self._extract_selector(*args, **kwargs), tag_name='g'))
+
+    def gs(self, *args, **kwargs):
+        from .elements.svg_elements import GCollection
+        return GCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                      tag_name='g'))
+
+    def line(self, *args, **kwargs):
+        from .elements.svg_elements import Line
+        return Line(self, dict(self._extract_selector(*args, **kwargs), tag_name='line'))
+
+    def lines(self, *args, **kwargs):
+        from .elements.svg_elements import LineCollection
+        return LineCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                         tag_name='line'))
+
+    def linear_gradient(self, *args, **kwargs):
+        from .elements.svg_elements import LinearGradient
+        return LinearGradient(self, dict(self._extract_selector(*args, **kwargs),
+                                         tag_name='linearGradient'))
+
+    def linear_gradients(self, *args, **kwargs):
+        from .elements.svg_elements import LinearGradientCollection
+        return LinearGradientCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                                   tag_name='linearGradient'))
+
+    def marker(self, *args, **kwargs):
+        from .elements.svg_elements import Marker
+        return Marker(self, dict(self._extract_selector(*args, **kwargs), tag_name='marker'))
+
+    def markers(self, *args, **kwargs):
+        from .elements.svg_elements import MarkerCollection
+        return MarkerCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                           tag_name='marker'))
+
+    def metadata(self, *args, **kwargs):
+        from .elements.svg_elements import Metadata
+        return Metadata(self, dict(self._extract_selector(*args, **kwargs), tag_name='metadata'))
+
+    def metadatas(self, *args, **kwargs):
+        from .elements.svg_elements import MetadataCollection
+        return MetadataCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                             tag_name='metadata'))
+
+    def path(self, *args, **kwargs):
+        from .elements.svg_elements import Path
+        return Path(self, dict(self._extract_selector(*args, **kwargs), tag_name='path'))
+
+    def paths(self, *args, **kwargs):
+        from .elements.svg_elements import PathCollection
+        return PathCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='path'))
+
+    def pattern(self, *args, **kwargs):
+        from .elements.svg_elements import Pattern
+        return Pattern(self, dict(self._extract_selector(*args, **kwargs), tag_name='pattern'))
+
+    def patterns(self, *args, **kwargs):
+        from .elements.svg_elements import PatternCollection
+        return PatternCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                            tag_name='pattern'))
+
+    def polygon(self, *args, **kwargs):
+        from .elements.svg_elements import Polygon
+        return Polygon(self, dict(self._extract_selector(*args, **kwargs), tag_name='polygon'))
+
+    def polygons(self, *args, **kwargs):
+        from .elements.svg_elements import PolygonCollection
+        return PolygonCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                            tag_name='polygon'))
+
+    def polyline(self, *args, **kwargs):
+        from .elements.svg_elements import Polyline
+        return Polyline(self, dict(self._extract_selector(*args, **kwargs), tag_name='polygon'))
+
+    def polylines(self, *args, **kwargs):
+        from .elements.svg_elements import PolylineCollection
+        return PolylineCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                             tag_name='polygon'))
+
+    def radial_gradient(self, *args, **kwargs):
+        from .elements.svg_elements import RadialGradient
+        return RadialGradient(self, dict(self._extract_selector(*args, **kwargs),
+                                         tag_name='radialGradient'))
+
+    def radial_gradients(self, *args, **kwargs):
+        from .elements.svg_elements import RadialGradientCollection
+        return RadialGradientCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                                   tag_name='radialGradient'))
+
+    def stop(self, *args, **kwargs):
+        from .elements.svg_elements import Stop
+        return Stop(self, dict(self._extract_selector(*args, **kwargs), tag_name='stop'))
+
+    def stops(self, *args, **kwargs):
+        from .elements.svg_elements import StopCollection
+        return StopCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='stop'))
+
+    def svg(self, *args, **kwargs):
+        from .elements.svg_elements import SVG
+        return SVG(self, dict(self._extract_selector(*args, **kwargs), tag_name='svg'))
+
+    def svgs(self, *args, **kwargs):
+        from .elements.svg_elements import SVGCollection
+        return SVGCollection(self, dict(self._extract_selector(*args, **kwargs), tag_name='svg'))
+
+    def switch(self, *args, **kwargs):
+        from .elements.svg_elements import Switch
+        return Switch(self, dict(self._extract_selector(*args, **kwargs), tag_name='switch'))
+
+    def switches(self, *args, **kwargs):
+        from .elements.svg_elements import SwitchCollection
+        return SwitchCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                           tag_name='switch'))
+
+    def symbol(self, *args, **kwargs):
+        from .elements.svg_elements import Symbol
+        return Symbol(self, dict(self._extract_selector(*args, **kwargs), tag_name='symbol'))
+
+    def symbols(self, *args, **kwargs):
+        from .elements.svg_elements import SymbolCollection
+        return SymbolCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                           tag_name='symbol'))
+
+    def text_path(self, *args, **kwargs):
+        from .elements.svg_elements import TextPath
+        return TextPath(self, dict(self._extract_selector(*args, **kwargs), tag_name='textPath'))
+
+    def text_paths(self, *args, **kwargs):
+        from .elements.svg_elements import TextPathCollection
+        return TextPathCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                             tag_name='textPath'))
+
+    def tspan(self, *args, **kwargs):
+        from .elements.svg_elements import TSpan
+        return TSpan(self, dict(self._extract_selector(*args, **kwargs), tag_name='tspan'))
+
+    def tspans(self, *args, **kwargs):
+        from .elements.svg_elements import TSpanCollection
+        return TSpanCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                          tag_name='tspan'))
+
+    def view(self, *args, **kwargs):
+        from .elements.svg_elements import View
+        return View(self, dict(self._extract_selector(*args, **kwargs), tag_name='view'))
+
+    def views(self, *args, **kwargs):
+        from .elements.svg_elements import ViewCollection
+        return ViewCollection(self, dict(self._extract_selector(*args, **kwargs),
+                                         tag_name='view'))
