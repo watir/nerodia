@@ -1,8 +1,7 @@
 import logging
+import re
 import socket
 import threading
-
-import re
 from os import path, chdir
 
 try:
@@ -95,7 +94,7 @@ class WebServer(object):
         self.stop_serving = True
         try:
             # This is to force stop the server loop
-            urllib_request.URLopener().open('http://{}:{}'.format(self.host, self.port))
+            urllib_request.urlopen('http://{}:{}'.format(self.host, self.port))
         except IOError:
             pass
         logging.info('Shutting down the webserver')
