@@ -265,7 +265,7 @@ class TestElementExistsIndex(object):
         assert browser.element(index=1).tag_name == 'head'
 
     def test_finds_the_last_element_by_index_neg_1(self, browser):
-        assert browser.element(index=-1).tag_name == 'p'
+        assert browser.element(index=-1).tag_name == 'div'
 
 
 class TestElementExist(object):

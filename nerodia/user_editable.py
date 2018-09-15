@@ -40,8 +40,8 @@ class UserEditable(object):
                 self.append(input_value[-1])
         value = self.value
         if value != input_value:
-            raise Error('#js_set value: {!r} does not match expected input: '
-                        '{!r}'.format(value, input_value))
+            raise Error("#js_set value: '{}' does not match expected input: "
+                        "'{}'".format(value, input_value))
 
     def append(self, *args):
         """
@@ -68,5 +68,5 @@ class UserEditable(object):
         text = self.text
         if text == input_text:
             return
-        raise Error('#js_set text: {!r} does not match expected input: '
-                    '{!r}'.format(text, input_text))
+        raise Error("#js_set text: '{}' does not match expected input: "
+                    "'{}'".format(text, input_text))

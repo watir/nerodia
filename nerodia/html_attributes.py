@@ -77,7 +77,7 @@ htmlelement = [
     (str, 'oncut', 'oncut'),
     (str, 'onpaste', 'onpaste'),
     (str, 'content_editable', 'contentEditable'),
-    (bool, 'content_editable', 'isContentEditable')
+    (bool, 'is_content_editable', 'isContentEditable')
 ]
 
 HTMLElementCollection = []

@@ -714,11 +714,17 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def __getattribute__(self, name):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, name):
             return self.attribute_value(name.replace('_', '-'))
-        elif name in (_[0] for _ in getmembers(UserEditable, predicate=isroutine)) and \
+        else:
+            return object.__getattribute__(self, name)
+
+    def __getattr__(self, name):
+        if name in (_[0] for _ in getmembers(UserEditable, predicate=isroutine)) and \
                 self.content_editable:
             self._content_editable = True
             setattr(self, name, six.create_bound_method(
                 six.get_unbound_function(getattr(UserEditable, name)), self))
-            return object.__getattribute__(self, name)
-        else:
-            return object.__getattribute__(self, name)
+            return getattr(self, name)
+
+    def _content_editable_check(self, name):
+        members = (_[0] for _ in getmembers(UserEditable, predicate=isroutine))
+        return name in members and self.is_content_editable
