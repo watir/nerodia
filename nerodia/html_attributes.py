@@ -10,9 +10,8 @@ htmlelement = [
     (int, 'tabindex', 'tabIndex'),
     (str, 'accesskey', 'accessKey'),
     (bool, 'draggable', 'draggable'),
-    (str, 'dropzone', 'dropzone'),
-    (str, 'contextmenu', 'contextMenu'),
     (bool, 'spellcheck', 'spellcheck'),
+    (str, 'innertext', 'innerText'),
     (str, 'onabort', 'onabort'),
     (str, 'onblur', 'onblur'),
     (str, 'oncancel', 'oncancel'),
@@ -21,7 +20,6 @@ htmlelement = [
     (str, 'onchange', 'onchange'),
     (str, 'onclick', 'onclick'),
     (str, 'onclose', 'onclose'),
-    (str, 'oncontextmenu', 'oncontextmenu'),
     (str, 'oncuechange', 'oncuechange'),
     (str, 'ondblclick', 'ondblclick'),
     (str, 'ondrag', 'ondrag'),
@@ -171,25 +169,12 @@ script = [
 
 ScriptCollection = []
 
-menuitem = [
-    (str, 'type', 'type'),
-    (str, 'label', 'label'),
-    (str, 'icon', 'icon'),
-    (bool, 'disabled', 'disabled'),
-    (bool, 'checked', 'checked'),
-    (str, 'radiogroup', 'radiogroup'),
-    (bool, 'default', 'default')
+dialog = [
+    (bool, 'open', 'open'),
+    (str, 'returnvalue', 'returnValue')
 ]
 
-MenuItemCollection = []
-
-menu = [
-    (str, 'type', 'type'),
-    (str, 'label', 'label'),
-    (bool, 'compact', 'compact')
-]
-
-MenuCollection = []
+DialogCollection = []
 
 details = [
     (bool, 'open', 'open')
@@ -252,22 +237,6 @@ output = [
 
 OutputCollection = []
 
-keygen = [
-    (bool, 'autofocus', 'autofocus'),
-    (str, 'challenge', 'challenge'),
-    (bool, 'disabled', 'disabled'),
-    (str, 'form', 'form'),
-    (str, 'keytype', 'keytype'),
-    (str, 'name', 'name'),
-    (str, 'type', 'type'),
-    (bool, 'willvalidate', 'willValidate'),
-    (str, 'validity', 'validity'),
-    (str, 'validationmessage', 'validationMessage'),
-    (str, 'labels', 'labels')
-]
-
-KeygenCollection = []
-
 textarea = [
     (str, 'autocomplete', 'autocomplete'),
     (bool, 'autofocus', 'autofocus'),
@@ -275,7 +244,6 @@ textarea = [
     (str, 'dirname', 'dirName'),
     (bool, 'disabled', 'disabled'),
     (str, 'form', 'form'),
-    (str, 'inputmode', 'inputMode'),
     (int, 'maxlength', 'maxLength'),
     (int, 'minlength', 'minLength'),
     (str, 'name', 'name'),
@@ -285,6 +253,7 @@ textarea = [
     (str, 'wrap', 'wrap'),
     (str, 'type', 'type'),
     (str, 'defaultvalue', 'defaultValue'),
+    (str, 'value', 'value'),
     (int, 'textlength', 'textLength'),
     (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
@@ -316,9 +285,7 @@ optgroup = [
 
 OptGroupCollection = []
 
-datalist = [
-    (str, 'options', 'options')
-]
+datalist = []
 
 DataListCollection = []
 
@@ -331,7 +298,6 @@ select = [
     (str, 'name', 'name'),
     (bool, 'required', 'required'),
     (str, 'type', 'type'),
-    (str, 'element_options', 'options'),
     (int, 'length', 'length'),
     (str, 'selectedoptions', 'selectedOptions'),
     (int, 'selectedindex', 'selectedIndex'),
@@ -356,7 +322,6 @@ button = [
     (str, 'name', 'name'),
     (str, 'type', 'type'),
     (str, 'value', 'value'),
-    (str, 'menu', 'menu'),
     (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
     (str, 'validationmessage', 'validationMessage'),
@@ -382,7 +347,6 @@ input = [
     (bool, 'formnovalidate', 'formNoValidate'),
     (str, 'formtarget', 'formTarget'),
     (bool, 'indeterminate', 'indeterminate'),
-    (str, 'inputmode', 'inputMode'),
     (str, 'list', 'list'),
     (str, 'max', 'max'),
     (int, 'maxlength', 'maxLength'),
@@ -460,9 +424,7 @@ tableheadercell = [
 
 TableHeaderCellCollection = []
 
-tabledatacell = [
-    (str, 'abbr', 'abbr')
-]
+tabledatacell = []
 
 TableDataCellCollection = []
 
@@ -527,6 +489,7 @@ area = [
     (str, 'rellist', 'relList'),
     (str, 'hreflang', 'hreflang'),
     (str, 'type', 'type'),
+    (str, 'referrerpolicy', 'referrerPolicy'),
     (bool, 'nohref', 'noHref'),
     (str, 'href', 'href'),
     (str, 'origin', 'origin'),
@@ -635,7 +598,6 @@ object = [
     (int, 'vspace', 'vspace'),
     (str, 'codebase', 'codeBase'),
     (str, 'codetype', 'codeType'),
-    (str, 'usemap', 'useMap'),
     (str, 'border', 'border')
 ]
 
@@ -656,11 +618,14 @@ iframe = [
     (str, 'name', 'name'),
     (str, 'sandbox', 'sandbox'),
     (bool, 'allowfullscreen', 'allowFullscreen'),
+    (bool, 'allowpaymentrequest', 'allowPaymentRequest'),
+    (str, 'referrerpolicy', 'referrerPolicy'),
     (str, 'contentdocument', 'contentDocument'),
     (str, 'contentwindow', 'contentWindow'),
     (str, 'align', 'align'),
     (str, 'scrolling', 'scrolling'),
     (str, 'frameborder', 'frameBorder'),
+    (str, 'longdesc', 'longDesc'),
     (str, 'marginheight', 'marginHeight'),
     (str, 'marginwidth', 'marginWidth')
 ]
@@ -674,11 +639,13 @@ image = [
     (str, 'sizes', 'sizes'),
     (str, 'crossorigin', 'crossOrigin'),
     (str, 'usemap', 'useMap'),
+    (str, 'longdesc', 'longDesc'),
     (bool, 'ismap', 'isMap'),
     (int, 'naturalwidth', 'naturalWidth'),
     (int, 'naturalheight', 'naturalHeight'),
     (bool, 'complete', 'complete'),
     (str, 'currentsrc', 'currentSrc'),
+    (str, 'referrerpolicy', 'referrerPolicy'),
     (str, 'name', 'name'),
     (str, 'lowsrc', 'lowsrc'),
     (str, 'align', 'align'),
@@ -690,11 +657,11 @@ image = [
 ImageCollection = []
 
 source = [
+    (str, 'src', 'src'),
+    (str, 'type', 'type'),
     (str, 'srcset', 'srcset'),
     (str, 'sizes', 'sizes'),
-    (str, 'media', 'media'),
-    (str, 'src', 'src'),
-    (str, 'type', 'type')
+    (str, 'media', 'media')
 ]
 
 SourceCollection = []
@@ -740,6 +707,7 @@ anchor = [
     (str, 'rellist', 'relList'),
     (str, 'hreflang', 'hreflang'),
     (str, 'type', 'type'),
+    (str, 'referrerpolicy', 'referrerPolicy'),
     (str, 'coords', 'coords'),
     (str, 'charset', 'charset'),
     (str, 'name', 'name'),
@@ -824,7 +792,6 @@ heading = [
 HeadingCollection = []
 
 body = [
-    (str, 'link', 'link'),
     (str, 'vlink', 'vLink'),
     (str, 'alink', 'aLink'),
     (str, 'bgcolor', 'bgColor'),

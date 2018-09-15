@@ -5,7 +5,7 @@ from .elements.d_list import DList
 from .elements.form import Form
 from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
     TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
-    Heading, Head, HR, Html, Keygen, Label, Legend, LI, Map, Menu, MenuItem, Meta, Meter, Object, \
+    Heading, Head, HR, Html, Label, Legend, LI, Map, Meta, Meter, Object, \
     OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
     Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
     HTMLElementCollection, AreaCollection, AudioCollection, BaseCollection, QuoteCollection, \
@@ -13,9 +13,9 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
     TableColCollection, DataCollection, DataListCollection, ModCollection, DetailsCollection, \
     DialogCollection, DivCollection, DListCollection, EmbedCollection, FieldSetCollection, \
     FormCollection, FrameSetCollection, HeadingCollection, HeadCollection, HRCollection, \
-    HtmlCollection, IFrameCollection, ImageCollection, InputCollection, KeygenCollection, \
-    LabelCollection, LegendCollection, LICollection, MapCollection, MenuCollection, \
-    MenuItemCollection, MetaCollection, MeterCollection, ObjectCollection, OListCollection, \
+    HtmlCollection, IFrameCollection, ImageCollection, InputCollection, \
+    LabelCollection, LegendCollection, LICollection, MapCollection, \
+    MetaCollection, MeterCollection, ObjectCollection, OListCollection, \
     OptGroupCollection, OptionCollection, OutputCollection, ParagraphCollection, ParamCollection, \
     PreCollection, ProgressCollection, ScriptCollection, SelectCollection, SourceCollection, \
     SpanCollection, StyleCollection, TableDataCellCollection, TemplateCollection, TextAreaCollection, \

@@ -2,10 +2,8 @@
 
 svgelement = [
     (str, 'classname', 'className'),
-    (str, 'dataset', 'dataset'),
     (str, 'ownersvgelement', 'ownerSVGElement'),
     (str, 'viewportelement', 'viewportElement'),
-    (int, 'tabindex', 'tabIndex'),
     (str, 'correspondingelement', 'correspondingElement'),
     (str, 'correspondinguseelement', 'correspondingUseElement')
 ]
@@ -19,22 +17,6 @@ view = [
 ]
 
 ViewCollection = []
-
-cursor = [
-    (int, 'x', 'x'),
-    (int, 'y', 'y'),
-    (str, 'href', 'href')
-]
-
-CursorCollection = []
-
-Hatchpath = []
-
-HatchpathCollection = []
-
-Hatch = []
-
-HatchCollection = []
 
 pattern = [
     (str, 'patternunits', 'patternUnits'),
@@ -57,14 +39,6 @@ stop = [
 
 StopCollection = []
 
-Meshpatch = []
-
-MeshpatchCollection = []
-
-Meshrow = []
-
-MeshrowCollection = []
-
 gradient = [
     (str, 'gradientunits', 'gradientUnits'),
     (str, 'gradienttransform', 'gradientTransform'),
@@ -73,10 +47,6 @@ gradient = [
 ]
 
 GradientCollection = []
-
-MeshGradient = []
-
-MeshGradientCollection = []
 
 radialgradient = [
     (int, 'cx', 'cx'),
@@ -97,10 +67,6 @@ lineargradient = [
 ]
 
 LinearGradientCollection = []
-
-Solidcolor = []
-
-SolidcolorCollection = []
 
 marker = [
     (int, 'refx', 'refX'),
@@ -236,12 +202,6 @@ polyline = [
 ]
 
 PolylineCollection = []
-
-mesh = [
-    (str, 'href', 'href')
-]
-
-MeshCollection = []
 
 line = [
     (int, 'x1', 'x1'),

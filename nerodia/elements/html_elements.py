@@ -102,26 +102,6 @@ class DialogCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
-class MenuItem(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class MenuItemCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class Menu(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class MenuCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
 class Details(HTMLElement):
     pass
 
@@ -178,16 +158,6 @@ class Output(HTMLElement):
 
 @six.add_metaclass(MetaHTMLElement)
 class OutputCollection(HTMLElementCollection):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class Keygen(HTMLElement):
-    pass
-
-
-@six.add_metaclass(MetaHTMLElement)
-class KeygenCollection(HTMLElementCollection):
     pass
 
 
@@ -639,3 +609,13 @@ class Unknown(HTMLElement):
 @six.add_metaclass(MetaHTMLElement)
 class UnknownCollection(HTMLElementCollection):
     pass
+
+@six.add_metaclass(MetaHTMLElement)
+class Font(HTMLElement):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class TableCell(HTMLElement):
+    pass
+
