@@ -45,6 +45,7 @@ class TestBrowserWindows(object):
             assert isinstance(win, Window)
 
     def test_only_returns_windows_matching_the_given_selector(self, browser):
+        browser.wait_until(lambda b: b.window(title='closeable window').exists)
         assert len(browser.windows(title='closeable window')) == 1
 
     def test_raises_correct_exception_if_the_windows_selector_is_invalid(self, browser):
