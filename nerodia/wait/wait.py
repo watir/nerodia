@@ -146,51 +146,66 @@ class Waitable(object):
                        object=object)
         return self
 
-    def wait_until_present(self, timeout=None, interval=None):
+    def wait_until_present(self, timeout=None, interval=None, message=None):
         """
         Waits until the element is present
         :param timeout: time to wait
         :type timeout: int
         :param interval: time to wait between each check
         :type interval: float
+        :param message: message error message for when times out
+        :type message: str
         :Example:
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
+        if not message:
+            def msg(obj):
+                return 'waiting for element {} to become present'.format(obj)
+            message = msg
         from nerodia.elements.element import Element
         if isinstance(self, Element):
             def func(e):
                 e.reset()
                 return e.present
-            return self.wait_until(method=func, timeout=timeout, interval=interval)
+            return self.wait_until(method=func, timeout=timeout, interval=interval, message=message)
 
         nerodia.logger.deprecate('{}#wait_until_present'.format(self.__class__.__name__),
                                  '{}#wait_until(method=lambda e: e.present)',
                                  ids=['wait_until_present'])
-        return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval)
+        return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval,
+                               message=message)
 
-    def wait_until_not_present(self, timeout=None, interval=None):
+    def wait_until_not_present(self, timeout=None, interval=None, message=None):
         """
         Waits while the element is present
         :param timeout: time to wait
         :type timeout: int
         :param interval: time to wait between each check
         :type interval: float
+        :param message: message error message for when times out
+        :type message: str
         :Example:
 
         browser.text_field(name='abrakadbra').wait_until_not_present
         """
+        if not message:
+            def msg(obj):
+                return 'waiting for element {} not to be present'.format(obj)
+            message = msg
         from nerodia.elements.element import Element
         if isinstance(self, Element):
             def func(e):
                 e.reset()
                 return e.present
-            return self.wait_until_not(method=func, timeout=timeout, interval=interval)
+            return self.wait_until_not(method=func, timeout=timeout, interval=interval,
+                                       message=message)
 
         nerodia.logger.deprecate('{}#wait_until_not_present'.format(self.__class__.__name__),
                                  '{}#wait_until_not(method=lambda e: e.present)',
                                  ids=['wait_until_not_present'])
-        return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval)
+        return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval,
+                                   message=message)
 
     def _create_closure(self, obj, until=True):
         from ..elements.element import Element

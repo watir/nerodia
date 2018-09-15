@@ -95,8 +95,9 @@ class TestElementWaitUntilPresent(object):
         browser.div(id='bar').wait_until_present()
 
     def test_times_out_if_the_element_doesnt_appear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for true condition on',
-                         '#<Div: located: True;', "'id': 'bar'", "'tag_name': 'div'"]
+        message_parts = ['timed out after 1 seconds, waiting for element',
+                         '#<Div: located: True;', "'id': 'bar'", "'tag_name': 'div'",
+                         'to become present']
         with pytest.raises(TimeoutError) as e:
             browser.div(id='bar').wait_until_present(timeout=1)
         assert all(part in e.value.args[0] for part in message_parts)
@@ -119,8 +120,9 @@ class TestElementWaitUntilNotPresent(object):
         browser.div(id='foo').wait_until_not_present(timeout=2)
 
     def test_times_out_if_the_element_doesnt_disappear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for false condition on',
-                         '#<Div: located: True;', "'tag_name': 'div'", "'id': 'foo'"]
+        message_parts = ['timed out after 1 seconds, waiting for element',
+                         '#<Div: located: True;', "'tag_name': 'div'", "'id': 'foo'",
+                         'not to be present']
         with pytest.raises(TimeoutError) as e:
             browser.div(id='foo').wait_until_not_present(timeout=1)
         assert all(part in e.value.args[0] for part in message_parts)
