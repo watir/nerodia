@@ -423,7 +423,7 @@ class TestElementSizeLocation(object):
         assert location.y > 0
         assert location.x > 0
 
-
+@pytest.mark.page('data_attributes.html')
 class TestElementAttributeValue(object):
     def test_returns_attribute_value_by_attribute_name(self, browser):
         assert browser.p().attribute_value('data-type') == 'ruby-library'
