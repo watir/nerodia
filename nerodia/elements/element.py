@@ -1,6 +1,7 @@
-from inspect import getmembers, isfunction, stack
+from inspect import getmembers, isroutine, stack
 from re import search, sub
 
+import six
 from selenium.common.exceptions import InvalidElementStateException, \
     StaleElementReferenceException, \
     ElementNotVisibleException, ElementNotInteractableException, NoSuchWindowException
@@ -713,11 +714,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def __getattribute__(self, name):
         if search(SelectorBuilder.WILDCARD_ATTRIBUTE, name):
             return self.attribute_value(name.replace('_', '-'))
-        elif name in (_[0] for _ in getmembers(UserEditable, predicate=isfunction)) and \
+        elif name in (_[0] for _ in getmembers(UserEditable, predicate=isroutine)) and \
                 self.content_editable:
-            import types
             self._content_editable = True
-            setattr(self, name, types.MethodType(getattr(UserEditable, name), self))
+            setattr(self, name, six.create_bound_method(
+                six.get_unbound_function(getattr(UserEditable, name)), self))
             return object.__getattribute__(self, name)
         else:
             return object.__getattribute__(self, name)
