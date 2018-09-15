@@ -719,7 +719,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def __getattr__(self, name):
         if name in (_[0] for _ in getmembers(UserEditable, predicate=isroutine)) and \
-                self.content_editable:
+                self.is_content_editable:
             self._content_editable = True
             setattr(self, name, six.create_bound_method(
                 six.get_unbound_function(getattr(UserEditable, name)), self))
@@ -727,7 +727,3 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         else:
             raise AttributeError("Element '{}' has no attribute "
                                  "'{}'".format(self.__class__.capitalize(), name))
-
-    def _content_editable_check(self, name):
-        members = (_[0] for _ in getmembers(UserEditable, predicate=isroutine))
-        return name in members and self.is_content_editable

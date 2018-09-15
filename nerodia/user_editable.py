@@ -33,7 +33,7 @@ class UserEditable(object):
         input_value = ''.join(args)
         if input_value:
             self.set(input_value[0])
-            if getattr(self, '_content_editable', None):
+            if hasattr(self, '_content_editable'):
                 return self._set_content_editable(*args)
             if len(input_value) > 1:
                 self._element_call(lambda: self._execute_js('setValue', self.el, input_value[:-1]))
@@ -48,7 +48,7 @@ class UserEditable(object):
         Appends the given value to the text in the text field
         :param args: value to add to the input
         """
-        if getattr(self, '_content_editable', None):
+        if hasattr(self, '_content_editable'):
             raise NotImplementedError('#append method is not supported with contenteditable '
                                       'element')
         self.send_keys(*args)
