@@ -422,3 +422,18 @@ class TestElementSizeLocation(object):
         assert isinstance(location, Point)
         assert location.y > 0
         assert location.x > 0
+
+
+class TestElementAttributeValue(object):
+    def test_returns_attribute_value_by_attribute_name(self, browser):
+        assert browser.p().attribute_value('data-type') == 'ruby-library'
+
+
+class TestElementLocated(object):
+    def test_returns_returns_true_if_element_has_been_located(self, browser):
+        el = browser.form(id='new_user')
+        el.exists
+        assert el.located is True
+
+    def test_returns_returns_false_if_element_has_not_been_located(self, browser):
+        assert browser.form(id='new_user').located is False

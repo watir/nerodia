@@ -40,10 +40,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def exists(self):
         """
         Returns True if element exists, False otherwise
+        Checking for staleness is deprecated
         :rtype: bool
         """
         try:
-            if self.el and self.stale:
+            if self.located and self.stale:
                 return False
             self.assert_exists()
             return True
@@ -56,7 +57,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         string = '#<{}: '.format(self.__class__.__name__)
         if self.keyword:
             string += 'keyword: {} '.format(self.keyword)
-        string += 'located: {}; '.format(self.el is not None)
+        string += 'located: {}; '.format(self.located)
         if not self.selector:
             string += '{element: (selenium element)}'
         else:
@@ -75,7 +76,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     eql = __eq__
 
     def __hash__(self):
-        return self.el.__hash__() if self.el else super(Element, self).__hash__()
+        return self.el.__hash__() if self.located else super(Element, self).__hash__()
 
     @property
     def text(self):
@@ -519,6 +520,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def reset(self):
         self.el = None
 
+    @property
+    def located(self):
+        """
+        Returns if the element has previously been located
+        :rtype: bool
+        """
+        return self.el is not None
+
     def wait_for_exists(self):
         if not nerodia.relaxed_locate:
             return self.assert_exists()
@@ -581,9 +590,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         Ensure that the element exists, making sure that it is not stale and located if necessary
         """
-        if not self.el:
+        if not self.located:
             self.locate()
-        if self.el is None:
+        if not self.located:
             raise UnknownObjectException('unable to locate element: {}'.format(self))
 
     def locate(self):
@@ -655,8 +664,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             if not already_locked:
                 Wait.timer.reset()
 
-    def _check_condition(self, condition):
-        nerodia.logger.info('<- `Verifying precondition {}#{}`'.format(self, condition))
+    def _check_condition(self, condition, caller):
+        nerodia.logger.info('<- `Verifying precondition {}#{} for '
+                            '{}`'.format(self, condition, caller))
         try:
             if not condition:
                 self.assert_exists()
@@ -668,7 +678,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             if condition is None:
                 nerodia.logger.info('<- `Unable to satisfy precondition '
                                     '{}#{}`'.format(self, condition))
-                self._check_condition(self.wait_for_exists)
+                self._check_condition(self.wait_for_exists, caller)
             else:
                 raise
 
@@ -676,7 +686,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         nerodia.logger.info('-> `Executing {}#{}`'.format(self, caller))
         while True:
             try:
-                self._check_condition(precondition)
+                self._check_condition(precondition, caller)
                 return method()
             except self._unknown_exception as e:
                 if precondition is None:
@@ -694,7 +704,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             except StaleElementReferenceException:
                 self.query_scope._ensure_context()
                 self.reset()
-                self._check_condition(precondition)
+                self._check_condition(precondition, caller)
                 return method()
             except (ElementNotVisibleException, ElementNotInteractableException):
                 if (Wait.timer.remaining_time <= 0) or \
