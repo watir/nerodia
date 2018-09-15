@@ -210,7 +210,7 @@ class Window(Waitable):
 
     @property
     def handle(self):
-        return self.window_handle or self._locate()
+        return self.window_handle or self.locate()
 
     # Referenced in EventuallyPresent
     def selector_string(self):
@@ -229,9 +229,7 @@ class Window(Waitable):
         except TimeoutError:
             raise NoMatchingWindowFoundException(str(self.selector))
 
-    # private
-
-    def _locate(self):
+    def locate(self):
         if not self.selector:
             self.window_handle = None
         elif 'index' in self.selector:
@@ -243,6 +241,8 @@ class Window(Waitable):
             self.window_handle = next((x for x in self.driver.window_handles if
                                        self._matches(x) is True), False)
         return self.window_handle
+
+    # private
 
     @property
     def _current_window(self):
