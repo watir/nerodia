@@ -123,7 +123,7 @@ def quick_timeout():
 
 @pytest.fixture(autouse=True)
 def start_page(request, page):
-    marker = request.node.get_marker('page')
+    marker = request.node.get_closest_marker('page')
     if marker:
         page.load(marker.args[0])
 
