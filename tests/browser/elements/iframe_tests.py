@@ -95,6 +95,7 @@ class TestIFrameExist(object):
 
 class TestIFrameOther(object):
     @pytest.mark.page('nested_iframes.html')
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1255946')
     def test_handles_nested_iframes(self, browser):
         from nerodia.wait.wait import Wait
         browser.iframe(id='two').iframe(id='three').link(id='four').click()
