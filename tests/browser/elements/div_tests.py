@@ -209,7 +209,6 @@ class TestDivManipulation(object):
 
     # js_double_click
 
-    @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/661')
     def test_js_double_click_fires_the_ondblclick_event(self, browser, messages):
         browser.div(id='html_test').js_double_click()
         assert 'double clicked' in messages.list

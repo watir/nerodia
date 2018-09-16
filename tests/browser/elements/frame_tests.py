@@ -46,7 +46,6 @@ class TestFrameExist(object):
 
 class TestFrameOther(object):
     @pytest.mark.page('nested_frames.html')
-    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1255946')
     def test_handles_nested_frames(self, browser):
         from nerodia.wait.wait import Wait
         browser.frame(id='two').frame(id='three').link(id='four').click()
