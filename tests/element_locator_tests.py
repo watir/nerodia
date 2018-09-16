@@ -70,7 +70,7 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_handles_selector_with_tag_name_and_single_attribute(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'title': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[@title='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][@title='foo']")
 
     def test_handles_selector_with_no_tag_name_and_single_attribute(self, browser, expect_one):
         locate_one(browser, {'title': 'foo'})
@@ -85,7 +85,7 @@ class TestElementLocatorFindsSingleElement(object):
         expect_one.assert_called_once()
         by, selector = expect_one.call_args[0]
         assert by == 'xpath'
-        assert '//div' in selector
+        assert "//*[local-name()='div']" in selector
         assert 'and' in selector
         assert "@dir='bar'" in selector
         assert "@title='foo'" in selector
@@ -145,7 +145,8 @@ class TestElementLocatorFindsSingleElement(object):
         selector = {'custom_attribute': 'foo', 'tag_name': 'span'}
         result = locate_one(browser, selector)
 
-        expect_one.assert_called_once_with(By.XPATH, ".//span[@custom-attribute='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='span']"
+                                                     "[@custom-attribute='foo']")
 
         assert result.tag_name == 'span'
 
@@ -153,36 +154,43 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_normalizes_space_for_text(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'text': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[normalize-space()='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div']"
+                                                     "[normalize-space()='foo']")
 
     def test_translates_caption_to_text(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'caption': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[normalize-space()='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div']"
+                                                     "[normalize-space()='foo']")
 
     def test_handles_data_attributes(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'data_name': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[@data-name='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div']"
+                                                     "[@data-name='foo']")
 
     def test_handles_aria_attributes(self, browser, expect_one):
         locate_one(browser, {'tag_name': 'div', 'aria_label': 'foo'})
-        expect_one.assert_called_once_with(By.XPATH, ".//div[@aria-label='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div']"
+                                                     "[@aria-label='foo']")
 
     def test_normalizes_space_for_the_href_attribute(self, browser, expect_one):
         from nerodia.elements.link import Anchor
         locate_one(browser, {'tag_name': 'a', 'href': 'foo'}, Anchor.ATTRIBUTES)
-        expect_one.assert_called_once_with(By.XPATH, ".//a[normalize-space(@href)='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='a']"
+                                                     "[normalize-space(@href)='foo']")
 
     def test_wraps_type_attribute_with_translate_for_upper_case_values(self, browser, expect_one):
         from nerodia.elements.input import Input
         translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'file'}, Input.ATTRIBUTES)
-        expect_one.assert_called_once_with(By.XPATH, ".//input[{}='file']".format(translated_type))
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='input']"
+                                                     "[{}='file']".format(translated_type))
 
     # uses the corresponding <label>'s @for attribute or parent::label when locating by label
     def test_uses_the_corresponding_label_for_attribute_for_parent_label_when_locating_by_label(
             self, browser, expect_one):
         from nerodia.elements.input import Input
-        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
+        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ'," \
+                          "'abcdefghijklmnopqrstuvwxyz')"
         locate_one(browser, {'tag_name': 'input', 'type': 'text', 'label': 'foo'}, Input.ATTRIBUTES)
         expect_one.assert_called_once()
         by, selector = expect_one.call_args[0]
@@ -200,12 +208,12 @@ class TestElementLocatorFindsSingleElement(object):
     def test_uses_label_attribute_if_it_is_valid_for_element(self, browser, expect_one):
         from nerodia.elements.option import Option
         locate_one(browser, {'tag_name': 'option', 'label': 'foo'}, Option.ATTRIBUTES)
-        expect_one.assert_called_once_with(By.XPATH, ".//option[@label='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='option'][@label='foo']")
 
     def test_translates_ruby_attribute_names_to_content_attribute_names(self, browser, expect_one):
         from nerodia.elements.html_elements import Meta
         locate_one(browser, {'tag_name': 'meta', 'http_equiv': 'foo'}, Meta.ATTRIBUTES)
-        expect_one.assert_called_once_with(By.XPATH, ".//meta[@http-equiv='foo']")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='meta'][@http-equiv='foo']")
 
     # with regexp selectors
 
@@ -226,7 +234,7 @@ class TestElementLocatorFindsSingleElement(object):
     def test_handles_xpath_and_index_selectors(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})] * 2
         expect_all.return_value = elements
-        selector = {'xpath': './/div[@class="foo"]', 'index': 1}
+        selector = {'xpath': ".//*[local-name()='div'][@class='foo']", 'index': 1}
         assert locate_one(browser, selector) == elements[1]
 
     def test_handles_css_and_index_selectors(self, browser, mocker, expect_all):
@@ -272,10 +280,11 @@ class TestElementLocatorFindsSingleElement(object):
         element1a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
         element1a.get_attribute.side_effect = StaleElementReferenceException
         element1b = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
-        element2 = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+        element2a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+        element2b = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
 
-        elements1 = [element1a, element2.copy()]
-        elements2 = [element1b, element2.copy()]
+        elements1 = [element1a, element2a]
+        elements2 = [element1b, element2b]
 
         expect_all.side_effect = [elements1, elements2]
         assert locate_one(browser, {'class_name': re.compile(r'foo')}) == elements2[0]
@@ -330,14 +339,14 @@ class TestElementLocatorFindsSeveralElements(object):
 
     def test_handles_selector_with_tag_name_and_single_attribute(self, browser, expect_all):
         locate_all(browser, {'tag_name': 'div', 'dir': 'foo'})
-        expect_all.assert_called_once_with(By.XPATH, ".//div[@dir='foo']")
+        expect_all.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][@dir='foo']")
 
     def test_handles_selector_with_tag_name_and_multiple_attributes(self, browser, expect_all):
         locate_all(browser, ['tag_name', 'div', 'dir', 'foo', 'title', 'bar'])
         expect_all.assert_called_once()
         by, selector = expect_all.call_args[0]
         assert by == 'xpath'
-        assert '//div' in selector
+        assert "//*[local-name()='div']" in selector
         assert 'and' in selector
         assert "@dir='foo'" in selector
         assert "@title='bar'" in selector

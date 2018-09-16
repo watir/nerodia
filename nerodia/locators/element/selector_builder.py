@@ -150,9 +150,10 @@ class XPath(object):
 
     def build(self, selectors):
         adjacent = selectors.pop('adjacent', None)
-        xpath = self._process_adjacent(adjacent) if adjacent else './/'
+        xpath = self._process_adjacent(adjacent) if adjacent else './/*'
 
-        xpath += selectors.pop('tag_name', '*')
+        if 'tag_name' in selectors:
+            xpath += "[local-name()='{}']".format(selectors.pop('tag_name'))
 
         index = selectors.pop('index', None)
 
@@ -220,13 +221,13 @@ class XPath(object):
     def _process_adjacent(self, adjacent):
         xpath = './'
         if adjacent == 'ancestor':
-            xpath += 'ancestor::'
+            xpath += 'ancestor::*'
         elif adjacent == 'preceding':
-            xpath += 'preceding-sibling::'
+            xpath += 'preceding-sibling::*'
         elif adjacent == 'following':
-            xpath += 'following-sibling::'
+            xpath += 'following-sibling::*'
         elif adjacent == 'child':
-            xpath += 'child::'
+            xpath += 'child::*'
         return xpath
 
     def _build_class_match(self, value):
