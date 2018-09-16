@@ -38,6 +38,7 @@ class TestElementDragAndDrop(object):
         reposition(browser, 'draggable')
         perform_drag_and_drop_on_droppable(draggable, droppable)
 
+    @pytest.mark.xfail_firefox(reason='flaky test on Travis')
     @pytest.mark.quits_browser
     def test_can_drag_an_element_by_the_given_offset(self, browser, draggable, droppable):
         assert droppable.text == 'Drop here'
