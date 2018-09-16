@@ -1,3 +1,5 @@
+from selenium.common.exceptions import InvalidElementStateException
+
 from nerodia.exception import Error
 
 
@@ -15,7 +17,14 @@ class UserEditable(object):
 
     @property
     def value(self):
-        return self.attribute_value('value')
+        """
+        Returns value of the element
+        :rtype: str
+        """
+        try:
+            return self.attribute_value('value') or ''
+        except InvalidElementStateException:
+            return ''
 
     @value.setter  # alias
     def value(self, *args):

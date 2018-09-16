@@ -49,15 +49,17 @@ class Logger(object):
 
     warn = warning
 
-    def deprecate(self, old, new, ids=None):
+    def deprecate(self, old, new, reference=None, ids=None):
         ids = ids or []
         if 'deprecations' in self._ignored or set(self._ignored).intersection(ids):
             return
-        if ids:
-            message = '[{}]'.format(', '.join(ids))
-        else:
-            message = ''
-        self.warning('[DEPRECATION] {}{} is deprecated. Use {} instead.'.format(message, old, new))
+        message = '[{}]'.format(', '.join(ids)) if ids else ''
+        ref_msg = '.'
+        if reference:
+            ref_msg += '; see explanation for this deprecation: {}.'.format(reference)
+
+        self.warning('[DEPRECATION] {}{} is deprecated. Use {} instead'
+                     '{}'.format(message, old, new, ref_msg))
 
     def __getattr__(self, item):
         return getattr(self._logger, item)

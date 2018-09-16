@@ -70,6 +70,11 @@ class TestRelaxedLocate(object):
         nerodia.default_timeout = -1
         browser.link().click()
 
+    def test_waits_for_parent_element_to_be_present_before_locating_a_collection(self, browser):
+        els = browser.element(id='not_there').elements(id='doesnt_matter')
+        with pytest.raises(UnknownObjectException):
+            list(els)
+
 
 @pytest.mark.page('wait.html')
 @pytest.mark.usefixtures('timeout_reset')

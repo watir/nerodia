@@ -212,9 +212,8 @@ class Window(Waitable):
     def handle(self):
         return self.window_handle or self.locate()
 
-    # Referenced in EventuallyPresent
     def selector_string(self):
-        return str(self.selector)
+        return repr(self.selector)
 
     def assert_exists(self):
         if self.handle not in self.driver.window_handles:

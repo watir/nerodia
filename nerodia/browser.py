@@ -265,20 +265,31 @@ class Browser(Container, HasWindow, Waitable):
         return self
 
     def assert_exists(self):
-        self._ensure_context()
+        self.locate()
         if self.window().present:
             return
         raise NoMatchingWindowFoundException('browser window was closed')
 
+    def locate(self):
+        if self.closed:
+            raise Error('browser was closed')
+        self._ensure_context()
+
     # private
 
     def _ensure_context(self):
-        if self.closed:
-            raise Error('browser was closed')
         if not self.default_context:
             self.driver.switch_to.default_content()
         self.default_context = True
         return self.default_context
+
+    @property
+    def _should_relocate(self):
+        """
+        Always relocate a Browser to ensure proper context switching
+        :rtype: bool
+        """
+        return True
 
     @staticmethod
     def _wrap_elements_in(scope, obj):

@@ -34,7 +34,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self.selector = selector
         self.keyword = None
         self.locator = None
-        self._stale = None
 
     @property
     def exists(self):
@@ -44,7 +43,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
-            if self.located and self.stale:
+            if self._located and self.stale:
                 return False
             self.assert_exists()
             return True
@@ -57,7 +56,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         string = '#<{}: '.format(self.__class__.__name__)
         if self.keyword:
             string += 'keyword: {} '.format(self.keyword)
-        string += 'located: {}; '.format(self.located)
+        string += 'located: {}; '.format(self._located)
         if not self.selector:
             string += '{element: (selenium element)}'
         else:
@@ -76,7 +75,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     eql = __eq__
 
     def __hash__(self):
-        return self.el.__hash__() if self.located else super(Element, self).__hash__()
+        return self.el.__hash__() if self._located else super(Element, self).__hash__()
 
     @property
     def text(self):
@@ -383,11 +382,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     @property
     def wd(self):
-        from .i_frame import FramedDriver
-        if self.el is None:
-            self.assert_exists()
-        if isinstance(self.el, FramedDriver):
-            return self.driver
+        """
+        Returns underlying Selenium object of the Nerodia Element
+        :rtype: selenium.webdriver.remote.webelement.WebElement
+        """
+        self.assert_exists()
         return self.el
 
     @property
@@ -398,18 +397,17 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
         :rtype: bool
         """
-        try:
-            nerodia.logger.warning('#visible behavior will be changing slightly, consider '
-                                   'switching to #present (more details: '
-                                   'http://watir.com/element-existentialism/',
-                                   ids=['visible_element'])
-            self.assert_exists()
-            return self.el.is_displayed()
-        except StaleElementReferenceException:
-            nerodia.logger.deprecate('Checking `#visible is False` to determine a stale element',
-                                     '`#stale is True`', ids=['stale_visible'])
-            self.reset()
+        nerodia.logger.warning('#visible behavior will be changing slightly, consider '
+                               'switching to #present (more details: '
+                               'http://watir.com/element-existentialism/',
+                               ids=['visible_element'])
+        displayed = self._display_check()
+        if displayed is None and self._display_check():
+            nerodia.logger.deprecate('Checking `#visible is False` to determine a stale '
+                                     'element', '`#stale is True`', ids=['stale_visible'])
+        if displayed is None:
             raise self._unknown_exception
+        return displayed
 
     @property
     def enabled(self):
@@ -429,13 +427,11 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
-            self.assert_exists()
-            return self.el.is_displayed()
-        except StaleElementReferenceException:
-            nerodia.logger.deprecate('Checking `#present is False` to determine a stale element',
-                                     '`#stale is True`', ids=['stale_present'])
-            self.reset()
-            return False
+            displayed = self._display_check()
+            if displayed is None and self._display_check():
+                nerodia.logger.deprecate('Checking `#present is False` to determine a stale '
+                                         'element', '`#stale is True`', ids=['stale_present'])
+            return displayed
         except (UnknownObjectException, UnknownFrameException):
             return False
 
@@ -505,8 +501,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         if self.el is None:
             raise Error('Can not check staleness of unused element')
-        self.query_scope._ensure_context()
-        return self._stale or self.stale_in_context
+        self._ensure_context()
+        return self.stale_in_context
 
     @property
     def stale_in_context(self):
@@ -514,19 +510,22 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self.el.is_enabled()  # any wire call will check for staleness
             return False
         except StaleElementReferenceException:
-            self._stale = True
             return True
 
     def reset(self):
         self.el = None
 
+    def locate(self):
+        self._ensure_context()
+        return self.locate_in_context()
+
     @property
-    def located(self):
-        """
-        Returns if the element has previously been located
-        :rtype: bool
-        """
-        return self.el is not None
+    def selector_string(self):
+        from ..browser import Browser
+        if isinstance(self.query_scope, Browser):
+            return repr(self.selector)
+        else:
+            return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
 
     def wait_for_exists(self):
         if not nerodia.relaxed_locate:
@@ -572,8 +571,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self._raise_disabled()
 
     def wait_for_writable(self):
-        self.wait_for_exists()
-
         self.wait_for_enabled()
         if not nerodia.relaxed_locate:
             if hasattr(self, 'readonly') and self.readonly:
@@ -588,28 +585,35 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def assert_exists(self):
         """
-        Ensure that the element exists, making sure that it is not stale and located if necessary
+        Locates if not previously found; does not check for staleness for performance reasons
         """
-        if not self.located:
+        if not self._located:
             self.locate()
-        if not self.located:
-            raise UnknownObjectException('unable to locate element: {}'.format(self))
+        if not self._located:
+            raise self._unknown_exception('unable to locate element: {}'.format(self))
 
-    def locate(self):
+    def locate_in_context(self):
         self.locator = self._build_locator()
-
         self.el = self.locator.locate()
         return self.el
 
-    @property
-    def selector_string(self):
-        from ..browser import Browser
-        if isinstance(self.query_scope, Browser):
-            return self.selector.__repr__()
-        else:
-            return '{} --> {}'.format(self.query_scope.selector_string, self.selector)
+    # private
 
-    # Private
+    @property
+    def _located(self):
+        """
+        Returns if the element has previously been located
+        :rtype: bool
+        """
+        return self.el is not None
+
+    def _should_relocate(self):
+        """
+        This is a performance shortcut for ensuring context
+        Returns True if ensuring context requires relocating the element.
+        :rtype: bool
+        """
+        return self._located and self.stale
 
     def _raise_writable(self):
         raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
@@ -633,10 +637,12 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def _element_class(self):
         return self.__class__
 
-    # Ensure the driver is in the desired browser context
     def _ensure_context(self):
-        if not self.exists:
-            self.locate()
+        from nerodia.elements.i_frame import IFrame
+        if self.query_scope._should_relocate:
+            self.query_scope.locate()
+        if isinstance(self.query_scope, IFrame):
+            self.query_scope.switch_to()
 
     def _is_attribute(self, attribute_name):
         return self.attribute_value(attribute_name) is not None
@@ -650,6 +656,16 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         if not isinstance(obj, Element):
             raise TypeError('execpted nerodia.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
+
+    def _display_check(self):
+        """
+        Removes duplication in #present? & #visible? and makes setting deprecation notice easier
+        """
+        try:
+            self.assert_exists()
+            return self.el.is_displayed()
+        except StaleElementReferenceException:
+            self.reset()
 
     def _element_call(self, method, precondition=None):
         caller = stack()[1][3]
@@ -692,7 +708,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                 if precondition is None:
                     self._element_call(method, self.wait_for_exists)
                 msg = str(e)
-                if self.query_scope._ensure_context() and len(self.query_scope.iframes()) > 0:
+                if self.query_scope.iframe().exists:
                     msg += '; Maybe look in an iframe?'
                 custom_attributes = []
                 if self.locator:
@@ -702,7 +718,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                            'ensure that was intended'.format(custom_attributes)
                 raise self._unknown_exception(msg)
             except StaleElementReferenceException:
-                self.query_scope._ensure_context()
                 self.reset()
                 self._check_condition(precondition, caller)
                 return method()
@@ -736,4 +751,4 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             return getattr(self, name)
         else:
             raise AttributeError("Element '{}' has no attribute "
-                                 "'{}'".format(self.__class__.capitalize(), name))
+                                 "'{}'".format(self.__class__.__name__.capitalize(), name))

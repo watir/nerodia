@@ -30,16 +30,15 @@ class ElementCollection(ClassHelpers):
         from .elements.input import Input
         dic = {}
         for idx, e in enumerate(self._elements):
-            element = self._element_class(self.query_scope, dict(self.selector, index=idx,
-                                                                 element=e))
+            selector = dict(self.selector, index=idx, element=e)
+            element = self._element_class(self.query_scope, selector)
             if element.__class__ in [HTMLElement, Input]:
                 tag_name = self.selector.get('tag_name', element.tag_name)
                 dic[tag_name] = dic.get(tag_name, 0)
                 dic[tag_name] += 1
                 kls = nerodia.element_class_for(tag_name)
-                new_selector = dict(self.selector, element=e, tag_name=tag_name,
-                                    index=dic[tag_name] - 1)
-                yield kls(self.query_scope, new_selector)
+                selector.update({'index': dic[tag_name] - 1, 'tag_name': tag_name})
+                yield kls(self.query_scope, selector)
             else:
                 yield element
 
@@ -149,11 +148,22 @@ class ElementCollection(ClassHelpers):
 
     @property
     def _elements(self):
-        if self.locator is None:
-            self.locator = self._build_locator()
-        if self.elements is None:
-            self.elements = self.locator.locate_all()
-        return self.elements
+        from nerodia.browser import Browser
+        self._ensure_context()
+        if isinstance(self.query_scope, Browser):
+            return self._locate_all()
+        else:
+            return self.query_scope._element_call(lambda: self._locate_all())
+
+    def _ensure_context(self):
+        from nerodia.elements.i_frame import IFrame
+        if self.query_scope._should_relocate:
+            self.query_scope.locate()
+        if isinstance(self.query_scope, IFrame):
+            self.query_scope.switch_to()
+
+    def _locate_all(self):
+        return self._build_locator().locate_all()
 
     @property
     def _element_class(self):

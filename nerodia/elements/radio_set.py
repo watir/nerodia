@@ -43,6 +43,25 @@ class RadioSet(object):
         """
         return self.radios()[idx]
 
+    @property
+    def exists(self):
+        return self.source.exists
+
+    @property
+    def present(self):
+        return self.source.present
+
+    @property
+    def visible(self):
+        return self.source.visible
+
+    @property
+    def browser(self):
+        return self.source.browser
+
+    def assert_exists(self):
+        return self.source.assert_exists()
+
     def radio(self, **kwargs):
         """
         Gets a Radio for the RadioSet
@@ -190,8 +209,10 @@ class RadioSet(object):
 
         :Example:
 
-        browser.radio_set(id='new_user_newsletter_yes') == browser.radio_set(id='new_user_newsletter_yes')   #=> True
-        browser.radio_set(id='new_user_newsletter_yes') == browser.radio_set(id='new_user_newsletter_no')   #=> False
+        browser.radio_set(id='new_user_newsletter_yes') == \
+            browser.radio_set(id='new_user_newsletter_yes')   #=> True
+        browser.radio_set(id='new_user_newsletter_yes') == \
+            browser.radio_set(id='new_user_newsletter_no')   #=> False
         """
         if not isinstance(other, RadioSet):
             return False
@@ -202,5 +223,5 @@ class RadioSet(object):
 
     # private
 
-    def _element_call(self, method, exist_check=None):
-        return self.source._element_call(method, exist_check)
+    def _element_call(self, *args, **kwargs):
+        return self.source._element_call(*args, **kwargs)

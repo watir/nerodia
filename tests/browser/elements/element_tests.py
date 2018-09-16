@@ -433,7 +433,14 @@ class TestElementLocated(object):
     def test_returns_returns_true_if_element_has_been_located(self, browser):
         el = browser.form(id='new_user')
         el.exists
-        assert el.located is True
+        assert el._located is True
 
     def test_returns_returns_false_if_element_has_not_been_located(self, browser):
-        assert browser.form(id='new_user').located is False
+        assert browser.form(id='new_user')._located is False
+
+
+class TestElementWd(object):
+    def test_returns_a_selenium_webelement_reference(self, browser):
+        from selenium.webdriver.remote.webelement import WebElement
+        element = browser.text_field(id='new_user_email')
+        assert isinstance(element.wd, WebElement)

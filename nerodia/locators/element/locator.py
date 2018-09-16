@@ -160,7 +160,7 @@ class Locator(object):
     def _create_normalized_selector(self, filter):
         if self.normalized_selector is not None:
             return self.normalized_selector
-        self.driver_scope = self._ensure_scope_context()
+        self.driver_scope = self.query_scope.wd
 
         self.normalized_selector = self.selector_builder.normalized_selector
 
@@ -296,9 +296,6 @@ class Locator(object):
 
     def _tag_vaildation_required(self, selector):
         return any(x in selector for x in ('css', 'xpath')) and 'tag_name' in selector
-
-    def _ensure_scope_context(self):
-        return self.query_scope.wd
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.query_scope.wd

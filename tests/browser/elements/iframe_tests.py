@@ -15,6 +15,29 @@ def test_handles_cross_iframe_javascript(browser):
     assert browser.iframe(id='iframe_2').text_field(name='recieverElement').value == 'send_this_value'
 
 
+def test_locates_an_element_defined_by_selenium_element(browser):
+    iframe = browser.iframe(id='iframe_1')
+    iframe.exists
+    se_element = iframe.el
+    iframe2 = browser.element(element=se_element).to_subtype()
+    assert iframe2 == iframe
+
+
+class TestIFrameWd(object):
+    def test_returns_a_nerodia_framed_driver_instance(self, browser):
+        from nerodia.elements.i_frame import FramedDriver
+        iframe = browser.iframe(id='iframe_1')
+        assert isinstance(iframe.wd, FramedDriver)
+
+    def test_properly_delegates_driver_commands(self, browser):
+        iframe = browser.iframe(id='iframe_1')
+        assert iframe.wd.title == 'Iframes'
+
+    def test_properly_delegates_element_commands(self, browser):
+        iframe = browser.iframe(id='iframe_1')
+        assert iframe.wd.get_attribute('id') == 'iframe_1'
+
+
 class TestIFrameExist(object):
     def test_returns_true_if_the_iframe_exists(self, browser):
         assert browser.iframe(id='iframe_1').exists is True
@@ -139,6 +162,12 @@ class TestIFrameOther(object):
     def test_will_suggest_looking_in_an_iframe_when_iframes_exist(self, browser):
         with pytest.raises(UnknownObjectException, match=r'.*Maybe look in an iframe?.*'):
             browser.text_field(name='senderElement').set('no')
+
+    def test_will_suggest_looking_in_a_nested_iframe_when_iframes_exist(self, browser, page):
+        browser.goto(page.url('nested_iframes.html'))
+        top = browser.iframe(id='two')
+        with pytest.raises(UnknownObjectException, match=r'.*Maybe look in an iframe?.*'):
+            top.link(id='four').click()
 
     def test_executes_the_given_javascript_in_the_specified_iframe(self, browser):
         iframe = browser.iframe(index=0)
