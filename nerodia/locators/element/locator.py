@@ -127,8 +127,10 @@ class Locator(object):
         elif how == 'href':
             href = element.get_attribute('href')
             return href and href.strip()
-        else:
+        elif isinstance(how, six.string_types):
             return element.get_attribute(how.replace('_', '-')) or ''
+        else:
+            raise Exception('Unable to fetch value for {}'.format(how))
 
     def _filter_elements(self, elements, filter='first'):
         selector = self.filter_selector.copy()
