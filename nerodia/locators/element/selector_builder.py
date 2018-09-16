@@ -206,8 +206,6 @@ class XPath(object):
     def lhs_for(building, key):
         if key == 'text':
             return 'normalize-space()'
-        elif isinstance(key, six.string_types):
-            return '@{}'.format(key)
         elif key == 'href':
             # TODO: change this behaviour?
             return 'normalize-space(@href)'
@@ -216,7 +214,7 @@ class XPath(object):
             # https://github.com/watir/watir/issues/72
             return XpathSupport.lower('@type')
         else:
-            raise Exception('Unable to build XPath using {}'.format(key))
+            return '@{}'.format(key.replace('_', '-'))
 
     # private
 
