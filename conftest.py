@@ -56,6 +56,9 @@ def bkwargs(request):
 
     if os.environ.get('DRIVER_PATH'):
         kwargs['executable_path'] = os.environ.get('DRIVER_PATH')
+
+    if os.environ.get('BINARY_PATH'):
+        kwargs['options'] = {'binary': os.environ.get('BINARY_PATH')}
     yield kwargs
 
 
