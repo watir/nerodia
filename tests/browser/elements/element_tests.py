@@ -2,6 +2,7 @@ from platform import system
 from re import compile
 
 import pytest
+import six
 from selenium.webdriver.common.keys import Keys
 
 from nerodia.exception import UnknownObjectException
@@ -423,10 +424,39 @@ class TestElementSizeLocation(object):
         assert location.y > 0
         assert location.x > 0
 
+
 @pytest.mark.page('data_attributes.html')
 class TestElementAttributeValue(object):
     def test_returns_attribute_value_by_attribute_name(self, browser):
         assert browser.p().attribute_value('data-type') == 'ruby-library'
+
+
+@pytest.mark.page('data_attributes.html')
+class TestElementAttributeValues(object):
+    def test_returns_a_dict_(self, browser):
+        assert isinstance(browser.p().attribute_values, dict)
+
+    def test_returns_attribute_values_from_an_element(self, browser):
+        assert browser.p().attribute_values == {'data_type': 'ruby-library'}
+
+    def test_returns_attribute_with_special_characters(self, browser):
+        expected = {'data_type': 'description', 'data-type_$p3c!a1': 'special-description'}
+        assert browser.div().attribute_values == expected
+
+    def test_returns_attribute_with_special_characters_as_a_string(self, browser):
+        assert isinstance(list(browser.div().attribute_values.keys())[0], six.string_types)
+
+
+@pytest.mark.page('data_attributes.html')
+class TestElementAttributeList(object):
+    def test_returns_a_list(self, browser):
+        assert isinstance(browser.div().attribute_list, list)
+
+    def test_returns_list_of_attributes_from_an_alement(self, browser):
+        assert browser.p().attribute_list == ['data_type']
+
+    def test_returns_attribute_name_with_special_characters_as_a_string(self, browser):
+        assert isinstance(browser.div().attribute_list[0], six.string_types)
 
 
 class TestElementLocated(object):

@@ -265,6 +265,41 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     attribute = attribute_value
 
+    @property
+    def attribute_values(self):
+        """
+        Returns all attribute values. Attributes with special characters are returned as String,
+        rest are returned as a Symbol.
+        :rtype: dict
+
+        :Example:
+
+        browser.pre(id='rspec').attribute_values  #=> {'class': 'ruby', 'id': 'rspec' }
+        """
+        result = self._element_call(lambda: self._execute_js('attributeValues', self.el))
+        regex = r'[a-zA-Z\-]*'
+        for key in result.keys():
+            match = search(regex, key)
+            if match and match.group(0) == key:
+                result[key.replace('-', '_')] = result.pop(key)
+        return result
+
+    get_attributes = attribute_values
+
+    attributes = attribute_values
+
+    @property
+    def attribute_list(self):
+        """
+        Returns list of all attributes.
+        :rtype: list
+
+        :Example:
+
+        browser.pre(id='rspec').attribute_list  #=> ['class', 'id']
+        """
+        return list(self.attribute_values.keys())
+
     def send_keys(self, *args):
         """
         Sends sequence of keystrokes to the element
