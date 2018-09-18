@@ -642,6 +642,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         return self.el is not None
 
+    @property
     def _should_relocate(self):
         """
         This is a performance shortcut for ensuring context
