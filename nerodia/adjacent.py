@@ -14,7 +14,6 @@ class Adjacent(object):
 
         browser.text_field(name='new_user_field_name').parent() == browser.fieldset    #=> True
         """
-        kwargs['index'] = kwargs.get('index', 0)
         return self._xpath_adjacent(**dict(kwargs, adjacent='ancestor', plural=False))
 
     def preceding_sibling(self, **kwargs):
