@@ -1,6 +1,4 @@
 import logging
-import os
-import tempfile
 
 import pytest
 
@@ -13,14 +11,6 @@ def default_logging_handling():
     yield
     nerodia.logger.level = orig
     nerodia.logger.filename = None
-
-
-@pytest.fixture
-def filepath():
-    filepath = os.path.join(tempfile.gettempdir(), 'log.tmp')
-    yield filepath
-    if os.path.isfile(filepath):
-        os.remove(filepath)
 
 
 def test_logs_warnings_by_default():
@@ -51,7 +41,8 @@ def test_outputs_to_stdout_by_default(caplog):
     assert 'warning_message' in caplog.text
 
 
-def test_allows_to_output_to_file(filepath):
+def test_allows_to_output_to_file(temp_file):
+    filepath = temp_file.name
     nerodia.logger.filename = filepath
     nerodia.logger.warning('warning_message1')
     with open(filepath) as f:
@@ -65,7 +56,8 @@ def test_allows_to_output_to_file(filepath):
     assert 'warning_message2' in text
 
 
-def test_allows_stopping_output_to_file(filepath):
+def test_allows_stopping_output_to_file(temp_file):
+    filepath = temp_file.name
     nerodia.logger.filename = filepath
     nerodia.logger.warning('warning_message1')
     with open(filepath) as f:

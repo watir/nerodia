@@ -6,13 +6,6 @@ import nerodia
 from nerodia.exception import UnknownObjectException
 
 
-@pytest.fixture
-def timeout_reset():
-    original = nerodia.default_timeout
-    yield
-    nerodia.default_timeout = original
-
-
 @pytest.mark.page('wait.html')
 @pytest.mark.usefixtures('timeout_reset')
 @pytest.mark.skipif('nerodia.relaxed_locate is False',

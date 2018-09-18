@@ -317,20 +317,17 @@ class TestSelectListSelect(object):
 
     @pytest.mark.skipif('nerodia.relaxed_locate is False',
                         reason='only applicable when relaxed locating')
+    @pytest.mark.usefixtures('timeout_reset')
     @pytest.mark.page('wait.html')
     def test_waits_to_select_an_option(self, browser):
         from time import time
-        start_timeout = nerodia.default_timeout
         browser.link(id='add_select').click()
         select_list = browser.select_list(id='languages')
         nerodia.default_timeout = 2
-        try:
-            start_time = time()
-            with pytest.raises(NoValueFoundException):
-                select_list.select('No')
-            assert time() - start_time > 2
-        finally:
-            nerodia.default_timeout = start_timeout
+        start_time = time()
+        with pytest.raises(NoValueFoundException):
+            select_list.select('No')
+        assert time() - start_time > 2
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):

@@ -303,19 +303,19 @@ class TestElementLocatorFindsSingleElement(object):
 
     # errors
 
-    def test_raises_correct_exception_if_index_is_not_an_integer(self, browser, mocker, expect_all):
-        with pytest.raises(TypeError) as e:
+    def test_raises_correct_exception_if_index_is_not_an_integer(self, browser, expect_all):
+        message = "expected {}, got 'bar':{}".format(int, str)
+        with pytest.raises(TypeError, message=message):
             selector = {'tag_name': 'div', 'index': 'bar'}
             locate_one(browser, selector)
-        assert e.value.args[0] == "expected {}, got 'bar':{}".format(int, str)
 
-    def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, mocker, expect_all):
+    def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, expect_all):
         from nerodia.locators.element.selector_builder import SelectorBuilder
-        with pytest.raises(TypeError) as e:
+        expected = SelectorBuilder.VALID_WHATS + [int]
+        message = "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
+        with pytest.raises(TypeError, message=message):
             selector = {'tag_name': 123}
             locate_one(browser, selector)
-        expected = SelectorBuilder.VALID_WHATS + [int]
-        assert e.value.args[0] == "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
 
 
 class TestElementLocatorFindsSeveralElements(object):
@@ -423,8 +423,7 @@ class TestElementLocatorFindsSeveralElements(object):
 
     # errors
 
-    def test_raises_correct_exception_if_index_is_given(self, browser, mocker, expect_all):
-        with pytest.raises(ValueError) as e:
+    def test_raises_correct_exception_if_index_is_given(self, browser, expect_all):
+        with pytest.raises(ValueError, message="can't locate all elements by index"):
             selector = {'tag_name': 'div', 'index': 1}
             locate_all(browser, selector)
-        assert e.value.args[0] == "can't locate all elements by index"

@@ -124,6 +124,13 @@ def quick_timeout():
     nerodia.default_timeout = orig_timeout
 
 
+@pytest.fixture
+def timeout_reset():
+    original = nerodia.default_timeout
+    yield
+    nerodia.default_timeout = original
+
+
 @pytest.fixture(autouse=True)
 def start_page(request, page):
     marker = request.node.get_closest_marker('page')

@@ -1,12 +1,12 @@
 import pytest
 
 
-@pytest.fixture()
+@pytest.fixture
 def draggable(browser):
     yield browser.div(id='draggable')
 
 
-@pytest.fixture()
+@pytest.fixture
 def droppable(browser):
     yield browser.div(id='droppable')
 
@@ -38,11 +38,16 @@ class TestElementDragAndDrop(object):
         reposition(browser, 'draggable')
         perform_drag_and_drop_on_droppable(draggable, droppable)
 
-    @pytest.mark.xfail_firefox(reason='flaky test on Travis')
+    @pytest.mark.xfail_firefox
+    @pytest.mark.xfail_ie
+    @pytest.mark.quits_browser
+    def test_can_drag_and_drop_an_element_onto_another_when_droppable_is_out_of_viewport(self, browser, draggable, droppable):
+        reposition(browser, 'droppable')
+        perform_drag_and_drop_on_droppable(draggable, droppable)
+
     @pytest.mark.quits_browser
     def test_can_drag_an_element_by_the_given_offset(self, browser, draggable, droppable):
         assert droppable.text == 'Drop here'
-        y = 150 if browser.wd.w3c else 50
-        draggable.drag_and_drop_by(200, y)
+        draggable.drag_and_drop_by(200, 50)
         droppable.wait_until(lambda e: e.text == 'Dropped!', timeout=2)
         assert droppable.text == 'Dropped!'
