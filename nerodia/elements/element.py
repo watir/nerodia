@@ -34,6 +34,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self.selector = selector
         self.keyword = None
         self.locator = None
+        self._content_editable = None
 
     @property
     def exists(self):
@@ -597,7 +598,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             return self._assert_enabled()
 
         self.wait_for_exists()
-        if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]):
+        if not any(isinstance(self, klass) for klass in [Input, Button, Select, Option]) \
+                and not self._content_editable:
+            return
+        if self.enabled:
             return
 
         try:
@@ -610,6 +614,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         if not nerodia.relaxed_locate:
             if hasattr(self, 'readonly') and self.readonly:
                 self._raise_writable()
+
+        if not hasattr(self, 'readonly') or not self.readonly:
+            return
 
         try:
             self.wait_until(lambda e: not getattr(e, 'readonly', None) or not e.readonly)

@@ -95,7 +95,7 @@ class TestElementWaitUntilPresent(object):
         browser.div(id='bar').wait_until_present()
 
     def test_times_out_if_the_element_doesnt_appear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for element',
+        message_parts = ['timed out after 1 seconds, waiting for ',
                          '#<Div: located: True;', "'id': 'bar'", "'tag_name': 'div'",
                          'to become present']
         with pytest.raises(TimeoutError) as e:
@@ -120,7 +120,7 @@ class TestElementWaitUntilNotPresent(object):
         browser.div(id='foo').wait_until_not_present(timeout=2)
 
     def test_times_out_if_the_element_doesnt_disappear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for element',
+        message_parts = ['timed out after 1 seconds, waiting for ',
                          '#<Div: located: True;', "'tag_name': 'div'", "'id': 'foo'",
                          'not to be present']
         with pytest.raises(TimeoutError) as e:
@@ -272,10 +272,35 @@ class TestElementWaitUntilNot(object):
         element.wait_until_not(text='bar', style=re.compile(r'block'))
 
     @pytest.mark.usefixtures('refresh_before')
-    def test_accepts_custom_keyword(self, browser):
+    def test_accepts_custom_attributes(self, browser):
         element = browser.div(id='foo')
         browser.link(id='hide_foo').click()
-        element.wait_until_not(custom='bar')
+        element.wait_until_not(custom='')
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_accepts_keywords_and_methods(self, browser):
+        element = browser.div(id='foo')
+        browser.link(id='hide_foo').click()
+        element.wait_until_not(lambda e: e.present, custom='')
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_browser_accepts_keywords(self, browser):
+        browser.wait_until(title='wait test')
+        browser.wait_until(title='wrong')
+
+    @pytest.mark.page('alerts.html')
+    def test_alert_accepts_keywords(self, browser):
+        try:
+            browser.button(id='alert').click()
+            browser.alert.wait_until(text='ok')
+            browser.alert.wait_until(text='not ok')
+        finally:
+            browser.alert.ok()
+
+    @pytest.mark.usefixtures('refresh_before')
+    def test_window_accepts_keywords(self, browser):
+        browser.window().wait_until(title='wait test')
+        browser.window().wait_until(title='wrong')
 
     @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
     def test_times_out_when_single_keyword_not_met(self, browser):

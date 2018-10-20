@@ -106,8 +106,7 @@ class Waitable(object):
 
         if method and kwargs:
             raise ValueError('Unknown keyword(s): {}'.format(kwargs.keys()))
-        if not method:
-            method = self._create_closure(kwargs)
+        method = self._create_closure(kwargs, method)
 
         Wait.until(method=method, timeout=timeout, message=message, interval=interval,
                    object=object)
@@ -137,10 +136,8 @@ class Waitable(object):
         if object is None:
             object = self
 
-        if method and kwargs:
-            raise ValueError('Unknown keyword(s): {}'.format(kwargs.keys()))
         if not method:
-            method = self._create_closure(kwargs, until=False)
+            method = self._create_closure(kwargs, method, until=False)
 
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
                        object=object)
@@ -159,20 +156,13 @@ class Waitable(object):
 
         browser.text_field(name='new_user_first_name').wait_until_present()
         """
+        nerodia.logger.deprecate('{}#wait_until_present'.format(self.__class__.__name__),
+                                 '{}#wait_until(method=lambda e: e.present)',
+                                 ids=['wait_until_present'])
         if not message:
             def msg(obj):
                 return 'waiting for element {} to become present'.format(obj)
             message = msg
-        from nerodia.elements.element import Element
-        if isinstance(self, Element):
-            def func(e):
-                e.reset()
-                return e.present
-            return self.wait_until(method=func, timeout=timeout, interval=interval, message=message)
-
-        nerodia.logger.deprecate('{}#wait_until_present'.format(self.__class__.__name__),
-                                 '{}#wait_until(method=lambda e: e.present)',
-                                 ids=['wait_until_present'])
         return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval,
                                message=message)
 
@@ -189,25 +179,25 @@ class Waitable(object):
 
         browser.text_field(name='abrakadbra').wait_until_not_present
         """
+        nerodia.logger.deprecate('{}#wait_until_not_present'.format(self.__class__.__name__),
+                                 '{}#wait_until_not(method=lambda e: e.present)',
+                                 ids=['wait_until_not_present'])
         if not message:
             def msg(obj):
                 return 'waiting for element {} not to be present'.format(obj)
             message = msg
-        from nerodia.elements.element import Element
-        if isinstance(self, Element):
-            def func(e):
-                e.reset()
-                return e.present
-            return self.wait_until_not(method=func, timeout=timeout, interval=interval,
-                                       message=message)
-
-        nerodia.logger.deprecate('{}#wait_until_not_present'.format(self.__class__.__name__),
-                                 '{}#wait_until_not(method=lambda e: e.present)',
-                                 ids=['wait_until_not_present'])
         return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval,
                                    message=message)
 
-    def _create_closure(self, obj, until=True):
+    def _create_closure(self, obj, method=None, until=True):
+        from nerodia.elements.element import Element
+        def func(*args):
+            if isinstance(self, Element):
+                self.reset()
+            return (not obj or self._match_attributes(obj, until)) and (not method or method(self))
+        return func
+
+    def _match_attributes(self, obj, until=True):
         from ..elements.element import Element
 
         def check(key):
