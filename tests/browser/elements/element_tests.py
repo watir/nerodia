@@ -370,6 +370,14 @@ class TestElementInnerOutter(object):
         assert browser.div(id='shown').outer_html == '<div id="shown"><div id="hidden" style="display: none;">Not shown</div><div>Not hidden</div></div>'
 
 
+@pytest.mark.page('non_control_elements.html')
+class TestSelectTextSelectedText(object):
+    def test_selects_text_and_returns_selected_text(self, browser):
+        el = browser.element(visible_text='all visible')
+        el.select_text('all visible')
+        assert el.selected_text == 'all visible'
+
+
 class TestElementScrollIntoView(object):
     @pytest.mark.quits_browser
     def test_scrolls_element_into_view(self, browser):

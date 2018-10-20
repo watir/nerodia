@@ -165,3 +165,14 @@ class JSExecution(object):
         browser.li(id='non_link_1').select_text('Non-link')
         """
         return self._element_call(lambda: self._execute_js('selectText', self.el, string))
+
+    @property
+    def selected_text(self):
+        """
+        Returns selected text
+
+        :Example:
+
+        browser.li(id='non_link_1').selected_text
+        """
+        return self._element_call(lambda: self._execute_js('selectedText'))
