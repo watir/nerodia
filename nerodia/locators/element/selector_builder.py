@@ -59,16 +59,12 @@ class SelectorBuilder(object):
     def should_use_label_element(self):
         return not self._is_valid_attribute('label')
 
-    def build(self, selector):
+    def build(self, selector, values):
         if 'xpath' in selector or 'css' in selector:
             return self._given_xpath_or_css(selector)
-        built = self._build_wd_selector(selector)
+        built = self._build_wd_selector(selector, values)
         nerodia.logger.debug('Converted {} to {}'.format(selector, built))
         return built
-
-    @property
-    def xpath_builder(self):
-        return self._xpath_builder_class(self.should_use_label_element)
 
     # private
 
@@ -91,32 +87,31 @@ class SelectorBuilder(object):
         self.custom_attributes.append(attribute)
 
     def _given_xpath_or_css(self, selector):
-        xpath = selector.pop('xpath', None)
-        css = selector.pop('css', None)
+        locator = {}
+        if 'xpath' in selector:
+            locator['xpath'] = selector.pop('xpath')
+        if 'css' in selector:
+            locator['css'] = selector.pop('css')
 
-        if not (xpath or css):
-            return None
+        if not locator:
+            return
 
-        if xpath and css:
+        if len(locator) > 1:
             raise ValueError("'xpath' and 'css' cannot be combined ({})".format(selector))
 
-        how, what = [None] * 2
-        if xpath:
-            how = By.XPATH
-            what = xpath
-        elif css:
-            how = By.CSS_SELECTOR
-            what = css
 
         if selector and not self._can_be_combined_with_xpath_or_css(selector):
-            raise ValueError('{} cannot be combined with other selectors {})'.format(how, selector))
+            raise ValueError('{} cannot be combined with other locators '
+                             '{})'.format(list(locator.keys()[0]), selector))
 
-        return [how, what]
+        return list(list(locator.items())[0])
 
-    def _build_wd_selector(self, selectors):
-        if any(isinstance(val, Pattern) for val in selectors.values()):
-            return None
-        return self._build_xpath(selectors)
+    def _build_wd_selector(self, selector, values):
+        return self._xpath_builder.build(selector, values)
+
+    @property
+    def _xpath_builder(self):
+        return self._xpath_builder_class(self.should_use_label_element)
 
     def _is_valid_attribute(self, attribute):
         return self.valid_attributes and attribute in self.valid_attributes
@@ -132,9 +127,6 @@ class SelectorBuilder(object):
             return keys == ['tag_name', 'type']
         return False
 
-    def _build_xpath(self, selectors):
-        return self.xpath_builder.build(selectors)
-
     @property
     def _xpath_builder_class(self):
         try:
@@ -145,33 +137,68 @@ class SelectorBuilder(object):
 
 
 class XPath(object):
-    def __init__(self, should_use_label_element):
-        self.should_use_label_element = should_use_label_element
+    # Regular expressions that can be reliably converted to xpath `contains`
+    # expressions in order to optimize the locator.
+    CONVERTABLE_REGEXP = re.compile(r'\A'
+                                    r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
+                                    r'[^|]*?'  # do not try to convert expressions with alternates
+                                    r'([^\[\]\\^$.|?*+()]*)'  # trailing literal characters
+                                    r'\Z',
+                                    re.X)
 
-    def build(self, selectors):
-        adjacent = selectors.pop('adjacent', None)
-        xpath = self._process_adjacent(adjacent) if adjacent else './/*'
+    def __init__(self, use_element_label):
+        self._should_use_label_element = use_element_label
 
-        if 'tag_name' in selectors:
-            xpath += "[local-name()='{}']".format(selectors.pop('tag_name'))
-
-        index = selectors.pop('index', None)
+    def build(self, selector, values):
+        adjacent = selector.pop('adjacent', None)
+        xpath = self._process_adjacent(adjacent) if adjacent else self.default_start
+        xpath += self.add_tag_name(selector)
+        index = selector.pop('index', None)
 
         # the remaining entries should be attributes
-        if selectors:
-            xpath += '[{}]'.format(self.attribute_expression(None, selectors))
+        xpath += self.add_attributes(selector)
 
         if adjacent and index is not None:
             xpath += "[{}]".format(index + 1)
 
-        logging.debug({'xpath': xpath, 'selectors': selectors})
+        xpath = self.add_regexp_predicates(xpath, values)
+
+        logging.debug({'xpath': xpath, 'selector': selector})
 
         return [By.XPATH, xpath]
 
+    @property
+    def default_start(self):
+        return './/*'
+
+    def add_tag_name(self, selector):
+        if 'tag_name' in selector:
+            return "[local-name()='{}']".format(selector.pop('tag_name'))
+        else:
+            return ''
+
+    def add_attributes(self, selector):
+        element_attr_exp = self.attribute_expression(None, selector)
+        return '[{}]'.format(element_attr_exp) if element_attr_exp else ''
+
+    def add_regexp_predicates(self, what, selector):
+        if not self._convert_regexp_to_contains:
+            return what
+
+        for key, value in selector.items():
+            if key in ['tag_name', 'text', 'visible_text', 'visible', 'index']:
+                continue
+
+            predicates = self._regexp_selector_to_predicates(key, value)
+            if predicates:
+                what = "({})[{}]".format(what, ' and '.join(predicates))
+
+        return what
+
     # TODO: Get rid of building
-    def attribute_expression(self, building, selectors):
+    def attribute_expression(self, building, selector):
         expressions = []
-        for key, val in selectors.items():
+        for key, val in selector.items():
             if isinstance(val, list) and key == 'class':
                 term = '({})'.format(' and '.join([self._build_class_match(v) for v in val]))
             elif isinstance(val, list):
@@ -194,7 +221,7 @@ class XPath(object):
                                          "list (e.g. {!r})".format(value.split()),
                                          ids=['class_array'])
             return self._build_class_match(value)
-        elif key == 'label' and self.should_use_label_element:
+        elif key == 'label' and self._should_use_label_element:
             # we assume 'label' means a corresponding label element, not the attribute
             text = 'normalize-space()={}'.format(XpathSupport.escape(value))
             return '(@id=//label[{0}]/@for or parent::label[{0}])'.format(text)
@@ -243,3 +270,19 @@ class XPath(object):
 
     def _attribute_absence(self, attribute):
         return "not({})".format(self.lhs_for(None, attribute))
+
+    def _convert_regexp_to_contains(self):
+        return True
+
+    def _regexp_selector_to_predicates(self, key, regex):
+        if regex.flags & re.IGNORECASE:
+            return []
+
+        match = self.CONVERTABLE_REGEXP.search(regex.pattern)
+        if match is None:
+            return None
+
+        lhs = self.lhs_for(None, key)
+
+        return ['contains({}, {})'.format(lhs, XpathSupport.escape(group)) for
+                group in match.groups() if group]

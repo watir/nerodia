@@ -9,19 +9,14 @@ class Locator(ElementLocator):
     def _using_selenium(self, *args):
         return None  # force using Nerodia
 
-    @property
-    def _can_convert_regexp_to_contains(self):
-        # regexp conversion won't work with the complex xpath selector
-        return False
-
-    def _matches_selector(self, element, selector):
+    def _matches_values(self, element, values):
         from ..element.validator import Validator
-        if 'value' in selector:
-            cpy = copy(selector)
+        if 'value' in values:
+            cpy = copy(values)
             value = cpy.pop('value', None)
 
-            return super(Locator, self)._matches_selector(element, cpy) and \
+            return super(Locator, self)._matches_values(element, cpy) and \
                 (Validator.match_str_or_regex(value, self._fetch_value(element, 'value')) or
                  Validator.match_str_or_regex(value, self._fetch_value(element, 'text')))
         else:
-            return super(Locator, self)._matches_selector(element, selector)
+            return super(Locator, self)._matches_values(element, values)

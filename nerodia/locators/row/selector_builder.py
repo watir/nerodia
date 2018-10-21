@@ -1,7 +1,5 @@
-import logging
-
-from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
-from ...exception import Error
+from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
+    XPath as ElementXPath
 
 try:
     from re import Pattern
@@ -10,29 +8,41 @@ except ImportError:
 
 
 class SelectorBuilder(ElementSelectorBuilder):
-    def _build_wd_selector(self, selectors):
-        if any(isinstance(val, Pattern) for val in selectors.values()):
-            return None
+    def _build_wd_selector(self, selector, values):
+        self._xpath_builder.scope_tag_name = self.query_scope.selector.get('tag_name')
+        super(SelectorBuilder, self)._build_wd_selector(selector, values)
 
-        if not selectors.pop('tag_name', None):
-            raise Error('internal error: no tag_name?!')
 
-        expressions = self._generate_expressions(self.query_scope.tag_name.lower())
+class XPath(ElementXPath):
 
-        attr_expr = self.xpath_builder.attribute_expression(None, selectors)
+    def __init__(self, use_element_label):
+        super(XPath, self).__init__(use_element_label)
+        self.scope_tag_name = None
 
+    def add_attributes(self, selector):
+        attr_expr = self.attribute_expression(None, selector)
+
+        expressions = self._generate_expressions()
         if attr_expr:
-            expressions = ['{}[{}]'.format(e, attr_expr) for e in expressions]
+            expressions = ['{}[{}]'.format(x, attr_expr) for x in expressions]
+        return ' | '.join(expressions)
 
-        xpath = " | ".join(expressions)
+    def add_tag_name(self, selector):
+        selector.pop('tag_name', None)
+        return ''
 
-        logging.debug({'build_wd_selector': xpath})
+    @property
+    def default_start(self):
+        return ''
 
-        return ['xpath', xpath]
+    # private
 
-    def _generate_expressions(self, tag_name):
+    def _generate_expressions(self):
         expressions = ['./tr']
 
-        if tag_name not in ['tbody', 'tfoot', 'thead']:
+        if not self.scope_tag_name or self.scope_tag_name in ['tbody', 'tfoot', 'thead']:
+            return expressions
+        else:
             expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
+
         return expressions

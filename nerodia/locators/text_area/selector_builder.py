@@ -1,6 +1,7 @@
 import re
 
-from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
+from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder, \
+    XPath as ElementXPath
 
 
 class SelectorBuilder(ElementSelectorBuilder):
@@ -17,3 +18,11 @@ class SelectorBuilder(ElementSelectorBuilder):
             return [how, re.compile(r'^{}$'.format(re.escape(what)))]
         else:
             return super(SelectorBuilder, self)._normalize_selector(how, what)
+
+
+class XPath(ElementXPath):
+
+    @property
+    def _convert_regexp_to_contains(self):
+        # regexp conversion won't work with the complex xpath selector
+        return False

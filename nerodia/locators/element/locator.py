@@ -1,4 +1,3 @@
-import re
 from copy import copy
 from itertools import islice
 from time import sleep
@@ -10,7 +9,6 @@ from selenium.webdriver.common.by import By
 import nerodia
 from .validator import Validator
 from ...exception import Error
-from ...xpath_support import XpathSupport
 
 try:
     from re import Pattern
@@ -28,21 +26,12 @@ class Locator(object):
         'xpath': By.XPATH
     }
 
-    # Regular expressions that can be reliably converted to xpath `contains`
-    # expressions in order to optimize the locator.
-    CONVERTABLE_REGEXP = re.compile(r'\A'
-                                    r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
-                                    r'[^|]*?'  # do not try to convert expressions with alternates
-                                    r'([^\[\]\\^$.|?*+()]*)'  # trailing literal characters
-                                    r'\Z',
-                                    re.X)
-
     def __init__(self, query_scope, selector, selector_builder, element_validator):
         self.query_scope = query_scope  # either element or browser
         self.selector = copy(selector)
         self.selector_builder = selector_builder
         self.element_validator = element_validator
-        self.filter_selector = None
+        self.values_to_match = None
         self.normalized_selector = None
         self.driver_scope = None
 
@@ -83,31 +72,16 @@ class Locator(object):
         if self.normalized_selector is None:
             return
 
-        self._create_filter_selector()
-
-        built_selector = self.selector_builder.build(self.normalized_selector.copy())
+        built_selector = self.selector_builder.build(self.normalized_selector,
+                                                     self._values_to_match)
         if not built_selector:
             raise Error('internal error: unable to build Selenium selector from '
                         '{}'.format(self.normalized_selector))
 
         how, what = built_selector
-        if how == 'xpath':
-            what = self._add_regexp_predicates(what)
 
-        if filter == 'all' or len(self.filter_selector) > 0:
-            retries = 0
-            while True:
-                try:
-                    elements = self._locate_elements(how, what, self.driver_scope) or []
-                    return self._filter_elements(elements, filter=filter)
-                except StaleElementReferenceException:
-                    retries += 1
-                    sleep(0.5)
-                    if retries < 2:
-                        continue
-                    target = 'element collection' if filter == 'all' else 'element'
-                    raise Error('Unable to locate {} from {} due to changing '
-                                'page'.format(target, self.selector))
+        if filter == 'all' or len(self._values_to_match) > 0:
+            return self._locate_matching_elements(how, what, filter)
         else:
             return self._locate_element(how, what, self.driver_scope)
 
@@ -132,32 +106,35 @@ class Locator(object):
         else:
             raise Exception('Unable to fetch value for {}'.format(how))
 
-    def _filter_elements(self, elements, filter='first'):
-        selector = self.filter_selector.copy()
+    def _matching_elements(self, elements, filter='first'):
         if filter == 'first':
-            idx = selector.pop('index', 0)
-            if idx < 0:
-                elements.reverse()
-                idx = abs(idx) - 1
-
+            idx = self._element_index(elements, self._values_to_match)
             counter = 0
+
             # Generator + slice to avoid fetching values for elements that will be discarded
             matches = []
             for element in elements:
                 counter += 1
-                if self._matches_selector(element, selector):
+                if self._matches_values(element, self._values_to_match) is not False:
                     matches.append(element)
             try:
                 val = list(islice(matches, idx + 1))[idx]
-                nerodia.logger.debug('Filtered through {} elements to locate '
-                                     '{}'.format(counter, selector))
+                nerodia.logger.debug('Iterated through {} elements to locate '
+                                     '{}'.format(counter, self.selector))
                 return val
             except IndexError:
                 return None
         else:
             nerodia.logger.debug('Iterated through {} elements to locate all '
-                                 '{}'.format(len(elements), selector))
-            return [el for el in elements if self._matches_selector(el, selector)]
+                                 '{}'.format(len(elements), self.selector))
+            return [el for el in elements if self._matches_values(el, self._values_to_match)]
+
+    def _element_index(self, elements, values):
+        idx = values.pop('index', 0)
+        if idx < 0:
+            elements.reverse()
+            idx = abs(idx) - 1
+        return idx
 
     def _create_normalized_selector(self, filter):
         if self.normalized_selector is not None:
@@ -181,38 +158,40 @@ class Locator(object):
             raise ValueError("can't locate all elements by index")
         return self.normalized_selector
 
-    def _create_filter_selector(self):
-        if self.filter_selector:
-            return self.filter_selector
-        self.filter_selector = {}
+    @property
+    def _values_to_match(self):
+        if self.values_to_match is not None:
+            return self.values_to_match
+        self.values_to_match = {}
 
-        # Remove selectors that can never be used in XPath builder
+        # Remove locators that can never be used in XPath builder
         for how in ('visible', 'visible_text'):
             if how in self.normalized_selector:
-                self.filter_selector[how] = self.normalized_selector.pop(how, None)
+                self.values_to_match[how] = self.normalized_selector.pop(how, None)
 
         if self._tag_vaildation_required(self.normalized_selector):
-            self.filter_selector['tag_name'] = self.normalized_selector.get('tag_name')
+            self._values_to_match['tag_name'] = self.normalized_selector.get('tag_name')
 
         # Regexp locators currently need to be validated even if they are included in the XPath
         # builder
         # TODO: Identify Regexp that can have an exact equivalent using XPath contains (ie would
-        # not require filtering) vs approximations (ie would still require filtering)
+        # not require additional matching) vs approximations (ie would still require additional
+        # matching)
         for how, what in self.normalized_selector.copy().items():
             if isinstance(what, Pattern):
-                self.filter_selector[how] = self.normalized_selector.pop(how, None)
+                self.values_to_match[how] = self.normalized_selector.pop(how, None)
 
         if self.normalized_selector.get('index') is not None and \
                 self.normalized_selector.get('adjacent') is None:
             idx = self.normalized_selector.pop('index')
 
-            # Do not add {'index': 0} filter if the only filter. This will allow using #find_element
-            # instead of #find_elements
-            implicit_idx_filter = not self.filter_selector and idx == 0
-            if not implicit_idx_filter:
-                self.filter_selector['index'] = idx
+            # Do not add {'index': 0} if the only value to match. This will allow using
+            # #find_element instead of #find_elements
+            implicit_idx_match = not self.values_to_match and idx == 0
+            if not implicit_idx_match:
+                self.values_to_match['index'] = idx
 
-        return self.filter_selector
+        return self.values_to_match
 
     def _process_label(self, label_key):
         regexp = isinstance(self.normalized_selector.get(label_key), Pattern)
@@ -237,18 +216,24 @@ class Locator(object):
         label_text = self.normalized_selector.pop(label_key, None)
         locator_key = label_key.replace('label', 'text')
         elements = self._locate_elements('tag_name', 'label', self.driver_scope)
-        return next((e for e in elements if self._matches_selector(e, {locator_key: label_text})),
+        return next((e for e in elements if self._matches_values(e, {locator_key: label_text})),
                     None)
 
-    def _matches_selector(self, element, selector):
+    def _matches_values(self, element, values):
         def check_match(how, what):
             if how == 'tag_name' and isinstance(what, six.string_types):
                 return self.element_validator.validate(element, {'tag_name': what})
             else:
                 return Validator.match_str_or_regex(what, self._fetch_value(element, how))
 
-        matches = all(check_match(how, what) for how, what in selector.items())
+        matches = all(check_match(how, what) for how, what in values.items())
 
+        if values.get('text'):
+            self._text_regexp_deprecation(element, values, matches)
+
+        return matches
+
+    def _text_regexp_deprecation(self, element, selector, matches):
         text_selector = selector.get('text')
         if text_selector is not None:
             from nerodia.elements.element import Element
@@ -263,39 +248,6 @@ class Locator(object):
                                          'visible_{}'.format(key),
                                          ids=['visible_text'])
 
-        return matches
-
-    @property
-    def _can_convert_regexp_to_contains(self):
-        return True
-
-    def _add_regexp_predicates(self, what):
-        if not self._can_convert_regexp_to_contains:
-            return what
-
-        for key, value in self.filter_selector.items():
-            if key in ['tag_name', 'text', 'visible_text', 'visible', 'index']:
-                continue
-
-            predicates = self._regexp_selector_to_predicates(key, value)
-            if predicates:
-                what = "({})[{}]".format(what, ' and '.join(predicates))
-
-        return what
-
-    def _regexp_selector_to_predicates(self, key, regex):
-        if regex.flags & re.IGNORECASE:
-            return []
-
-        match = self.CONVERTABLE_REGEXP.search(regex.pattern)
-        if match is None:
-            return None
-
-        lhs = self.selector_builder.xpath_builder.lhs_for(None, key)
-
-        return ['contains({}, {})'.format(lhs, XpathSupport.escape(group)) for
-                group in match.groups() if group]
-
     def _tag_vaildation_required(self, selector):
         return any(x in selector for x in ('css', 'xpath')) and 'tag_name' in selector
 
@@ -309,6 +261,21 @@ class Locator(object):
 
     def _wd_finder(self, how):
         return self.W3C_FINDERS.get(how, how)
+
+    def _locate_matching_elements(self, how, what, filter):
+        retries = 0
+        while True:
+            try:
+                elements = self._locate_elements(how, what, self.driver_scope) or []
+                return self._matching_elements(elements, filter=filter)
+            except StaleElementReferenceException:
+                retries += 1
+                sleep(0.5)
+                if retries < 2:
+                    continue
+                target = 'element collection' if filter == 'all' else 'element'
+                raise Error('Unable to locate {} from {} due to changing '
+                            'page'.format(target, self.selector))
 
     def _wd_is_supported(self, how, what, tag):
         if how not in self.W3C_FINDERS:

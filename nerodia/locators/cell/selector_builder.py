@@ -1,26 +1,26 @@
-import logging
-
-from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
-
-try:
-    from re import Pattern
-except ImportError:
-    from re import _pattern_type as Pattern
+from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
+    XPath as ElementXPath
 
 
 class SelectorBuilder(ElementSelectorBuilder):
-    def _build_wd_selector(self, selectors):
-        if any(isinstance(val, Pattern) for val in selectors.values()):
-            return None
+    pass
+
+
+class XPath(ElementXPath):
+
+    def add_attributes(self, selector):
+        attr_exp = self.attribute_expression(None, selector)
 
         expressions = ['./th', './td']
-        attr_expr = self.xpath_builder.attribute_expression(None, selectors)
+        if attr_exp:
+            expressions = ['{}[{}]'.format(x, attr_exp) for x in expressions]
 
-        if attr_expr:
-            expressions = ['{}[{}]'.format(e, attr_expr) for e in expressions]
+        return ' | '.join(expressions)
 
-        xpath = " | ".join(expressions)
+    @property
+    def default_start(self):
+        return ''
 
-        logging.debug({'build_wd_selector': xpath})
-
-        return ['xpath', xpath]
+    def add_tag_name(self, selector):
+        selector.pop('tag_name', None)
+        return ''
