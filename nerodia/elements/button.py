@@ -1,6 +1,5 @@
 import six
 
-from nerodia.exception import Error
 from .input import Input
 from ..meta_elements import MetaHTMLElement
 
@@ -24,11 +23,8 @@ class Button(Input):
 
         :rtype: str
         """
-        tn = self.tag_name
 
-        if tn == 'input':
+        if self.tag_name == 'input':
             return self.value
-        elif tn == 'button':
-            return super(Button, self).text
         else:
-            raise Error("unknown tag name for button: {}".format(tn))
+            return super(Button, self).text

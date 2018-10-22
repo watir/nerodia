@@ -110,7 +110,7 @@ class TestElementWithoutTagName(object):
         assert browser.field_set().element(id='first_label').exists
 
     def test_finds_several_elements_from_an_elements_subtree(self, browser):
-        assert len(browser.fieldset().elements(xpath=".//label")) == 22
+        assert len(browser.fieldset().elements(xpath=".//label")) == 23
 
 
 class TestElementSubtype(object):
@@ -331,6 +331,28 @@ class TestElementSendKeys(object):
         assert receiver.value == ''
         assert len(browser.element(id='output').ps()) == 7
 
+    @pytest.mark.xfail_chrome(reason='http://code.google.com/p/chromium/issues/detail?id=93879')
+    @pytest.mark.xfail_firefox
+    @pytest.mark.xfail_safari
+    def test_supports_combination_of_strings_and_arrays(self, browser):
+        receiver = browser.text_field(id='receiver')
+        receiver.send_keys('foo', [MODIFIER, 'a'], Keys.BACKSPACE)
+        assert receiver.value == ''
+        assert len(browser.element(id='output').ps()) == 6
+
+
+class TestElementClick(object):
+    @pytest.mark.xfail_firefox(reason='https://github.com/mozilla/geckodriver/issues/1375')
+    def test_accepts_modifiers(self, browser):
+        try:
+            browser.link().click(Keys.SHIFT)
+            assert len(browser.windows()) == 2
+        finally:
+            for window in browser.windows():
+                if not window.is_current:
+                    window.close()
+            assert len(browser.windows()) == 1
+
 
 class TestElementFlash(object):
     def test_returns_the_element_on_which_it_was_called(self, browser):
@@ -482,6 +504,36 @@ class TestElementWd(object):
         from selenium.webdriver.remote.webelement import WebElement
         element = browser.text_field(id='new_user_email')
         assert isinstance(element.wd, WebElement)
+
+
+class TestElementHash(object):
+    def test_returns_a_hash(self, browser):
+        element = browser.text_field(id='new_user_email')
+        hash1 = hash(element)
+        hash2 = hash(element.locate())
+        assert isinstance(hash1, int)
+        assert isinstance(hash2, int)
+        assert hash1 != hash2
+
+
+class TestElementFloat(object):
+    def test_returns_float_value_of_applicable_element(self, browser):
+        element = browser.text_field(id='number')
+        assert isinstance(element.valueasnumber, float)
+
+    def test_returns_none_for_an_inapplicable_element(self, browser):
+        element = browser.input()
+        assert element.valueasnumber is None
+
+
+class TestElementInteger(object):
+    def test_returns_integer_value_of_applicable_element(self, browser):
+        element = browser.form()
+        assert isinstance(element.length, int)
+
+    def test_returns_negative_one_for_an_inapplicable_element(self, browser):
+        element = browser.input()
+        assert element.maxlength == -1
 
 
 class TestElementClassName(object):

@@ -63,6 +63,8 @@ def make_attr(typ, val):
     elif typ == float:
         def attr_float(self):
             value = self.attribute_value(val)
+            if value == 'NaN':
+                value = None
             return value and float(value)
 
         return attr_float

@@ -1,6 +1,7 @@
 import pytest
 
 import nerodia
+from nerodia.exception import UnknownObjectException
 from nerodia.wait.wait import TimeoutError
 
 pytestmark = pytest.mark.page('alerts.html')
@@ -15,6 +16,12 @@ def cleanup_alert(browser):
 
 @pytest.mark.usefixtures('cleanup_alert')
 class TestAlertAPI(object):
+    def test_raises_exception_after_timing_out(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.alert.text
+
+    # text
+
     # TODO: xfail safari
     def test_returns_text_of_alert(self, browser):
         browser.button(id='alert').click()

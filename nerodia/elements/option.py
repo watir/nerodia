@@ -29,15 +29,7 @@ class Option(HTMLElement):
     def text(self):
         """
         Returns the text of the option
-        Note that the text is either one of the following respectively:
-            * label attribute
-            * text attribute
-            * inner element text
+        getAttribute atom pulls the text value if the label does not exist
         :rtype: str
         """
-        for attr in ['label', 'text']:
-            val = self.attribute_value(attr)
-            if val:
-                return val
-
-        return super(Option, self).text
+        return self.attribute_value('label')

@@ -98,10 +98,8 @@ class Locator(object):
         elif how == 'href':
             href = element.get_attribute('href')
             return href and href.strip()
-        elif isinstance(how, six.string_types):
-            return element.get_attribute(how.replace('_', '-')) or ''
         else:
-            raise Exception('Unable to fetch value for {}'.format(how))
+            return element.get_attribute(how.replace('_', '-')) or ''
 
     def _matching_elements(self, elements, filter='first'):
         if filter == 'first':

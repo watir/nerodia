@@ -66,7 +66,7 @@ class Adjacent(object):
 
         :Example:
 
-        len(browser.text_field(name='new_user_first_name').following_siblings)    #=> 52
+        len(browser.text_field(name='new_user_first_name').following_siblings)    #=> 55
         """
         if 'index' in kwargs:
             raise ValueError('#following_siblings can not take an index value')
@@ -81,7 +81,7 @@ class Adjacent(object):
 
         :Example:
 
-        len(browser.text_field(name='new_user_first_name').siblings)    #=> 56
+        len(browser.text_field(name='new_user_first_name').siblings)    #=> 59
         """
         return self.parent().children(**kwargs)
 

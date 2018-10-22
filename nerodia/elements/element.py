@@ -241,17 +241,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def classes(self):
         return self.class_name.split()
 
-    @property
-    def value(self):
-        """
-        Returns value of the element
-        :rtype: str
-        """
-        try:
-            return self.attribute_value('value') or ''
-        except InvalidElementStateException:
-            return ''
-
     def attribute_value(self, attribute_name):
         """
         Returns given attribute value of the element
@@ -557,7 +546,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def locate(self):
         self._ensure_context()
-        return self.locate_in_context()
+        self.locate_in_context()
+        return self
 
     @property
     def selector_string(self):

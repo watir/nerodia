@@ -157,11 +157,14 @@ class TestButtonAttributes(object):
             browser.button(name='no_such_name').value
 
     # text
-    def test_returns_the_text_of_the_button(self, browser):
+    def test_returns_the_text_of_an_input_button(self, browser):
         assert browser.button(index=0).text == 'Submit'
         assert browser.button(index=1).text == 'Reset'
         assert browser.button(index=2).text == 'Button'
         assert browser.button(index=3).text == 'Preview'
+
+    def test_returns_the_text_of_a_button_element(self, browser):
+        assert browser.button(name='new_user_button_2').text == 'Button 2'
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_for_text_if_the_element_does_not_exist(self, browser):
@@ -199,7 +202,7 @@ class TestButtonEnabled(object):
         with pytest.raises(ObjectDisabledException):
             browser.button(name='new_user_submit_disabled').click()
 
-    # diabled
+    # disabled
     def test_returns_false_when_button_is_enabled(self, browser):
         assert not browser.button(name='new_user_submit').disabled
 

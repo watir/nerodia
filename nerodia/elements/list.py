@@ -31,6 +31,13 @@ class List(object):
         """
         return self.list_items[idx]
 
+    def __len__(self):
+        """
+        Returns the number of elements in the list
+        :rtype: int
+        """
+        return len([_ for _ in self])
+
     @property
     def list_items(self):
         return LICollection(self, {'adjacent': 'child', 'tag_name': 'li'})

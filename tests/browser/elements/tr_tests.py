@@ -49,5 +49,5 @@ class TestTrOther(object):
         assert table[1].cell(id=re.compile('t2_r1_c1')).exists is False
 
     def test_iterates_correctly_through_the_cells_of_the_row(self, browser):
-        for index, cell in enumerate(browser.table(id='outer').row(index=1).cells()):
+        for index, cell in enumerate(browser.table(id='outer').tr(index=1)):
             assert cell.id == 't1_r2_c{}'.format(index + 1)
