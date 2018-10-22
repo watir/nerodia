@@ -18,7 +18,7 @@ class Window(Waitable):
             self.window_handle = selector.pop('handle')
         else:
             if not all(key in ['title', 'url', 'index'] for key in selector.keys()):
-                raise ValueError('invalid window selector: {}'.format(selector))
+                raise ValueError('invalid window selector: {}'.format(self.selector_string))
 
     def __repr__(self):
         return '#<{}:0x{:x} located={}>'.format(self.__class__.__name__, hash(self) * 2,
@@ -212,12 +212,13 @@ class Window(Waitable):
     def handle(self):
         return self.window_handle or self.locate()
 
+    @property
     def selector_string(self):
         return repr(self.selector)
 
     def assert_exists(self):
         if self.handle not in self.driver.window_handles:
-            raise NoMatchingWindowFoundException(str(self.selector))
+            raise NoMatchingWindowFoundException(self.selector_string)
 
     def wait_for_exists(self):
         import nerodia
@@ -226,7 +227,7 @@ class Window(Waitable):
         try:
             self.wait_until(lambda w: w.exists)
         except TimeoutError:
-            raise NoMatchingWindowFoundException(str(self.selector))
+            raise NoMatchingWindowFoundException(self.selector_string)
 
     def locate(self):
         if not self.selector:
@@ -261,14 +262,14 @@ class Window(Waitable):
 
             if 'title' in self.selector:
                 title_value = self.selector.get('title')
-                driver_title = self.driver.title
+                driver_title = self.browser.title
                 matches_title = Validator.match_str_or_regex(title_value, driver_title)
             else:
                 matches_title = True
 
             if 'url' in self.selector:
                 url_value = self.selector.get('url')
-                driver_url = self.driver.current_url
+                driver_url = self.browser.url
                 matches_url = Validator.match_str_or_regex(url_value, driver_url)
             else:
                 matches_url = True

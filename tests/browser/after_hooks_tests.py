@@ -230,3 +230,31 @@ class TestAfterHooksRun(object):
             browser.link(id='close').click()
         finally:
             self.cleanup(browser, hook)
+
+
+class TestAfterHooksLength(object):
+    def test_provides_the_number_of_after_hooks(self, browser):
+
+        def hook():
+            return True
+
+        try:
+            for _ in range(4):
+                browser.after_hooks.add(hook)
+            assert len(browser.after_hooks) == 4
+        finally:
+            browser.after_hooks.after_hooks = []
+
+
+class TestAfterHooksGetItem(object):
+    def test_returns_the_after_hook_at_the_provided_index(self, browser):
+
+        def hook1():
+            return True
+
+        def hook2():
+            return False
+
+        browser.after_hooks.add(hook1)
+        browser.after_hooks.add(hook2)
+        assert browser.after_hooks[1] == hook2

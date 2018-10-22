@@ -2,6 +2,9 @@ from re import compile
 
 import pytest
 
+import nerodia
+from nerodia.exception import UnknownObjectException
+
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 
@@ -51,3 +54,10 @@ class TestFormSubmit(object):
         assert form.exists
         assert len(messages) == 1
         assert messages.list[0] == 'submit'
+
+    @pytest.mark.skipif('nerodia.relaxed_locate is False',
+                        reason='only applicable when relaxed locating')
+    def test_times_out_when_submitting_an_element_that_is_not_displayed(self, browser):
+        assert nerodia.relaxed_locate is True
+        with pytest.raises(UnknownObjectException):
+            browser.form(name='no').submit()

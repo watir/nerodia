@@ -124,6 +124,11 @@ class TestUserEditableSet(object):
         with pytest.raises(UnknownObjectException):
             browser.text_field(id='no_such_id').set('secret')
 
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_raises_correct_exception_if_the_object_is_read_only(self, browser):
+        with pytest.raises(ObjectReadOnlyException):
+            browser.text_field(id='new_user_code').set('Foo')
+
 
 class TestUserEditableJsSet(object):
     def test_sets_the_value_of_the_element(self, browser):

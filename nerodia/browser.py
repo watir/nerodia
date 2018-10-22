@@ -12,7 +12,7 @@ from .alert import Alert
 from .capabilities import Capabilities
 from .container import Container
 from .cookies import Cookies
-from .exception import Error, NoMatchingWindowFoundException
+from .exception import Error
 from .has_window import HasWindow
 from .wait.wait import Waitable
 
@@ -263,12 +263,6 @@ class Browser(Container, HasWindow, Waitable):
     @property
     def browser(self):
         return self
-
-    def assert_exists(self):
-        self.locate()
-        if self.window().present:
-            return
-        raise NoMatchingWindowFoundException('browser window was closed')
 
     def locate(self):
         if self.closed:

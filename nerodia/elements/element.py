@@ -579,7 +579,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         try:
             if not isinstance(self.query_scope, Browser):
                 self.query_scope.wait_for_present()
-            self.wait_until_present()
+            self.wait_until(lambda e: e.present)
         except TimeoutError as e:
             raise self._unknown_exception('element located, but {}'.format(e))
 
@@ -615,9 +615,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         try:
             self.wait_until(lambda e: not getattr(e, 'readonly', None) or not e.readonly)
         except TimeoutError:
-            raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
-                                          'seconds, waiting for {} to not be '
-                                          'readonly'.format(nerodia.default_timeout, self))
+            self._raise_writable()
 
     def assert_exists(self):
         """
@@ -680,9 +678,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             self.query_scope.locate()
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
-
-    def _is_attribute(self, attribute_name):
-        return self.attribute_value(attribute_name) is not None
 
     def _assert_enabled(self):
         if not self._element_call(lambda: self.el.is_enabled()):

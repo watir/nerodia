@@ -135,13 +135,10 @@ class Select(HTMLElement):
 
     def _select_by(self, term):
         found = self._find_options('value', term)
-        if found:
-            if len(found) > 1:
-                nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all',
-                                         ids=['select_by'])
-            return self._select_matching(found)
-
-        raise NoValueFoundException('{} not found in select list'.format(term))
+        if len(found) > 1:
+            nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all',
+                                     ids=['select_by'])
+        return self._select_matching(found)
 
     def _js_select_by(self, term, number):
         if isinstance(term, Pattern):
@@ -179,10 +176,7 @@ class Select(HTMLElement):
             raise Error('you can only use #select_all on multi-selects')
 
         found = self._find_options('text', term)
-        if found:
-            return self._select_matching(found)
-
-        raise NoValueFoundException('{} not found in select list'.format(term))
+        return self._select_matching(found)
 
     def _find_options(self, how, term):
         types = [six.text_type, six.binary_type, int, Pattern]
@@ -218,15 +212,6 @@ class Select(HTMLElement):
             if not element.is_selected:
                 element.click()
         return elements[0].text if elements[0].exist else ''
-
-    def _matches_regexp(self, how, element, exp):
-        if how == 'text':
-            return (re.search(exp, self.el.text) or re.search(exp, self.el.label)) \
-                is not None
-        elif how == 'value':
-            return re.search(exp, element.value) is not None
-        else:
-            raise Error('unknown how: {}'.format(how))
 
     @staticmethod
     def _flatten(term):

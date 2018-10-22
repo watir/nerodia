@@ -254,6 +254,64 @@ class TestWindow(object):
             Wait.until(lambda: len(browser.windows()) == 1)
             browser.window().use()
 
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_raises_correct_exception_when_using_an_element_on_a_closed_window(self, browser):
+        browser.window(title='closeable window').use()
+        browser.link(id='close').click()
+        Wait.until(lambda: len(browser.windows()) == 1)
+        with pytest.raises(NoMatchingWindowFoundException, message='browser window was closed'):
+            browser.link().text
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_raises_correct_exception_when_locating_a_closed_window(self, browser, mocker):
+        browser.window(title='closeable window').use()
+        handles = [x.window_handle for x in browser.windows()]
+        browser.link(id='close').click()
+        Wait.until(lambda: len(browser.windows()) == 1)
+
+        mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.window_handles')
+        mock.side_effect = [handles, [browser.original_window.window_handle]]
+
+        with pytest.raises(NoMatchingWindowFoundException, message='browser window was closed'):
+            browser.window(title='closeable window').use()
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_raises_an_exception_when_locating_a_window_closed_during_lookup(self, bkwargs, page):
+        from time import sleep
+        from nerodia.browser import Browser
+
+        class Dscrpt(object):
+            def __init__(slf):
+                slf.method = lambda x: x.driver.title
+
+            def __get__(slf, instance, owner):
+                return slf.method(instance)
+
+            def __set__(slf, instance, value):
+                slf.method = value
+
+        class TmpBrowser(Browser):
+            title = Dscrpt()
+
+        def title(b):
+            sleep(0.5)
+            return b.driver.title
+
+        browser = TmpBrowser(**bkwargs)
+        try:
+            browser.goto(page.url('window_switching.html'))
+            browser.link(id='open').click()
+            Wait.until(lambda: len(browser.windows()) == 2)
+            browser.window(title='closeable window').use()
+            browser.link(id='close-delay').click()
+
+            browser.title = title
+
+            with pytest.raises(NoMatchingWindowFoundException):
+                browser.window(title='closeable window').use()
+        finally:
+            browser.close()
+
 
 # TODO: xfail safari, or skip
 # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1280517

@@ -183,3 +183,17 @@ class TestIFrameOther(object):
 
     def test_returns_the_text_inside_the_iframe(self, browser):
         assert 'Frame 1' in browser.iframe().text
+
+
+class TestFramedDriver(object):
+    def test_raises_attribute_error_if_method_is_not_defined_on_driver_or_element(self, browser):
+        assert not hasattr(browser.iframe(id='iframe_1').wd, 'foo')
+        with pytest.raises(AttributeError):
+            browser.iframe(id='iframe_1').wd.foo
+
+    def test_raises_exception_when_attempting_to_switch_to_a_non_frame_element(self, browser):
+        from nerodia.elements.i_frame import FramedDriver
+        element = browser.h1().wd
+        fd = FramedDriver(element, browser)
+        with pytest.raises(UnknownFrameException):
+            fd.switch()
