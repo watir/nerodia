@@ -144,6 +144,7 @@ class XPath(object):
     CONVERTABLE_REGEXP = re.compile(r'\A'
                                     r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
                                     r'[^|]*?'  # do not try to convert expressions with alternates
+                                    r'(?<!\\)'  # skip metacharacters - ie has preceding slash
                                     r'([^\[\]\\^$.|?*+()]*)'  # trailing literal characters
                                     r'\Z',
                                     re.X)

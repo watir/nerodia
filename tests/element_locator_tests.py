@@ -467,6 +467,13 @@ class TestElementLocatorFindsSeveralElements(object):
         selector = {'tag_name': 'div', 'class_name': re.compile(r'x|b')}
         assert locate_one(browser, selector) == elements[1]
 
+    def test_does_not_convert_metacharacters_to_literal_characters(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'abcd'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'abc23'})]
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'class_name': re.compile(r'abc\d\d')}
+        assert locate_one(browser, selector) == elements[1]
+
     # errors
 
     def test_raises_correct_exception_if_index_is_given(self, browser, expect_all):
