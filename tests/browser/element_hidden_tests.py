@@ -42,3 +42,9 @@ class TestElementHidden(object):
 
     def test_handles_collections(self, browser):
         assert len(browser.divs(visible=False)) == 3
+
+    def test_raises_exception_when_value_is_not_boolean(self, browser):
+        element = browser.body().element(visible='true')
+        msg = "expected True or False, got 'true'"
+        with pytest.raises(TypeError, message=msg):
+            element.exists

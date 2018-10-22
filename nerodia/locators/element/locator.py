@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 
 import nerodia
 from .validator import Validator
-from ...exception import Error
+from ...exception import Error, LocatorException
 
 try:
     from re import Pattern
@@ -75,8 +75,9 @@ class Locator(object):
         built_selector = self.selector_builder.build(self.normalized_selector,
                                                      self._values_to_match)
         if not built_selector:
-            raise Error('internal error: unable to build Selenium selector from '
-                        '{}'.format(self.normalized_selector))
+            raise LocatorException('{} was unable to build selector from '
+                                   '{}'.format(self.selector_builder.__class__.__name__,
+                                               self.normalized_selector))
 
         how, what = built_selector
 
@@ -84,10 +85,6 @@ class Locator(object):
             return self._locate_matching_elements(how, what, filter)
         else:
             return self._locate_element(how, what, self.driver_scope)
-
-    def _validate(self, elements, tag_name):
-        return all(self.element_validator.validate(el, {'tag_name': tag_name})
-                   for el in elements if el is not None)
 
     def _fetch_value(self, element, how):
         if how == 'text':

@@ -204,6 +204,20 @@ class TestWindow(object):
         Wait.until(lambda: len(browser.windows()) == 1)
         assert not browser.window().present
 
+    def test_returns_false_if_window_closes_during_iteration(self, browser, mocker):
+        from nerodia.wait.wait import Wait
+        browser.window(title='closeable window').use()
+        original_handle = browser.original_window.window_handle
+        handles = [x.window_handle for x in browser.windows()]
+
+        browser.link(id='close').click()
+        Wait.until(lambda: len(browser.windows()) == 1)
+
+        mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.window_handles')
+        mock.side_effect = [handles, [original_handle]]
+
+        assert browser.window(title='closeable window').exists is False
+
     # current
 
     def test_returns_false_if_the_referenced_window_is_closed(self, browser):

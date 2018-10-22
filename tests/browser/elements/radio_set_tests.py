@@ -188,6 +188,11 @@ class TestRadioSetRadios(object):
         with pytest.raises(UnknownObjectException):
             radio_set.radios(name='')
 
+    def test_returns_the_radio_button_at_the_specified_index(self, browser):
+        from nerodia.elements.radio import Radio
+        radio_set = browser.radio_set(id='new_user_newsletter_yes')
+        assert isinstance(radio_set[1], Radio)
+
 
 class TestRadioSetSelected(object):
     @pytest.mark.usefixtures('quick_timeout')

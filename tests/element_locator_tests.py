@@ -5,6 +5,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
 from nerodia.elements.html_elements import HTMLElement
+from nerodia.exception import LocatorException
 from nerodia.locators.element import Validator, SelectorBuilder
 from nerodia.locators.element.locator import Locator
 
@@ -65,6 +66,12 @@ class TestElementLocatorFindsSingleElement(object):
         arg, str = finder
         locate_one(browser, {arg: 'bar'})
         expect_one.assert_called_once_with(str, 'bar')
+
+    def test_raises_exception_if_locating_a_non_link_element_by_link_locator(self, browser):
+        selector = {'tag_name': 'div', 'link_text': 'foo'}
+        msg = 'Can not use link_text locator to find a foo element'
+        with pytest.raises(Exception, message=msg):
+            locate_one(browser, selector)
 
     # with selectors not supported by selenium
 
@@ -289,6 +296,26 @@ class TestElementLocatorFindsSingleElement(object):
         expect_all.side_effect = [elements1, elements2]
         assert locate_one(browser, {'class_name': re.compile(r'foo')}) == elements2[0]
 
+    def test_raises_error_if_too_many_attempts_to_relocate_a_stale_element_during_filtering(self, browser, mocker, expect_all):
+        element1a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        element1a.get_attribute.side_effect = StaleElementReferenceException
+        element1b = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        element1b.get_attribute.side_effect = StaleElementReferenceException
+        element1c = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        element1c.get_attribute.side_effect = StaleElementReferenceException
+        element2a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+        element2b = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+        element2c = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+
+        elements1 = [element1a, element2a]
+        elements2 = [element1b, element2b]
+        elements3 = [element1c, element2c]
+
+        expect_all.side_effect = [elements1, elements2, elements3]
+        msg = "Unable to locate element from {'class': 'foo'} due to changing page"
+        with pytest.raises(Exception, message=msg):
+            locate_one(browser, {'class_name': re.compile(r'foo')})
+
     def test_finds_all_if_index_is_given(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'})] * 2
         expect_all.return_value = elements
@@ -316,6 +343,25 @@ class TestElementLocatorFindsSingleElement(object):
         with pytest.raises(TypeError, message=message):
             selector = {'tag_name': 123}
             locate_one(browser, selector)
+
+    def test_raises_an_error_if_unable_to_build_selector(self, browser):
+        from nerodia.locators.element.selector_builder import SelectorBuilder as ElementSelectorBuilder
+        from nerodia.locators.element.locator import Locator
+        from nerodia.locators.element.validator import Validator
+        from nerodia.elements.html_elements import HTMLElement
+
+        class SelectorBuilder(ElementSelectorBuilder):
+            def build(self, *args):
+                return None
+
+        selector = {'name': 'foo'}
+        element_validator = Validator()
+        selector_builder = SelectorBuilder(browser, selector, HTMLElement.ATTRIBUTES)
+        locator = Locator(browser, selector, selector_builder, element_validator)
+
+        msg = "SelectorBuilder was unable to build selector from {'name': 'foo'}"
+        with pytest.raises(LocatorException, message=msg):
+            locator.locate()
 
 
 class TestElementLocatorFindsSeveralElements(object):

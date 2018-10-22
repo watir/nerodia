@@ -100,7 +100,7 @@ class SelectorBuilder(object):
         if len(locator) > 1:
             raise ValueError("'xpath' and 'css' cannot be combined ({})".format(selector))
 
-        if selector and not self._can_be_combined_with_xpath_or_css(selector):
+        if selector and not self._combine_with_xpath_or_css(selector):
             raise ValueError('{} cannot be combined with other locators '
                              '{})'.format(list(locator.keys()[0]), selector))
 
@@ -115,11 +115,19 @@ class SelectorBuilder(object):
             self.xpath_builder = self._xpath_builder_class(self.should_use_label_element)
         return self.xpath_builder
 
+    @property
+    def _xpath_builder_class(self):
+        try:
+            mod = import_module(self.__module__)
+            return getattr(mod, 'XPath', XPath)
+        except ImportError:
+            return XPath
+
     def _is_valid_attribute(self, attribute):
         return self.valid_attributes and attribute in self.valid_attributes
 
     @staticmethod
-    def _can_be_combined_with_xpath_or_css(selector):
+    def _combine_with_xpath_or_css(selector):
         keys = list(selector)
         if keys == ['tag_name']:
             return True
@@ -128,14 +136,6 @@ class SelectorBuilder(object):
             keys.sort()
             return keys == ['tag_name', 'type']
         return False
-
-    @property
-    def _xpath_builder_class(self):
-        try:
-            mod = import_module(self.__module__)
-            return getattr(mod, 'XPath', XPath)
-        except ImportError:
-            return XPath
 
 
 class XPath(object):

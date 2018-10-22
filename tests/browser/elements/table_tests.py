@@ -114,3 +114,9 @@ class TestTableBodys(object):
 
         assert bodies[0].id == 'first'
         assert bodies[1].id == 'second'
+
+
+class TestTableIter(object):
+    def test_allows_iterating_over_the_rows_in_a_table(self, browser):
+        from nerodia.elements.row import Row
+        assert all(isinstance(x, Row) for x in browser.table(id='inner'))

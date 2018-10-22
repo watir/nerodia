@@ -18,10 +18,6 @@ class NoValueFoundException(Error):
     pass
 
 
-class UnknownCellException(Error):
-    pass
-
-
 class NoMatchingWindowFoundException(Error):
     pass
 
@@ -30,5 +26,5 @@ class UnknownFrameException(Error):
     pass
 
 
-class UnknownRowException(Error):
+class LocatorException(Error):
     pass
