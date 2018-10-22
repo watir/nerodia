@@ -384,26 +384,6 @@ class TestBrowserClosed(object):
 
 
 class TestBrowserWait(object):
-    def test_delegates_wait_until_not_to_the_wait_module(self, browser, mocker):
-        mock = mocker.patch('nerodia.wait.wait.Wait.until_not')
-
-        def method():
-            pass
-
-        browser.wait_until_not(timeout=3, message='foo', interval=0.2, method=method)
-        mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
-                                     object=browser)
-
-    def test_delegates_wait_until_to_the_wait_module(self, browser, mocker):
-        mock = mocker.patch('nerodia.wait.wait.Wait.until')
-
-        def method():
-            pass
-
-        browser.wait_until(timeout=3, message='foo', interval=0.2, method=method)
-        mock.assert_called_once_with(timeout=3, message='foo', interval=0.2, method=method,
-                                     object=browser)
-
     def test_waits_until_document_readystate_is_complete(self, browser, mocker):
         mock = mocker.patch('nerodia.browser.Browser.ready_state',
                             new_callable=mocker.PropertyMock)

@@ -286,21 +286,24 @@ class TestElementWaitUntilNot(object):
     @pytest.mark.usefixtures('refresh_before')
     def test_browser_accepts_keywords(self, browser):
         browser.wait_until(title='wait test')
-        browser.wait_until(title='wrong')
+        with pytest.raises(TimeoutError):
+            browser.wait_until(title='wrong')
 
     @pytest.mark.page('alerts.html')
     def test_alert_accepts_keywords(self, browser):
         try:
             browser.button(id='alert').click()
             browser.alert.wait_until(text='ok')
-            browser.alert.wait_until(text='not ok')
+            with pytest.raises(TimeoutError):
+                browser.alert.wait_until(text='not ok')
         finally:
             browser.alert.ok()
 
     @pytest.mark.usefixtures('refresh_before')
     def test_window_accepts_keywords(self, browser):
         browser.window().wait_until(title='wait test')
-        browser.window().wait_until(title='wrong')
+        with pytest.raises(TimeoutError):
+            browser.window().wait_until(title='wrong')
 
     @pytest.mark.usefixtures('refresh_before', 'default_timeout_handling')
     def test_times_out_when_single_keyword_not_met(self, browser):

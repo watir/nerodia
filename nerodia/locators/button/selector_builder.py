@@ -3,11 +3,6 @@ from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 from ...elements.button import Button
 from ...xpath_support import XpathSupport
 
-try:
-    from re import Pattern
-except ImportError:
-    from re import _pattern_type as Pattern
-
 
 class SelectorBuilder(ElementSelectorBuilder):
     pass

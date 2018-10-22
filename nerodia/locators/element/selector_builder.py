@@ -25,6 +25,7 @@ class SelectorBuilder(object):
         self.selector = selector
         self.valid_attributes = valid_attributes
         self.custom_attributes = []
+        self.xpath_builder = None
 
     @property
     def normalized_selector(self):
@@ -99,7 +100,6 @@ class SelectorBuilder(object):
         if len(locator) > 1:
             raise ValueError("'xpath' and 'css' cannot be combined ({})".format(selector))
 
-
         if selector and not self._can_be_combined_with_xpath_or_css(selector):
             raise ValueError('{} cannot be combined with other locators '
                              '{})'.format(list(locator.keys()[0]), selector))
@@ -111,7 +111,9 @@ class SelectorBuilder(object):
 
     @property
     def _xpath_builder(self):
-        return self._xpath_builder_class(self.should_use_label_element)
+        if self.xpath_builder is None:
+            self.xpath_builder = self._xpath_builder_class(self.should_use_label_element)
+        return self.xpath_builder
 
     def _is_valid_attribute(self, attribute):
         return self.valid_attributes and attribute in self.valid_attributes

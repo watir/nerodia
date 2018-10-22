@@ -136,8 +136,7 @@ class Waitable(object):
         if object is None:
             object = self
 
-        if not method:
-            method = self._create_closure(kwargs, method, until=False)
+        method = self._create_closure(kwargs, method, until=False)
 
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
                        object=object)
@@ -191,10 +190,11 @@ class Waitable(object):
 
     def _create_closure(self, obj, method=None, until=True):
         from nerodia.elements.element import Element
+
         def func(*args):
             if isinstance(self, Element):
                 self.reset()
-            return (not obj or self._match_attributes(obj, until)) and (not method or method(self))
+            return (not obj or self._match_attributes(obj, until)()) and (not method or method(*args))
         return func
 
     def _match_attributes(self, obj, until=True):

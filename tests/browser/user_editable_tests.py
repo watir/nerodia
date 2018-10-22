@@ -127,8 +127,8 @@ class TestUserEditableSet(object):
 
 class TestUserEditableJsSet(object):
     def test_sets_the_value_of_the_element(self, browser):
-        browser.text_field(id='new_user_email').js_set('Hello Cruel World')
-        assert browser.text_field(id='new_user_email').value == 'Hello Cruel World'
+        browser.text_field(id='new_user_email').js_set('Bye Cruel World')
+        assert browser.text_field(id='new_user_email').value == 'Bye Cruel World'
 
     def test_sets_the_value_of_a_textarea_element(self, browser):
         browser.textarea(id='delete_user_comment').js_set('Hello Cruel World')

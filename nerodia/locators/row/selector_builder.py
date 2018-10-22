@@ -1,16 +1,11 @@
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
     XPath as ElementXPath
 
-try:
-    from re import Pattern
-except ImportError:
-    from re import _pattern_type as Pattern
-
 
 class SelectorBuilder(ElementSelectorBuilder):
     def _build_wd_selector(self, selector, values):
         self._xpath_builder.scope_tag_name = self.query_scope.selector.get('tag_name')
-        super(SelectorBuilder, self)._build_wd_selector(selector, values)
+        return super(SelectorBuilder, self)._build_wd_selector(selector, values)
 
 
 class XPath(ElementXPath):
