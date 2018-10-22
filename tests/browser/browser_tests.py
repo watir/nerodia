@@ -165,7 +165,7 @@ class TestBrowserRefresh(object):
         browser.span(class_name='footer').click()
         assert 'Javascript' in browser.span(class_name='footer').text
         browser.refresh()
-        browser.span(class_name='footer').wait_until_present()
+        browser.span(class_name='footer').wait_until(lambda e: e.present)
         assert 'Javascript' not in browser.span(class_name='footer').text
 
 

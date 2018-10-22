@@ -279,7 +279,7 @@ class Locator(object):
             return False
 
         if how in ['partial_link_text', 'link_text', 'link']:
-            nerodia.logger.deprecate('{} locator'.format(how), 'visible_text')
+            nerodia.logger.deprecate('{} locator'.format(how), 'visible_text', ids=['link_text'])
             if tag in ['link', None]:
                 return True
             raise Exception('Can not use {} locator to find a {} element'.format(how, what))
