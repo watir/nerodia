@@ -50,15 +50,6 @@ class TestSelectListExists(object):
 
 
 class TestSelectListAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_select_list_exists_and_has_class_name(self, browser):
-        assert browser.select_list(name='new_user_country').class_name == 'country'
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_select_list_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.select_list(name='no_such_name').class_name
-
     # id
     def test_returns_the_id_if_the_select_list_exists_and_has_id(self, browser):
         assert browser.select_list(index=0).id == 'new_user_country'

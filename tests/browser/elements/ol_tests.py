@@ -31,19 +31,6 @@ class TestOlExists(object):
 
 
 class TestOlAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_ol_exists_and_has_class_name(self, browser):
-        assert browser.ol(id='favorite_compounds').class_name == 'chemistry'
-
-    def test_returns_an_empty_string_if_the_ol_exists_and_has_no_class_name(self, browser):
-        assert browser.ol(index=1).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_ol_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
-        with pytest.raises(UnknownObjectException):
-            browser.ol(id='no_such_id').class_name
-
     # id
     def test_returns_the_id_if_the_ol_exists_and_has_id(self, browser):
         assert browser.ol(class_name='chemistry').id == 'favorite_compounds'

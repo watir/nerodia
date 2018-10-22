@@ -43,24 +43,6 @@ class TestDivExist(object):
 
 
 class TestDivAttributes(object):
-    # class_name
-
-    def test_returns_the_class_name_if_element_exists(self, browser):
-        assert browser.div(id='footer').class_name == 'profile'
-
-    def test_returns_an_empty_string_if_element_exists_but_class_name_doesnt(self, browser):
-        assert browser.div(id='content').class_name == ''
-
-    @pytest.mark.parametrize('selector',
-                             [{'id': 'no_such_id'},
-                              {'title': 'no_such_title'},
-                              {'index': 1337},
-                              {'xpath': "//div[@id='no_such_id']"}])
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        with pytest.raises(UnknownObjectException):
-            browser.div(**selector).class_name
-
     # id
 
     def test_returns_the_id_attribute_if_element_exists(self, browser):

@@ -82,13 +82,6 @@ class TestButtonExist(object):
 
 
 class TestButtonAttributes(object):
-    # class_name
-    def test_returns_the_class_name_of_the_button(self, browser):
-        assert browser.button(name='new_user_image').class_name == 'image'
-
-    def test_returns_an_empty_string_if_the_button_has_no_class_name(self, browser):
-        assert browser.button(name='new_user_submit').class_name == ''
-
     # id
     def test_returns_the_id_if_the_button_exists(self, browser):
         assert browser.button(index=0).id == 'new_user_submit'

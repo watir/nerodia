@@ -37,18 +37,6 @@ class TestPreExist(object):
 
 
 class TestPreAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_element_exists_and_has_class_name(self, browser):
-        assert browser.pre(id='rspec').class_name == 'ruby'
-
-    def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
-        assert browser.pre(index=0).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.pre(index=1337).class_name
-
     # id
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.pre(class_name='ruby').id == 'rspec'

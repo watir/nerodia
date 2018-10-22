@@ -37,18 +37,6 @@ class TestInsExist(object):
 
 
 class TestInsAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_element_exists_and_has_class_name(self, browser):
-        assert browser.ins(index=0).class_name == 'lead'
-
-    def test_returns_an_empty_string_if_the_ins_exists_and_the_class_name_doesnt(self, browser):
-        assert browser.ins(index=2).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.ins(index=1337).class_name
-
     # id
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.ins(index=0).id == 'lead'

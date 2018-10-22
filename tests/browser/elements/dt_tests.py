@@ -24,24 +24,6 @@ class TestDtExist(object):
 
 
 class TestDtAttributes(object):
-    # class_name
-
-    def test_returns_the_class_name_if_element_exists(self, browser):
-        assert browser.dt(id='experience').class_name == 'industry'
-
-    def test_returns_an_empty_string_if_element_exists_but_class_name_doesnt(self, browser):
-        assert browser.dt(id='education').class_name == ''
-
-    @pytest.mark.parametrize('selector',
-                             [{'id': 'no_such_id'},
-                              {'title': 'no_such_title'},
-                              {'index': 1337},
-                              {'xpath': "//dt[@id='no_such_id']"}])
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        with pytest.raises(UnknownObjectException):
-            browser.dt(**selector).class_name
-
     # id
 
     def test_returns_the_id_attribute_if_element_exists(self, browser):

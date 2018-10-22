@@ -44,18 +44,6 @@ class TestLinkExist(object):
 
 
 class TestLinkAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_element_exists_and_has_class_name(self, browser):
-        assert browser.link(index=1).class_name == 'external'
-
-    def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
-        assert browser.link(index=0).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.link(index=1337).class_name
-
     # href
     def test_returns_the_href_if_the_element_exists_and_has_href(self, browser):
         assert 'non_control_elements' in browser.link(index=1).href

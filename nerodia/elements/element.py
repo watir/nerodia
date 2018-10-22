@@ -238,6 +238,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self._element_call(lambda: self._execute_js('selectText', self.el, string))
 
     @property
+    def classes(self):
+        return self.class_name.split()
+
+    @property
     def value(self):
         """
         Returns value of the element

@@ -92,15 +92,6 @@ class TestOptionSelect(object):
             browser.select_list(name='new_user_country').option(text=compile(r'missing')).select()
 
 
-class TestOptionAttributes(object):
-    # class_name
-    def test_returns_the_id_if_the_element_exists_and_has_class_name(self, browser):
-        assert browser.option(text='Sweden').class_name == 'scandinavia'
-
-    def test_returns_the_id_if_the_element_exists_within_select_list_and_has_class_name(self, browser):
-        assert browser.select_list(name='new_user_country').option(text='Sweden').class_name == 'scandinavia'
-
-
 def test_finds_all_attribute_methods(browser):
     assert hasattr(browser.select_list(name='new_user_country').option(text='Sweden'), 'class_name')
     assert hasattr(browser.select_list(name='new_user_country').option(text='Sweden'), 'id')

@@ -34,18 +34,6 @@ class TestHnExist(object):
 
 
 class TestHnAttributes(object):
-    # class
-    def test_returns_the_class_name_if_the_element_exists_and_has_id(self, browser):
-        assert browser.h1(index=0).class_name == 'primary'
-
-    def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
-        assert browser.h2(index=0).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.h2(id='no_such_id').class_name
-
     # id
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.h1(index=0).id == 'first_header'

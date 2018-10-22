@@ -24,21 +24,6 @@ class TestEmExist(object):
 
 
 class TestEmAttributes(object):
-    # class_name
-
-    def test_returns_the_class_name_if_element_exists(self, browser):
-        assert browser.em(id='important-id').class_name == 'important-class'
-
-    @pytest.mark.parametrize('selector',
-                             [{'id': 'no_such_id'},
-                              {'title': 'no_such_title'},
-                              {'index': 1337},
-                              {'xpath': "//em[@id='no_such_id']"}])
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser, selector):
-        with pytest.raises(UnknownObjectException):
-            browser.em(**selector).class_name
-
     # id
 
     def test_returns_the_id_attribute_if_element_exists(self, browser):

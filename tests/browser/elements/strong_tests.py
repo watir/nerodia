@@ -37,18 +37,6 @@ class TestStrongExist(object):
 
 
 class TestStrongAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_element_exists_and_has_class_name(self, browser):
-        assert browser.strong(index=0).class_name == 'descartes'
-
-    def test_returns_an_empty_string_if_the_element_exists_and_the_class_name_doesnt(self, browser):
-        assert browser.strong(index=1).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_element_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.strong(index=1337).class_name
-
     # id
     def test_returns_the_id_if_the_element_exists_and_has_id(self, browser):
         assert browser.strong(index=0).id == 'descartes'

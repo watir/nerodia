@@ -31,19 +31,6 @@ class TestUlExists(object):
 
 
 class TestUlAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_ul_exists_and_has_class_name(self, browser):
-        assert browser.ul(id='navbar').class_name == 'navigation'
-
-    def test_returns_an_empty_string_if_the_ul_exists_and_has_no_class_name(self, browser):
-        assert browser.ul(index=1).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_ul_doesnt_exist(self, browser):
-        from nerodia.exception import UnknownObjectException
-        with pytest.raises(UnknownObjectException):
-            browser.ul(id='no_such_id').class_name
-
     # id
     def test_returns_the_id_if_the_checkbox_exists_and_has_id(self, browser):
         assert browser.ul(class_name='navigation').id == 'navbar'

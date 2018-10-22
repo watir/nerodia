@@ -37,19 +37,6 @@ class TestDeleteExist(object):
 
 
 class TestDeleteAttributes(object):
-    # class_name
-
-    def test_returns_the_class_name_if_element_exists(self, browser):
-        assert browser.delete(index=0).class_name == 'lead'
-
-    def test_returns_an_empty_string_if_element_exists_but_class_name_doesnt(self, browser):
-        assert browser.delete(index=2).class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_element_does_not_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.delete(id='no_such_id').class_name
-
     # id
 
     def test_returns_the_id_attribute_if_element_exists(self, browser):

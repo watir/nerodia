@@ -60,18 +60,6 @@ class TestCheckboxExist(object):
 
 
 class TestCheckboxAttributes(object):
-    # class_name
-    def test_returns_the_class_name_if_the_checkbox_exists_and_has_class_name(self, browser):
-        assert browser.checkbox(id='new_user_interests_dancing').class_name == 'fun'
-
-    def test_returns_an_empty_string_if_the_checkbox_exists_and_has_no_class_name(self, browser):
-        assert browser.checkbox(id='new_user_interests_books').class_name == ''
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_for_class_name_if_the_checkbox_doesnt_exist(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.checkbox(id='no_such_id').class_name
-
     # id
     def test_returns_the_id_if_the_checkbox_exists_and_has_id(self, browser):
         assert browser.checkbox(index=0).id == 'new_user_interests_books'

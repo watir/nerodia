@@ -482,3 +482,30 @@ class TestElementWd(object):
         from selenium.webdriver.remote.webelement import WebElement
         element = browser.text_field(id='new_user_email')
         assert isinstance(element.wd, WebElement)
+
+
+class TestElementClassName(object):
+    def test_returns_single_class_name(self, browser):
+        assert browser.form(id='new_user').class_name == 'user'
+
+    def test_returns_multiple_class_names_in_a_string(self, browser):
+        assert browser.div(id='messages').class_name == 'multiple classes here'
+
+    def test_returns_an_empty_string_if_the_element_exists_but_there_is_no_class_attribute(self, browser):
+        assert browser.div(id='changed_language').class_name == ''
+
+    def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.div(id='no_such_id').class_name
+
+
+class TestElementClasses(object):
+    def test_returns_the_class_attribute_if_the_if_the_element_exists(self, browser):
+        assert browser.div(id='messages').classes == 'multiple classes here'.split()
+
+    def test_rturns_an_empty_list_if_the_element_exists_but_there_is_no_class_attribute(self, browser):
+        assert browser.div(id='changed_language').classes == []
+
+    def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.div(id='no_such_id').classes
