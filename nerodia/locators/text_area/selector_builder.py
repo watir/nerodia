@@ -22,8 +22,9 @@ class SelectorBuilder(ElementSelectorBuilder):
 
 class XPath(ElementXPath):
 
-    @property
     def _convert_predicate(self, key, regexp):
-        if key == 'value':
-            return [None, {key: regexp}]
-        return super(XPath, self)._convert_predicate(key, regexp)
+        if key != 'value':
+            return super(XPath, self)._convert_predicate(key, regexp)
+        else:
+            self.requires_matches['value'] = regexp
+            return None

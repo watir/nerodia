@@ -42,6 +42,10 @@ class XPath(ElementXPath):
             selector['text'] = text
         return {'xpath': xpath}
 
+    @property
+    def use_index(self):
+        return False
+
     # private
 
     def _generate_expressions(self, scope_tag_name):

@@ -24,3 +24,7 @@ class XPath(ElementXPath):
     @property
     def default_start(self):
         return './' if 'adjacent' in self.selector else './*'
+
+    @property
+    def use_index(self):
+        return False

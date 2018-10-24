@@ -185,15 +185,11 @@ class XPath(object):
         attribute_string = self._add_attribute_predicates()
         converted_attribute_string = self._convert_attribute_predicates()
         text_string = self.add_text()
-        if adjacent_string and index is not None and index >= 0:
-            index_string = '[{}]'.format(index + 1)
-        else:
-            if index is not None:
-                self.requires_matches['index'] = index
-            index_string = ''
 
         xpath = ''.join((start_string, adjacent_string, tag_string, class_string, attribute_string,
-                         converted_attribute_string, text_string, index_string))
+                         converted_attribute_string, text_string))
+        if index is not None:
+            xpath = self._add_index(xpath, index, len(adjacent_string) > 0)
 
         self.selector.update(self.requires_matches)
 
@@ -214,17 +210,38 @@ class XPath(object):
     def default_start(self):
         return './' if 'adjacent' in self.selector else './/*'
 
+    @property
+    def use_index(self):
+        return True
+
     # private
+
+    def _add_index(self, xpath, index=None, adjacent=None):
+        if adjacent:
+            return "{}[{}]".format(xpath, index + 1)
+        elif index and index >= 0 and len(self.requires_matches) == 0 and self.use_index:
+            return "({})[{}]".format(xpath, index + 1)
+        elif index and index < 0 and len(self.requires_matches) == 0 and self.use_index:
+            last_value = 'last()'
+            if index < -1:
+                last_value += str(index + 1)
+            return "({})[{}]".format(xpath, last_value)
+        else:
+            self.requires_matches['index'] = index
+            return xpath
 
     def _add_tag_name(self):
         tag_name = self.selector.pop('tag_name', None)
 
+        if isinstance(tag_name, str):
+            return "[local-name()='{}']".format(tag_name)
         if XpathSupport.is_simple_regexp(tag_name):
             return "[contains(local-name(), '{}')]".format(tag_name.pattern)
         elif tag_name is None:
             return ''
         else:
-            return "[local-name()='{}']".format(tag_name)
+            self.requires_matches['tag_name'] = tag_name
+            return ''
 
     def _add_attribute_predicates(self):
         element_attr_exp = self._attribute_expression
@@ -274,43 +291,42 @@ class XPath(object):
         if 'class' not in self.selector:
             return ''
 
-        class_name = self.selector['class']
-        if isinstance(class_name, str) and ' ' in class_name.strip():
-            dep = "Using the 'class' locator to locate multiple classes with a string value " \
-                  "(i.e. {!r})".format(class_name)
-            nerodia.logger.deprecate(dep, "list (e.g. {}".format(class_name.split()),
-                                     ids=['class_array'])
-        elif isinstance(class_name, bool):
-            self.selector.pop('class')
-            return '[{}]'.format(self._locator_expression('class', class_name))
+        self.requires_matches['class'] = []
 
-        self.selector['class'] = list(ClassHelpers._flatten([class_name]))
+        class_name = self.selector.pop('class', None)
+        if isinstance(class_name, str) and ' ' in class_name.strip():
+            self._deprecate_class_list(class_name)
 
         predicates = []
-        for key in copy(self.selector['class']):
-            result = self._class_predicate(key)
-            remainder = None
-            if isinstance(result, list):
-                predicate, remainder = result
-            else:
-                predicate = result
-            if predicate is not None:
-                predicates.append(predicate)
-            if not remainder:
-                self.selector['class'].remove(key)
-
-        remaining_values = self.selector.pop('class', [])
-        if len(remaining_values) > 0:
-            self.requires_matches['class'] = remaining_values
-
-        if len(predicates) == 0:
-            return ''
+        if isinstance(class_name, bool):
+            self.selector.pop('class')
+            predicates = [self._locator_expression('class', class_name)]
         else:
+            for x in ClassHelpers._flatten([class_name]):
+                pred = self._class_predicate(x)
+                if pred is not None:
+                    predicates.append(pred)
+
+        if len(self.requires_matches['class']) == 0:
+            self.requires_matches.pop('class')
+
+        if len(predicates) > 0:
             return '[{}]'.format(' and '.join(predicates))
+        else:
+            return ''
+
+    def _deprecate_class_list(self, class_name):
+        dep = "Using the 'class' locator to locate multiple classes with a String value " \
+              "(i.e. '{}')".format(class_name)
+        nerodia.logger.deprecate(dep, 'list (e.g. {})'.format(class_name.split()),
+                                 ids=['class_list'])
 
     def _class_predicate(self, value):
         if isinstance(value, Pattern):
-            return self._convert_predicate('class', value)
+            predicate = self._convert_predicate('class', value)
+            if predicate is None:
+                self.requires_matches['class'].append(value)
+            return predicate
 
         if re.search(r'^!', value):
             value = value[1:]
@@ -355,21 +371,22 @@ class XPath(object):
     def _convert_attribute_predicates(self):
         predicates = []
         for key in self.selector.copy():
-            predicate, remainder = self._convert_predicate(key, self.selector[key])
-            if predicate is not None:
-                predicates.append(predicate)
-            if not remainder:
-                self.selector.pop(key)
+            if key == 'text':
+                continue
+
+            predicate = self._convert_predicate(key, self.selector[key])
+            self.selector.pop(key, None)
+            predicates.append(predicate)
 
         return "[{}]".format(' and '.join(predicates)) if len(predicates) > 0 else ''
 
     def _convert_predicate(self, key, regexp):
-        if key == 'text':
-            return [None, {key: regexp}]
-
         lhs = self._lhs_for(key)
 
         if XpathSupport.is_simple_regexp(regexp):
-            return ["contains({}, '{}')".format(lhs, regexp.pattern), None]
+            return "contains({}, '{}')".format(lhs, regexp.pattern)
+        elif key == 'class':
+            self.requires_matches['class'].append(regexp)
         else:
-            return [lhs, {key: regexp}]
+            self.requires_matches[key] = regexp
+        return lhs

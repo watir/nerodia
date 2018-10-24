@@ -46,6 +46,10 @@ class XPath(ElementXPath):
 
         return {'xpath': xpath}
 
+    @property
+    def use_index(self):
+        return False
+
     def add_text(self):
         if 'text' not in self.selector:
             return ''
@@ -56,7 +60,7 @@ class XPath(ElementXPath):
         elif XpathSupport.is_simple_regexp(text):
             return "[contains(text(), '{0}') or contains(@value, '{0}')]".format(text.pattern)
         else:
-            self.selector['text'] = text
+            self.requires_matches['text'] = text
             return ''
 
     # private

@@ -46,8 +46,12 @@ class XPath(ElementXPath):
         elif XpathSupport.is_simple_regexp(text):
             return "[contains(@value, '{}')]".format(text.pattern)
         else:
-            self.selector['value'] = text
+            self.requires_matches['value'] = text
             return ''
+
+    @property
+    def use_index(self):
+        return False
 
     # private
 

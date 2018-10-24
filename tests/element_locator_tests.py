@@ -231,11 +231,12 @@ class TestElementLocatorFindsSingleElement(object):
         assert locate_one(browser, selector) == el
         expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][contains(@class, 'oob')]")
 
-    def test_handles_tag_name_index_and_a_single_regexp_attribute(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})] * 2
-        expect_all.return_value = elements
+    def test_handles_tag_name_index_and_a_single_regexp_attribute(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
+        expect_one.return_value = el
         selector = {'tag_name': 'div', 'class_name': re.compile(r'foo'), 'index': 1}
-        assert locate_one(browser, selector) == elements[1]
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, "(.//*[local-name()='div'][contains(@class, 'foo')])[2]")
 
     def test_handles_xpath_and_index_selectors(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})] * 2
@@ -438,21 +439,16 @@ class TestElementLocatorFindsSeveralElements(object):
 
     # with index
 
-    def test_converts_a_leading_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'bar'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'fo.b$')}
-        assert locate_one(browser, selector) == elements[1]
+    def test_with_index(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'})
+
+        expect_one.return_value = el
+        selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, "(.//*[local-name()='div'][@dir='foo'])[2]")
 
     # errors
 
-    def test_with_index(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}),
-                    element(mocker, values={'tag_name': 'div'})]
-
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
-        assert locate_one(browser, selector) == elements[1]
-        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@dir='foo']")
+    def test_raises_exception_if_index_is_given(self, browser):
+        with pytest.raises(ValueError, match="can't locate all elements by 'index'"):
+            locate_all(browser, {'tag_name': 'div', 'index': 1})

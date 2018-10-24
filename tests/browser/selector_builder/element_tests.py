@@ -281,6 +281,44 @@ class TestBuild(object):
         with pytest.raises(TypeError, match=match):
             selector_builder.build({'text': 7})
 
+    # with index
+
+    def test_index_positive(self, browser):
+        items = {
+            'selector': {'tag_name': 'div', 'index': 7},
+            'wd': {'xpath': "(.//*[local-name()='div'])[8]"},
+            'data': 'content'
+        }
+        verify_build(browser, **items)
+
+    def test_index_negative(self, browser):
+        items = {
+            'selector': {'tag_name': 'div', 'index': -7},
+            'wd': {'xpath': "(.//*[local-name()='div'])[last()-6]"},
+            'data': 'second div'
+        }
+        verify_build(browser, **items)
+
+    def test_index_last(self, browser):
+        items = {
+            'selector': {'tag_name': 'div', 'index': -1},
+            'wd': {'xpath': "(.//*[local-name()='div'])[last()]"},
+            'data': 'content'
+        }
+        verify_build(browser, **items)
+
+    def test_index_does_not_return_index_if_zero(self, browser):
+        items = {
+            'selector': {'tag_name': 'div', 'index': 0},
+            'wd': {'xpath': ".//*[local-name()='div']"}
+        }
+        verify_build(browser, **items)
+
+    def test_raises_exception_when_index_is_not_an_integer(self, browser, selector_builder):
+        match = "expected {}, got 'foo':{}".format(int, str)
+        with pytest.raises(TypeError, match=match):
+            selector_builder.build({'index': 'foo'})
+
     # with labels
 
     def test_locates_the_element_associated_with_the_label_element_located_by_the_text_of_the_provided_label_key(self, browser):
@@ -518,22 +556,6 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
-    def test_text_with_any_regexp(self, browser):
-        items = {
-            'selector': {'text': compile(r'Add')},
-            'wd': {'xpath': './/*'},
-            'remaining': {'text': compile(r'Add')}
-        }
-        verify_build(browser, **items)
-
-    def test_not_translated_index(self, browser):
-        items = {
-            'selector': {'tag_name': 'div', 'index': 1},
-            'wd': {'xpath': ".//*[local-name()='div']"},
-            'remaining': {'index': 1}
-        }
-        verify_build(browser, **items)
-
     def test_not_translated_visible(self, browser):
         items = {
             'selector': {'tag_name': 'div', 'visible': True},
@@ -557,17 +579,6 @@ class TestBuild(object):
             'remaining': {'visible_text': 'foo'}
         }
         verify_build(browser, **items)
-
-    def test_does_not_return_index_if_it_is_zero(self, browser):
-        items = {
-            'selector': {'tag_name': 'div', 'index': 0},
-            'wd': {'xpath': ".//*[local-name()='div']"}
-        }
-        verify_build(browser, **items)
-
-    def test_raises_exception_when_index_is_not_an_integer(self, browser, selector_builder):
-        with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(int, str)):
-            selector_builder.build({'index': 'foo'})
 
     def test_raises_exception_when_visible_is_not_a_boolean(self, browser, selector_builder):
         with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(bool, str)):
