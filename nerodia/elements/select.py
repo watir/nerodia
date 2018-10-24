@@ -212,12 +212,3 @@ class Select(HTMLElement):
             if not element.is_selected:
                 element.click()
         return elements[0].text if elements[0].exist else ''
-
-    @staticmethod
-    def _flatten(term):
-        for x in term:
-            if isinstance(x, list):
-                for y in x:
-                    yield y
-            else:
-                yield x

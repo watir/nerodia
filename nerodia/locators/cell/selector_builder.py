@@ -8,19 +8,19 @@ class SelectorBuilder(ElementSelectorBuilder):
 
 class XPath(ElementXPath):
 
-    def add_attributes(self, selector):
-        attr_exp = self.attribute_expression(None, selector)
+    def build(self, selector):
+        if 'adjacent' in selector:
+            return super(XPath, self).build(selector)
 
-        expressions = ['./th', './td']
-        if attr_exp:
-            expressions = ['{}[{}]'.format(x, attr_exp) for x in expressions]
+        wd_locator = super(XPath, self).build(selector)
+        start_string = self.default_start
+        tag_string = "[local-name()='th' or local-name()='td']"
+        common_string = wd_locator['xpath'].replace(start_string, '')
 
-        return ' | '.join(expressions)
+        xpath = ''.join((start_string, tag_string, common_string))
+
+        return {'xpath': xpath}
 
     @property
     def default_start(self):
-        return ''
-
-    def add_tag_name(self, selector):
-        selector.pop('tag_name', None)
-        return ''
+        return './' if 'adjacent' in self.selector else './*'

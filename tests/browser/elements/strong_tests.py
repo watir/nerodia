@@ -12,11 +12,13 @@ class TestStrongExist(object):
         assert browser.strong(id='descartes').exists is True
         assert browser.strong(id=compile(r'descartes')).exists is True
         assert browser.strong(text='Dubito, ergo cogito, ergo sum.').exists is True
-        assert browser.strong(text=compile(r'Dubito, ergo cogito, ergo sum')).exists is True
         assert browser.strong(class_name='descartes').exists is True
         assert browser.strong(class_name=compile(r'descartes')).exists is True
         assert browser.strong(index=0).exists is True
         assert browser.strong(xpath="//strong[@id='descartes']").exists is True
+
+    def test_visible_text_is_found_by_regular_expression_with_text_locator(self, browser):
+        assert browser.strong(text=compile(r'Dubito, ergo cogito, ergo sum')).exists is True
 
     def test_returns_the_first_strong_if_given_no_args(self, browser):
         assert browser.strong().exists

@@ -18,8 +18,6 @@ class TestTextFieldExist(object):
         assert browser.text_field(name=compile(r'new_user_email')).exists is True
         assert browser.text_field(value='Developer').exists is True
         assert browser.text_field(value=compile(r'Developer')).exists is True
-        assert browser.text_field(text='Developer').exists is True
-        assert browser.text_field(text=compile(r'Developer')).exists is True
         assert browser.text_field(class_name='name').exists is True
         assert browser.text_field(class_name=compile(r'name')).exists is True
         assert browser.text_field(index=0).exists is True
@@ -35,6 +33,10 @@ class TestTextFieldExist(object):
         # assert browser.text_field(label=compile(r'With hidden text')).exists is True
 
         assert browser.text_field(visible_label=compile(r'With text')).exists is True
+
+    def test_locates_value_of_text_field_using_text_locator(self, browser):
+        assert browser.text_field(text='Developer').exists is True
+        assert browser.text_field(text=compile(r'Developer')).exists is True
 
     def test_returns_the_first_text_field_if_given_no_args(self, browser):
         assert browser.text_field().exists

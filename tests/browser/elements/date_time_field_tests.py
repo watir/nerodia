@@ -21,7 +21,9 @@ class TestDateTimeFieldExist(object):
         assert browser.date_time_field(name=compile(r'html5_datetime-local')).exists is True
         assert browser.date_time_field(text='').exists is True
         assert browser.date_time_field(index=0).exists is True
-        assert browser.date_time_field(xpath="//input[@id='html5_datetime-local']").exists is True
+        # Firefox validates attribute "type" as "text" not "datetime-local"
+        if browser.name != 'firefox':
+            assert browser.date_time_field(xpath="//input[@id='html5_datetime-local']").exists is True
         assert browser.date_time_field(label='HTML5 Datetime Local').exists is True
         assert browser.date_time_field(label=compile(r'Local')).exists is True
 

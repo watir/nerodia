@@ -272,7 +272,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         result = self._element_call(lambda: self._execute_js('attributeValues', self.el))
         regex = r'[a-zA-Z\-]*'
-        for key in result.keys():
+        for key in result:
             match = search(regex, key)
             if match and match.group(0) == key:
                 result[key.replace('-', '_')] = result.pop(key)
@@ -292,7 +292,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
         browser.pre(id='rspec').attribute_list  #=> ['class', 'id']
         """
-        return list(self.attribute_values.keys())
+        return list(self.attribute_values)
 
     def send_keys(self, *args):
         """

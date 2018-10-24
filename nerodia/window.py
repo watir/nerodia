@@ -1,3 +1,5 @@
+import re
+
 from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 
 from .exception import NoMatchingWindowFoundException
@@ -252,7 +254,6 @@ class Window(Waitable):
             return None
 
     def _matches(self, handle):
-        from .locators.element.validator import Validator
         try:
             orig = self.driver.current_window_handle
         except NoSuchWindowException:
@@ -263,14 +264,14 @@ class Window(Waitable):
             if 'title' in self.selector:
                 title_value = self.selector.get('title')
                 driver_title = self.browser.title
-                matches_title = Validator.match_str_or_regex(title_value, driver_title)
+                matches_title = re.search(r'{}'.format(title_value), driver_title) is not None
             else:
                 matches_title = True
 
             if 'url' in self.selector:
                 url_value = self.selector.get('url')
                 driver_url = self.browser.url
-                matches_url = Validator.match_str_or_regex(url_value, driver_url)
+                matches_url = re.search(r'{}'.format(url_value), driver_url) is not None
             else:
                 matches_url = True
 

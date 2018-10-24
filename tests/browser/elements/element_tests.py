@@ -5,7 +5,7 @@ import pytest
 import six
 from selenium.webdriver.common.keys import Keys
 
-from nerodia.exception import UnknownObjectException
+from nerodia.exception import UnknownObjectException, LocatorException
 from nerodia.window import Point, Dimension
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
@@ -274,22 +274,34 @@ class TestElementExist(object):
         assert not browser.div(id='no_such_div').link(id='no_such_id').exists
 
     def test_raises_correct_exception_if_both_xpath_and_css_are_given(self, browser):
-        with pytest.raises(ValueError):
+        message_parts = ["'xpath' and 'css' cannot be combined",
+                         "'xpath': '//div'",
+                         "'css': 'div'"]
+        with pytest.raises(LocatorException) as e:
             browser.div(xpath='//div', css='div').exists
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_doesnt_raise_when_selector_with_xpath_has_index(self, browser):
         assert browser.div(xpath='//div', index=1).exists
 
     def test_raises_correct_exception_if_selector_dict_with_xpath_has_multiple_entries(self, browser):
-        with pytest.raises(ValueError):
+        message_parts = ["xpath cannot be combined with all of these locators",
+                         "'class': 'foo'",
+                         "'tag_name': 'div'"]
+        with pytest.raises(LocatorException) as e:
             browser.div(xpath='//div', class_name='foo').exists
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_doesnt_raise_when_selector_with_css_has_index(self, browser):
         assert browser.div(css='div', index=1).exists
 
     def test_raises_correct_exception_if_selector_dict_with_css_has_multiple_entries(self, browser):
-        with pytest.raises(ValueError):
+        message_parts = ["css cannot be combined with all of these locators",
+                         "'class': 'foo'",
+                         "'tag_name': 'div'"]
+        with pytest.raises(LocatorException) as e:
             browser.div(css='div', class_name='foo').exists
+        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_finds_element_by_selenium_name_locator(self, browser):
         assert browser.element(name='new_user_first_name').exists
@@ -474,7 +486,7 @@ class TestElementAttributeValues(object):
         assert browser.div().attribute_values == expected
 
     def test_returns_attribute_with_special_characters_as_a_string(self, browser):
-        assert isinstance(list(browser.div().attribute_values.keys())[0], six.string_types)
+        assert isinstance(list(browser.div().attribute_values)[0], six.string_types)
 
 
 @pytest.mark.page('data_attributes.html')

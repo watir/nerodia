@@ -1,3 +1,5 @@
+import re
+
 from .window import Window
 
 
@@ -47,7 +49,7 @@ class HasWindow(object):
     # private
 
     def _filter_windows(self, selector, windows):
-        from .locators.element.validator import Validator
         if not all(key in ['title', 'url'] for key in selector.keys()):
             raise ValueError('invalid window selector: {}'.format(selector))
-        return [w for w in windows if all(Validator.match_str_or_regex(v, getattr(w, k)) for k, v in selector.items())]
+        return [w for w in windows if all(re.search(r'{}'.format(v), getattr(w, k)) is not None
+                                          for k, v in selector.items())]

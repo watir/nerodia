@@ -1,43 +1,54 @@
-from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
+from importlib import import_module
+
+from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder, \
     XPath as ElementXPath
 
 
 class SelectorBuilder(ElementSelectorBuilder):
-    def _build_wd_selector(self, selector, values):
-        self._xpath_builder.scope_tag_name = self.query_scope.selector.get('tag_name')
-        return super(SelectorBuilder, self)._build_wd_selector(selector, values)
+
+    def __init__(self, valid_attributes, scope_tag_name):
+        self.scope_tag_name = scope_tag_name
+        super(SelectorBuilder, self).__init__(valid_attributes)
+
+    def _build_wd_selector(self, selector):
+        try:
+            mod = import_module(self.__module__)
+            xpath = getattr(mod, 'XPath', XPath)
+        except ImportError:
+            xpath = XPath
+        return xpath().build(selector, self.scope_tag_name)
 
 
 class XPath(ElementXPath):
 
-    def __init__(self, use_element_label):
-        super(XPath, self).__init__(use_element_label)
-        self.scope_tag_name = None
+    def build(self, selector, scope_tag_name):
+        if 'adjacent' in selector:
+            return super(XPath, self).build(selector)
 
-    def add_attributes(self, selector):
-        attr_expr = self.attribute_expression(None, selector)
+        # Cannot locate a Row with Text because all text is in the Cells;
+        # needs to user Locator#locate_matching_elements
+        text = selector.pop('text', None)
+        wd_locator = super(XPath, self).build(selector)
 
-        expressions = self._generate_expressions()
-        if attr_expr:
-            expressions = ['{}[{}]'.format(x, attr_expr) for x in expressions]
-        return ' | '.join(expressions)
+        common_string = wd_locator['xpath'].replace(self.default_start, '')
 
-    def add_tag_name(self, selector):
-        selector.pop('tag_name', None)
-        return ''
+        expressions = self._generate_expressions(scope_tag_name)
+        if len(common_string) > 0:
+            expressions = ["{}{}".format(e, common_string) for e in expressions]
 
-    @property
-    def default_start(self):
-        return ''
+        xpath = ' | '.join(expressions)
+
+        if text is not None:
+            selector['text'] = text
+        return {'xpath': xpath}
 
     # private
 
-    def _generate_expressions(self):
-        expressions = ['./tr']
-
-        if not self.scope_tag_name or self.scope_tag_name in ['tbody', 'tfoot', 'thead']:
-            return expressions
+    def _generate_expressions(self, scope_tag_name):
+        if scope_tag_name in ['tbody', 'tfoot', 'thead']:
+            return ["./*[local-name()='tr']"]
         else:
-            expressions += ['./tbody/tr', './thead/tr', './tfoot/tr']
-
-        return expressions
+            return ["./*[local-name()='tr']",
+                    "./*[local-name()='tbody']/*[local-name()='tr']",
+                    "./*[local-name()='thead']/*[local-name()='tr']",
+                    "./*[local-name()='tfoot']/*[local-name()='tr']"]

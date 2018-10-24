@@ -33,8 +33,22 @@ class ClassHelpers(object):
         return self._element_class.__name__
 
     def _build_locator(self):
+        from nerodia.elements.row import Row
+        if self._element_class == Row:
+            scope_tag_name = self.query_scope.selector.get('tag_name')
+            selector_builder = self._selector_builder_class(self._element_class.ATTRIBUTES,
+                                                            scope_tag_name)
+        else:
+            selector_builder = self._selector_builder_class(self._element_class.ATTRIBUTES)
         element_validator = self._element_validator_class()
-        selector_builder = self._selector_builder_class(self.query_scope, self.selector.copy(),
-                                                        self._element_class.ATTRIBUTES)
         return self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
                                    element_validator)
+
+    @staticmethod
+    def _flatten(term):
+        for x in term:
+            if isinstance(x, list):
+                for y in x:
+                    yield y
+            else:
+                yield x

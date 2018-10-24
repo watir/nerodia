@@ -9,8 +9,10 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 class TestCheckboxExist(object):
     def test_returns_true_if_the_checkbox_button_exists(self, browser):
-        assert browser.checkbox(id='new_user_interests_books').exists
-        assert browser.checkbox(id=compile(r'new_user_interests_books')).exists
+        # assert browser.checkbox(id='new_user_interests_books').exists
+        # assert browser.checkbox(id=compile(r'new_user_interests_books')).exists
+        # assert browser.checkbox(label='Cars').exists
+        assert browser.checkbox(label=compile(r'Cars')).exists
         assert browser.checkbox(name='new_user_interests').exists
         assert browser.checkbox(name=compile(r'new_user_interests')).exists
         assert browser.checkbox(value='books').exists

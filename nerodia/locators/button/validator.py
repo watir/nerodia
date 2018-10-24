@@ -4,7 +4,7 @@ from ...elements.button import Button
 
 class Validator(ElementValidator):
     @staticmethod
-    def validate(element, selector):
+    def validate(element, _tag_name):
         tag_name = element.tag_name.lower()
         if tag_name not in ['input', 'button']:
             return None

@@ -1,11 +1,13 @@
-import logging
+import inspect
 import re
+from copy import copy
 from importlib import import_module
 
 import six
 from selenium.webdriver.common.by import By
 
 import nerodia
+from nerodia.exception import LocatorException
 from ...xpath_support import XpathSupport
 
 try:
@@ -17,66 +19,92 @@ STRING_TYPES = [six.text_type, six.binary_type]
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [list, Pattern, bool] + STRING_TYPES
+    VALID_WHATS = [Pattern, bool] + STRING_TYPES
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
 
-    def __init__(self, query_scope, selector, valid_attributes):
-        self.query_scope = query_scope  # either element or browser
-        self.selector = selector
+    def __init__(self, valid_attributes):
         self.valid_attributes = valid_attributes
         self.custom_attributes = []
         self.xpath_builder = None
+        self.selector = None
 
-    @property
-    def normalized_selector(self):
-        selector = {}
+    def build(self, selector):
+        rep = repr(selector)
+        self.selector = selector
+        self.normalize_selector()
 
-        for how, what in self.selector.items():
-            self.check_type(how, what)
+        xpath_css = {}
 
-            how, what = self._normalize_selector(how, what)
-            selector[how] = what
+        for key in copy(self.selector):
+            if key in ['xpath', 'css']:
+                xpath_css[key] = self.selector.pop(key)
 
-        return selector
+        if len(xpath_css) == 0:
+            built = self._build_wd_selector(self.selector)
+        else:
+            self._process_xpath_css(xpath_css)
+            built = xpath_css
+
+        if self.selector.get('index') == 0:
+            self.selector.pop('index')
+
+        nerodia.logger.debug('Converted {} to {}, with {} '
+                             'to match'.format(rep, built, self.selector))
+        return [built, self.selector]
+
+    def normalize_selector(self):
+        if self.selector.get('adjacent') == 'ancestor' and 'text' in self.selector:
+            raise LocatorException('Can not find parent element with text locator')
+
+        for key in self.selector:
+            self.check_type(key, self.selector.get(key))
+            how, what = self._normalize_locator(key, self.selector.pop(key, None))
+            self.selector[how] = what
 
     def check_type(self, how, what):
-        if how == 'index':
-            if not isinstance(what, int):
-                raise TypeError('expected {}, got {!r}:{}'.format(int, what, what.__class__))
+        if how in ['adjacent', 'xpath', 'css']:
+            return self._raise_unless(what, str)
+        elif how == 'index':
+            return self._raise_unless(what, int)
         elif how == 'visible':
-            if not isinstance(what, bool):
-                raise TypeError('expected {}, got {!r}:{}'.format(bool, what, what.__class__))
-        elif how == 'visible_text':
-            if type(what) not in [six.text_type, six.binary_type, Pattern]:
-                raise TypeError('expected str or regexp, got {}')
-        else:
-            if isinstance(what, list) and how != 'class_name':
-                raise TypeError("only 'class_name' locator can have a value of a list")
-            if type(what) not in self.VALID_WHATS:
-                raise TypeError(
-                    'expected one of {}, got {!r}:{}'.format(self.VALID_WHATS, what, what.__class__))
+            return self._raise_unless(what, bool)
+        elif how in ['tag_name', 'visible_text', 'text']:
+            return self._raise_unless(what, 'string_or_regexp')
+        elif how in ['class', 'class_name']:
+            if isinstance(what, list):
+                if len(what) == 0:
+                    raise LocatorException("Cannot locate elements with an empty list for "
+                                           "'class_name'")
+
+                for w in what:
+                    self._raise_unless(w, 'string_or_regexp')
+                return
+        if type(what) not in self.VALID_WHATS:
+            raise TypeError(
+                'expected one of {}, got {!r}:{}'.format(self.VALID_WHATS, what, what.__class__))
 
     @property
     def should_use_label_element(self):
         return not self._is_valid_attribute('label')
 
-    def build(self, selector, values):
-        if 'xpath' in selector or 'css' in selector:
-            return self._given_xpath_or_css(selector)
-        built = self._build_wd_selector(selector, values)
-        nerodia.logger.debug('Converted {} to {}'.format(selector, built))
-        return built
-
     # private
 
-    def _normalize_selector(self, how, what):
-        if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'label', 'css', 'visible',
-                   'visible_text', 'adjacent']:
+    def _normalize_locator(self, how, what):
+        if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'css', 'visible', 'visible_text',
+                   'adjacent']:
             # include 'class' since the valid attribute is 'class_name'
             return [how, what]
+        elif how == 'label':
+            if self.should_use_label_element:
+                return ['{}_element'.format(how), what]
+            else:
+                return [how, what]
         elif how == 'class_name':
             return ['class', what]
         elif how == 'caption':
+            # This allows any element to be located with 'caption' instead of 'text'
+            nerodia.logger.deprecate("Locating elements with 'caption'", "'text' locator",
+                                     ids=['caption'])
             return ['text', what]
         else:
             self._check_custom_attribute(how)
@@ -87,41 +115,24 @@ class SelectorBuilder(object):
             return None
         self.custom_attributes.append(attribute)
 
-    def _given_xpath_or_css(self, selector):
-        locator = {}
-        if 'xpath' in selector:
-            locator['xpath'] = selector.pop('xpath')
-        if 'css' in selector:
-            locator['css'] = selector.pop('css')
+    def _process_xpath_css(self, xpath_css):
+        if len(xpath_css) > 1:
+            raise LocatorException("'xpath' and 'css' cannot be combined ({})".format(xpath_css))
 
-        if not locator:
+        if self._combine_with_xpath_or_css(self.selector):
             return
 
-        if len(locator) > 1:
-            raise ValueError("'xpath' and 'css' cannot be combined ({})".format(selector))
+        raise LocatorException("{} cannot be combined with all of these locators "
+                               "({})".format(list(xpath_css)[0], self.selector))
 
-        if selector and not self._combine_with_xpath_or_css(selector):
-            raise ValueError('{} cannot be combined with other locators '
-                             '{})'.format(list(locator.keys()[0]), selector))
-
-        return list(list(locator.items())[0])
-
-    def _build_wd_selector(self, selector, values):
-        return self._xpath_builder.build(selector, values)
-
-    @property
-    def _xpath_builder(self):
-        if self.xpath_builder is None:
-            self.xpath_builder = self._xpath_builder_class(self.should_use_label_element)
-        return self.xpath_builder
-
-    @property
-    def _xpath_builder_class(self):
+    # Implement this method when creating a different selector builder
+    def _build_wd_selector(self, selector):
         try:
             mod = import_module(self.__module__)
-            return getattr(mod, 'XPath', XPath)
+            xpath = getattr(mod, 'XPath', XPath)
         except ImportError:
-            return XPath
+            xpath = XPath
+        return xpath().build(selector)
 
     def _is_valid_attribute(self, attribute):
         return self.valid_attributes and attribute in self.valid_attributes
@@ -129,163 +140,243 @@ class SelectorBuilder(object):
     @staticmethod
     def _combine_with_xpath_or_css(selector):
         keys = list(selector)
-        if keys == ['tag_name']:
-            return True
+        keys = [x for x in keys if x not in ['visible', 'visible_text', 'index']]
 
-        if selector.get('tag_name') == 'input':
-            keys.sort()
-            return keys == ['tag_name', 'type']
-        return False
+        if len(set(keys) - {'tag_name'}) == 0:
+            return True
+        elif selector.get('tag_name') == 'input' and set(keys) == {'tag_name', 'type'}:
+            return True
+        else:
+            return False
+
+    def _raise_unless(self, what, klass):
+        if klass == bool and isinstance(what, bool):
+                return
+        elif klass == 'string_or_regexp' and \
+                type(what) in [six.text_type, six.binary_type, Pattern]:
+            return
+        elif inspect.isclass(klass) and isinstance(what, klass):
+            return
+
+        raise TypeError('expected {}, got {!r}:{}'.format(klass, what, what.__class__))
 
 
 class XPath(object):
-    # Regular expressions that can be reliably converted to xpath `contains`
-    # expressions in order to optimize the locator.
-    CONVERTABLE_REGEXP = re.compile(r'\A'
-                                    r'([^\[\]\\^$.|?*+()]*)'  # leading literal characters
-                                    r'[^|]*?'  # do not try to convert expressions with alternates
-                                    r'(?<!\\)'  # skip metacharacters - ie has preceding slash
-                                    r'([^\[\]\\^$.|?*+()]*)'  # trailing literal characters
-                                    r'\Z',
-                                    re.X)
+    CAN_NOT_BUILD = ['visible', 'visible_text']
+    LITERAL_REGEXP = re.compile(r'\A([^\[\]\\^$.|?*+()]*)\Z')
 
-    def __init__(self, use_element_label):
-        self._should_use_label_element = use_element_label
+    def __init__(self):
+        self.selector = None
+        self.requires_matches = None
 
-    def build(self, selector, values):
-        adjacent = selector.pop('adjacent', None)
-        xpath = self._process_adjacent(adjacent) if adjacent else self.default_start
-        xpath += self.add_tag_name(selector)
-        index = selector.pop('index', None)
+    def build(self, selector):
+        self.selector = selector
 
-        # the remaining entries should be attributes
-        xpath += self.add_attributes(selector)
+        self.requires_matches = {}
 
-        if adjacent and index is not None:
-            xpath += "[{}]".format(index + 1)
+        for key in self.selector.copy():
+            if key in self.CAN_NOT_BUILD:
+                self.requires_matches[key] = self.selector.pop(key)
 
-        xpath = self.add_regexp_predicates(xpath, values)
+        index = self.selector.pop('index', None)
+        start_string = self.default_start
+        adjacent_string = self._add_adjacent()
+        tag_string = self._add_tag_name()
+        class_string = self._add_class_predicates()
+        attribute_string = self._add_attribute_predicates()
+        converted_attribute_string = self._convert_attribute_predicates()
+        text_string = self.add_text()
+        if adjacent_string and index is not None and index >= 0:
+            index_string = '[{}]'.format(index + 1)
+        else:
+            if index is not None:
+                self.requires_matches['index'] = index
+            index_string = ''
 
-        logging.debug({'xpath': xpath, 'selector': selector})
+        xpath = ''.join((start_string, adjacent_string, tag_string, class_string, attribute_string,
+                         converted_attribute_string, text_string, index_string))
 
-        return [By.XPATH, xpath]
+        self.selector.update(self.requires_matches)
+
+        return {By.XPATH: xpath}
+
+    def add_text(self):
+        if 'text' not in self.selector:
+            return ''
+
+        text = self.selector.pop('text')
+        if not isinstance(text, Pattern):
+            return '[normalize-space()={}]'.format(XpathSupport.escape(text))
+        else:
+            self.requires_matches['text'] = text
+            return ''
 
     @property
     def default_start(self):
-        return './/*'
+        return './' if 'adjacent' in self.selector else './/*'
 
-    def add_tag_name(self, selector):
-        if 'tag_name' in selector:
-            return "[local-name()='{}']".format(selector.pop('tag_name'))
-        else:
+    def is_simple_regexp(self, regex):
+        if not isinstance(regex, Pattern) or regex.flags & re.IGNORECASE or not regex.pattern:
+            return False
+
+        return re.search(self.LITERAL_REGEXP, regex.pattern) is not None
+
+    # private
+
+    def _add_tag_name(self):
+        tag_name = self.selector.pop('tag_name', None)
+
+        if self.is_simple_regexp(tag_name):
+            return "[contains(local-name(), '{}')]".format(tag_name.pattern)
+        elif tag_name is None:
             return ''
+        else:
+            return "[local-name()='{}']".format(tag_name)
 
-    def add_attributes(self, selector):
-        element_attr_exp = self.attribute_expression(None, selector)
-        return '[{}]'.format(element_attr_exp) if element_attr_exp else ''
+    def _add_attribute_predicates(self):
+        element_attr_exp = self._attribute_expression
+        if not element_attr_exp:
+            return ''
+        else:
+            return '[{}]'.format(element_attr_exp)
 
-    def add_regexp_predicates(self, what, selector):
-        if not self._convert_regexp_to_contains:
-            return what
-
-        for key, value in selector.items():
-            if key in ['tag_name', 'text', 'visible_text', 'visible', 'index']:
+    @property
+    def _attribute_expression(self):
+        expressions = []
+        for key, value in self.selector.copy().items():
+            if key == 'class' or key == 'text' or isinstance(value, Pattern):
                 continue
 
-            predicates = self._regexp_selector_to_predicates(key, value)
-            if predicates:
-                what = "({})[{}]".format(what, ' and '.join(predicates))
+            expressions.append(self._locator_expression(key, value))
+            self.selector.pop(key)
 
-        return what
+        return ' and '.join([x for x in expressions if x is not None])
 
-    # TODO: Get rid of building
-    def attribute_expression(self, building, selector):
-        expressions = []
-        for key, val in selector.items():
-            if isinstance(val, list) and key == 'class':
-                term = '({})'.format(' and '.join([self._build_class_match(v) for v in val]))
-            elif isinstance(val, list):
-                term = '({})'.format(' or '.join([self.equal_pair(building, key, v) for v in val]))
-            elif val is True:
-                term = self._attribute_presence(key)
-            elif val is False:
-                term = self._attribute_absence(key)
-            else:
-                term = self.equal_pair(building, key, val)
-            expressions.append(term)
-        return ' and '.join(expressions)
-
-    # TODO: Get rid of building
-    def equal_pair(self, building, key, value):
-        if key in ['class', 'class_name']:
-            if ' ' in value.strip():
-                nerodia.logger.deprecate("using the 'class_name' locator to locate multiple "
-                                         "classes with a str value (i.e. {!r})".format(value),
-                                         "list (e.g. {!r})".format(value.split()),
-                                         ids=['class_array'])
-            return self._build_class_match(value)
-        elif key == 'label' and self._should_use_label_element:
+    def _equal_pair(self, key, value):
+        if key == 'label_element':
             # we assume 'label' means a corresponding label element, not the attribute
-            text = 'normalize-space()={}'.format(XpathSupport.escape(value))
-            return '(@id=//label[{0}]/@for or parent::label[{0}])'.format(text)
+            text = "normalize-space()={}".format(XpathSupport.escape(value))
+            return "(@id=//label[{0}]/@for or parent::label[{0}])".format(text)
         else:
-            return '{}={}'.format(self.lhs_for(building, key), XpathSupport.escape(value))
+            return "{}={}".format(self._lhs_for(key), XpathSupport.escape(value))
 
-    # TODO: Get rid of building
     @staticmethod
-    def lhs_for(building, key):
-        if key == 'text':
-            return 'normalize-space()'
-        elif key == 'href':
-            # TODO: change this behaviour?
+    def _lhs_for(key):
+        if key == 'href':
             return 'normalize-space(@href)'
         elif key == 'type':
             # type attributes can be upper case - downcase them
             # https://github.com/watir/watir/issues/72
             return XpathSupport.lower('@type')
+        elif isinstance(key, str):
+            if key.startswith('data'):
+                return '@{}'.format(key.replace('_', '-'))
+            else:
+                return '@{}'.format(key)
         else:
-            return '@{}'.format(key.replace('_', '-'))
+            raise LocatorException('Unable to build XPath using {}:{}'.format(key, key.__class__))
 
-    # private
+    def _add_class_predicates(self):
+        from nerodia.locators.class_helpers import ClassHelpers
+        if 'class' not in self.selector:
+            return ''
 
-    def _process_adjacent(self, adjacent):
-        xpath = './'
+        class_name = self.selector['class']
+        if isinstance(class_name, str) and ' ' in class_name.strip():
+            dep = "Using the 'class' locator to locate multiple classes with a string value " \
+                  "(i.e. {!r})".format(class_name)
+            nerodia.logger.deprecate(dep, "list (e.g. {}".format(class_name.split()),
+                                     ids=['class_array'])
+        elif isinstance(class_name, bool):
+            self.selector.pop('class')
+            return '[{}]'.format(self._locator_expression('class', class_name))
+
+        self.selector['class'] = list(ClassHelpers._flatten([class_name]))
+
+        predicates = []
+        for key in copy(self.selector['class']):
+            result = self._class_predicate(key)
+            remainder = None
+            if isinstance(result, list):
+                predicate, remainder = result
+            else:
+                predicate = result
+            if predicate is not None:
+                predicates.append(predicate)
+            if not remainder:
+                self.selector['class'].remove(key)
+
+        remaining_values = self.selector.pop('class', [])
+        if len(remaining_values) > 0:
+            self.requires_matches['class'] = remaining_values
+
+        if len(predicates) == 0:
+            return ''
+        else:
+            return '[{}]'.format(' and '.join(predicates))
+
+    def _class_predicate(self, value):
+        if isinstance(value, Pattern):
+            return self._convert_predicate('class', value)
+
+        if re.search(r'^!', value):
+            value = value[1:]
+            negate_xpath = True
+        else:
+            negate_xpath = False
+
+        xpath = "contains(concat(' ', @class, ' '), " \
+                "{})".format(XpathSupport.escape(' {} '.format(value)))
+        return "not({})".format(xpath) if negate_xpath else xpath
+
+    def _locator_expression(self, key, val):
+        if val is True:
+            return self._attribute_presence(key)
+        elif val is False:
+            return self._attribute_absence(key)
+        else:
+            return self._equal_pair(key, val)
+
+    def _add_adjacent(self):
+        if 'adjacent' not in self.selector:
+            return ''
+
+        adjacent = self.selector.pop('adjacent')
         if adjacent == 'ancestor':
-            xpath += 'ancestor::*'
+            return 'ancestor::*'
         elif adjacent == 'preceding':
-            xpath += 'preceding-sibling::*'
+            return 'preceding-sibling::*'
         elif adjacent == 'following':
-            xpath += 'following-sibling::*'
+            return 'following-sibling::*'
         elif adjacent == 'child':
-            xpath += 'child::*'
-        return xpath
-
-    def _build_class_match(self, value):
-        if re.match('!', value):
-            escaped = XpathSupport.escape(" {} ".format(value[1:]))
-            return "not(contains(concat(' ', @class, ' '), {}))".format(escaped)
+            return 'child::*'
         else:
-            escaped = XpathSupport.escape(" {} ".format(value))
-            return "contains(concat(' ', @class, ' '), {})".format(escaped)
+            raise LocatorException('Unable to process adjacent locator with {}'.format(adjacent))
 
     def _attribute_presence(self, attribute):
-        return self.lhs_for(None, attribute)
+        return self._lhs_for(attribute)
 
     def _attribute_absence(self, attribute):
-        return "not({})".format(self.lhs_for(None, attribute))
+        return "not({})".format(self._lhs_for(attribute))
 
-    def _convert_regexp_to_contains(self):
-        return True
+    def _convert_attribute_predicates(self):
+        predicates = []
+        for key in self.selector.copy():
+            predicate, remainder = self._convert_predicate(key, self.selector[key])
+            if predicate is not None:
+                predicates.append(predicate)
+            if not remainder:
+                self.selector.pop(key)
 
-    def _regexp_selector_to_predicates(self, key, regex):
-        if regex.flags & re.IGNORECASE:
-            return []
+        return "[{}]".format(' and '.join(predicates)) if len(predicates) > 0 else ''
 
-        match = self.CONVERTABLE_REGEXP.search(regex.pattern)
-        if match is None:
-            return None
+    def _convert_predicate(self, key, regexp):
+        if key == 'text':
+            return [None, {key: regexp}]
 
-        lhs = self.lhs_for(None, key)
+        lhs = self._lhs_for(key)
 
-        return ['contains({}, {})'.format(lhs, XpathSupport.escape(group)) for
-                group in match.groups() if group]
+        if self.is_simple_regexp(regexp):
+            return ["contains({}, '{}')".format(lhs, regexp.pattern), None]
+        else:
+            return [lhs, {key: regexp}]

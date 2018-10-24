@@ -1,3 +1,4 @@
+import re
 from copy import copy
 from itertools import islice
 from time import sleep
@@ -7,7 +8,6 @@ from selenium.common.exceptions import NoSuchElementException, StaleElementRefer
 from selenium.webdriver.common.by import By
 
 import nerodia
-from .validator import Validator
 from ...exception import Error, LocatorException
 
 try:
@@ -28,10 +28,9 @@ class Locator(object):
 
     def __init__(self, query_scope, selector, selector_builder, element_validator):
         self.query_scope = query_scope  # either element or browser
-        self.selector = copy(selector)
+        self.selector = selector
         self.selector_builder = selector_builder
         self.element_validator = element_validator
-        self.values_to_match = None
         self.normalized_selector = None
         self.driver_scope = None
 
@@ -52,12 +51,14 @@ class Locator(object):
     # private
 
     def _using_selenium(self, filter='first'):
-        tag = self.selector.pop('tag_name', None)
+        selector = copy(self.selector)
+
+        tag = selector.pop('tag_name', None)
         if len(self.selector) > 1:
             return
 
-        how = list(self.selector.keys())[0] if self.selector else 'tag_name'
-        what = list(self.selector.values())[0] if self.selector else tag
+        how = list(selector)[0] if selector else 'tag_name'
+        what = list(selector.values())[0] if selector else tag
 
         if not self._wd_is_supported(how, what, tag):
             return
@@ -68,23 +69,35 @@ class Locator(object):
             return self._locate_element(how, what)
 
     def _using_nerodia(self, filter='first'):
-        self._create_normalized_selector(filter)
-        if self.normalized_selector is None:
-            return
+        if 'index' in self.selector and filter == 'all':
+            raise ValueError("can't locate all elements by 'index'")
 
-        built_selector = self.selector_builder.build(self.normalized_selector,
-                                                     self._values_to_match)
-        if not built_selector:
-            raise LocatorException('{} was unable to build selector from '
-                                   '{}'.format(self.selector_builder.__class__.__name__,
-                                               self.normalized_selector))
+        try:
+            self._generate_scope()
+        except LocatorException:
+            return None
 
-        how, what = built_selector
+        built = self.selector_builder.build(self.selector)
 
-        if filter == 'all' or len(self._values_to_match) > 0:
-            return self._locate_matching_elements(how, what, filter)
+        # Validate selector before unpacking
+        self._validate_built_selector(built)
+        selector, values = built
+
+        if filter == 'all' or len(values) > 0:
+            return self._locate_matching_elements(selector, values, filter)
         else:
-            return self._locate_element(how, what, self.driver_scope)
+            first_key, first_value = list(selector.items())[0]
+            return self._locate_element(first_key, first_value, self.driver_scope)
+
+    def _validate_built_selector(self, built):
+        if not isinstance(built, list) or built[0] is None:
+            msg = "{} was unable to build selector from {}".format(self.selector_builder.__class__,
+                                                                   self.selector)
+            raise LocatorException(msg)
+        elif len(built) < 2 or built[1] is None:
+            msg = "{}#build is not returning expected responses for the current version of " \
+                  "Nerodia".format(self.selector_builder.__class__)
+            raise LocatorException(msg)
 
     def _fetch_value(self, element, how):
         if how == 'text':
@@ -101,16 +114,16 @@ class Locator(object):
         else:
             return element.get_attribute(how.replace('_', '-')) or ''
 
-    def _matching_elements(self, elements, filter='first'):
+    def _matching_elements(self, elements, values, filter='first'):
         if filter == 'first':
-            idx = self._element_index(elements, self._values_to_match)
+            idx = self._element_index(elements, values)
             counter = 0
 
             # Generator + slice to avoid fetching values for elements that will be discarded
             matches = []
             for element in elements:
                 counter += 1
-                if self._matches_values(element, self._values_to_match) is not False:
+                if self._matches_values(element, values) is not False:
                     matches.append(element)
             try:
                 val = list(islice(matches, idx + 1))[idx]
@@ -122,7 +135,7 @@ class Locator(object):
         else:
             nerodia.logger.debug('Iterated through {} elements to locate all '
                                  '{}'.format(len(elements), self.selector))
-            return [el for el in elements if self._matches_values(el, self._values_to_match)]
+            return [el for el in elements if self._matches_values(el, values)]
 
     def _element_index(self, elements, values):
         idx = values.pop('index', 0)
@@ -131,85 +144,39 @@ class Locator(object):
             idx = abs(idx) - 1
         return idx
 
-    def _create_normalized_selector(self, filter):
-        if self.normalized_selector is not None:
-            return self.normalized_selector
+    def _generate_scope(self):
+        if self.driver_scope:
+            return self.driver_scope
+
         self.driver_scope = self.query_scope.wd
 
-        self.normalized_selector = self.selector_builder.normalized_selector
-
-        label_key = None
-        if 'label' in self.normalized_selector:
-            label_key = 'label'
-        elif 'visible_label' in self.normalized_selector:
-            label_key = 'visible_label'
-
-        if label_key:
-            self._process_label(label_key)
-            if self.normalized_selector is None:
-                return None
-
-        if 'index' in self.normalized_selector and filter == 'all':
-            raise ValueError("can't locate all elements by index")
-        return self.normalized_selector
-
-    @property
-    def _values_to_match(self):
-        if self.values_to_match is not None:
-            return self.values_to_match
-        self.values_to_match = {}
-
-        # Remove locators that can never be used in XPath builder
-        for how in ('visible', 'visible_text'):
-            if how in self.normalized_selector:
-                self.values_to_match[how] = self.normalized_selector.pop(how, None)
-
-        if self._tag_vaildation_required(self.normalized_selector):
-            self._values_to_match['tag_name'] = self.normalized_selector.get('tag_name')
-
-        # Regexp locators currently need to be validated even if they are included in the XPath
-        # builder
-        # TODO: Identify Regexp that can have an exact equivalent using XPath contains (ie would
-        # not require additional matching) vs approximations (ie would still require additional
-        # matching)
-        for how, what in self.normalized_selector.copy().items():
-            if isinstance(what, Pattern):
-                self.values_to_match[how] = self.normalized_selector.pop(how, None)
-
-        if self.normalized_selector.get('index') is not None and \
-                self.normalized_selector.get('adjacent') is None:
-            idx = self.normalized_selector.pop('index')
-
-            # Do not add {'index': 0} if the only value to match. This will allow using
-            # #find_element instead of #find_elements
-            implicit_idx_match = not self.values_to_match and idx == 0
-            if not implicit_idx_match:
-                self.values_to_match['index'] = idx
-
-        return self.values_to_match
+        if 'label' in self.selector:
+            self._process_label('label')
+        elif 'visible_label' in self.selector:
+            self._process_label('visible_label')
 
     def _process_label(self, label_key):
-        regexp = isinstance(self.normalized_selector.get(label_key), Pattern)
+        regexp = isinstance(self.selector.get(label_key), Pattern)
 
         if (regexp or label_key == 'visible_label') and \
                 self.selector_builder.should_use_label_element:
 
             label = self._label_from_text(label_key)
             if not label:
-                self.normalized_selector = None
-                return None
+                raise LocatorException("Unable to locate element with label "
+                                       "{}: {}".format(label_key, self.selector[label_key]))
 
             _id = label.get_attribute('for')
             if _id:
-                self.normalized_selector['id'] = _id
+                self.selector['id'] = _id
             else:
                 self.driver_scope = label
 
     def _label_from_text(self, label_key):
         # TODO: this won't work correctly if @wd is a sub-element
         # TODO: figure out how to do this with find_element
-        label_text = self.normalized_selector.pop(label_key, None)
-        locator_key = label_key.replace('label', 'text')
+        label_text = self.selector.pop(label_key, None)
+        locator_key = label_key.replace('label', 'text').replace('_element', '')
         elements = self._locate_elements('tag_name', 'label', self.driver_scope)
         return next((e for e in elements if self._matches_values(e, {locator_key: label_text})),
                     None)
@@ -217,9 +184,10 @@ class Locator(object):
     def _matches_values(self, element, values):
         def check_match(how, what):
             if how == 'tag_name' and isinstance(what, six.string_types):
-                return self.element_validator.validate(element, {'tag_name': what})
+                return self.element_validator.validate(element, what)
             else:
-                return Validator.match_str_or_regex(what, self._fetch_value(element, how))
+                val = self._fetch_value(element, how)
+                return what == val or re.search(what, val) is not None
 
         matches = all(check_match(how, what) for how, what in values.items())
 
@@ -234,7 +202,7 @@ class Locator(object):
             from nerodia.elements.element import Element
             text_content = Element(self.query_scope, {'element': element}).\
                 _execute_js('getTextContent', element).strip()
-            text_content_matches = Validator.match_str_or_regex(text_selector, text_content)
+            text_content_matches = re.search(r'{}'.format(text_selector), text_content) is not None
             if matches != text_content_matches:
                 key = 'text' if 'text' in self.selector else 'label'
                 nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
@@ -242,9 +210,6 @@ class Locator(object):
                                          'text'.format(key, text_selector.pattern),
                                          'visible_{}'.format(key),
                                          ids=['visible_text'])
-
-    def _tag_vaildation_required(self, selector):
-        return any(x in selector for x in ('css', 'xpath')) and 'tag_name' in selector
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.query_scope.wd
@@ -257,12 +222,13 @@ class Locator(object):
     def _wd_finder(self, how):
         return self.W3C_FINDERS.get(how, how)
 
-    def _locate_matching_elements(self, how, what, filter):
+    def _locate_matching_elements(self, selector, values, filter):
         retries = 0
         while True:
             try:
-                elements = self._locate_elements(how, what, self.driver_scope) or []
-                return self._matching_elements(elements, filter=filter)
+                first_key, first_value = list(selector.items())[0]
+                elements = self._locate_elements(first_key, first_value, self.driver_scope) or []
+                return self._matching_elements(elements, values, filter=filter)
             except StaleElementReferenceException:
                 retries += 1
                 sleep(0.5)

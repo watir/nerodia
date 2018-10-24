@@ -87,10 +87,10 @@ class TestAdjacentFollowingSibling(object):
 
     def test_accepts_text_as_regexp(self, browser):
         exp = 'third_sibling'
-        assert browser.div(id='first_sibling').following_sibling(text=re.compile('t')).id == exp
+        assert browser.div(id='first_sibling').following_sibling(text=re.compile('T')).id == exp
 
     def test_accepts_text_as_string(self, browser):
-        assert browser.div(id='first_sibling').following_sibling(text='text').id == 'third_sibling'
+        assert browser.div(id='first_sibling').following_sibling(text='Third').id == 'third_sibling'
 
     def test_does_not_error_when_no_next_sibling_of_an_index_exists(self, browser):
         assert not browser.body().following_sibling(index=1).exists

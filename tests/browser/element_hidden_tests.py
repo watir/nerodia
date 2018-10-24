@@ -45,6 +45,5 @@ class TestElementHidden(object):
 
     def test_raises_exception_when_value_is_not_boolean(self, browser):
         element = browser.body().element(visible='true')
-        msg = "expected True or False, got 'true'"
-        with pytest.raises(TypeError, message=msg):
+        with pytest.raises(TypeError, match="expected {}, got 'true':{}".format(bool, str)):
             element.exists

@@ -1,11 +1,11 @@
 class RowContainer(object):
     def row(self, *args, **kwargs):
         from .elements.row import Row
-        return Row(self, self._extract_selector(tag_name='tr', *args, **kwargs))
+        return Row(self, self._extract_selector(*args, **kwargs))
 
     def rows(self, *args, **kwargs):
         from .elements.row import RowCollection
-        return RowCollection(self, self._extract_selector(tag_name='tr', *args, **kwargs))
+        return RowCollection(self, self._extract_selector(*args, **kwargs))
 
     @property
     def strings(self):

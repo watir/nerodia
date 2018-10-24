@@ -214,7 +214,7 @@ class Waitable(object):
 
         def func(*args):
             truthy = all if until else any
-            return truthy(check(key) for key in obj.keys())
+            return truthy(check(key) for key in obj)
         return func
 
 

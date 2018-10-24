@@ -6,7 +6,7 @@ pytestmark = pytest.mark.page('nested_tables.html')
 
 
 class TestNestedTables(object):
-    def test_returns_the_correct_number_of_rows_under_a_table(self, browser):
+    def test_returns_the_correct_number_of_rows_under_a_table_element(self, browser):
         tables = browser.div(id='table-rows-test').tables(id=re.compile(r'^tbl'))
         assert len(tables) > 0
 

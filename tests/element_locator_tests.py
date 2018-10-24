@@ -30,7 +30,7 @@ def element(mocker, values, attrs=None):
 
 
 def locator(browser, selector, attrs):
-    selector_builder = SelectorBuilder(browser.wd, selector, attrs or HTMLElement.ATTRIBUTES)
+    selector_builder = SelectorBuilder(attrs or HTMLElement.ATTRIBUTES)
     return Locator(browser, selector, selector_builder, Validator())
 
 
@@ -69,9 +69,9 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_raises_exception_if_locating_a_non_link_element_by_link_locator(self, browser):
         selector = {'tag_name': 'div', 'link_text': 'foo'}
-        msg = 'Can not use link_text locator to find a foo element'
-        with pytest.raises(Exception, message=msg):
+        with pytest.raises(Exception) as e:
             locate_one(browser, selector)
+        assert e.value.args[0] == 'Can not use link_text locator to find a foo element'
 
     # with selectors not supported by selenium
 
@@ -121,7 +121,7 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_handles_selector_with_multiple_classes_in_list(self, browser, expect_one):
         locate_one(browser, {'class_name': ['a', 'b']})
-        expect_one.assert_called_once_with(By.XPATH, ".//*[(contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b '))]")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b ')]")
 
     def test_handles_selector_with_multiple_classes_in_string(self, browser, expect_one):
         locate_one(browser, {'class_name': 'a b'})
@@ -224,13 +224,12 @@ class TestElementLocatorFindsSingleElement(object):
 
     # with regexp selectors
 
-    def test_handles_selector_with_tag_name_and_a_single_regexp_attribute(self, browser, mocker, expect_all):
-        el1 = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
-        el2 = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
-
-        expect_all.return_value = [el1, el2]
+    def test_handles_selector_with_tag_name_and_a_single_regexp_attribute(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
+        expect_one.return_value = el
         selector = {'tag_name': 'div', 'class_name': re.compile(r'oob')}
-        assert locate_one(browser, selector) == el2
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][contains(@class, 'oob')]")
 
     def test_handles_tag_name_index_and_a_single_regexp_attribute(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})] * 2
@@ -250,19 +249,19 @@ class TestElementLocatorFindsSingleElement(object):
         selector = {'css': 'div[class="foo"]', 'index': 1}
         assert locate_one(browser, selector) == elements[1]
 
-    def test_handles_mix_of_string_and_regexp_attributes(self, browser, mocker, expect_all):
-        el1 = element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'bar'})
-        el2 = element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'baz'})
-        expect_all.return_value = [el1, el2]
+    def test_handles_mix_of_string_and_regexp_attributes(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'baz'})
+        expect_one.return_value = el
         selector = {'tag_name': 'div', 'dir': 'foo', 'title': re.compile(r'baz')}
-        assert locate_one(browser, selector) == el2
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][@dir='foo'][contains(@title, 'baz')]")
 
-    def test_handles_data_attributes_with_regexp(self, browser, mocker, expect_all):
-        el1 = element(mocker, values={'tag_name': 'div'}, attrs={'data-automation-id': 'foo'})
-        el2 = element(mocker, values={'tag_name': 'div'}, attrs={'data-automation-id': 'bar'})
-        expect_all.return_value = [el1, el2]
+    def test_handles_data_attributes_with_regexp(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'}, attrs={'data-automation-id': 'bar'})
+        expect_one.return_value = el
         selector = {'tag_name': 'div', 'data_automation_id': re.compile(r'bar')}
-        assert locate_one(browser, selector) == el2
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][contains(@data-automation-id, 'bar')]")
 
     def test_handles_label_regexp_selector(self, browser, mocker, expect_one, expect_all):
         fetch_mock = mocker.patch('nerodia.locators.element.locator.Locator._fetch_value')
@@ -294,7 +293,8 @@ class TestElementLocatorFindsSingleElement(object):
         elements2 = [element1b, element2b]
 
         expect_all.side_effect = [elements1, elements2]
-        assert locate_one(browser, {'class_name': re.compile(r'foo')}) == elements2[0]
+        assert locate_one(browser, {'class_name': re.compile(r'^foo')}) == elements2[0]
+        expect_all.assert_called_with(By.XPATH, './/*[@class]')
 
     def test_raises_error_if_too_many_attempts_to_relocate_a_stale_element_during_filtering(self, browser, mocker, expect_all):
         element1a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
@@ -312,15 +312,11 @@ class TestElementLocatorFindsSingleElement(object):
         elements3 = [element1c, element2c]
 
         expect_all.side_effect = [elements1, elements2, elements3]
-        msg = "Unable to locate element from {'class': 'foo'} due to changing page"
-        with pytest.raises(Exception, message=msg):
-            locate_one(browser, {'class_name': re.compile(r'foo')})
-
-    def test_finds_all_if_index_is_given(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'})] * 2
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
-        assert locate_one(browser, selector) == elements[1]
+        msg = "Unable to locate element from {'class': '^foo'} due to changing page"
+        with pytest.raises(Exception) as e:
+            locate_one(browser, {'class_name': re.compile(r'^foo')})
+        assert e.value.args[0] == msg
+        expect_all.assert_called_with(By.XPATH, './/*[@class]')
 
     def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_all):
         from nerodia.elements.input import Input
@@ -332,36 +328,47 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_raises_correct_exception_if_index_is_not_an_integer(self, browser, expect_all):
         message = "expected {}, got 'bar':{}".format(int, str)
-        with pytest.raises(TypeError, message=message):
+        with pytest.raises(TypeError) as e:
             selector = {'tag_name': 'div', 'index': 'bar'}
             locate_one(browser, selector)
+        assert e.value.args[0] == message
 
     def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, expect_all):
-        from nerodia.locators.element.selector_builder import SelectorBuilder
-        expected = SelectorBuilder.VALID_WHATS + [int]
-        message = "expected one of [{}, {}, {}, {}, {}], got 123:{}".format(*expected)
-        with pytest.raises(TypeError, message=message):
-            selector = {'tag_name': 123}
-            locate_one(browser, selector)
+        message = "expected string_or_regexp, got 123:{}".format(int)
+        with pytest.raises(TypeError) as e:
+            locate_one(browser, {'tag_name': 123})
+        assert e.value.args[0] == message
 
     def test_raises_an_error_if_unable_to_build_selector(self, browser):
-        from nerodia.locators.element.selector_builder import SelectorBuilder as ElementSelectorBuilder
-        from nerodia.locators.element.locator import Locator
-        from nerodia.locators.element.validator import Validator
-        from nerodia.elements.html_elements import HTMLElement
-
-        class SelectorBuilder(ElementSelectorBuilder):
+        class FooSelectorBuilder(SelectorBuilder):
             def build(self, *args):
-                return None
+                return [None]
 
         selector = {'name': 'foo'}
         element_validator = Validator()
-        selector_builder = SelectorBuilder(browser, selector, HTMLElement.ATTRIBUTES)
+        selector_builder = FooSelectorBuilder(HTMLElement.ATTRIBUTES)
         locator = Locator(browser, selector, selector_builder, element_validator)
 
         msg = "SelectorBuilder was unable to build selector from {'name': 'foo'}"
-        with pytest.raises(LocatorException, message=msg):
+        with pytest.raises(LocatorException) as e:
             locator.locate()
+        assert e.value.args[0] == msg
+
+    def test_raises_an_error_if_unable_to_build_values_to_match(self, browser):
+        class FooSelectorBuilder(SelectorBuilder):
+            def build(self, *args):
+                return [{}, None]
+
+        selector = {'name': 'foo'}
+        element_validator = Validator()
+        selector_builder = FooSelectorBuilder(HTMLElement.ATTRIBUTES)
+        locator = Locator(browser, selector, selector_builder, element_validator)
+
+        msg = "SelectorBuilder#build is not returning expected responses for the current version " \
+              "of Nerodia"
+        with pytest.raises(LocatorException) as e:
+            locator.locate()
+        assert e.value.args[0] == msg
 
 
 class TestElementLocatorFindsSeveralElements(object):
@@ -403,7 +410,7 @@ class TestElementLocatorFindsSeveralElements(object):
 
     def test_handles_selector_with_multiple_classes_in_list(self, browser, expect_all):
         locate_all(browser, {'class_name': ['a', 'b']})
-        expect_all.assert_called_once_with(By.XPATH, ".//*[(contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b '))]")
+        expect_all.assert_called_once_with(By.XPATH, ".//*[contains(concat(' ', @class, ' '), ' a ') and contains(concat(' ', @class, ' '), ' b ')]")
 
     def test_handles_selector_with_multiple_classes_in_string(self, browser, expect_all):
         locate_all(browser, {'class_name': 'a b'})
@@ -412,24 +419,24 @@ class TestElementLocatorFindsSeveralElements(object):
     # with regexp selectors
 
     def test_handles_selector_with_tag_name_and_a_single_regexp_attribute(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'}),
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'}),
                     element(mocker, values={'tag_name': 'div'}, attrs={'class': 'doob'}),
                     element(mocker, values={'tag_name': 'div'}, attrs={'class': 'noob'})]
 
         expect_all.return_value = elements
         selector = {'tag_name': 'div', 'class_name': re.compile(r'oob')}
         assert locate_all(browser, selector) == elements[-3:]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][contains(@class, 'oob')]")
 
     def test_handles_mix_of_string_and_regexp_attributes(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'bar'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'baz'}),
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'baz'}),
                     element(mocker, values={'tag_name': 'div'}, attrs={'dir': 'foo', 'title': 'bazt'})]
         expect_all.return_value = elements
         selector = {'tag_name': 'div', 'dir': 'foo', 'title': re.compile(r'baz')}
         assert locate_all(browser, selector) == elements[-2:]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@dir='foo'][contains(@title, 'baz')]")
 
-    # with regexp selectors and xpath
+    # with index
 
     def test_converts_a_leading_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
         elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
@@ -439,44 +446,13 @@ class TestElementLocatorFindsSeveralElements(object):
         selector = {'tag_name': 'div', 'class_name': re.compile(r'fo.b$')}
         assert locate_one(browser, selector) == elements[1]
 
-    def test_converts_a_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'^fo.b')}
-        assert locate_one(browser, selector) == elements[1]
-
-    def test_converts_a_leading_and_a_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'fo.b')}
-        assert locate_one(browser, selector) == elements[1]
-
-    def test_does_not_try_to_convert_case_insensitive_expressions(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'FOOB', re.IGNORECASE)}
-        assert locate_one(browser, selector) == elements[1]
-
-    def test_does_not_try_to_convert_expressions_containing_pipe(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'x|b')}
-        assert locate_one(browser, selector) == elements[1]
-
-    def test_does_not_convert_metacharacters_to_literal_characters(self, browser, mocker, expect_all):
-        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'class': 'abcd'}),
-                    element(mocker, values={'tag_name': 'div'}, attrs={'class': 'abc23'})]
-        expect_all.return_value = elements
-        selector = {'tag_name': 'div', 'class_name': re.compile(r'abc\d\d')}
-        assert locate_one(browser, selector) == elements[1]
-
     # errors
 
-    def test_raises_correct_exception_if_index_is_given(self, browser, expect_all):
-        with pytest.raises(ValueError, message="can't locate all elements by index"):
-            selector = {'tag_name': 'div', 'index': 1}
-            locate_all(browser, selector)
+    def test_with_index(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}),
+                    element(mocker, values={'tag_name': 'div'})]
+
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
+        assert locate_one(browser, selector) == elements[1]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@dir='foo']")

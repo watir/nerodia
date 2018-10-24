@@ -1,7 +1,13 @@
+from nerodia.exception import LocatorException
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
     XPath as ElementXPath
 from ...elements.button import Button
 from ...xpath_support import XpathSupport
+
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
 
 
 class SelectorBuilder(ElementSelectorBuilder):
@@ -9,41 +15,60 @@ class SelectorBuilder(ElementSelectorBuilder):
 
 
 class XPath(ElementXPath):
+    def build(self, selector):
+        if 'adjacent' in selector:
+            return super(XPath, self).build(selector)
 
-    def add_tag_name(self, selector):
-        selector.pop('tag_name', None)
-        return "[local-name()='button']"
+        selector['tag_name'] = 'button'
 
-    def add_attributes(self, selector):
-        button_attr_exp = self.attribute_expression('button', selector)
-        xpath = '' if not button_attr_exp else '[{}]'.format(button_attr_exp)
-        if selector.get('type') is False:
-            return xpath
+        typ = selector.pop('type', None)
+        if typ is False:
+            return super(XPath, self).build(selector)
 
-        if selector.get('type') in [None, True]:
-            selector['type'] = Button.VALID_TYPES
-        xpath += " | .//*[local-name()='input']"
-        input_attr_exp = self.attribute_expression('input', selector)
-        if input_attr_exp:
-            xpath += '[{}]'.format(input_attr_exp)
-        return xpath
+        # both value and text selectors will locate elements by value attribute or text content
+        if 'value' in selector:
+            selector['text'] = selector.pop('value')
 
-    @staticmethod
-    def lhs_for(building, key):
-        if building == 'input' and key == 'text':
-            return '@value'
+        wd_locator = super(XPath, self).build(selector)
+        start_string = self.default_start
+        button_string = "local-name()='button'"
+        common_string = wd_locator['xpath'].replace(start_string, '')\
+            .replace('[{}]'.format(button_string), '')
+
+        input_string = "(local-name()='input' and {})".format(self._input_types(typ))
+
+        if typ is None:
+            tag_string = '[{} or {}]'.format(button_string, input_string)
         else:
-            return super(XPath, XPath).lhs_for(building, key)
+            tag_string = '[{}]'.format(input_string)
 
-    def equal_pair(self, building, key, value):
-        if building == 'button' and key == 'value':
-            # :value should look for both node text and @value attribute
-            text = XpathSupport.escape(value)
-            return '(text()={0} or @value={0})'.format(text)
+        xpath = ''.join((start_string, tag_string, common_string))
+
+        return {'xpath': xpath}
+
+    def add_text(self):
+        if 'text' not in self.selector:
+            return ''
+
+        text = self.selector.pop('text')
+        if not isinstance(text, Pattern):
+            return "[normalize-space()='{0}' or @value='{0}']".format(text)
+        elif self.is_simple_regexp(text):
+            return "[contains(text(), '{0}') or contains(@value, '{0}')]".format(text.pattern)
         else:
-            return super(XPath, self).equal_pair(building, key, value)
+            self.selector['text'] = text
+            return ''
 
-    @property
-    def _convert_regexp_to_contains(self):
-        # regexp conversion won't work with the complex xpath selector
-        return False
+    # private
+
+    def _input_types(self, typ):
+        if typ in [None, True]:
+            types = Button.VALID_TYPES
+        elif typ not in Button.VALID_TYPES:
+            msg = 'Button Elements can not be located by input type: {}'.format(typ)
+            raise LocatorException(msg)
+        else:
+            types = [typ]
+
+        return ' or '.join(['{}={}'.format(XpathSupport.lower('@type'),
+                                           XpathSupport.escape(b)) for b in types])

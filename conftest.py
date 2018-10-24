@@ -16,7 +16,7 @@ browsers = (
     'safari'
 )
 
-nerodia.default_timeout = 3
+nerodia.default_timeout = 8
 
 
 browser_instance = None

@@ -12,11 +12,13 @@ class TestSpanExist(object):
         assert browser.span(id='lead').exists is True
         assert browser.span(id=compile(r'lead')).exists is True
         assert browser.span(text='Dubito, ergo cogito, ergo sum.').exists is True
-        assert browser.span(text=compile(r'Dubito, ergo cogito, ergo sum')).exists is True
         assert browser.span(class_name='lead').exists is True
         assert browser.span(class_name=compile(r'lead')).exists is True
         assert browser.span(index=0).exists is True
         assert browser.span(xpath="//span[@id='lead']").exists is True
+
+    def test_visible_text_is_found_by_regular_expression_with_text_locator(self, browser):
+        assert browser.span(text=compile(r'Dubito, ergo cogito, ergo sum')).exists is True
 
     def test_returns_the_first_span_if_given_no_args(self, browser):
         assert browser.span().exists
