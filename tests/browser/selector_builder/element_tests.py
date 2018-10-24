@@ -16,6 +16,7 @@ pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 
+
 @pytest.fixture
 def selector_builder():
     return SelectorBuilder(ATTRIBUTES)
@@ -575,4 +576,3 @@ class TestBuild(object):
     def test_raises_exception_when_text_is_not_a_string_or_regexp(self, browser, selector_builder):
         with pytest.raises(TypeError, match="expected string_or_regexp, got 7:{}".format(int)):
             selector_builder.build({'visible_text': 7})
-

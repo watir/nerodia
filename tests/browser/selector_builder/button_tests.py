@@ -16,6 +16,7 @@ DEFAULT_TYPES = ' or '.join([
     "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='image'"
 ])
 
+
 def verify_build(browser, selector, wd, data=None, remaining=None, scope=None):
     builder = SelectorBuilder(ATTRIBUTES)
     query_scope = scope or browser
@@ -33,7 +34,7 @@ class TestBuild(object):
         items = {
             'selector': {},
             'wd': {'xpath': ".//*[local-name()='button' or "
-                                   "(local-name()='input' and {})]".format(DEFAULT_TYPES)},
+                            "(local-name()='input' and {})]".format(DEFAULT_TYPES)},
             'data': 'user submit'
         }
         verify_build(browser, **items)

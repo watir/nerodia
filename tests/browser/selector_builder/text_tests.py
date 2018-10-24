@@ -137,6 +137,3 @@ class TestBuild(object):
             'data': 'form'
         }
         verify_build(browser, **items)
-
-
-
