@@ -1,3 +1,5 @@
+from re import compile
+
 import pytest
 
 pytestmark = pytest.mark.page('non_control_elements.html')
@@ -24,3 +26,14 @@ class TestLinks(object):
             count += 1
 
         assert count > 0
+
+
+class TestLinksVisibleText(object):
+    def test_finds_links_by_visible_text(self, browser):
+        container = browser.div(id='visible_text')
+        assert len(container.links(visible_text='all visible')) == 1
+        assert len(container.links(visible_text=compile(r'all visible'))) == 1
+        assert len(container.links(visible_text='some visible')) == 1
+        assert len(container.links(visible_text=compile(r'some visible'))) == 1
+        assert len(container.links(visible_text='none visible')) == 0
+        assert len(container.links(visible_text=compile(r'none visible'))) == 0

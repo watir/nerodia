@@ -53,7 +53,7 @@ class XPath(ElementXPath):
         text = self.selector.pop('text')
         if not isinstance(text, Pattern):
             return "[normalize-space()='{0}' or @value='{0}']".format(text)
-        elif self.is_simple_regexp(text):
+        elif XpathSupport.is_simple_regexp(text):
             return "[contains(text(), '{0}') or contains(@value, '{0}')]".format(text.pattern)
         else:
             self.selector['text'] = text

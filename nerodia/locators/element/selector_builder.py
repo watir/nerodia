@@ -163,7 +163,6 @@ class SelectorBuilder(object):
 
 class XPath(object):
     CAN_NOT_BUILD = ['visible', 'visible_text']
-    LITERAL_REGEXP = re.compile(r'\A([^\[\]\\^$.|?*+()]*)\Z')
 
     def __init__(self):
         self.selector = None
@@ -215,18 +214,12 @@ class XPath(object):
     def default_start(self):
         return './' if 'adjacent' in self.selector else './/*'
 
-    def is_simple_regexp(self, regex):
-        if not isinstance(regex, Pattern) or regex.flags & re.IGNORECASE or not regex.pattern:
-            return False
-
-        return re.search(self.LITERAL_REGEXP, regex.pattern) is not None
-
     # private
 
     def _add_tag_name(self):
         tag_name = self.selector.pop('tag_name', None)
 
-        if self.is_simple_regexp(tag_name):
+        if XpathSupport.is_simple_regexp(tag_name):
             return "[contains(local-name(), '{}')]".format(tag_name.pattern)
         elif tag_name is None:
             return ''
@@ -269,7 +262,7 @@ class XPath(object):
             # https://github.com/watir/watir/issues/72
             return XpathSupport.lower('@type')
         elif isinstance(key, str):
-            if key.startswith('data'):
+            if key.startswith('data') or key.startswith('aria'):
                 return '@{}'.format(key.replace('_', '-'))
             else:
                 return '@{}'.format(key)
@@ -376,7 +369,7 @@ class XPath(object):
 
         lhs = self._lhs_for(key)
 
-        if self.is_simple_regexp(regexp):
+        if XpathSupport.is_simple_regexp(regexp):
             return ["contains({}, '{}')".format(lhs, regexp.pattern), None]
         else:
             return [lhs, {key: regexp}]

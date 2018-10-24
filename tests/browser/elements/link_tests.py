@@ -114,3 +114,21 @@ class TestLinkManipulation(object):
         browser.link(href=compile(r'definition_lists.html')).click()
         Wait.until_not(lambda: browser.title == 'Images' or browser.title == '')
         assert browser.title == 'definition_lists'
+
+
+class TestLinkVisibleText(object):
+    def test_finds_links_by_visible_text(self, browser):
+        assert browser.link(visible_text='all visible').exists is True
+        assert browser.link(visible_text=compile(r'all visible')).exists is True
+        assert browser.link(visible_text='some visible').exists is True
+        assert browser.link(visible_text=compile(r'some visible')).exists is True
+        assert browser.link(visible_text='none visible').exists is False
+        assert browser.link(visible_text=compile(r'none visible')).exists is False
+
+        assert browser.link(visible_text='Link 2', class_name='external').exists is True
+        assert browser.link(visible_text=compile(r'Link 2'), class_name='external').exists is True
+
+    def test_raises_exception_unless_value_is_a_string_or_regexp(self, browser):
+        match = 'expected string_or_regexp, got 7:{}'.format(int)
+        with pytest.raises(TypeError, match=match):
+            browser.link(visible_text=7).exists

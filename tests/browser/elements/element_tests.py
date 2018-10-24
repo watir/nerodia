@@ -73,20 +73,19 @@ class TestElementAriaAttributes(object):
 @pytest.mark.page('non_control_elements.html')
 class TestElementVisibleText(object):
     def test_finds_elements_by_visible_text(self, browser):
-        assert browser.link(visible_text='all visible').exists is True
-        assert browser.link(visible_text=compile(r'all visible')).exists is True
-        assert browser.link(visible_text='some visible').exists is True
-        assert browser.link(visible_text=compile(r'some visible')).exists is True
-        assert browser.link(visible_text='none visible').exists is False
-        assert browser.link(visible_text=compile(r'none visible')).exists is False
-
-        assert browser.link(visible_text='Link 2', class_name='external').exists is True
-        assert browser.link(visible_text=compile(r'Link 2'), class_name='external').exists is True
-
         assert browser.element(visible_text='all visible').exists is True
         assert browser.element(visible_text=compile(r'all visible')).exists is True
         assert browser.element(visible_text='some visible').exists is True
         assert browser.element(visible_text=compile(r'some visible')).exists is True
+        assert browser.element(visible_text='none visible').exists is False
+        assert browser.element(visible_text=compile(r'none visible')).exists is False
+        assert browser.element(visible_text='Link 2', class_name='external').exists is True
+        assert browser.element(visible_text=compile(r'Link 2'), class_name='external').exists is True
+
+    def test_raises_exception_unless_value_is_a_string_or_regexp(self, browser):
+        with pytest.raises(TypeError, match=r'expected string_or_regexp, got 7:{}'.format(int)):
+            browser.link(visible_text=7).exists
+            browser.element(visible_text=7).exists
 
 
 class TestElementWithoutTagName(object):
