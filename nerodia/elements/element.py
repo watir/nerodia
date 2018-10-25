@@ -464,6 +464,25 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         except (UnknownObjectException, UnknownFrameException):
             return False
 
+    @property
+    def obscured(self):
+        """
+        Returns if the element's center point is covered by a non-descendant element.
+
+        :rtype: bool
+
+        :Example:
+
+        browser.button(value='Delete').obscured           #=> False
+        """
+        def func():
+            if not self.present:
+                return True
+
+            self.scroll_into_view()
+            return self._execute_js('elementObscured', self)
+        return self._element_call(func)
+
     def style(self, prop=None):
         """
         Returns given style property of this element

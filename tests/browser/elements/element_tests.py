@@ -3,6 +3,7 @@ from re import compile
 
 import pytest
 import six
+from selenium.common.exceptions import WebDriverException, ElementClickInterceptedException
 from selenium.webdriver.common.keys import Keys
 
 from nerodia.exception import UnknownObjectException, LocatorException
@@ -572,3 +573,53 @@ class TestElementClasses(object):
     def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
         with pytest.raises(UnknownObjectException):
             browser.div(id='no_such_id').classes
+
+
+@pytest.mark.page('obscured.html')
+class TestElementObscured(object):
+    def test_returns_false_if_element_center_is_not_covered(self, browser):
+        btn = browser.button(id='not_obscured')
+        assert not btn.obscured
+        btn.click()
+
+    def test_returns_false_if_element_center_is_covered_by_its_decendant(self, browser):
+        btn = browser.button(id='has_descendant')
+        assert not btn.obscured
+        btn.click()
+
+    def test_returns_true_if_element_center_is_covered_by_non_descendant(self, browser):
+        btn = browser.button(id='obscured')
+        assert btn.obscured
+        exception = WebDriverException if browser.name == 'chrome' else \
+            ElementClickInterceptedException
+        with pytest.raises(exception):
+            btn.click()
+
+    def _test_returns_false_if_element_center_is_surrounded_by_non_descendants(self, browser):
+        btn = browser.button(id='surrounded')
+        assert not btn.obscured
+        btn.click()
+
+    def test_scrolls_element_into_view_before_checking_if_obscured(self, browser):
+        btn = browser.button(id='requires_scrolling')
+        assert not btn.obscured
+        btn.click()
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_returns_true_if_element_cannot_be_scrolled_into_view(self, browser):
+        btn = browser.button(id='off_screen')
+        assert btn.obscured
+        with pytest.raises(UnknownObjectException):
+            btn.click()
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_returns_true_if_the_element_is_hidden(self, browser):
+        btn = browser.button(id='hidden')
+        assert btn.obscured
+        with pytest.raises(UnknownObjectException):
+            btn.click()
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_raises_correct_exception_if_the_element_does_not_exist(self, browser):
+        with pytest.raises(UnknownObjectException):
+            browser.button(id='does_not_exist').obscured
