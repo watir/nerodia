@@ -130,7 +130,6 @@ class Browser(Container, HasWindow, Waitable):
         Returns the URL of the current page
         :rtype: str
         """
-        self.assert_exists()
         return self.driver.current_url
 
     @property
