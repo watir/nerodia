@@ -68,10 +68,6 @@ class XPath(ElementXPath):
             return '[{} or {}]'.format(self._predicate_expression('text', value),
                                        self._predicate_expression('value', value))
 
-    @property
-    def _use_index(self):
-        return False
-
     def _predicate_conversion(self, key, regexp):
         if key == 'text':
             res = super(XPath, self)._predicate_conversion('contains_text', regexp)

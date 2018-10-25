@@ -33,10 +33,6 @@ class XPath(ElementXPath):
             self.selector['tag_name'] = 'input'
         return super(XPath, self)._tag_string
 
-    @property
-    def _use_index(self):
-        return False
-
     def _type_string(self, typ):
         if typ is True:
             return '[{}]'.format(self._negative_type_text)

@@ -310,9 +310,9 @@ class XPath(object):
     def _add_index(self, xpath, index=None):
         if self.adjacent is not None:
             return '{}[{}]'.format(xpath, index + 1)
-        elif index and index >= 0 and len(self.requires_matches) == 0 and self._use_index:
+        elif index and index >= 0 and len(self.requires_matches) == 0:
             return '({})[{}]'.format(xpath, index + 1)
-        elif index and index < 0 and len(self.requires_matches) == 0 and self._use_index:
+        elif index and index < 0 and len(self.requires_matches) == 0:
             last_value = 'last()'
             if index < -1:
                 last_value += str(index + 1)
@@ -320,10 +320,6 @@ class XPath(object):
         else:
             self.requires_matches['index'] = index
             return xpath
-
-    @property
-    def _use_index(self):
-        return True
 
     def _deprecate_class_list(self, class_name):
         dep = "Using the 'class' locator to locate multiple classes with a String value " \

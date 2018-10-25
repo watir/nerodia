@@ -65,6 +65,56 @@ class TestBuild(object):
         }
         verify_build(**items)
 
+    # with index
+
+    def test_index_positive(self, browser):
+        items = {
+            'scope': browser.element(id='outer').locate(),
+            'selector': {'index': 1},
+            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+                            "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
+                            "./*[local-name()='tfoot']/*[local-name()='tr'])[2]"},
+            'data': 'middle row'
+        }
+        verify_build(**items)
+
+    def test_index_negative(self, browser):
+        items = {
+            'scope': browser.element(id='outer').locate(),
+            'selector': {'index': -3},
+            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+                            "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
+                            "./*[local-name()='tfoot']/*[local-name()='tr'])[last()-2]"},
+            'data': 'first row'
+        }
+        verify_build(**items)
+
+    def test_index_last(self, browser):
+        items = {
+            'scope': browser.element(id='outer').locate(),
+            'selector': {'index': -1},
+            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+                            "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
+                            "./*[local-name()='tfoot']/*[local-name()='tr'])[last()]"},
+            'data': 'last row'
+        }
+        verify_build(**items)
+
+    def test_index_does_not_return_index_if_zero(self, browser):
+        items = {
+            'scope': browser.element(id='outer').locate(),
+            'selector': {'index': 0},
+            'wd': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+                            "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
+                            "./*[local-name()='tfoot']/*[local-name()='tr']"},
+            'data': 'first row'
+        }
+        verify_build(**items)
+
+    def test_raises_exception_when_index_is_not_an_integer(self, browser):
+        with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(int, str)):
+            SelectorBuilder(ATTRIBUTES, 'table').build({'index': 'foo'})
+
     # with multiple locators
 
     def test_attribute_and_class(self, browser):

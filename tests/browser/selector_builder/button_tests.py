@@ -207,6 +207,48 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
+    # with index
+
+    def test_index_positive(self, browser):
+        items = {
+            'selector': {'index': 3},
+            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+                            "({}))])[4]".format(DEFAULT_TYPES)},
+            'data': 'preview'
+        }
+        verify_build(browser, **items)
+
+    def test_index_negative(self, browser):
+        items = {
+            'selector': {'index': -4},
+            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+                            "({}))])[last()-3]".format(DEFAULT_TYPES)},
+            'data': 'submittable button'
+        }
+        verify_build(browser, **items)
+
+    def test_index_last(self, browser):
+        items = {
+            'selector': {'index': -1},
+            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+                            "({}))])[last()]".format(DEFAULT_TYPES)},
+            'data': 'last button'
+        }
+        verify_build(browser, **items)
+
+    def test_index_does_not_return_index_if_zero(self, browser):
+        items = {
+            'selector': {'index': 0},
+            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and "
+                            "({}))]".format(DEFAULT_TYPES)},
+            'data': 'user submit'
+        }
+        verify_build(browser, **items)
+
+    def test_raises_exception_when_index_is_not_an_integer(self, browser):
+        with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(int, str)):
+            SelectorBuilder(ATTRIBUTES).build({'index': 'foo'})
+
     # with multiple locators
 
     def test_locates_using_class_and_attributes(self, browser):

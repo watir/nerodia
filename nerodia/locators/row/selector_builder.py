@@ -22,18 +22,23 @@ class SelectorBuilder(ElementSelectorBuilder):
 class XPath(ElementXPath):
 
     def build(self, selector, scope_tag_name):
-        built = super(XPath, self).build(selector)
+        if 'adjacent' in selector:
+            return super(XPath, self).build(selector)
 
-        if self.adjacent is not None:
-            return built
+        index = selector.pop('index', None)
 
-        common_string = built.get('xpath')
+        common_string = super(XPath, self).build(selector).get('xpath')
 
         expressions = self._generate_expressions(scope_tag_name)
         if len(common_string) > 0:
             expressions = ["{}{}".format(e, common_string) for e in expressions]
 
         xpath = ' | '.join(expressions)
+
+        if index is not None:
+            xpath = self._add_index(xpath, index)
+
+        self.selector.update(self.requires_matches)
 
         return {'xpath': xpath}
 
@@ -53,10 +58,6 @@ class XPath(ElementXPath):
         if 'text' in self.selector:
             self.requires_matches['text'] = self.selector.pop('text')
         return ''
-
-    @property
-    def _use_index(self):
-        return False
 
     def _generate_expressions(self, scope_tag_name):
         if scope_tag_name in ['tbody', 'tfoot', 'thead']:
