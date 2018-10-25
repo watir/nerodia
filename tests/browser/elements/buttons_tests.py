@@ -9,7 +9,7 @@ def test_returns_the_matching_elements(browser):
 
 
 def test_returns_the_number_of_buttons(browser):
-    assert len(browser.buttons()) == 9
+    assert len(browser.buttons()) == 10
 
 
 def test_returns_the_button_at_the_given_index(browser):

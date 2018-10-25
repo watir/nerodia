@@ -21,10 +21,12 @@ class SelectorBuilder(ElementSelectorBuilder):
 
 
 class XPath(ElementXPath):
+    # private
 
-    def _convert_predicate(self, key, regexp):
+    # value always requires a wire call since we want the property not the attribute
+    def _predicate_conversion(self, key, regexp):
         if key != 'value':
-            return super(XPath, self)._convert_predicate(key, regexp)
+            return super(XPath, self)._predicate_conversion(key, regexp)
         else:
             self.requires_matches['value'] = regexp
             return None

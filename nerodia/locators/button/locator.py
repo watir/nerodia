@@ -12,7 +12,7 @@ class Locator(ElementLocator):
         return None  # force using Nerodia
 
     def _matches_values(self, element, values):
-        if 'value' in values:
+        if 'value' not in values:
             return super(Locator, self)._matches_values(element, values)
 
         cpy = copy(values)

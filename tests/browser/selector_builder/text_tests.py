@@ -75,11 +75,10 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
-    def test_true_locates_text_field_without_type_specified(self, browser):
+    def test_false_locates_text_field_without_type_specified(self, browser):
         items = {
             'selector': {'type': False},
-            'wd': {'xpath': ".//*[local-name()='input'][not(translate(@type,'ABCDEFGHIJKLMNOPQRS"
-                            "TUVWXYZ','abcdefghijklmnopqrstuvwxyz'))]"},
+            'wd': {'xpath': ".//*[local-name()='input'][not(@type)]"},
             'data': 'input name'
         }
         verify_build(browser, **items)
@@ -94,18 +93,18 @@ class TestBuild(object):
     def test_string_for_value(self, browser):
         items = {
             'selector': {'text': 'Developer'},
-            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})]"
-                            "[@value='Developer']".format(NEGATIVE_TYPES)},
-            'data': 'dev'
+            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
+                            "({})]".format(NEGATIVE_TYPES)},
+            'remaining': {'text': 'Developer'}
         }
         verify_build(browser, **items)
 
     def test_simple_regexp_for_value(self, browser):
         items = {
             'selector': {'text': compile(r'Dev')},
-            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})]"
-                            "[contains(@value, 'Dev')]".format(NEGATIVE_TYPES)},
-            'data': 'dev'
+            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
+                            "({})]".format(NEGATIVE_TYPES)},
+            'remaining': {'text': compile(r'Dev')}
         }
         verify_build(browser, **items)
 
@@ -114,7 +113,7 @@ class TestBuild(object):
             'selector': {'text': compile(r'^foo$')},
             'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
                             "({})]".format(NEGATIVE_TYPES)},
-            'remaining': {'value': compile(r'^foo$')}
+            'remaining': {'text': compile(r'^foo$')}
         }
         verify_build(browser, **items)
 
@@ -123,9 +122,9 @@ class TestBuild(object):
     def test_locates_using_tag_name_class_attributes_text(self, browser):
         items = {
             'selector': {'text': 'Developer', 'class_name': compile(r'c'), 'id': True},
-            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})][contains(@class, 'c')]"
-                            "[@id][@value='Developer']".format(NEGATIVE_TYPES)},
-            'data': 'dev'
+            'wd': {'xpath': ".//*[local-name()='input'][contains(@class, 'c')][not(@type) or "
+                            "({})][@id]".format(NEGATIVE_TYPES)},
+            'remaining': {'text': 'Developer'}
         }
         verify_build(browser, **items)
 

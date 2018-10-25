@@ -36,8 +36,8 @@ class TestBuild(object):
     def test_attribute_and_text(self, browser):
         items = {
             'selector': {'headers': compile(r'before_tax'), 'text': '5 934'},
-            'wd': {'xpath': "./*[local-name()='th' or local-name()='td']"
-                            "[contains(@headers, 'before_tax')][normalize-space()='5 934']"},
+            'wd': {'xpath': "./*[local-name()='th' or local-name()='td'][normalize-space()="
+                            "'5 934'][contains(@headers, 'before_tax')]"},
             'data': 'before tax'
         }
         verify_build(browser, **items)

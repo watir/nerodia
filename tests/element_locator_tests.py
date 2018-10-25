@@ -1,6 +1,7 @@
 import re
 
 import pytest
+import six
 from selenium.common.exceptions import StaleElementReferenceException
 from selenium.webdriver.common.by import By
 
@@ -8,6 +9,11 @@ from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
 from nerodia.locators.element import Validator, SelectorBuilder
 from nerodia.locators.element.locator import Locator
+
+try:
+    from re import Pattern
+except ImportError:
+    from re import _pattern_type as Pattern
 
 
 def to_dict(selector):
@@ -255,7 +261,7 @@ class TestElementLocatorFindsSingleElement(object):
         expect_one.return_value = el
         selector = {'tag_name': 'div', 'dir': 'foo', 'title': re.compile(r'baz')}
         assert locate_one(browser, selector) == el
-        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][@dir='foo'][contains(@title, 'baz')]")
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][@dir='foo' and contains(@title, 'baz')]")
 
     def test_handles_data_attributes_with_regexp(self, browser, mocker, expect_one):
         el = element(mocker, values={'tag_name': 'div'}, attrs={'data-automation-id': 'bar'})
@@ -335,9 +341,10 @@ class TestElementLocatorFindsSingleElement(object):
         assert e.value.args[0] == message
 
     def test_raises_correct_exception_if_selector_value_is_not_a_list_string_unicode_regexp_or_boolean(self, browser, expect_all):
-        message = "expected string_or_regexp, got 123:{}".format(int)
+        message = 'expected one of [{}, {}, {}, {}], got ' \
+                  '123:{}'.format(Pattern, bool, six.text_type, six.binary_type, int)
         with pytest.raises(TypeError) as e:
-            locate_one(browser, {'tag_name': 123})
+            locate_one(browser, {'foo': 123})
         assert e.value.args[0] == message
 
     def test_raises_an_error_if_unable_to_build_selector(self, browser):
@@ -435,7 +442,7 @@ class TestElementLocatorFindsSeveralElements(object):
         expect_all.return_value = elements
         selector = {'tag_name': 'div', 'dir': 'foo', 'title': re.compile(r'baz')}
         assert locate_all(browser, selector) == elements[-2:]
-        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@dir='foo'][contains(@title, 'baz')]")
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@dir='foo' and contains(@title, 'baz')]")
 
     # with index
 

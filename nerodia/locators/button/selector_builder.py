@@ -2,7 +2,6 @@ from nerodia.exception import LocatorException
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder,\
     XPath as ElementXPath
 from ...elements.button import Button
-from ...xpath_support import XpathSupport
 
 try:
     from re import Pattern
@@ -15,64 +14,82 @@ class SelectorBuilder(ElementSelectorBuilder):
 
 
 class XPath(ElementXPath):
-    def build(self, selector):
-        if 'adjacent' in selector:
-            return super(XPath, self).build(selector)
-
-        selector['tag_name'] = 'button'
-
-        typ = selector.pop('type', None)
-        if typ is False:
-            return super(XPath, self).build(selector)
-
-        # both value and text selectors will locate elements by value attribute or text content
-        if 'value' in selector:
-            selector['text'] = selector.pop('value')
-
-        wd_locator = super(XPath, self).build(selector)
-        start_string = self.default_start
-        button_string = "local-name()='button'"
-        common_string = wd_locator['xpath'].replace(start_string, '')\
-            .replace('[{}]'.format(button_string), '')
-
-        input_string = "(local-name()='input' and {})".format(self._input_types(typ))
-
-        if typ is None:
-            tag_string = '[{} or {}]'.format(button_string, input_string)
-        else:
-            tag_string = '[{}]'.format(input_string)
-
-        xpath = ''.join((start_string, tag_string, common_string))
-
-        return {'xpath': xpath}
-
-    @property
-    def use_index(self):
-        return False
-
-    def add_text(self):
-        if 'text' not in self.selector:
-            return ''
-
-        text = self.selector.pop('text')
-        if not isinstance(text, Pattern):
-            return "[normalize-space()='{0}' or @value='{0}']".format(text)
-        elif XpathSupport.is_simple_regexp(text):
-            return "[contains(text(), '{0}') or contains(@value, '{0}')]".format(text.pattern)
-        else:
-            self.requires_matches['text'] = text
-            return ''
-
     # private
 
+    @property
+    def _tag_string(self):
+        if self.adjacent is not None:
+            return super(XPath, self)._text_string
+
+        # Selector builder ignores tag name and builds for both button elements and input
+        # elements of type button
+        self.selector.pop('tag_name', None)
+
+        typ = self.selector.pop('type', None)
+        text = self.selector.pop('text', None)
+
+        string = '({})'.format(self._button_string(text=text, typ=typ))
+        if typ is not False:
+            string += ' or ({})'.format(self._input_string(text=text, typ=typ))
+        return '[{}]'.format(string)
+
+    def _button_string(self, text=None, typ=None):
+        string = self._process_attribute('tag_name', 'button')
+        if text is not None:
+            string += ' and {}'.format(self._process_attribute('text', text))
+        if typ is not None:
+            string += ' and {}'.format(self._input_types(typ))
+        return string
+
+    def _input_string(self, text=None, typ=None):
+        string = self._process_attribute('tag_name', 'input')
+        if typ is True:
+            typ = None
+        string += ' and ({})'.format(self._input_types(typ))
+        if text is not None:
+            string += ' and {}'.format(self._process_attribute('value', text))
+            self.requires_matches.pop('value', None)
+        return string
+
+    @property
+    def _text_string(self):
+        if self.adjacent is not None:
+            return super(XPath, self)._text_string
+        # text locator is already dealt with in #tag_name_string
+        value = self.selector.pop('value', None)
+        if value is None:
+            return ''
+        elif isinstance(value, Pattern):
+            res = '[{} or {}]'.format(self._predicate_conversion('text', value),
+                                      self._predicate_conversion('value', value))
+            self.requires_matches.pop('text', None)
+            return res
+        else:
+            return '[{} or {}]'.format(self._predicate_expression('text', value),
+                                       self._predicate_expression('value', value))
+
+    @property
+    def _use_index(self):
+        return False
+
+    def _predicate_conversion(self, key, regexp):
+        if key == 'text':
+            res = super(XPath, self)._predicate_conversion('contains_text', regexp)
+        else:
+            res = super(XPath, self)._predicate_conversion(key, regexp)
+        if 'contains_text' in self.requires_matches:
+            self.requires_matches[key] = self.requires_matches.pop('contains_text')
+        return res
+
     def _input_types(self, typ):
-        if typ in [None, True]:
+        if typ is None:
             types = Button.VALID_TYPES
-        elif typ not in Button.VALID_TYPES:
+        elif typ in Button.VALID_TYPES or typ in [True, False]:
+            types = [typ]
+        else:
             msg = 'Button Elements can not be located by input type: {}'.format(typ)
             raise LocatorException(msg)
-        else:
-            types = [typ]
 
-        return ' or '.join(['{}={}'.format(XpathSupport.lower('@type'),
-                                           XpathSupport.escape(b)) for b in types])
+        types = [self._predicate_expression('type', t) for t in types if t is not None]
+
+        return ' or '.join(types)
