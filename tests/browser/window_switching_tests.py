@@ -273,9 +273,8 @@ class TestWindow(object):
         mock = mocker.patch('selenium.webdriver.remote.webdriver.WebDriver.window_handles')
         mock.side_effect = [handles, [browser.original_window.window_handle]]
 
-        with pytest.raises(NoMatchingWindowFoundException) as e:
+        with pytest.raises(NoMatchingWindowFoundException):
             browser.window(title='closeable window').use()
-        assert e.value.args[0] == 'browser window was closed'
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_an_exception_when_locating_a_window_closed_during_lookup(self, bkwargs, page):

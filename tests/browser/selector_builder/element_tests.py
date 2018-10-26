@@ -524,8 +524,8 @@ class TestBuild(object):
         items = {
             'selector': {'tag_name': 'div', 'class_name': 'content', 'contenteditable': 'true',
                          'text': 'Foo'},
-            'wd': {'xpath': ".//*[local-name()='div'][contains(concat(' ', @class, ' '), "
-                            "' content ')][@contenteditable='true'][normalize-space()='Foo']"},
+            'wd': {'xpath': ".//*[local-name()='div'][contains(concat(' ', @class, ' '), ' content "
+                            "')][normalize-space()='Foo'][@contenteditable='true']"},
             'data': 'content'
         }
         verify_build(browser, **items)

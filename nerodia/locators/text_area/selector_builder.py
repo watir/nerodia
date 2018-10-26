@@ -17,7 +17,7 @@ class SelectorBuilder(ElementSelectorBuilder):
         if how == 'value' and isinstance(what, str):
             return [how, re.compile(r'^{}$'.format(re.escape(what)))]
         else:
-            return super(SelectorBuilder, self).normalize_selector(how, what)
+            return super(SelectorBuilder, self)._normalize_locator(how, what)
 
 
 class XPath(ElementXPath):

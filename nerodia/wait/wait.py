@@ -71,7 +71,7 @@ class Wait(object):
     @classmethod
     def _run_with_timer(cls, timeout, interval, method, object, until=True):
         if timeout == 0:
-            return method(object) if object else method()
+            return method(object) if object is not None else method()
         else:
             interval = interval or cls.INTERVAL
             result = cls.timer.wait(timeout, method, interval=interval,

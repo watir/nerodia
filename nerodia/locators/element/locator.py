@@ -164,7 +164,7 @@ class Locator(object):
             label = self._label_from_text(label_key)
             if not label:
                 raise LocatorException("Unable to locate element with label "
-                                       "{}: {}".format(label_key, self.selector[label_key]))
+                                       "{}: {}".format(label_key, self.selector.get(label_key)))
 
             _id = label.get_attribute('for')
             if _id:
@@ -187,7 +187,11 @@ class Locator(object):
                 return self.element_validator.validate(element, what)
             else:
                 val = self._fetch_value(element, how)
-                return what == val or re.search(what, val) is not None
+                if isinstance(what, (Pattern, str)):
+                    val_match = re.search(what, val) is not None
+                else:
+                    val_match = False
+                return what == val or val_match
 
         matches = all(check_match(how, what) for how, what in values.items())
 
