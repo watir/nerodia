@@ -30,7 +30,7 @@ def current_window(browser, page):
     browser.link(id='close').click()
     Wait.until(lambda: len(browser.windows()) == 1)
     yield
-    browser.original_window.use()
+    browser.window(index=0).use()
     for window in browser.windows()[1:]:
         window.close()
 

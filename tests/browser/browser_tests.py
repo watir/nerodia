@@ -19,7 +19,7 @@ W3C_BROWSERS = ['firefox']
 @pytest.fixture
 def cleanup_browser(browser):
     yield
-    browser.original_window.use()
+    browser.window(index=0).use()
     for window in browser.windows()[1:]:
         window.close()
 
