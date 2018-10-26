@@ -17,6 +17,7 @@ def clear_alert(browser):
     if browser.alert.exists:
         browser.alert.ok()
 
+
 pytestmark = pytest.mark.usefixtures('cleanup_hooks')
 
 
