@@ -157,8 +157,10 @@ class SelectorBuilder(object):
         elif typ == 'string_or_regexp' and \
                 type(what) in [six.text_type, six.binary_type, Pattern]:
             return
-        elif inspect.isclass(typ) and isinstance(what, typ):
-            return
+        elif inspect.isclass(typ):
+            typ_check = (six.text_type, six.string_types) if typ == str else typ
+            if isinstance(what, typ_check):
+                return
 
         raise TypeError('expected {}, got {!r}:{}'.format(typ, what, what.__class__))
 
