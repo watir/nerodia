@@ -81,7 +81,7 @@ class TestTableRow(object):
     def test_does_not_find_rows_from_a_nested_table(self, browser):
         table = browser.table(id='outer')
         assert table.row(id='inner_first').exists is False
-        assert table.row(text=re.compile('\ATable 2, Row 1, Cell 1 '
+        assert table.row(text=re.compile(r'\ATable 2, Row 1, Cell 1 '
                                          'Table 2, Row 1, Cell 2')).exists is False
 
 
