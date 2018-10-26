@@ -51,5 +51,5 @@ class HasWindow(object):
     def _filter_windows(self, selector, windows):
         if not all(key in ['title', 'url'] for key in selector.keys()):
             raise ValueError('invalid window selector: {}'.format(selector))
-        return [w for w in windows if all(re.search(r'{}'.format(v), getattr(w, k)) is not None
+        return [w for w in windows if all(re.search(v, getattr(w, k)) is not None
                                           for k, v in selector.items())]

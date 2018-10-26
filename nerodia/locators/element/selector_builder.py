@@ -57,7 +57,7 @@ class SelectorBuilder(object):
         if self.selector.get('adjacent') == 'ancestor' and 'text' in self.selector:
             raise LocatorException('Can not find parent element with text locator')
 
-        for key in self.selector:
+        for key in self.selector.copy():
             self.check_type(key, self.selector.get(key))
             how, what = self._normalize_locator(key, self.selector.pop(key, None))
             self.selector[how] = what

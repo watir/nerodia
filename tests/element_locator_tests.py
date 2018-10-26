@@ -148,14 +148,14 @@ class TestElementLocatorFindsSingleElement(object):
         assert result.tag_name == 'span'
 
     def test_handles_custom_attributes(self, browser, mocker, expect_one, expect_all):
-        div1 = element(mocker, values={'tag_name': 'div'}, attrs={'custom_attribute': 'foo'})
-        span = element(mocker, values={'tag_name': 'span'}, attrs={'custom_attribute': 'foo'})
-        div2 = element(mocker, values={'tag_name': 'div'}, attrs={'custom_attribute': 'foo'})
+        div1 = element(mocker, values={'tag_name': 'div'}, attrs={'custom-attribute': 'foo'})
+        span = element(mocker, values={'tag_name': 'span'}, attrs={'custom-attribute': 'foo'})
+        div2 = element(mocker, values={'tag_name': 'div'}, attrs={'custom-attribute': 'foo'})
 
         expect_one.return_value = span
         expect_all.return_value = [div1, span, div2]
 
-        selector = {'custom_attribute': 'foo', 'tag_name': 'span'}
+        selector = {'custom-attribute': 'foo', 'tag_name': 'span'}
         result = locate_one(browser, selector)
 
         expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='span']"

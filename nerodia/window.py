@@ -264,14 +264,14 @@ class Window(Waitable):
             if 'title' in self.selector:
                 title_value = self.selector.get('title')
                 driver_title = self.browser.title
-                matches_title = re.search(r'{}'.format(title_value), driver_title) is not None
+                matches_title = re.search(title_value, driver_title) is not None
             else:
                 matches_title = True
 
             if 'url' in self.selector:
                 url_value = self.selector.get('url')
                 driver_url = self.browser.url
-                matches_url = re.search(r'{}'.format(url_value), driver_url) is not None
+                matches_url = re.search(url_value, driver_url) is not None
             else:
                 matches_url = True
 

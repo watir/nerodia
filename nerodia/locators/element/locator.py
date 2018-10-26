@@ -197,19 +197,18 @@ class Locator(object):
         return matches
 
     def _text_regexp_deprecation(self, element, selector, matches):
-        text_selector = selector.get('text')
-        if text_selector is not None:
-            from nerodia.elements.element import Element
-            text_content = Element(self.query_scope, {'element': element}).\
-                _execute_js('getTextContent', element).strip()
-            text_content_matches = re.search(r'{}'.format(text_selector), text_content) is not None
-            if matches != text_content_matches:
-                key = 'text' if 'text' in self.selector else 'label'
-                nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
-                                         'that includes hidden '
-                                         'text'.format(key, text_selector.pattern),
-                                         'visible_{}'.format(key),
-                                         ids=['visible_text'])
+        from nerodia.elements.element import Element
+        new_element = Element(self.query_scope, {'element': element})
+        text_content = new_element._execute_js('getTextContent', element).strip()
+        text_selector = selector.get('text', '')
+        text_content_matches = re.search(text_selector, text_content) is not None
+        if matches != text_content_matches:
+            key = 'text' if 'text' in self.selector else 'label'
+            nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
+                                     'that includes hidden '
+                                     'text'.format(key, text_selector.pattern),
+                                     'visible_{}'.format(key),
+                                     ids=['text_regexp'])
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.query_scope.wd

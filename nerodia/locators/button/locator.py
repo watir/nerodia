@@ -20,10 +20,8 @@ class Locator(ElementLocator):
 
         everything_except_value = super(Locator, self)._matches_values(element, cpy)
 
-        matches_value = re.search(r'{}'.format(value),
-                                  self._fetch_value(element, 'value')) is not None
-        matches_text = re.search(r'{}'.format(value),
-                                 self._fetch_value(element, 'text')) is not None
+        matches_value = re.search(value, self._fetch_value(element, 'value')) is not None
+        matches_text = re.search(value, self._fetch_value(element, 'text')) is not None
 
         if matches_text:
             nerodia.logger.deprecate("'value' locator key for finding button text",

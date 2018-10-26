@@ -19,8 +19,8 @@ class TestDivExist(object):
         assert browser.div(class_name=compile(r'profile')).exists
         assert browser.div(index=0).exists
         assert browser.div(xpath="//div[@id='header']").exists
-        assert browser.div(custom_attribute='custom').exists
-        assert browser.div(custom_attribute=compile(r'custom')).exists
+        assert browser.div(**{'custom-attribute': 'custom'}).exists
+        assert browser.div(**{'custom-attribute': compile(r'custom')}).exists
 
     def test_returns_the_first_div_if_given_no_args(self, browser):
         assert browser.div().exists
@@ -109,7 +109,7 @@ class TestDivAttributes(object):
     # custom attributes
 
     def test_returns_the_custom_attribute_if_the_element_exists(self, browser):
-        assert browser.div(custom_attribute='custom').attribute_value('custom-attribute') == 'custom'
+        assert browser.div(**{'custom-attribute': 'custom'}).attribute_value('custom-attribute') == 'custom'
 
 
 def test_finds_all_attribute_methods(browser):
@@ -161,9 +161,9 @@ class TestDivManipulation(object):
     @pytest.mark.usefixtures('quick_timeout')
     def test_includes_custom_message_if_element_with_a_custom_attribute_does_not_exist(self, browser):
         with pytest.raises(UnknownObjectException,
-                           match=r'.*Nerodia treated \[\'custom_attribute\'\] as a non-HTML '
+                           match=r'.*Nerodia treated \[\'custom-attribute\'\] as a non-HTML '
                                  r'compliant attribute, ensure that was intended.*'):
-            browser.div(custom_attribute='not_there').click()
+            browser.div(**{'custom-attribute': 'not_there'}).click()
 
     # js_click
 
