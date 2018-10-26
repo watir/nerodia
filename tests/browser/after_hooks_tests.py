@@ -7,7 +7,7 @@ from nerodia.exception import UnknownObjectException
 @pytest.fixture
 def cleanup_hooks(browser):
     yield
-    browser.original_window.use()
+    browser.window(index=0).use()
     browser.after_hooks.after_hooks = []
 
 
