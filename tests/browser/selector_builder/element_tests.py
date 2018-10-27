@@ -1,3 +1,4 @@
+from collections import OrderedDict
 from re import compile
 
 import pytest
@@ -234,7 +235,7 @@ class TestBuild(object):
 
     def test_with_multiple_attributes_no_equals_and_not_with_no_equals_and_equals(self, browser):
         items = {
-            'selector': {'readonly': True, 'foo': False, 'id': 'good_luck'},
+            'selector': OrderedDict([('readonly', True), ('foo', False), ('id', 'good_luck')]),
             'wd': {'xpath': ".//*[@readonly and not(@foo) and @id='good_luck']"},
             'data': 'Good Luck'
         }
@@ -252,7 +253,7 @@ class TestBuild(object):
 
     def test_with_multiple_regexp_attributes_separated_by_and(self, browser):
         items = {
-            'selector': {'readonly': compile(r'read'), 'id': compile(r'good')},
+            'selector': OrderedDict([('readonly', compile(r'read')), ('id', compile(r'good'))]),
             'wd': {'xpath': ".//*[contains(@readonly, 'read') and contains(@id, 'good')]"},
             'data': 'Good Luck'
         }
