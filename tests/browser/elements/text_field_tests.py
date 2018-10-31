@@ -16,6 +16,7 @@ class TestTextFieldExist(object):
         assert browser.text_field(id=compile(r'new_user_email')).exists is True
         assert browser.text_field(name='new_user_email').exists is True
         assert browser.text_field(name=compile(r'new_user_email')).exists is True
+        assert browser.text_field(name=compile(r'new_user_occupation', flags=IGNORECASE)).exists is True
         assert browser.text_field(value='Developer').exists is True
         assert browser.text_field(value=compile(r'Developer')).exists is True
         assert browser.text_field(class_name='name').exists is True

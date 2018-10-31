@@ -5,15 +5,16 @@ import pytest
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
 from nerodia.locators.button.selector_builder import SelectorBuilder
+from nerodia.locators.element.xpath_support import XpathSupport
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 DEFAULT_TYPES = ' or '.join([
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='button'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='reset'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='submit'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='image'"
+    "translate(@type,'{}','{}')='button'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')='reset'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')='submit'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')='image'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
 ])
 
 
@@ -61,10 +62,9 @@ class TestBuild(object):
     def test_locates_input_or_button_element_with_specified_type(self, browser):
         items = {
             'selector': {'type': 'reset'},
-            'wd': {'xpath': ".//*[(local-name()='button' and translate(@type,'ABCDEFGHIJKLMNOPQRS"
-                            "TUVWXYZ','abcdefghijklmnopqrstuvwxyz')='reset') or (local-name()='in"
-                            "put' and (translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklm"
-                            "nopqrstuvwxyz')='reset'))]"},
+            'wd': {'xpath': ".//*[(local-name()='button' and translate(@type,'{0}','{1}')='reset')"
+                            " or (local-name()='input' and (translate(@type,'{0}','{1}')='reset')"
+                            ")]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)},
             'data': 'reset'
         }
         verify_build(browser, **items)
@@ -127,11 +127,32 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
+    def test_locates_with_simple_regexp_for_text(self, browser):
+        items = {
+            'selector': {'text': compile(r'n 2')},
+            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'n 2')) or "
+                            "(local-name()='input' and ({}) and contains(@value, "
+                            "'n 2'))]".format(DEFAULT_TYPES)},
+            'data': 'Benjamin'
+        }
+        verify_build(browser, **items)
+
+    def test_locates_with_simple_regexp_for_value(self, browser):
+        items = {
+            'selector': {'text': compile(r'Prev')},
+            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Prev')) or "
+                            "(local-name()='input' and ({}) and contains(@value, "
+                            "'Prev'))]".format(DEFAULT_TYPES)},
+            'data': 'preview'
+        }
+        verify_build(browser, **items)
+
     def test_returns_complex_text_regexp_to_the_locator(self, browser):
         items = {
             'selector': {'text': compile(r'^foo$')},
-            'wd': {'xpath': ".//*[(local-name()='button' and text()) or (local-name()='input' "
-                            "and ({}) and @value)]".format(DEFAULT_TYPES)},
+            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'foo')) or "
+                            "(local-name()='input' and ({}) and contains(@value, "
+                            "'foo'))]".format(DEFAULT_TYPES)},
             'remaining': {'text': compile(r'^foo$')}
         }
         verify_build(browser, **items)
@@ -202,7 +223,8 @@ class TestBuild(object):
         items = {
             'selector': {'value': compile(r'^foo$')},
             'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
-                            "[text() or @value]".format(DEFAULT_TYPES)},
+                            "[contains(text(), 'foo') or contains(@value, "
+                            "'foo')]".format(DEFAULT_TYPES)},
             'remaining': {'value': compile(r'^foo$')}
         }
         verify_build(browser, **items)

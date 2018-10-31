@@ -1,5 +1,7 @@
+from re import IGNORECASE
+
+from ..element.regexp_disassembler import RegexpDisassembler
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
-from ...xpath_support import XpathSupport
 
 
 class SelectorBuilder(ElementSelectorBuilder):
@@ -19,10 +21,15 @@ class SelectorBuilder(ElementSelectorBuilder):
             isinstance(selector.get('visible_text'), str)
 
     def _build_partial_link_text(self, selector):
-        if self._can_convert_to_partial_link_text(selector):
+        if self._convert_to_partial_link_text(selector):
             selector.pop('tag_name')
             return {'partial_link_text': selector.pop('visible_text').pattern}
 
-    def _can_convert_to_partial_link_text(self, selector):
-        return set(selector) == {'tag_name', 'visible_text'} and \
-            XpathSupport.is_simple_regexp(selector.get('visible_text'))
+    def _convert_to_partial_link_text(self, selector):
+        regex = selector.get('visible_text')
+        substrings = RegexpDisassembler(regex).substrings
+        if len(substrings) == 0:
+            return
+
+        return set(selector) == {'tag_name', 'visible_text'} and not regex.flags & IGNORECASE and \
+            substrings[0] == regex.pattern

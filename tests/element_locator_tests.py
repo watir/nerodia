@@ -1,4 +1,5 @@
 import re
+from collections import OrderedDict
 
 import pytest
 import six
@@ -193,7 +194,7 @@ class TestElementLocatorFindsSingleElement(object):
 
     def test_wraps_type_attribute_with_translate_for_upper_case_values(self, browser, expect_one):
         from nerodia.elements.input import Input
-        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')"
+        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ','abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
         locate_one(browser, {'tag_name': 'input', 'type': 'file'}, Input.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='input']"
                                                      "[{}='file']".format(translated_type))
@@ -202,8 +203,7 @@ class TestElementLocatorFindsSingleElement(object):
     def test_uses_the_corresponding_label_for_attribute_for_parent_label_when_locating_by_label(
             self, browser, expect_one):
         from nerodia.elements.input import Input
-        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ'," \
-                          "'abcdefghijklmnopqrstuvwxyz')"
+        translated_type = "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ','abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
         locate_one(browser, {'tag_name': 'input', 'type': 'text', 'label': 'foo'}, Input.ATTRIBUTES)
         expect_one.assert_called_once()
         by, selector = expect_one.call_args[0]
@@ -228,16 +228,16 @@ class TestElementLocatorFindsSingleElement(object):
         locate_one(browser, {'tag_name': 'meta', 'http_equiv': 'foo'}, Meta.ATTRIBUTES)
         expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='meta'][@http-equiv='foo']")
 
-    # with regexp selectors
+    # with simple regexp selectors
 
-    def test_handles_selector_with_tag_name_and_a_single_regexp_attribute(self, browser, mocker, expect_one):
+    def test_handles_selector_with_tag_name_and_a_simple_regexp_attribute(self, browser, mocker, expect_one):
         el = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foob'})
         expect_one.return_value = el
         selector = {'tag_name': 'div', 'class_name': re.compile(r'oob')}
         assert locate_one(browser, selector) == el
         expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][contains(@class, 'oob')]")
 
-    def test_handles_tag_name_index_and_a_single_regexp_attribute(self, browser, mocker, expect_one):
+    def test_handles_tag_name_index_and_a_simple_regexp_attribute(self, browser, mocker, expect_one):
         el = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
         expect_one.return_value = el
         selector = {'tag_name': 'div', 'class_name': re.compile(r'foo'), 'index': 1}
@@ -300,8 +300,8 @@ class TestElementLocatorFindsSingleElement(object):
         elements2 = [element1b, element2b]
 
         expect_all.side_effect = [elements1, elements2]
-        assert locate_one(browser, {'class_name': re.compile(r'^foo')}) == elements2[0]
-        expect_all.assert_called_with(By.XPATH, './/*[@class]')
+        assert locate_one(browser, {'class_name': re.compile(r'foo$')}) == elements2[0]
+        expect_all.assert_called_with(By.XPATH, ".//*[contains(@class, 'foo')]")
 
     def test_raises_error_if_too_many_attempts_to_relocate_a_stale_element_during_filtering(self, browser, mocker, expect_all):
         element1a = element(mocker, values={'tag_name': 'div'}, attrs={'class': 'foo'})
@@ -319,9 +319,9 @@ class TestElementLocatorFindsSingleElement(object):
         elements3 = [element1c, element2c]
 
         expect_all.side_effect = [elements1, elements2, elements3]
-        msg = "Unable to locate element from {'class': '^foo'} due to changing page"
+        msg = "Unable to locate element from {'class': 'foo'} due to changing page"
         with pytest.raises(Exception) as e:
-            locate_one(browser, {'class_name': re.compile(r'^foo')})
+            locate_one(browser, {'class_name': re.compile(r'foo$')})
         assert e.value.args[0] == msg
         expect_all.assert_called_with(By.XPATH, './/*[@class]')
 
@@ -453,6 +453,53 @@ class TestElementLocatorFindsSeveralElements(object):
         selector = {'tag_name': 'div', 'dir': 'foo', 'index': 1}
         assert locate_one(browser, selector) == el
         expect_one.assert_called_once_with(By.XPATH, "(.//*[local-name()='div'][@dir='foo'])[2]")
+
+    # with xpath
+
+    def test_converts_a_leading_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foob'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'bar'})]
+
+        expect_all.return_value = elements
+        selector = OrderedDict([('tag_name', 'div'), ('foo', re.compile(r'fo.b$'))])
+        assert locate_one(browser, selector) == elements[1]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][contains(@foo, 'fo') and contains(@foo, 'b')]")
+
+    def test_converts_a_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foob'})]
+
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'foo': re.compile(r'^fo.b')}
+        assert locate_one(browser, selector) == elements[1]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][contains(@foo, 'fo') and contains(@foo, 'b')]")
+
+    def test_converts_a_leading_and_trailing_run_of_regexp_literals_to_a_contains_expression(self, browser, mocker, expect_all):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foob'})]
+
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'foo': re.compile(r'fo.b')}
+        assert locate_one(browser, selector) == elements[1]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][contains(@foo, 'fo') and contains(@foo, 'b')]")
+
+    def test_does_not_try_to_convert_case_insensitive_expressions(self, browser, mocker, expect_one):
+        el = element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foo'})
+
+        expect_one.return_value = el
+        selector = {'tag_name': 'div', 'foo': re.compile(r'FOOB', flags=re.IGNORECASE)}
+        assert locate_one(browser, selector) == el
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='div'][contains(@foo, 'FOOB')]")
+
+    def test_does_not_try_to_convert_expressions_containing_pipe(self, browser, mocker, expect_one):
+        elements = [element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foo'}),
+                    element(mocker, values={'tag_name': 'div'}, attrs={'foo': 'foob'})]
+
+        expect_all.return_value = elements
+        selector = {'tag_name': 'div', 'foo': re.compile(r'x|b')}
+        assert locate_one(browser, selector) == elements[1]
+        expect_all.assert_called_with(By.XPATH, ".//*[local-name()='div'][@foo]")
 
     # errors
 

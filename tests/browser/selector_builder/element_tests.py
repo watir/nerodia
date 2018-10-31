@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from re import compile
+from re import compile, IGNORECASE
 
 import pytest
 import six
@@ -102,7 +102,7 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
-    def test_with_regexp_contains(self, browser):
+    def test_with_simple_regexp_contains(self, browser):
         items = {
             'selector': {'tag_name': compile(r'div')},
             'wd': {'xpath': ".//*[contains(local-name(), 'div')]"},
@@ -141,7 +141,7 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
-    def test_single_regexp_contains(self, browser):
+    def test_simple_regexp_contains(self, browser):
         items = {
             'selector': {'class_name': compile(r'use')},
             'wd': {'xpath': ".//*[contains(@class, 'use')]"},
@@ -528,6 +528,70 @@ class TestBuild(object):
             'wd': {'xpath': ".//*[local-name()='div'][contains(concat(' ', @class, ' '), ' content "
                             "')][normalize-space()='Foo'][@contenteditable='true']"},
             'data': 'content'
+        }
+        verify_build(browser, **items)
+
+    # with simple regexp
+
+    def test_simple_regexp_handles_spaces(self, browser):
+        items = {
+            'selector': {'title': compile(r'od Lu')},
+            'wd': {'xpath': ".//*[contains(@title, 'od Lu')]"},
+            'data': 'Good Luck'
+        }
+        verify_build(browser, **items)
+
+    def test_simple_regexp_handles_escaped_characters(self, browser):
+        items = {
+            'selector': {'src': compile(r'ages/but')},
+            'wd': {'xpath': ".//*[contains(@src, 'ages/but')]"},
+            'data': 'submittable button'
+        }
+        verify_build(browser, **items)
+
+    # with complex regexp
+
+    def test_complex_regexp_handles_wildcards(self, browser):
+        items = {
+            'selector': {'src': compile(r'ages.*but')},
+            'wd': {'xpath': ".//*[contains(@src, 'ages') and contains(@src, 'but')]"},
+            'data': 'submittable button',
+            'remaining': {'src': compile(r'ages.*but')}
+        }
+        verify_build(browser, **items)
+
+    def test_complex_regexp_handles_optional_characters(self, browser):
+        items = {
+            'selector': {'src': compile(r'ages ?but')},
+            'wd': {'xpath': ".//*[contains(@src, 'ages') and contains(@src, 'but')]"},
+            'data': 'submittable button',
+            'remaining': {'src': compile(r'ages ?but')}
+        }
+        verify_build(browser, **items)
+
+    def test_complex_regexp_handles_anchors(self, browser):
+        items = {
+            'selector': {'src': compile(r'^new_user_image$')},
+            'wd': {'xpath': ".//*[contains(@name, 'new_user_image')]"},
+            'data': 'submittable button',
+            'remaining': {'src': compile(r'^new_user_image$')}
+        }
+        verify_build(browser, **items)
+
+    def test_complex_regexp_handles_beginning_anchor(self, browser):
+        items = {
+            'selector': {'src': compile(r'^i')},
+            'wd': {'xpath': ".//*[starts-with(@src, 'i')]"},
+            'data': 'submittable button'
+        }
+        verify_build(browser, **items)
+
+    def test_complex_regexp_handles_case_insensitive(self, browser):
+        items = {
+            'selector': {'src': compile(r'me', flags=IGNORECASE)},
+            'wd': {'xpath': ".//*[contains(translate(@action, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
+                            "'abcdefghijklmnopqrstuvwxyz'), 'me')]"},
+            'data': 'form'
         }
         verify_build(browser, **items)
 

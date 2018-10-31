@@ -9,7 +9,8 @@ from selenium.webdriver.common.by import By
 import nerodia
 from nerodia.exception import LocatorException
 from nerodia.locators.class_helpers import ClassHelpers
-from ...xpath_support import XpathSupport
+from nerodia.locators.element.regexp_disassembler import RegexpDisassembler
+from nerodia.locators.element.xpath_support import XpathSupport
 
 try:
     from re import Pattern
@@ -217,16 +218,28 @@ class XPath(object):
             return self._equal_pair(key, val)
 
     def _predicate_conversion(self, key, regexp):
-        lhs = self._lhs_for(key)
+        lower = key == 'type' or regexp.flags & re.IGNORECASE
 
-        if not XpathSupport.is_simple_regexp(regexp):
+        lhs = self._lhs_for(key, lower)
+
+        results = RegexpDisassembler(regexp).substrings
+
+        starts_with = regexp.pattern.startswith('^')
+
+        if len(results) == 0:
+            self.requires_matches[key] = regexp
+        elif len(results) == 1 and starts_with and results[0] == regexp.pattern[1:]:
+            if set(self.requires_matches).intersection(XPath.CAN_NOT_BUILD):
+                self.requires_matches[key] = regexp
+            else:
+                return "starts-with({}, '{}')".format(lhs, results[0])
+        elif self._requires_matching(results, regexp):
             if key == 'class':
                 self.requires_matches['class'].append(regexp)
             else:
                 self.requires_matches[key] = regexp
-            return lhs
-        else:
-            return "contains({}, '{}')".format(lhs, regexp.pattern)
+
+        return ' and '.join(("contains({}, '{}')".format(lhs, substring) for substring in results))
 
     @property
     def _start_string(self):
@@ -329,8 +342,14 @@ class XPath(object):
         nerodia.logger.deprecate(dep, 'list (e.g. {})'.format(class_name.split()),
                                  ids=['class_list'])
 
+    def _requires_matching(self, results, regexp):
+        if regexp.flags & re.IGNORECASE:
+            return results[0].lower() != regexp.pattern.lower()
+        else:
+            return results[0] != regexp.pattern
+
     @staticmethod
-    def _lhs_for(key):
+    def _lhs_for(key, lower=False):
         if key == 'tag_name':
             return 'local-name()'
         elif key == 'href':
@@ -339,24 +358,20 @@ class XPath(object):
             return 'normalize-space()'
         elif key == 'contains_text':
             return 'text()'
-        elif key == 'type':
-            # type attributes can be upper case - downcase them
-            # https://github.com/watir/watir/issues/72
-            return XpathSupport.lower('@type')
         elif isinstance(key, str):
             if key.startswith('data') or key.startswith('aria'):
-                return '@{}'.format(key.replace('_', '-'))
+                lhs = '@{}'.format(key.replace('_', '-'))
             else:
-                return '@{}'.format(key)
+                lhs = '@{}'.format(key)
+            return XpathSupport.lower(lhs) if lower else lhs
         else:
             raise LocatorException('Unable to build XPath using {}:{}'.format(key, key.__class__))
 
     def _attribute_presence(self, attribute):
-        return '@type' if attribute == 'type' else self._lhs_for(attribute)
+        return self._lhs_for(attribute)
 
     def _attribute_absence(self, attribute):
-        lhs = '@type' if attribute == 'type' else self._lhs_for(attribute)
-        return 'not({})'.format(lhs)
+        return 'not({})'.format(self._lhs_for(attribute))
 
     def _equal_pair(self, key, value):
         if key == 'label_element':
@@ -373,4 +388,4 @@ class XPath(object):
                          "{})".format(XpathSupport.escape(' {} '.format(value)))
             return "not({})".format(expression) if negate_xpath else expression
         else:
-            return "{}={}".format(self._lhs_for(key), XpathSupport.escape(value))
+            return "{}={}".format(self._lhs_for(key, key == 'type'), XpathSupport.escape(value))

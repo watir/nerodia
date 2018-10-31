@@ -1,9 +1,8 @@
 from nerodia.exception import LocatorException
 from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder, \
     XPath as ElementXPath
-
+from ..element.xpath_support import XpathSupport
 from ...elements.text_field import TextField
-from ...xpath_support import XpathSupport
 
 
 class SelectorBuilder(ElementSelectorBuilder):
@@ -45,6 +44,6 @@ class XPath(ElementXPath):
 
     @property
     def _negative_type_text(self):
-        types = ['{}!={}'.format(self._lhs_for('type'), XpathSupport.escape(typ)) for
+        types = ['{}!={}'.format(self._lhs_for('type', lower=True), XpathSupport.escape(typ)) for
                  typ in TextField.NON_TEXT_TYPES]
         return ' and '.join(types)

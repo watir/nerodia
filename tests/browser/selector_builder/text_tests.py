@@ -4,24 +4,25 @@ import pytest
 
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
+from nerodia.locators.element.xpath_support import XpathSupport
 from nerodia.locators.text_field.selector_builder import SelectorBuilder
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 NEGATIVE_TYPES = ' and '.join([
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='file'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='radio'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='checkbox'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='submit'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='reset'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='image'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='button'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='hidden'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='range'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='color'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='date'",
-    "translate(@type,'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')!='datetime-local'"
+    "translate(@type,'{}','{}')!='file'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='radio'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='checkbox'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='submit'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='reset'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='image'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='button'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='hidden'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='range'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='color'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='date'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{}','{}')!='datetime-local'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
 ])
 
 
@@ -52,8 +53,8 @@ class TestBuild(object):
     def test_specified_text_field_type_that_is_text(self, browser):
         items = {
             'selector': {'type': 'text'},
-            'wd': {'xpath': ".//*[local-name()='input'][translate(@type,"
-                            "'ABCDEFGHIJKLMNOPQRSTUVWXYZ','abcdefghijklmnopqrstuvwxyz')='text']"},
+            'wd': {'xpath': ".//*[local-name()='input'][translate(@type,'{}','{}')='text'"
+                            "]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)},
             'data': 'first text'
         }
         verify_build(browser, **items)
@@ -61,8 +62,8 @@ class TestBuild(object):
     def test_specified_text_field_type_that_is_not_text(self, browser):
         items = {
             'selector': {'type': 'number'},
-            'wd': {'xpath': ".//*[local-name()='input'][translate(@type,'ABCDEFGHIJKLMNOPQRSTU"
-                            "VWXYZ','abcdefghijklmnopqrstuvwxyz')='number']"},
+            'wd': {'xpath': ".//*[local-name()='input'][translate(@type,'{}','{}')='number'"
+                            "]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)},
             'data': '42'
         }
         verify_build(browser, **items)
