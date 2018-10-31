@@ -571,10 +571,10 @@ class TestBuild(object):
 
     def test_complex_regexp_handles_anchors(self, browser):
         items = {
-            'selector': {'src': compile(r'^new_user_image$')},
+            'selector': {'name': compile(r'^new_user_image$')},
             'wd': {'xpath': ".//*[contains(@name, 'new_user_image')]"},
             'data': 'submittable button',
-            'remaining': {'src': compile(r'^new_user_image$')}
+            'remaining': {'name': compile(r'^new_user_image$')}
         }
         verify_build(browser, **items)
 
@@ -588,36 +588,29 @@ class TestBuild(object):
 
     def test_complex_regexp_handles_case_insensitive(self, browser):
         items = {
-            'selector': {'src': compile(r'me', flags=IGNORECASE)},
-            'wd': {'xpath': ".//*[contains(translate(@action, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', "
-                            "'abcdefghijklmnopqrstuvwxyz'), 'me')]"},
+            'selector': {'action': compile(r'me', flags=IGNORECASE)},
+            'wd': {'xpath': ".//*[contains(translate(@action,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇ"
+                            "ÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ','abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëì"
+                            "íîïðñòóôõöøùúûüýþÿžšœ'), 'me')]"},
             'data': 'form'
         }
         verify_build(browser, **items)
 
     # returns locators that cannot be directly translated
 
-    def test_attribute_with_complicated_regexp_at_beginning(self, browser):
-        items = {
-            'selector': {'action': compile(r'^post')},
-            'wd': {'xpath': './/*[@action]'},
-            'remaining': {'action': compile(r'^post')}
-        }
-        verify_build(browser, **items)
-
     def test_attribute_with_complicated_regexp_at_end(self, browser):
         items = {
             'selector': {'action': compile(r'me$')},
-            'wd': {'xpath': './/*[@action]'},
+            'wd': {'xpath': ".//*[contains(@action, 'me')]"},
             'remaining': {'action': compile(r'me$')}
         }
         verify_build(browser, **items)
 
     def test_class_with_complicated_regexp(self, browser):
         items = {
-            'selector': {'class_name': compile(r'^her')},
-            'wd': {'xpath': './/*[@class]'},
-            'remaining': {'class': [compile(r'^her')]}
+            'selector': {'class_name': compile(r'he?r')},
+            'wd': {'xpath': ".//*[contains(@class, 'h') and contains(@class, 'r')]"},
+            'remaining': {'class': [compile(r'he?r')]}
         }
         verify_build(browser, **items)
 

@@ -24,9 +24,8 @@ def verify_build(browser, selector, wd, data=None, remaining=None, scope=None):
     built = builder.build(selector)
     assert built == [wd, remaining or {}]
 
-    located = query_scope.wd.find_element(*list(wd.items())[0])
-
     if data:
+        located = query_scope.wd.find_element(*list(wd.items())[0])
         assert located.get_attribute('data-locator') == data
 
 

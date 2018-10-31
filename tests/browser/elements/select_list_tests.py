@@ -229,7 +229,7 @@ class TestSelectListSelect(object):
 
     def test_selects_an_option_by_value_with_a_regexp(self, browser):
         browser.select_list(name='new_user_languages').clear()
-        browser.select_list(name='new_user_languages').select(re.compile(r'[13]'))
+        browser.select_list(name='new_user_languages').select(re.compile(r'1|3'))
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['Danish', 'NO']
 

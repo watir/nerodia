@@ -218,7 +218,7 @@ class XPath(object):
             return self._equal_pair(key, val)
 
     def _predicate_conversion(self, key, regexp):
-        lower = key == 'type' or regexp.flags & re.IGNORECASE
+        lower = key == 'type' or regexp.flags & re.IGNORECASE == re.IGNORECASE
 
         lhs = self._lhs_for(key, lower)
 
@@ -228,6 +228,7 @@ class XPath(object):
 
         if len(results) == 0:
             self.requires_matches[key] = regexp
+            return lhs
         elif len(results) == 1 and starts_with and results[0] == regexp.pattern[1:]:
             if set(self.requires_matches).intersection(XPath.CAN_NOT_BUILD):
                 self.requires_matches[key] = regexp
@@ -343,7 +344,7 @@ class XPath(object):
                                  ids=['class_list'])
 
     def _requires_matching(self, results, regexp):
-        if regexp.flags & re.IGNORECASE:
+        if regexp.flags & re.IGNORECASE == re.IGNORECASE:
             return results[0].lower() != regexp.pattern.lower()
         else:
             return results[0] != regexp.pattern
