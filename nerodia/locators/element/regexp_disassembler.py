@@ -1,6 +1,7 @@
 # Translated to python from https://github.com/teamcapybara/capybara/blob/663a6003c0fa45fb83c55593183fdb2542a845ba/lib/capybara/selector/regexp_disassembler.rb
 
 import re
+from collections import OrderedDict
 
 
 class RegexpDisassembler(object):
@@ -65,7 +66,7 @@ class RegexpDisassembler(object):
             return []
         match = re.search(r'\A\^?(.*?)\$?\Z', pattern)
         if match is not None:
-            strs = list({x for x in match.group(1).split('.') if len(x) > 0})
+            strs = list(OrderedDict.fromkeys(x for x in match.group(1).split('.') if len(x) > 0))
             if self.regexp.flags & re.IGNORECASE:
                 strs = [x.lower() for x in strs]
         return strs
