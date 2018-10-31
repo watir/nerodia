@@ -56,8 +56,8 @@ class RegexpDisassembler(object):
         # repeat counted characters
         match = re.search(RegexpDisassembler.COUNTED_REP_REGEX, pattern)
         if match is not None:
-            final = match['char'] * int(match['min_rep'])
-            if match['max_rep'] is not None and match['min'] is None:
+            final = match.group('char') * int(match.group('min_rep'))
+            if match.group('max_rep') is not None and match.group('min') is None:
                 final += '.'
             pattern = re.sub(RegexpDisassembler.COUNTED_REP_REGEX, final, pattern)
 
@@ -65,23 +65,23 @@ class RegexpDisassembler(object):
             return []
         match = re.search(r'\A\^?(.*?)\$?\Z', pattern)
         if match is not None:
-            strs = list({x for x in match[1].split('.') if len(x) > 0})
+            strs = list({x for x in match.group(1).split('.') if len(x) > 0})
             if self.regexp.flags & re.IGNORECASE:
                 strs = [x.lower() for x in strs]
         return strs
 
     @staticmethod
     def _simplify_group(match):  # no support for alternation in groups
-        if '|' in match['group'] is not None:
+        if '|' in match.group('group') is not None:
             return '.'
-        elif match['one_or_more'] is not None:  # required but may repeat becomes text + wildcard
-            return match['group'][1:-1] + '.'
-        elif match['optional'] is not None:
+        elif match.group('one_or_more') is not None:  # required but may repeat becomes text + wildcard
+            return match.group('group')[1:-1] + '.'
+        elif match.group('optional') is not None:
             return '.'
-        elif match['min_rep'] is not None:
-            str = match['group'] * int(match['min_rep'])
-            if match['max_rep'] is not None:
+        elif match.group('min_rep') is not None:
+            str = match.group('group') * int(match.group('min_rep'))
+            if match.group('max_rep') is not None:
                 str += '.'
             return str
         else:
-            return match['group'][1:-1]
+            return match.group('group')[1:-1]
