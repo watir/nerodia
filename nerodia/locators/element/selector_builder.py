@@ -221,24 +221,15 @@ class XPath(object):
         lower = key == 'type' or regexp.flags & re.IGNORECASE == re.IGNORECASE
 
         lhs = self._lhs_for(key, lower)
-
         results = RegexpDisassembler(regexp).substrings
 
-        starts_with = regexp.pattern.startswith('^')
-
         if len(results) == 0:
-            self.requires_matches[key] = regexp
+            self._add_to_matching(key, regexp)
             return lhs
-        elif len(results) == 1 and starts_with and results[0] == regexp.pattern[1:]:
-            if set(self.requires_matches).intersection(XPath.CAN_NOT_BUILD):
-                self.requires_matches[key] = regexp
-            else:
-                return "starts-with({}, '{}')".format(lhs, results[0])
-        elif self._requires_matching(results, regexp):
-            if key == 'class':
-                self.requires_matches['class'].append(regexp)
-            else:
-                self.requires_matches[key] = regexp
+        elif len(results) == 1 and self._starts_with(results, regexp) and not self._is_visible:
+            return "starts-with({}, '{}')".format(lhs, results[0])
+
+        self._add_to_matching(key, regexp, results)
 
         return ' and '.join(("contains({}, '{}')".format(lhs, substring) for substring in results))
 
@@ -342,6 +333,20 @@ class XPath(object):
               "(i.e. '{}')".format(class_name)
         nerodia.logger.deprecate(dep, 'list (e.g. {})'.format(class_name.split()),
                                  ids=['class_list'])
+
+    @property
+    def _is_visible(self):
+        return not not set(self.requires_matches).intersection(XPath.CAN_NOT_BUILD)
+
+    def _starts_with(self, results, regexp):
+        return regexp.pattern.startswith('^') and results[0] == regexp.pattern[1:]
+
+    def _add_to_matching(self, key, regexp, results=None):
+        if results is None or self._requires_matching(results, regexp):
+            if key == 'class':
+                self.requires_matches[key].append(regexp)
+            else:
+                self.requires_matches[key] = regexp
 
     def _requires_matching(self, results, regexp):
         if regexp.flags & re.IGNORECASE == re.IGNORECASE:
