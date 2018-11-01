@@ -8,6 +8,7 @@ import six
 
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
+from nerodia.locators.element.locator import Locator
 from nerodia.locators.element.selector_builder import SelectorBuilder
 
 try:
@@ -35,7 +36,8 @@ def verify_build(browser, selector, wd, data=None, remaining=None, scope=None, a
     if data is None and tag_name is None:
         return
 
-    located = query_scope.wd.find_element(*list(wd.items())[0])
+    by, value = list(wd.items())[0]
+    located = query_scope.wd.find_element(Locator.W3C_FINDERS[by], value)
 
     if data:
         assert located.get_attribute('data-locator') == data
