@@ -68,14 +68,15 @@ class TestElementStale(object):
 
 @pytest.mark.page('removed_element.html')
 class TestElementExists(object):
-    def test_element_from_a_collection_returns_false_when_it_becomes_stale(self, browser):
+    def test_element_from_a_collection_returns_false_when_it_becomes_stale(self, browser, caplog):
         element = browser.divs(id='text')[0]
         element.exists
 
         browser.refresh()
 
         assert element.stale
-        assert not element.present
+        assert not element.exists
+        assert '[DEPRECATION] [stale_exists]Checking `#exists is False` to determine a stale element' in caplog.text
 
     def test_returns_false_when_tag_name_does_not_match_id(self, browser):
         assert not browser.span(id='text').exists

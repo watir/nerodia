@@ -45,6 +45,10 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         try:
             if self._located and self.stale:
+                nerodia.logger.deprecate('Checking `#exists is False` to determine a stale element',
+                                         '`#stale is True`',
+                                         reference='http://watir.com/staleness-changes',
+                                         ids=['stale_exists'])
                 return False
             self.assert_exists()
             return True
