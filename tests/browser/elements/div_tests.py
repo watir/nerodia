@@ -109,7 +109,7 @@ class TestDivAttributes(object):
     # custom attributes
 
     def test_returns_the_custom_attribute_if_the_element_exists(self, browser):
-        assert browser.div(custom_attribute='custom''custom').attribute_value('custom-attribute') == 'custom'
+        assert browser.div(custom_attribute='custom').attribute_value('custom-attribute') == 'custom'
 
 
 def test_finds_all_attribute_methods(browser):
