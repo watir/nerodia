@@ -12,7 +12,7 @@ for scheme in INSTALL_SCHEMES.values():
 setup_args = {
     'cmdclass': {'install': install},
     'name': 'nerodia',
-    'version': '0.12.0',
+    'version': '0.12.1',
     'license': 'MIT',
     'description': 'Python port of WATIR https://github.com/watir/watir',
     'long_description': open(join(abspath(dirname(__file__)), 'README.rst')).read(),
