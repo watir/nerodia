@@ -161,9 +161,9 @@ class TestDivManipulation(object):
     @pytest.mark.usefixtures('quick_timeout')
     def test_includes_custom_message_if_element_with_a_custom_attribute_does_not_exist(self, browser):
         with pytest.raises(UnknownObjectException,
-                           match=r'.*Nerodia treated \[\'custom-attribute\'\] as a non-HTML '
+                           match=r'.*Nerodia treated \[\'custom_attribute\'\] as a non-HTML '
                                  r'compliant attribute, ensure that was intended.*'):
-            browser.div(ustom_attribute='not_there').click()
+            browser.div(custom_attribute='not_there').click()
 
     # js_click
 

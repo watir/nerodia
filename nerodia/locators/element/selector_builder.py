@@ -365,10 +365,7 @@ class XPath(object):
         elif key == 'contains_text':
             return 'text()'
         elif isinstance(key, str):
-            if key.startswith('data') or key.startswith('aria'):
-                lhs = '@{}'.format(key.replace('_', '-'))
-            else:
-                lhs = '@{}'.format(key)
+            lhs = '@{}'.format(key.replace('_', '-'))
             return XpathSupport.lower(lhs) if lower else lhs
         else:
             raise LocatorException('Unable to build XPath using {}:{}'.format(key, key.__class__))
