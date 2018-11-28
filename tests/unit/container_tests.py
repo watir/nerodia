@@ -1,3 +1,5 @@
+from re import compile
+
 import pytest
 
 from nerodia.container import Container
@@ -26,3 +28,10 @@ class TestContainerExtractSelector(object):
 
     def test_accepts_1_arg_if_dict_and_merges_with_kwargs(self):
         assert Container._extract_selector({'how': 'what'}, foo='bar') == {'how': 'what', 'foo': 'bar'}
+
+    def test_allows_regex_to_be_passed_by_string(self):
+        assert Container._extract_selector(how=r'/what/') == {'how': compile(r'what')}
+
+    def test_allows_multiple_regex_to_be_passed_by_string(self):
+        assert Container._extract_selector(how=r'/what/', foo=r'/bar\dspam/') == {'how': compile(r'what'),
+                                                                                  'foo': compile(r'bar\dspam')}

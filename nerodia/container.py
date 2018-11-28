@@ -1,3 +1,5 @@
+from re import compile
+
 import nerodia
 
 
@@ -16,14 +18,20 @@ class Container(object):
             nerodia.logger.deprecate('Using ordered parameters to locate elements '
                                      '({}, {})'.format(*args), '{{{}={}}}'.format(*args),
                                      ids='selector_parameters')
-            return {args[0]: args[1]}
+            selector = {args[0]: args[1]}
         elif len(args) == 1 and isinstance(args[0], dict):
             kwargs.update(args[0])
-            return kwargs
+            selector = kwargs
         elif not args:
-            return kwargs
+            selector = kwargs
+        else:
+            raise ValueError('expected kwargs dict, got {}'.format(kwargs))
 
-        raise ValueError('expected kwargs dict, got {}'.format(kwargs))
+        for k, v in selector.copy().items():
+            if isinstance(v, str) and v.startswith(r'/') and v.endswith(r'/'):
+                selector[k] = compile(v[1:-1])
+        return selector
+
 
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
