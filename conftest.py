@@ -109,7 +109,7 @@ def page(browser_manager, webserver):
 
 @pytest.fixture(autouse=True)
 def browser_guard(request, browser_manager):
-    only = request.node.get_marker('only')
+    only = request.node.get_closest_marker('only')
     if only:
         browsers = list(only.args[0])
         if browser_manager.name not in browsers:
