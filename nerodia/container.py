@@ -32,7 +32,6 @@ class Container(object):
                 selector[k] = compile(v[1:-1])
         return selector
 
-
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
         from .elements.link import Anchor

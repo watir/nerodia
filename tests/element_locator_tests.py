@@ -164,6 +164,21 @@ class TestElementLocatorFindsSingleElement(object):
 
         assert result.tag_name == 'span'
 
+    def test_handles_custom_attributes_with_underscore(self, browser, mocker, expect_one, expect_all):
+        div1 = element(mocker, values={'tag_name': 'div'}, attrs={'custom_attribute': 'foo'})
+        span = element(mocker, values={'tag_name': 'span'}, attrs={'custom_attribute': 'foo'})
+
+        expect_one.return_value = span
+        expect_all.return_value = [div1, span]
+
+        selector = {'custom__attribute': 'foo', 'tag_name': 'span'}
+        result = locate_one(browser, selector)
+
+        expect_one.assert_called_once_with(By.XPATH, ".//*[local-name()='span']"
+                                                     "[@custom_attribute='foo']")
+
+        assert result.tag_name == 'span'
+
     # with special cased selectors
 
     def test_normalizes_space_for_text(self, browser, expect_one):
