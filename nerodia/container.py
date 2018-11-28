@@ -10,12 +10,16 @@ class Container(object):
         from .elements.html_elements import HTMLElementCollection
         return HTMLElementCollection(self, self._extract_selector(*args, **kwargs))
 
-    def _extract_selector(self, *args, **kwargs):
-        if args and len(args) == 2:
+    @staticmethod
+    def _extract_selector(*args, **kwargs):
+        if len(args) == 2:
             nerodia.logger.deprecate('Using ordered parameters to locate elements '
                                      '({}, {})'.format(*args), '{{{}={}}}'.format(*args),
                                      ids='selector_parameters')
             return {args[0]: args[1]}
+        elif len(args) == 1 and isinstance(args[0], dict):
+            kwargs.update(args[0])
+            return kwargs
         elif not args:
             return kwargs
 
