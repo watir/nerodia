@@ -4,7 +4,6 @@ from collections import OrderedDict
 from re import IGNORECASE, compile
 
 import pytest
-import six
 
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
@@ -193,8 +192,8 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_not_a_string_regexp_list(self, browser, selector_builder):
-        msg = 'expected one of [{}, {}, {}, {}], got 7:{}'.format(Pattern, bool, six.text_type,
-                                                                  six.binary_type, int)
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES + [bool], int)
         with pytest.raises(TypeError) as e:
             selector_builder.build({'class_name': 7})
         assert e.value.args[0] == msg
