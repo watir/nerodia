@@ -98,7 +98,7 @@ class SelectorBuilder(object):
                    'adjacent']:
             # include 'class' since the valid attribute is 'class_name'
             return [how, what]
-        elif how == 'label':
+        elif how in ['label', 'visible_label']:
             if self.should_use_label_element:
                 return ['{}_element'.format(how), what]
             else:
@@ -162,12 +162,11 @@ class SelectorBuilder(object):
 
 
 class XPath(object):
-    CAN_NOT_BUILD = ['visible', 'visible_text']
+    CAN_NOT_BUILD = ['visible', 'visible_text', 'visible_label_element']
 
-    def __init__(self):
-        self.selector = None
-        self.requires_matches = None
-        self.adjacent = None
+    selector = None
+    requires_matches = None
+    adjacent = None
 
     def build(self, selector):
         self.selector = selector
@@ -187,6 +186,7 @@ class XPath(object):
         xpath += self._class_string
         xpath += self._text_string
         xpath += self._additional_string
+        xpath += self._label_element_string
         xpath += self._attribute_string
 
         if index is not None:
@@ -294,6 +294,30 @@ class XPath(object):
             return '[{}]'.format(self._predicate_expression('text', text))
 
     @property
+    def _label_element_string(self):
+        label = self.selector.pop('label_element', None)
+        if label is None:
+            return ''
+
+        key = 'contains_text' if isinstance(label, Pattern) else 'text'
+
+        value = self._process_attribute(key, label)
+
+        if 'contains_text' in self.requires_matches:
+            self.requires_matches['label_element'] = self.requires_matches.pop('contains_text')
+
+        # TODO: This conditional can be removed when we remove this deprecation
+        if isinstance(label, Pattern):
+            if 'label_element' in self.requires_matches:
+                dep = "Using 'label' locator with RegExp {} to match an element that includes " \
+                      "hidden text".format(label)
+                nerodia.logger.deprecate(dep, 'visible_{}'.format(key), ids=['text_regexp'])
+            self.requires_matches['label_element'] = label
+            return ''
+        else:
+            return "[@id=//label[{0}]/@for or parent::label[{0}]]".format(value)
+
+    @property
     def _attribute_string(self):
         attributes = []
         for key in self.selector.copy():
@@ -375,11 +399,7 @@ class XPath(object):
         return 'not({})'.format(self._lhs_for(attribute))
 
     def _equal_pair(self, key, value):
-        if key == 'label_element':
-            # we assume 'label' means a corresponding label element, not the attribute
-            text = "{}={}".format(self._lhs_for('text'), XpathSupport.escape(value))
-            return "(@id=//label[{0}]/@for or parent::label[{0}])".format(text)
-        elif key == 'class':
+        if key == 'class':
             if re.search(r'^!', value):
                 value = value[1:]
                 negate_xpath = True

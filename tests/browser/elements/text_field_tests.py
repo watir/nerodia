@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from re import compile, IGNORECASE
+from re import IGNORECASE, compile
 
 import pytest
 
-from nerodia.exception import UnknownObjectException, ObjectReadOnlyException
+from nerodia.exception import ObjectReadOnlyException, UnknownObjectException
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
@@ -24,7 +24,7 @@ class TestTextFieldExist(object):
         assert browser.text_field(index=0).exists is True
         assert browser.text_field(xpath="//input[@id='new_user_email']").exists is True
         assert browser.text_field(label='First name').exists is True
-        assert browser.text_field(label=compile(r'(Last|First) name')).exists is True
+        assert browser.text_field(label=compile(r'([qa])st? name')).exists is True
         assert browser.text_field(label='Without for').exists is True
         assert browser.text_field(label=compile(r'Without for')).exists is True
         assert browser.text_field(label='With hidden text').exists is True

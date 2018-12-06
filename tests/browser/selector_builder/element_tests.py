@@ -340,8 +340,8 @@ class TestBuild(object):
     def test_locates_the_element_associated_with_the_label_element_located_by_the_text_of_the_provided_label_key(self, browser):
         items = {
             'selector': {'label': 'Cars'},
-            'wd': {'xpath': ".//*[(@id=//label[normalize-space()='Cars']/@for or "
-                            "parent::label[normalize-space()='Cars'])]"},
+            'wd': {'xpath': ".//*[@id=//label[normalize-space()='Cars']/@for or "
+                            "parent::label[normalize-space()='Cars']]"},
             'data': 'cars'
         }
         verify_build(browser, **items)

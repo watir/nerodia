@@ -118,6 +118,49 @@ class TestBuild(object):
         }
         verify_build(browser, **items)
 
+    # with label
+
+    def test_using_string(self, browser):
+        items = {
+            'selector': {'label': 'First name'},
+            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})]"
+                            "[@id=//label[normalize-space()='First name']/@for or parent::"
+                            "label[normalize-space()='First name']]".format(NEGATIVE_TYPES)},
+            'data': 'input name'
+        }
+        verify_build(browser, **items)
+
+    def test_using_string_with_hidden_text(self, browser):
+        items = {
+            'selector': {'label': 'With hidden text'},
+            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})][@id=//label"
+                            "[normalize-space()='With hidden text']/@for or parent::"
+                            "label[normalize-space()='With hidden text']]".format(NEGATIVE_TYPES)},
+            'data': 'hidden'
+        }
+        verify_build(browser, **items)
+
+    # def test_using_simple_regex(self, browser):
+    #     items = {
+    #         'selector': {'label': compile(r'First')},
+    #         'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})][@id=//label"
+    #                         "[contains(text(), 'First')]/@for or parent::"
+    #                         "label[contains(text(), 'First')]]".format(NEGATIVE_TYPES)},
+    #         'data': 'input name'
+    #     }
+    #     verify_build(browser, **items)
+    #
+    # def test_using_complex_regex(self, browser):
+    #     items = {
+    #         'selector': {'label': compile(r'([qa])st? name')},
+    #         'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})]"
+    #                         "[@id=//label[contains(text(), 's') and contains(text(), ' name')]"
+    #                         "/@for or parent::label[contains(text(), 's') and "
+    #                         "contains(text(), ' name')]]".format(NEGATIVE_TYPES)},
+    #         'remaining': {'label_element': compile(r'([qa])st? name')}
+    #     }
+    #     verify_build(browser, **items)
+
     # with index
 
     def test_index_positive(self, browser):

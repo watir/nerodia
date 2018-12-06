@@ -72,10 +72,7 @@ class Locator(object):
         if 'index' in self.selector and filter == 'all':
             raise ValueError("can't locate all elements by 'index'")
 
-        try:
-            self._generate_scope()
-        except LocatorException:
-            return None
+        self.driver_scope = self.driver_scope or self.query_scope.wd
 
         built = self.selector_builder.build(self.selector)
 
@@ -114,6 +111,21 @@ class Locator(object):
         else:
             return element.get_attribute(how.replace('_', '-')) or ''
 
+    def _matching_labels(self, elements, values, scope):
+        from nerodia.elements.html_elements import LabelCollection
+        from nerodia.elements.input import Input
+        label_key = 'label_element' if 'label_element' in values else 'visible_label_element'
+        label_value = values.pop('label_element', None) or values.pop('visible_label_element', None)
+        locator_key = label_key.replace('label', 'text').replace('_element', '')
+        matching = []
+        for label in LabelCollection(scope, {'tag_name': 'label'}):
+            if self._matches_values(label.wd, {locator_key: label_value}):
+                label_for = label.attribute('htmlFor')
+                input = Input(scope, {'id': label_for}) if label_for else label.input()
+                if input.wd in elements:
+                    matching.append(input.wd)
+        return matching
+
     def _matching_elements(self, elements, values, filter='first'):
         if filter == 'first':
             idx = self._element_index(elements, values)
@@ -143,43 +155,6 @@ class Locator(object):
             elements.reverse()
             idx = abs(idx) - 1
         return idx
-
-    def _generate_scope(self):
-        if self.driver_scope:
-            return self.driver_scope
-
-        self.driver_scope = self.query_scope.wd
-
-        if 'label' in self.selector:
-            self._process_label('label')
-        elif 'visible_label' in self.selector:
-            self._process_label('visible_label')
-
-    def _process_label(self, label_key):
-        regexp = isinstance(self.selector.get(label_key), Pattern)
-
-        if (regexp or label_key == 'visible_label') and \
-                self.selector_builder.should_use_label_element:
-
-            label = self._label_from_text(label_key)
-            if not label:
-                raise LocatorException("Unable to locate element with label "
-                                       "{}: {}".format(label_key, self.selector.get(label_key)))
-
-            _id = label.get_attribute('for')
-            if _id:
-                self.selector['id'] = _id
-            else:
-                self.driver_scope = label
-
-    def _label_from_text(self, label_key):
-        # TODO: this won't work correctly if @wd is a sub-element
-        # TODO: figure out how to do this with find_element
-        label_text = self.selector.pop(label_key, None)
-        locator_key = label_key.replace('label', 'text').replace('_element', '')
-        elements = self._locate_elements('tag_name', 'label', self.driver_scope)
-        return next((e for e in elements if self._matches_values(e, {locator_key: label_text})),
-                    None)
 
     def _matches_values(self, element, values):
         def check_match(how, what):
@@ -231,6 +206,8 @@ class Locator(object):
             try:
                 first_key, first_value = list(selector.items())[0]
                 elements = self._locate_elements(first_key, first_value, self.driver_scope) or []
+                if 'label_element' in values or 'visible_label_element' in values:
+                    elements = self._matching_labels(elements, values, self.query_scope)
                 return self._matching_elements(elements, values, filter=filter)
             except StaleElementReferenceException:
                 retries += 1
