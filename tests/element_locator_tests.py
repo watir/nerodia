@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
-from nerodia.locators.element import Validator, SelectorBuilder
+from nerodia.locators.element import SelectorBuilder, Validator
 from nerodia.locators.element.locator import Locator
 
 try:
@@ -349,7 +349,7 @@ class TestElementLocatorFindsSingleElement(object):
     # errors
 
     def test_raises_correct_exception_if_index_is_not_an_integer(self, browser, expect_all):
-        message = "expected {}, got 'bar':{}".format(int, str)
+        message = "expected one of {!r}, got 'bar':{}".format([int], str)
         with pytest.raises(TypeError) as e:
             selector = {'tag_name': 'div', 'index': 'bar'}
             locate_one(browser, selector)

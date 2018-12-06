@@ -1,5 +1,5 @@
-import inspect
 import re
+from collections import defaultdict
 from copy import copy
 from importlib import import_module
 
@@ -18,11 +18,23 @@ except ImportError:
     from re import _pattern_type as Pattern
 
 STRING_TYPES = [six.text_type, six.binary_type]
+STRING_REGEX_TYPES = STRING_TYPES + [Pattern]
+
+WHATS = {
+    'adjacent': STRING_TYPES,
+    'xpath': STRING_TYPES,
+    'css': STRING_TYPES,
+    'index': [int],
+    'visible': [bool],
+    'tag_name': STRING_REGEX_TYPES,
+    'visible_text': STRING_REGEX_TYPES,
+    'text': STRING_REGEX_TYPES
+}
 
 
 class SelectorBuilder(object):
-    VALID_WHATS = [Pattern, bool] + STRING_TYPES
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
+    VALID_WHATS = defaultdict(lambda: STRING_REGEX_TYPES + [bool], WHATS)
 
     def __init__(self, valid_attributes):
         self.valid_attributes = valid_attributes
@@ -64,26 +76,16 @@ class SelectorBuilder(object):
             self.selector[how] = what
 
     def check_type(self, how, what):
-        if how in ['adjacent', 'xpath', 'css']:
-            return self._raise_unless(what, str)
-        elif how == 'index':
-            return self._raise_unless(what, int)
-        elif how == 'visible':
-            return self._raise_unless(what, bool)
-        elif how in ['tag_name', 'visible_text', 'text']:
-            return self._raise_unless(what, 'string_or_regexp')
-        elif how in ['class', 'class_name']:
-            if isinstance(what, list):
-                if len(what) == 0:
-                    raise LocatorException("Cannot locate elements with an empty list for "
-                                           "'class_name'")
+        if how in ['class', 'class_name']:
+            classes = list(ClassHelpers._flatten([what]))
+            if len(classes) == 0:
+                raise LocatorException("Cannot locate elements with an empty list for "
+                                       "'{}'".format(how))
 
-                for w in what:
-                    self._raise_unless(w, 'string_or_regexp')
-                return
-        if type(what) not in self.VALID_WHATS:
-            raise TypeError(
-                'expected one of {}, got {!r}:{}'.format(self.VALID_WHATS, what, what.__class__))
+            for c in classes:
+                self._raise_unless(c, self.VALID_WHATS[how])
+        else:
+            self._raise_unless(what, self.VALID_WHATS[how])
 
     @property
     def should_use_label_element(self):
@@ -152,18 +154,11 @@ class SelectorBuilder(object):
             return False
 
     @staticmethod
-    def _raise_unless(what, typ):
-        if typ == bool and isinstance(what, bool):
-                return
-        elif typ == 'string_or_regexp' and \
-                type(what) in [six.text_type, six.binary_type, Pattern]:
+    def _raise_unless(what, types):
+        if what.__class__ in types:
             return
-        elif inspect.isclass(typ):
-            typ_check = (six.text_type, six.string_types) if typ == str else typ
-            if isinstance(what, typ_check):
-                return
 
-        raise TypeError('expected {}, got {!r}:{}'.format(typ, what, what.__class__))
+        raise TypeError('expected one of {!r}, got {!r}:{}'.format(types, what, what.__class__))
 
 
 class XPath(object):

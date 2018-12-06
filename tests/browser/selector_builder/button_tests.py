@@ -267,8 +267,10 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_index_is_not_an_integer(self, browser):
-        with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(int, str)):
+        msg = "expected one of {!r}, got 'foo':{}".format([int], str)
+        with pytest.raises(TypeError) as e:
             SelectorBuilder(ATTRIBUTES).build({'index': 'foo'})
+        assert e.value.args[0] == msg
 
     # with multiple locators
 

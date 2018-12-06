@@ -3,11 +3,11 @@ from re import compile
 
 import pytest
 import six
-from selenium.common.exceptions import WebDriverException, ElementClickInterceptedException
+from selenium.common.exceptions import ElementClickInterceptedException, WebDriverException
 from selenium.webdriver.common.keys import Keys
 
-from nerodia.exception import UnknownObjectException, LocatorException
-from nerodia.window import Point, Dimension
+from nerodia.exception import LocatorException, UnknownObjectException
+from nerodia.window import Dimension, Point
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
 
@@ -84,9 +84,12 @@ class TestElementVisibleText(object):
         assert browser.element(visible_text=compile(r'Link 2'), class_name='external').exists is True
 
     def test_raises_exception_unless_value_is_a_string_or_regexp(self, browser):
-        with pytest.raises(TypeError, match=r'expected string_or_regexp, got 7:{}'.format(int)):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES, int)
+        with pytest.raises(TypeError) as e:
             browser.link(visible_text=7).exists
             browser.element(visible_text=7).exists
+        assert e.value.args[0] == msg
 
 
 class TestElementWithoutTagName(object):

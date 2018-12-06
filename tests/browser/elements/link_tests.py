@@ -129,6 +129,8 @@ class TestLinkVisibleText(object):
         assert browser.link(visible_text=compile(r'Link 2'), class_name='external').exists is True
 
     def test_raises_exception_unless_value_is_a_string_or_regexp(self, browser):
-        match = 'expected string_or_regexp, got 7:{}'.format(int)
-        with pytest.raises(TypeError, match=match):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES, int)
+        with pytest.raises(TypeError) as e:
             browser.link(visible_text=7).exists
+        assert e.value.args[0] == msg

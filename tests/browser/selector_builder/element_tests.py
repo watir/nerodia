@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from collections import OrderedDict
-from re import compile, IGNORECASE
+from re import IGNORECASE, compile
 
 import pytest
 import six
@@ -93,8 +93,11 @@ class TestBuild(object):
         assert e.value.args[0] == msg
 
     def test_raises_exception_when_not_a_string(self, browser, selector_builder):
-        with pytest.raises(TypeError, match='expected {}, got 7:{}'.format(str, int)):
+        from nerodia.locators.element.selector_builder import STRING_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_TYPES, int)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'xpath': 7})
+        assert e.value.args[0] == msg
 
     # with tag_name
 
@@ -115,8 +118,11 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_not_a_string_or_regexp(self, browser, selector_builder):
-        with pytest.raises(TypeError, match='expected string_or_regexp, got 7:{}'.format(int)):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES, int)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'tag_name': 7})
+        assert e.value.args[0] == msg
 
     # with class names
 
@@ -194,9 +200,11 @@ class TestBuild(object):
         assert e.value.args[0] == msg
 
     def test_raises_exception_when_list_values_are_not_a_str_or_regexp(self, browser, selector_builder):
-        match = 'expected string_or_regexp, got 7:{}'.format(int)
-        with pytest.raises(TypeError, match=match):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES + [bool], int)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'class_name': [7]})
+        assert e.value.args[0] == msg
 
     def test_raises_exception_when_class_list_is_empty(self, browser, selector_builder):
         match = "Cannot locate elements with an empty list for 'class_name'"
@@ -282,9 +290,11 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_text_is_not_a_str_or_regexp(self, browser, selector_builder):
-        match = 'expected string_or_regexp, got 7:{}'.format(int)
-        with pytest.raises(TypeError, match=match):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES, int)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'text': 7})
+        assert e.value.args[0] == msg
 
     # with index
 
@@ -320,9 +330,10 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_index_is_not_an_integer(self, browser, selector_builder):
-        match = "expected {}, got 'foo':{}".format(int, str)
-        with pytest.raises(TypeError, match=match):
+        msg = "expected one of {!r}, got 'foo':{}".format([int], str)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'index': 'foo'})
+        assert e.value.args[0] == msg
 
     # with labels
 
@@ -643,9 +654,14 @@ class TestBuild(object):
         verify_build(browser, **items)
 
     def test_raises_exception_when_visible_is_not_a_boolean(self, browser, selector_builder):
-        with pytest.raises(TypeError, match="expected {}, got 'foo':{}".format(bool, str)):
+        msg = "expected one of {!r}, got 'foo':{}".format([bool], str)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'visible': 'foo'})
+        assert e.value.args[0] == msg
 
     def test_raises_exception_when_text_is_not_a_string_or_regexp(self, browser, selector_builder):
-        with pytest.raises(TypeError, match="expected string_or_regexp, got 7:{}".format(int)):
+        from nerodia.locators.element.selector_builder import STRING_REGEX_TYPES
+        msg = 'expected one of {!r}, got 7:{}'.format(STRING_REGEX_TYPES, int)
+        with pytest.raises(TypeError) as e:
             selector_builder.build({'visible_text': 7})
+        assert e.value.args[0] == msg

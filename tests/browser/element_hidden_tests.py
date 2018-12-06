@@ -44,6 +44,8 @@ class TestElementHidden(object):
         assert len(browser.divs(visible=False)) == 3
 
     def test_raises_exception_when_value_is_not_boolean(self, browser):
+        msg = "expected one of {!r}, got 'true':{}".format([bool], str)
         element = browser.body().element(visible='true')
-        with pytest.raises(TypeError, match="expected {}, got 'true':{}".format(bool, str)):
+        with pytest.raises(TypeError) as e:
             element.exists
+        assert e.value.args[0] == msg
