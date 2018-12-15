@@ -6,17 +6,18 @@ from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 
 class SelectorBuilder(ElementSelectorBuilder):
 
-    def __init__(self, valid_attributes, scope_tag_name):
-        self.scope_tag_name = scope_tag_name
-        super(SelectorBuilder, self).__init__(valid_attributes)
-
     def _build_wd_selector(self, selector):
+        scope_tag_name = self.query_scope.selector.get('tag_name', self.query_scope.tag_name)
         try:
             mod = import_module(self.__module__)
             xpath = getattr(mod, 'XPath', XPath)
         except ImportError:
             xpath = XPath
-        return xpath().build(selector, self.scope_tag_name)
+        return xpath().build(selector, scope_tag_name)
+
+    @property
+    def _use_scope(self):
+        return False
 
 
 class XPath(ElementXPath):
@@ -35,8 +36,7 @@ class XPath(ElementXPath):
             expressions = ["{}{}".format(e, common_string) for e in expressions]
 
         xpath = ' | '.join(expressions)
-        if index is not None:
-            self.built['xpath'] = self._add_index(xpath, index)
+        self.built['xpath'] = self._add_index(xpath, index) if index is not None else xpath
 
         return self.built
 

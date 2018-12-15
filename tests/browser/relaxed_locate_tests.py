@@ -1,3 +1,4 @@
+from re import compile
 from time import time
 
 import pytest
@@ -64,7 +65,7 @@ class TestRelaxedLocate(object):
         browser.link().click()
 
     def test_waits_for_parent_element_to_be_present_before_locating_a_collection(self, browser):
-        els = browser.element(id='not_there').elements(id='doesnt_matter')
+        els = browser.element(id=compile(r'not|there')).elements(id='doesnt_matter')
         with pytest.raises(UnknownObjectException):
             list(els)
 

@@ -3,7 +3,9 @@ from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 
 
 class SelectorBuilder(ElementSelectorBuilder):
-    pass
+    @property
+    def _use_scope(self):
+        return False
 
 
 class XPath(ElementXPath):

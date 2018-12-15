@@ -3,6 +3,9 @@ from .radio import Radio, RadioCollection
 
 
 class RadioSet(object):
+
+    _name = None
+
     def __init__(self, query_scope, selector):
         if not isinstance(selector, dict):
             raise ValueError('invalid argument: {}'.format(selector))
@@ -67,29 +70,27 @@ class RadioSet(object):
         Gets a Radio for the RadioSet
         :rtype: Radio
         """
-        name = self.name
-        if name and ('name' not in kwargs or kwargs.get('name') == name):
-            return self.frame.radio(**dict(kwargs, name=name))
-        elif not name:
+        if self.name and ('name' not in kwargs or kwargs.get('name') == self.name):
+            return self.frame.radio(**dict(kwargs, name=self.name))
+        elif not self.name:
             return self.source
         else:
             raise UnknownObjectException('{} does not match name of RadioSet: '
-                                         '{}'.format(kwargs.get('name'), name))
+                                         '{}'.format(kwargs.get('name'), self.name))
 
     def radios(self, **kwargs):
         """
         Gets a RadioCollection for the RadioSet
         :rtype: RadioCollection
         """
-        name = self.name
-        if name and ('name' not in kwargs or kwargs.get('name') == name):
-            return self._element_call(lambda: self.frame.radios(**dict(kwargs, name=name)),
+        if self.name and ('name' not in kwargs or kwargs.get('name') == self.name):
+            return self._element_call(lambda: self.frame.radios(**dict(kwargs, name=self.name)),
                                       self.source.wait_for_present)
-        elif not name:
-            return RadioCollection(self.frame, {'element': self.source.wd})
+        elif not self.name:
+            return self._single_radio_collection
         else:
             raise UnknownObjectException('{} does not match name of RadioSet: '
-                                         '{}'.format(kwargs.get('name'), name))
+                                         '{}'.format(kwargs.get('name'), self.name))
 
     @property
     def enabled(self):
@@ -116,7 +117,9 @@ class RadioSet(object):
 
         :rtype: str
         """
-        return self.source.name
+        if self._name is None:
+            self._name = self.source.name
+        return self._name
 
     @property
     def type(self):
@@ -145,19 +148,13 @@ class RadioSet(object):
         :returns: the value or text of the radio selected
         :rtype: str
         """
-        found_by_value = self.radio(value=term)
-        found_by_text = self.radio(label=term)
-
-        if found_by_value.exists:
-            if not found_by_value.is_selected:
-                found_by_value.click()
-            return found_by_value.value
-        elif found_by_text.exists:
-            if not found_by_text.is_selected:
-                found_by_text.click()
-            return found_by_text.text
-        else:
-            raise UnknownObjectException('Unable to locate radio matching {}'.format(term))
+        for key in ['value', 'label']:
+            radio = self.radio(**{key: term})
+            if radio.exists:
+                if not radio.is_selected:
+                    radio.click()
+                return radio.value if key == 'value' else radio.text
+        raise UnknownObjectException('Unable to locate radio matching {}'.format(term))
 
     def is_selected(self, term):
         """
@@ -225,3 +222,9 @@ class RadioSet(object):
 
     def _element_call(self, *args, **kwargs):
         return self.source._element_call(*args, **kwargs)
+
+    @property
+    def _single_radio_collection(self):
+        collection = RadioCollection(self.frame, self.source.selector)
+        collection[0].cache = self.source.wd
+        return collection

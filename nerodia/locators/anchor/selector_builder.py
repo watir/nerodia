@@ -27,9 +27,6 @@ class SelectorBuilder(ElementSelectorBuilder):
 
     def _convert_to_partial_link_text(self, selector):
         regex = selector.get('visible_text')
-        substrings = RegexpDisassembler(regex).substrings
-        if len(substrings) == 0:
-            return
 
         return set(selector) == {'tag_name', 'visible_text'} and not regex.flags & IGNORECASE and \
-            substrings[0] == regex.pattern
+            RegexpDisassembler(regex).substrings[0] == regex.pattern

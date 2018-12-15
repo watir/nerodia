@@ -1,16 +1,16 @@
 import six
 
-from .html_elements import InputCollection
-from .input import Input
-from ..meta_elements import MetaHTMLElement
+from nerodia.elements.html_elements import InputCollection
+from nerodia.elements.input import Input
+from nerodia.meta_elements import MetaHTMLElement
 
 
 @six.add_metaclass(MetaHTMLElement)
 class Radio(Input):
-    def __init__(self, *args, **kwargs):
-        super(Radio, self).__init__(*args, **kwargs)
+    def build(self):
         if 'text' in self.selector:
             self.selector['label'] = self.selector.pop('text')
+        super(Radio, self).build()
 
     @property
     def is_set(self):
@@ -37,6 +37,11 @@ class Radio(Input):
 
 @six.add_metaclass(MetaHTMLElement)
 class RadioCollection(InputCollection):
+    def build(self):
+        if 'text' in self.selector:
+            self.selector['label'] = self.selector.pop('text')
+        super(RadioCollection, self).build()
+
     # private
 
     @property

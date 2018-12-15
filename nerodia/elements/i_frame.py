@@ -37,8 +37,8 @@ class IFrame(HTMLElement):
 
     def execute_script(self, script, *args):
         """ Executes JavaScript in context of frame """
-        from .element import Element
-        args = [e.wd if isinstance(e, Element) else e for e in args]
+        from nerodia.elements.element import Element
+        args = [e.wait_until(lambda e: e.exists).wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
 
         return self.browser._wrap_elements_in(self, returned)

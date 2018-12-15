@@ -1,242 +1,74 @@
-import re
 from copy import copy
-from itertools import islice
 from time import sleep
 
-import six
 from selenium.common.exceptions import NoSuchElementException, StaleElementReferenceException
-from selenium.webdriver.common.by import By
 
-import nerodia
-from ...exception import Error, LocatorException
-
-try:
-    from re import Pattern
-except ImportError:
-    from re import _pattern_type as Pattern
+from nerodia.exception import LocatorException
+from nerodia.locators import W3C_FINDERS
+from nerodia.locators.class_helpers import ClassHelpers
 
 
 class Locator(object):
-    W3C_FINDERS = {
-        'css': By.CSS_SELECTOR,
-        'link': By.LINK_TEXT,
-        'link_text': By.LINK_TEXT,
-        'partial_link_text': By.PARTIAL_LINK_TEXT,
-        'tag_name': By.TAG_NAME,
-        'xpath': By.XPATH
-    }
+    built = None
+    driver_scope = None
 
-    def __init__(self, query_scope, selector, selector_builder, element_validator):
-        self.query_scope = query_scope  # either element or browser
-        self.selector = selector
-        self.selector_builder = selector_builder
-        self.element_validator = element_validator
-        self.normalized_selector = None
-        self.driver_scope = None
+    def __init__(self, element_matcher):
+        self.element_matcher = element_matcher
+        self.query_scope = element_matcher.query_scope  # either element or browser
+        self.selector = element_matcher.selector
 
-    def locate(self):
+    def locate(self, built):
         try:
-            elements = self._using_selenium('first')
-            return elements if elements else self._using_nerodia('first')
-        except (NoSuchElementException, StaleElementReferenceException):
+            self.built = copy(built)
+            self.driver_scope = (self.built.pop('scope', None) or self.query_scope.browser).wd
+            return self._matching_elements(self.built, 'first')
+        except (NoSuchElementException):
             return None
 
-    def locate_all(self):
-        if 'element' in self.selector:
-            return [self.selector.get('element')]
+    def locate_all(self, built):
+        self.built = copy(built)
+        scope = self.built.pop('scope') if 'scope' in self.built else self.query_scope.browser
+        self.driver_scope = scope.wd
+        if 'index' in self.built:
+            raise ValueError("can't locate all elements by 'index'")
 
-        elements = self._using_selenium('all')
-        return elements if elements else self._using_nerodia('all')
+        return list(ClassHelpers._flatten(self._matching_elements(self.built, 'all')))
 
     # private
 
-    def _using_selenium(self, filter='first'):
-        selector = copy(self.selector)
+    def _matching_elements(self, built, filter='first'):
+        if len(built) == 1 and filter == 'first':
+            return self._locate_element(*list(ClassHelpers._flatten(built.items())))
 
-        tag = selector.pop('tag_name', None)
-        if len(self.selector) > 1:
-            return
-
-        how = list(selector)[0] if selector else 'tag_name'
-        what = list(selector.values())[0] if selector else tag
-
-        if not self._wd_is_supported(how, what, tag):
-            return
-
-        if filter == 'all':
-            return self._locate_elements(how, what)
-        else:
-            return self._locate_element(how, what)
-
-    def _using_nerodia(self, filter='first'):
-        selector = copy(self.selector)
-        if 'index' in self.selector and filter == 'all':
-            raise ValueError("can't locate all elements by 'index'")
-
-        self.driver_scope = self.driver_scope or self.query_scope.wd
-
-        built = self.selector_builder.build(selector)
-        self._validate_built_selector(built)
-
+        wd_locator_int = list(set(W3C_FINDERS).intersection(self.built.keys()))
+        wd_locator_key = wd_locator_int[0] if wd_locator_int else None
         wd_locator = {}
-        values_to_match = {}
+        match_values = {}
         for key, value in built.items():
-            if key in ['css', 'xpath', 'link_text', 'partial_link_text']:
+            if wd_locator_key == key:
                 wd_locator[key] = value
             else:
-                values_to_match[key] = value
+                match_values[key] = value
 
-        if filter == 'all' or len(values_to_match) > 0:
-            return self._locate_matching_elements(wd_locator, values_to_match, filter)
-        else:
-            first_key, first_value = list(wd_locator.items())[0]
-            return self._locate_element(first_key, first_value, self.driver_scope)
-
-    def _validate_built_selector(self, built):
-        if not built:
-            msg = "{} was unable to build selector from {}".format(self.selector_builder.__class__,
-                                                                   self.selector)
-            raise LocatorException(msg)
-
-    def _fetch_value(self, element, how):
-        if how == 'text':
-            return element.text
-        elif how == 'visible':
-            return element.is_displayed()
-        elif how == 'visible_text':
-            return element.text
-        elif how == 'tag_name':
-            return element.tag_name.lower()
-        elif how == 'href':
-            href = element.get_attribute('href')
-            return href and href.strip()
-        else:
-            return element.get_attribute(how.replace('_', '-')) or ''
-
-    def _matching_labels(self, elements, values, scope):
-        from nerodia.elements.html_elements import LabelCollection
-        from nerodia.elements.input import Input
-        label_key = 'label_element' if 'label_element' in values else 'visible_label_element'
-        label_value = values.pop('label_element', None) or values.pop('visible_label_element', None)
-        locator_key = label_key.replace('label', 'text').replace('_element', '')
-        matching = []
-        for label in LabelCollection(scope, {'tag_name': 'label'}):
-            if self._matches_values(label.wd, {locator_key: label_value}):
-                label_for = label.attribute('htmlFor')
-                input = Input(scope, {'id': label_for}) if label_for else label.input()
-                if input.wd in elements:
-                    matching.append(input.wd)
-        return matching
-
-    def _matching_elements(self, elements, values, filter='first'):
-        if filter == 'first':
-            idx = self._element_index(elements, values)
-            counter = 0
-
-            # Generator + slice to avoid fetching values for elements that will be discarded
-            matches = []
-            for element in elements:
-                counter += 1
-                if self._matches_values(element, values) is not False:
-                    matches.append(element)
-            try:
-                val = list(islice(matches, idx + 1))[idx]
-                nerodia.logger.debug('Iterated through {} elements to locate '
-                                     '{}'.format(counter, self.selector))
-                return val
-            except IndexError:
-                return None
-        else:
-            nerodia.logger.debug('Iterated through {} elements to locate all '
-                                 '{}'.format(len(elements), self.selector))
-            return [el for el in elements if self._matches_values(el, values)]
-
-    def _element_index(self, elements, values):
-        idx = values.pop('index', 0)
-        if idx < 0:
-            elements.reverse()
-            idx = abs(idx) - 1
-        return idx
-
-    def _matches_values(self, element, values):
-        def check_match(how, what):
-            if how == 'tag_name' and isinstance(what, six.string_types):
-                return self.element_validator.validate(element, what)
-            else:
-                val = self._fetch_value(element, how)
-                if isinstance(what, (Pattern, str)):
-                    val_match = re.search(what, val) is not None
-                else:
-                    val_match = False
-                return what == val or val_match
-
-        matches = all(check_match(how, what) for how, what in values.items())
-
-        if values.get('text'):
-            self._text_regexp_deprecation(element, values, matches)
-
-        return matches
-
-    def _text_regexp_deprecation(self, element, selector, matches):
-        from nerodia.elements.element import Element
-        new_element = Element(self.query_scope, {'element': element})
-        text_content = new_element._execute_js('getTextContent', element).strip()
-        text_selector = selector.get('text', '')
-        text_content_matches = re.search(text_selector, text_content) is not None
-        if matches != text_content_matches:
-            key = 'text' if 'text' in self.selector else 'label'
-            nerodia.logger.deprecate('Using {!r} locator with RegExp: {!r} to match an element '
-                                     'that includes hidden '
-                                     'text'.format(key, text_selector.pattern),
-                                     'visible_{}'.format(key),
-                                     ids=['text_regexp'])
-
-    def _locate_element(self, how, what, scope=None):
-        scope = scope or self.query_scope.wd
-        return scope.find_element(self._wd_finder(how), what)
-
-    def _locate_elements(self, how, what, scope=None):
-        scope = scope or self.query_scope.wd
-        return scope.find_elements(self._wd_finder(how), what)
-
-    def _wd_finder(self, how):
-        return self.W3C_FINDERS.get(how, how)
-
-    def _locate_matching_elements(self, selector, values, filter):
         retries = 0
-        while True:
+        while retries <= 2:
             try:
-                if len(selector) > 0:
-                    key, value = list(selector.items())[0]
-                    elements = self._locate_elements(key, value, self.driver_scope) or []
-                else:
-                    elements = []
-                if 'label_element' in values or 'visible_label_element' in values:
-                    elements = self._matching_labels(elements, values, self.query_scope)
-                return self._matching_elements(elements, values, filter=filter)
+                elements = self._locate_elements(*list(ClassHelpers._flatten(wd_locator.items())))
+
+                return self.element_matcher.match(elements, match_values, filter)
             except StaleElementReferenceException:
                 retries += 1
                 sleep(0.5)
-                if retries < 2:
-                    continue
-                target = 'element collection' if filter == 'all' else 'element'
-                raise Error('Unable to locate {} from {} due to changing '
-                            'page'.format(target, self.selector))
+                pass
 
-    def _wd_is_supported(self, how, what, tag):
-        if how not in self.W3C_FINDERS:
-            return False
-        if type(what) not in nerodia._str_types:
-            return False
+        target = 'element collection' if filter == 'all' else 'element'
+        raise LocatorException('Unable to locate {} from {} due to changing '
+                               'page'.format(target, self.selector))
 
-        if how in ['partial_link_text', 'link_text', 'link']:
-            nerodia.logger.deprecate('{} locator'.format(how), 'visible_text', ids=['link_text'])
-            if tag in ['link', None]:
-                return True
-            raise Exception('Can not use {} locator to find a {} element'.format(how, what))
-        elif how == 'tag_name':
-            return True
-        else:
-            if tag:
-                return False
-        return True
+    def _locate_element(self, how, what, scope=None):
+        scope = scope or self.driver_scope
+        return scope.find_element(W3C_FINDERS.get(how), what)
+
+    def _locate_elements(self, how, what, scope=None):
+        scope = scope or self.driver_scope
+        return scope.find_elements(W3C_FINDERS.get(how), what)

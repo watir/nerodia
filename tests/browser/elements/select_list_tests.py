@@ -322,10 +322,19 @@ class TestSelectListSelect(object):
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_option_doesnt_exist(self, browser):
-        with pytest.raises(NoValueFoundException):
+        message_parts = ["#<Select: located: False;",
+                         "'name': 'new_user_country'",
+                         "'tag_name': 'select'"]
+        with pytest.raises(NoValueFoundException) as e:
             browser.select_list(name='new_user_country').select('missing_option')
-        with pytest.raises(NoValueFoundException):
+        assert all(part in e.value.args[0] for part in message_parts)
+
+        message_parts = ["#<Select: located: False;",
+                         "'name': {}".format(re.compile('new_user_country')),
+                         "'tag_name': 'select'"]
+        with pytest.raises(NoValueFoundException) as e:
             browser.select_list(name=re.compile('new_user_country')).select('missing_option')
+        assert all(part in e.value.args[0] for part in message_parts)
 
     # This test doesn't like quick timeout
     def test_raises_correct_exception_if_the_option_is_disabled(self, browser):

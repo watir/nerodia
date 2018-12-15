@@ -4,8 +4,8 @@ from time import time
 import pytest
 
 import nerodia
-from nerodia.exception import UnknownObjectException, ObjectDisabledException
-from nerodia.wait.wait import Wait, TimeoutError
+from nerodia.exception import ObjectDisabledException, UnknownObjectException
+from nerodia.wait.wait import TimeoutError, Wait
 
 
 @pytest.fixture
@@ -138,8 +138,7 @@ class TestElementWaitUntilNotPresent(object):
         assert mock.call_count == 2
 
     def test_does_not_error_when_element_goes_stale(self, browser):
-        element = browser.div(id='foo')
-        element.exists
+        element = browser.div(id='foo').locate()
 
         browser.link(id='hide_foo').click()
         element.wait_until_not_present(timeout=1)

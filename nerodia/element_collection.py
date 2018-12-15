@@ -6,13 +6,18 @@ from .locators.class_helpers import ClassHelpers
 
 
 class ElementCollection(ClassHelpers):
+
+    _selector_builder = None
+    _element_matcher = None
+    _locator = None
+
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
         self.selector = selector
         self.generator = ()
-        self.locator = None
-        self.elements = None
         self._els = []
+        if 'element' not in self.selector:
+            self.build()
 
     def __iter__(self):
         """
@@ -29,18 +34,16 @@ class ElementCollection(ClassHelpers):
         from .elements.html_elements import HTMLElement
         from .elements.input import Input
         dic = {}
-        for idx, e in enumerate(self._elements):
-            selector = dict(self.selector, index=idx, element=e)
+        for idx, el in enumerate(self._elements):
+            selector = self.selector.copy()
+            if idx != 0:
+                selector['index'] = idx
+            selector = dict(self.selector, index=idx)
             element = self._element_class(self.query_scope, selector)
             if element.__class__ in [HTMLElement, Input]:
-                tag_name = self.selector.get('tag_name', element.tag_name)
-                dic[tag_name] = dic.get(tag_name, 0)
-                dic[tag_name] += 1
-                kls = nerodia.element_class_for(tag_name)
-                selector.update({'index': dic[tag_name] - 1, 'tag_name': tag_name})
-                yield kls(self.query_scope, selector)
-            else:
-                yield element
+                element = self._construct_subtype(element, dic)
+            element.cache = el
+            yield element
 
     def __len__(self):
         """
@@ -54,7 +57,7 @@ class ElementCollection(ClassHelpers):
         """
         Get the element at the given index or slice
 
-        Any call to an ElementCollection including an adjacent selector
+        Any call to an ElementCollection that includes an adjacent selector
         can not be lazy loaded because it must store correct type
 
         Slices can only be lazy loaded if the indices are positive
@@ -96,6 +99,9 @@ class ElementCollection(ClassHelpers):
         :rtype: bool
         """
         return len(self) == 0
+
+    def build(self):
+        self.selector_builder.build(self.selector.copy())
 
     @property
     def to_list(self):
@@ -148,12 +154,11 @@ class ElementCollection(ClassHelpers):
 
     @property
     def _elements(self):
-        from nerodia.browser import Browser
         self._ensure_context()
-        if isinstance(self.query_scope, Browser):
-            return self._locate_all()
-        else:
+        if 'scope' in self.selector_builder.built:
             return self.query_scope._element_call(lambda: self._locate_all())
+        else:
+            return self._locate_all()
 
     def _ensure_context(self):
         from nerodia.elements.i_frame import IFrame
@@ -163,7 +168,7 @@ class ElementCollection(ClassHelpers):
             self.query_scope.switch_to()
 
     def _locate_all(self):
-        return self._build_locator().locate_all()
+        return self.locator.locate_all(self.selector_builder.built)
 
     @property
     def _element_class(self):
@@ -183,3 +188,12 @@ class ElementCollection(ClassHelpers):
                 raise TypeError(
                     'element class for {} could not be determined'.format(name))
         return getattr(module, name)
+
+    def _construct_subtype(self, element, dic):
+        selector = element.selector
+        tag_name = self.selector.get('tag_name', element.tag_name)
+        dic[tag_name] = dic.get(tag_name, 0)
+        dic[tag_name] += 1
+        kls = nerodia.element_class_for(tag_name)
+        selector.update({'index': dic[tag_name] - 1, 'tag_name': tag_name})
+        return kls(self.query_scope, selector)

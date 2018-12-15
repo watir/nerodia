@@ -6,6 +6,7 @@ from selenium.webdriver.remote.webelement import WebElement
 from selenium.webdriver.support.event_firing_webdriver import EventFiringWebDriver
 
 import nerodia
+from nerodia.elements.scroll import Scrolling
 from . import locators
 from .after_hooks import AfterHooks
 from .alert import Alert
@@ -22,7 +23,7 @@ except ImportError:
     from urllib.parse import urlparse
 
 
-class Browser(Container, HasWindow, Waitable):
+class Browser(Container, HasWindow, Waitable, Scrolling):
     def __init__(self, browser='chrome', *args, **kwargs):
         """
         Creates a nerodia.browser.Browser instance
@@ -228,7 +229,7 @@ class Browser(Container, HasWindow, Waitable):
         :return: result of script
         """
         from .elements.element import Element
-        args = [e.wd if isinstance(e, Element) else e for e in args]
+        args = [e.wait_until(lambda x: x.exists).wd if isinstance(e, Element) else e for e in args]
         returned = self.driver.execute_script(script, *args)
 
         return self._wrap_elements_in(self, returned)
