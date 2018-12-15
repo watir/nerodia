@@ -69,31 +69,33 @@ class Locator(object):
             return self._locate_element(how, what)
 
     def _using_nerodia(self, filter='first'):
+        selector = copy(self.selector)
         if 'index' in self.selector and filter == 'all':
             raise ValueError("can't locate all elements by 'index'")
 
         self.driver_scope = self.driver_scope or self.query_scope.wd
 
-        built = self.selector_builder.build(self.selector)
-
-        # Validate selector before unpacking
+        built = self.selector_builder.build(selector)
         self._validate_built_selector(built)
-        selector, values = built
 
-        if filter == 'all' or len(values) > 0:
-            return self._locate_matching_elements(selector, values, filter)
+        wd_locator = {}
+        values_to_match = {}
+        for key, value in built.items():
+            if key in ['css', 'xpath', 'link_text', 'partial_link_text']:
+                wd_locator[key] = value
+            else:
+                values_to_match[key] = value
+
+        if filter == 'all' or len(values_to_match) > 0:
+            return self._locate_matching_elements(wd_locator, values_to_match, filter)
         else:
-            first_key, first_value = list(selector.items())[0]
+            first_key, first_value = list(wd_locator.items())[0]
             return self._locate_element(first_key, first_value, self.driver_scope)
 
     def _validate_built_selector(self, built):
-        if not isinstance(built, list) or built[0] is None:
+        if not built:
             msg = "{} was unable to build selector from {}".format(self.selector_builder.__class__,
                                                                    self.selector)
-            raise LocatorException(msg)
-        elif len(built) < 2 or built[1] is None:
-            msg = "{}#build is not returning expected responses for the current version of " \
-                  "Nerodia".format(self.selector_builder.__class__)
             raise LocatorException(msg)
 
     def _fetch_value(self, element, how):
@@ -204,8 +206,11 @@ class Locator(object):
         retries = 0
         while True:
             try:
-                first_key, first_value = list(selector.items())[0]
-                elements = self._locate_elements(first_key, first_value, self.driver_scope) or []
+                if len(selector) > 0:
+                    key, value = list(selector.items())[0]
+                    elements = self._locate_elements(key, value, self.driver_scope) or []
+                else:
+                    elements = []
                 if 'label_element' in values or 'visible_label_element' in values:
                     elements = self._matching_labels(elements, values, self.query_scope)
                 return self._matching_elements(elements, values, filter=filter)

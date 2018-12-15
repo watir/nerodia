@@ -26,13 +26,12 @@ NEGATIVE_TYPES = ' and '.join([
 ])
 
 
-def verify_build(browser, selector, wd, data=None, remaining=None, scope=None):
+def verify_build(browser, selector, built, data=None, scope=None):
     builder = SelectorBuilder(ATTRIBUTES)
     query_scope = scope or browser
-    built = builder.build(selector)
-    assert built == [wd, remaining or {}]
+    assert builder.build(selector) == built
 
-    located = query_scope.wd.find_element(*list(wd.items())[0])
+    located = query_scope.wd.find_element(*list(built.items())[0])
 
     if data:
         assert located.get_attribute('data-locator') == data
@@ -42,7 +41,7 @@ class TestBuild(object):
     def test_without_any_elements(self, browser):
         items = {
             'selector': {},
-            'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
+            'built': {'xpath': ".//*[local-name()='input'][not(@type) or "
                             "({})]".format(NEGATIVE_TYPES)},
             'data': 'input name'
         }
@@ -95,8 +94,8 @@ class TestBuild(object):
         items = {
             'selector': {'text': 'Developer'},
             'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
-                            "({})]".format(NEGATIVE_TYPES)},
-            'remaining': {'text': 'Developer'}
+                            "({})]".format(NEGATIVE_TYPES),
+                   'text': 'Developer'},
         }
         verify_build(browser, **items)
 
@@ -104,8 +103,8 @@ class TestBuild(object):
         items = {
             'selector': {'text': compile(r'Dev')},
             'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
-                            "({})]".format(NEGATIVE_TYPES)},
-            'remaining': {'text': compile(r'Dev')}
+                            "({})]".format(NEGATIVE_TYPES),
+                   'text': compile(r'Dev')},
         }
         verify_build(browser, **items)
 
@@ -113,8 +112,8 @@ class TestBuild(object):
         items = {
             'selector': {'text': compile(r'^foo$')},
             'wd': {'xpath': ".//*[local-name()='input'][not(@type) or "
-                            "({})]".format(NEGATIVE_TYPES)},
-            'remaining': {'text': compile(r'^foo$')}
+                            "({})]".format(NEGATIVE_TYPES),
+                   'text': compile(r'^foo$')},
         }
         verify_build(browser, **items)
 
@@ -156,8 +155,8 @@ class TestBuild(object):
     #         'wd': {'xpath': ".//*[local-name()='input'][not(@type) or ({})]"
     #                         "[@id=//label[contains(text(), 's') and contains(text(), ' name')]"
     #                         "/@for or parent::label[contains(text(), 's') and "
-    #                         "contains(text(), ' name')]]".format(NEGATIVE_TYPES)},
-    #         'remaining': {'label_element': compile(r'([qa])st? name')}
+    #                         "contains(text(), ' name')]]".format(NEGATIVE_TYPES),
+    #                'label_element': compile(r'([qa])st? name')},
     #     }
     #     verify_build(browser, **items)
 
@@ -211,8 +210,8 @@ class TestBuild(object):
         items = {
             'selector': {'text': 'Developer', 'class_name': compile(r'c'), 'id': True},
             'wd': {'xpath': ".//*[local-name()='input'][contains(@class, 'c')][not(@type) or "
-                            "({})][@id]".format(NEGATIVE_TYPES)},
-            'remaining': {'text': 'Developer'}
+                            "({})][@id]".format(NEGATIVE_TYPES),
+                   'text': 'Developer'},
         }
         verify_build(browser, **items)
 

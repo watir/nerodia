@@ -4,7 +4,6 @@ from copy import copy
 from importlib import import_module
 
 import six
-from selenium.webdriver.common.by import By
 
 import nerodia
 from nerodia.exception import LocatorException
@@ -53,18 +52,17 @@ class SelectorBuilder(object):
             if key in ['xpath', 'css']:
                 xpath_css[key] = self.selector.pop(key)
 
-        if len(xpath_css) == 0:
-            built = self._build_wd_selector(self.selector)
-        else:
-            self._process_xpath_css(xpath_css)
-            built = xpath_css
+        if len(xpath_css) > 1:
+            raise LocatorException("'xpath' and 'css' cannot be combined ({})".format(xpath_css))
 
-        if self.selector.get('index') == 0:
+        built = self._build_wd_selector(self.selector) if len(xpath_css) == 0 else self.selector
+
+        if built.get('index') == 0:
             self.selector.pop('index')
 
         nerodia.logger.debug('Converted {} to {}, with {} '
                              'to match'.format(rep, built, self.selector))
-        return [built, self.selector]
+        return built
 
     def normalize_selector(self):
         if self.selector.get('adjacent') == 'ancestor' and 'text' in self.selector:
@@ -119,16 +117,6 @@ class SelectorBuilder(object):
             return None
         self.custom_attributes.append(attribute)
 
-    def _process_xpath_css(self, xpath_css):
-        if len(xpath_css) > 1:
-            raise LocatorException("'xpath' and 'css' cannot be combined ({})".format(xpath_css))
-
-        if self._combine_with_xpath_or_css(self.selector):
-            return
-
-        raise LocatorException("{} cannot be combined with all of these locators "
-                               "({})".format(list(xpath_css)[0], self.selector))
-
     # Implement this method when creating a different selector builder
     def _build_wd_selector(self, selector):
         try:
@@ -171,11 +159,11 @@ class XPath(object):
     def build(self, selector):
         self.selector = selector
 
-        self.requires_matches = {}
+        self.built = {}
 
         for key in self.selector.copy():
             if key in self.CAN_NOT_BUILD:
-                self.requires_matches[key] = self.selector.pop(key)
+                self.built[key] = self.selector.pop(key)
 
         index = self.selector.pop('index', None)
         self.adjacent = self.selector.pop('adjacent', None)
@@ -189,12 +177,9 @@ class XPath(object):
         xpath += self._label_element_string
         xpath += self._attribute_string
 
-        if index is not None:
-            xpath = self._add_index(xpath, index)
+        self.built['xpath'] = self._add_index(xpath, index) if index is not None else xpath
 
-        self.selector.update(self.requires_matches)
-
-        return {By.XPATH: xpath}
+        return self.built
 
     # private
 
@@ -266,7 +251,7 @@ class XPath(object):
         if isinstance(class_name, str) and ' ' in class_name.strip():
             self._deprecate_class_list(class_name)
 
-        self.requires_matches['class'] = []
+        self.built['class'] = []
 
         predicates = []
         for value in ClassHelpers._flatten([class_name]):
@@ -274,8 +259,8 @@ class XPath(object):
             if pred is not None:
                 predicates.append(pred)
 
-        if len(self.requires_matches['class']) == 0:
-            self.requires_matches.pop('class')
+        if len(self.built['class']) == 0:
+            self.built.pop('class')
 
         if len(predicates) > 0:
             return '[{}]'.format(' and '.join(predicates))
@@ -288,7 +273,7 @@ class XPath(object):
         if text is None:
             return ''
         elif isinstance(text, Pattern):
-            self.requires_matches['text'] = text
+            self.built['text'] = text
             return ''
         else:
             return '[{}]'.format(self._predicate_expression('text', text))
@@ -303,16 +288,16 @@ class XPath(object):
 
         value = self._process_attribute(key, label)
 
-        if 'contains_text' in self.requires_matches:
-            self.requires_matches['label_element'] = self.requires_matches.pop('contains_text')
+        if 'contains_text' in self.built:
+            self.built['label_element'] = self.built.pop('contains_text')
 
         # TODO: This conditional can be removed when we remove this deprecation
         if isinstance(label, Pattern):
-            if 'label_element' in self.requires_matches:
+            if 'label_element' in self.built:
                 dep = "Using 'label' locator with RegExp {} to match an element that includes " \
                       "hidden text".format(label)
                 nerodia.logger.deprecate(dep, 'visible_{}'.format(key), ids=['text_regexp'])
-            self.requires_matches['label_element'] = label
+            self.built['label_element'] = label
             return ''
         else:
             return "[@id=//label[{0}]/@for or parent::label[{0}]]".format(value)
@@ -336,15 +321,15 @@ class XPath(object):
     def _add_index(self, xpath, index=None):
         if self.adjacent is not None:
             return '{}[{}]'.format(xpath, index + 1)
-        elif index and index >= 0 and len(self.requires_matches) == 0:
+        elif index and index >= 0 and len(self.built) == 0:
             return '({})[{}]'.format(xpath, index + 1)
-        elif index and index < 0 and len(self.requires_matches) == 0:
+        elif index and index < 0 and len(self.built) == 0:
             last_value = 'last()'
             if index < -1:
                 last_value += str(index + 1)
             return '({})[{}]'.format(xpath, last_value)
         else:
-            self.requires_matches['index'] = index
+            self.built['index'] = index
             return xpath
 
     def _deprecate_class_list(self, class_name):
@@ -355,7 +340,7 @@ class XPath(object):
 
     @property
     def _is_visible(self):
-        return not not set(self.requires_matches).intersection(XPath.CAN_NOT_BUILD)
+        return not not set(self.built).intersection(XPath.CAN_NOT_BUILD)
 
     def _starts_with(self, results, regexp):
         return regexp.pattern.startswith('^') and results[0] == regexp.pattern[1:]
@@ -363,9 +348,9 @@ class XPath(object):
     def _add_to_matching(self, key, regexp, results=None):
         if results is None or self._requires_matching(results, regexp):
             if key == 'class':
-                self.requires_matches[key].append(regexp)
+                self.built[key].append(regexp)
             else:
-                self.requires_matches[key] = regexp
+                self.built[key] = regexp
 
     def _requires_matching(self, results, regexp):
         if regexp.flags & re.IGNORECASE == re.IGNORECASE:

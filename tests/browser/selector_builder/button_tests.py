@@ -18,14 +18,13 @@ DEFAULT_TYPES = ' or '.join([
 ])
 
 
-def verify_build(browser, selector, wd, data=None, remaining=None, scope=None):
+def verify_build(browser, selector, built, data=None, scope=None):
     builder = SelectorBuilder(ATTRIBUTES)
     query_scope = scope or browser
-    built = builder.build(selector)
-    assert built == [wd, remaining or {}]
+    assert builder.build(selector) == built
 
     if data:
-        located = query_scope.wd.find_element(*list(wd.items())[0])
+        located = query_scope.wd.find_element(*list(built.items())[0])
         assert located.get_attribute('data-locator') == data
 
 
@@ -33,7 +32,7 @@ class TestBuild(object):
     def test_without_any_elements(self, browser):
         items = {
             'selector': {},
-            'wd': {'xpath': ".//*[(local-name()='button') or "
+            'built': {'xpath': ".//*[(local-name()='button') or "
                             "(local-name()='input' and ({}))]".format(DEFAULT_TYPES)},
             'data': 'user submit'
         }
@@ -44,7 +43,7 @@ class TestBuild(object):
     def test_false_only_locates_with_button_without_a_type(self, browser):
         items = {
             'selector': {'type': False},
-            'wd': {'xpath': ".//*[(local-name()='button' and not(@type))]"},
+            'built': {'xpath': ".//*[(local-name()='button' and not(@type))]"},
             'data': 'No Type'
         }
         verify_build(browser, **items)
@@ -52,7 +51,7 @@ class TestBuild(object):
     def test_true_locates_button_or_input_with_a_type(self, browser):
         items = {
             'selector': {'type': True},
-            'wd': {'xpath': ".//*[(local-name()='button' and @type) or "
+            'built': {'xpath': ".//*[(local-name()='button' and @type) or "
                             "(local-name()='input' and ({}))]".format(DEFAULT_TYPES)},
             'data': 'user submit'
         }
@@ -61,7 +60,7 @@ class TestBuild(object):
     def test_locates_input_or_button_element_with_specified_type(self, browser):
         items = {
             'selector': {'type': 'reset'},
-            'wd': {'xpath': ".//*[(local-name()='button' and translate(@type,'{0}','{1}')='reset')"
+            'built': {'xpath': ".//*[(local-name()='button' and translate(@type,'{0}','{1}')='reset')"
                             " or (local-name()='input' and (translate(@type,'{0}','{1}')='reset')"
                             ")]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)},
             'data': 'reset'
@@ -80,8 +79,7 @@ class TestBuild(object):
         items = {
             'selector': {'xpath': '//*[@id="disabled_button"]', 'tag_name': 'input',
                          'type': 'submit'},
-            'wd': {'xpath': '//*[@id="disabled_button"]'},
-            'remaining': {'tag_name': 'input', 'type': 'submit'}
+            'built': {'xpath': '//*[@id="disabled_button"]', 'tag_name': 'input', 'type': 'submit'},
         }
         verify_build(browser, **items)
 
@@ -90,7 +88,7 @@ class TestBuild(object):
     def test_locates_value_of_input_element_with_string(self, browser):
         items = {
             'selector': {'text': 'Button'},
-            'wd': {'xpath': ".//*[(local-name()='button' and normalize-space()='Button') or "
+            'built': {'xpath': ".//*[(local-name()='button' and normalize-space()='Button') or "
                             "(local-name()='input' and ({}) and @value='Button')]".format(DEFAULT_TYPES)},
             'data': 'new user'
         }
@@ -99,7 +97,7 @@ class TestBuild(object):
     def test_locates_text_of_button_element_with_string(self, browser):
         items = {
             'selector': {'text': 'Button 2'},
-            'wd': {'xpath': ".//*[(local-name()='button' and normalize-space()='Button 2') or "
+            'built': {'xpath': ".//*[(local-name()='button' and normalize-space()='Button 2') or "
                             "(local-name()='input' and ({}) and @value='Button "
                             "2')]".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -109,7 +107,7 @@ class TestBuild(object):
     def test_locates_value_of_input_element_with_simple_regexp(self, browser):
         items = {
             'selector': {'text': compile(r'Button')},
-            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button')) or "
                             "(local-name()='input' and ({}) and contains(@value, "
                             "'Button'))]".format(DEFAULT_TYPES)},
             'data': 'new user'
@@ -119,7 +117,7 @@ class TestBuild(object):
     def test_locates_text_of_button_element_with_simple_regexp(self, browser):
         items = {
             'selector': {'text': compile(r'Button 2')},
-            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button 2')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button 2')) or "
                             "(local-name()='input' and ({}) and contains(@value, "
                             "'Button 2'))]".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -129,7 +127,7 @@ class TestBuild(object):
     def test_locates_with_simple_regexp_for_text(self, browser):
         items = {
             'selector': {'text': compile(r'n 2')},
-            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'n 2')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'n 2')) or "
                             "(local-name()='input' and ({}) and contains(@value, "
                             "'n 2'))]".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -139,7 +137,7 @@ class TestBuild(object):
     def test_locates_with_simple_regexp_for_value(self, browser):
         items = {
             'selector': {'text': compile(r'Prev')},
-            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Prev')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Prev')) or "
                             "(local-name()='input' and ({}) and contains(@value, "
                             "'Prev'))]".format(DEFAULT_TYPES)},
             'data': 'preview'
@@ -149,10 +147,9 @@ class TestBuild(object):
     def test_returns_complex_text_regexp_to_the_locator(self, browser):
         items = {
             'selector': {'text': compile(r'^foo$')},
-            'wd': {'xpath': ".//*[(local-name()='button' and contains(text(), 'foo')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'foo')) or "
                             "(local-name()='input' and ({}) and contains(@value, "
-                            "'foo'))]".format(DEFAULT_TYPES)},
-            'remaining': {'text': compile(r'^foo$')}
+                            "'foo'))]".format(DEFAULT_TYPES), 'text': compile(r'^foo$')},
         }
         verify_build(browser, **items)
 
@@ -161,7 +158,7 @@ class TestBuild(object):
     def test_input_element_value_with_string(self, browser):
         items = {
             'selector': {'value': 'Preview'},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[normalize-space()='Preview' or @value="
                             "'Preview']".format(DEFAULT_TYPES)},
             'data': 'preview'
@@ -171,7 +168,7 @@ class TestBuild(object):
     def test_button_element_value_with_string(self, browser):
         items = {
             'selector': {'value': 'button_2'},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[normalize-space()='button_2' or @value="
                             "'button_2']".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -181,7 +178,7 @@ class TestBuild(object):
     def test_input_element_value_with_simple_regexp(self, browser):
         items = {
             'selector': {'value': compile(r'Prev')},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[contains(text(), 'Prev') or contains(@value, "
                             "'Prev')]".format(DEFAULT_TYPES)},
             'data': 'preview'
@@ -191,7 +188,7 @@ class TestBuild(object):
     def test_button_element_value_with_simple_regexp(self, browser):
         items = {
             'selector': {'value': compile(r'on_2')},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[contains(text(), 'on_2') or contains(@value, "
                             "'on_2')]".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -201,7 +198,7 @@ class TestBuild(object):
     def test_button_element_text_with_string(self, browser):
         items = {
             'selector': {'value': 'Button 2'},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[normalize-space()='Button 2' or @value="
                             "'Button 2']".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -211,7 +208,7 @@ class TestBuild(object):
     def test_button_element_text_with_simple_regexp(self, browser):
         items = {
             'selector': {'value': compile(r'ton 2')},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[contains(text(), 'ton 2') or contains(@value, "
                             "'ton 2')]".format(DEFAULT_TYPES)},
             'data': 'Benjamin'
@@ -221,7 +218,7 @@ class TestBuild(object):
     def test_returns_complex_value_regexp_to_the_locator(self, browser):
         items = {
             'selector': {'value': compile(r'^foo$')},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[contains(text(), 'foo') or contains(@value, "
                             "'foo')]".format(DEFAULT_TYPES)},
             'remaining': {'value': compile(r'^foo$')}
@@ -233,7 +230,7 @@ class TestBuild(object):
     def test_index_positive(self, browser):
         items = {
             'selector': {'index': 3},
-            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+            'built': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
                             "({}))])[4]".format(DEFAULT_TYPES)},
             'data': 'preview'
         }
@@ -242,7 +239,7 @@ class TestBuild(object):
     def test_index_negative(self, browser):
         items = {
             'selector': {'index': -4},
-            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+            'built': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
                             "({}))])[last()-3]".format(DEFAULT_TYPES)},
             'data': 'submittable button'
         }
@@ -251,7 +248,7 @@ class TestBuild(object):
     def test_index_last(self, browser):
         items = {
             'selector': {'index': -1},
-            'wd': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
+            'built': {'xpath': "(.//*[(local-name()='button') or (local-name()='input' and "
                             "({}))])[last()]".format(DEFAULT_TYPES)},
             'data': 'last button'
         }
@@ -260,7 +257,7 @@ class TestBuild(object):
     def test_index_does_not_return_index_if_zero(self, browser):
         items = {
             'selector': {'index': 0},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and "
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and "
                             "({}))]".format(DEFAULT_TYPES)},
             'data': 'user submit'
         }
@@ -277,7 +274,7 @@ class TestBuild(object):
     def test_locates_using_class_and_attributes(self, browser):
         items = {
             'selector': {'class_name': 'image', 'name': 'new_user_image', 'src': True},
-            'wd': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
+            'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
                             "[contains(concat(' ', @class, ' '), ' image ')][@name="
                             "'new_user_image' and @src]".format(DEFAULT_TYPES)},
             'data': 'submittable button'
@@ -288,7 +285,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='new_user_button').locate(),
             'selector': {'adjacent': 'ancestor', 'index': 2},
-            'wd': {'xpath': './ancestor::*[3]'},
+            'built': {'xpath': './ancestor::*[3]'},
             'data': 'body'
         }
         verify_build(browser, **items)

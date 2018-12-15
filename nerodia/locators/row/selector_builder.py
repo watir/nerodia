@@ -27,20 +27,18 @@ class XPath(ElementXPath):
 
         index = selector.pop('index', None)
 
-        common_string = super(XPath, self).build(selector).get('xpath')
+        super(XPath, self).build(selector)
+        common_string = self.built.pop('xpath', None)
 
         expressions = self._generate_expressions(scope_tag_name)
         if len(common_string) > 0:
             expressions = ["{}{}".format(e, common_string) for e in expressions]
 
         xpath = ' | '.join(expressions)
-
         if index is not None:
-            xpath = self._add_index(xpath, index)
+            self.built['xpath'] = self._add_index(xpath, index)
 
-        self.selector.update(self.requires_matches)
-
-        return {'xpath': xpath}
+        return self.built
 
     # private
 
@@ -56,7 +54,7 @@ class XPath(ElementXPath):
         # Can not directly locate a Row with Text because all text is in the Cells;
         # needs to use Locator#locate_matching_elements
         if 'text' in self.selector:
-            self.requires_matches['text'] = self.selector.pop('text')
+            self.built['text'] = self.selector.pop('text')
         return ''
 
     def _generate_expressions(self, scope_tag_name):

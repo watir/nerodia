@@ -10,14 +10,13 @@ pytestmark = pytest.mark.page('tables.html')
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 
 
-def verify_build(selector, wd, data=None, remaining=None, scope=None, scope_tag=None):
+def verify_build(selector, built, data=None, scope=None, scope_tag=None):
     query_scope = scope
     scope_tag_name = scope_tag or query_scope.tag_name
     builder = SelectorBuilder(ATTRIBUTES, scope_tag_name)
-    built = builder.build(selector)
-    assert built == [wd, remaining or {}]
+    assert builder.build(selector) == built
 
-    located = query_scope.wd.find_element(*list(wd.items())[0])
+    located = query_scope.wd.find_element(*list(built.items())[0])
 
     if data:
         assert located.get_attribute('data-locator') == data
@@ -31,7 +30,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='outer').locate(),
             'selector': {},
-            'wd': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/"
+            'built': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/"
                             "*[local-name()='tr'] | ./*[local-name()='thead']/*[local-name()='tr']"
                             " | ./*[local-name()='tfoot']/*[local-name()='tr']"},
             'data': 'first row'
@@ -42,7 +41,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='first').locate(),
             'selector': {},
-            'wd': {'xpath': "./*[local-name()='tr']"},
+            'built': {'xpath': "./*[local-name()='tr']"},
             'data': 'tbody row'
         }
         verify_build(**items)
@@ -51,7 +50,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='tax_headers').locate(),
             'selector': {},
-            'wd': {'xpath': "./*[local-name()='tr']"},
+            'built': {'xpath': "./*[local-name()='tr']"},
             'data': 'thead row'
         }
         verify_build(**items)
@@ -60,7 +59,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='tax_totals').locate(),
             'selector': {},
-            'wd': {'xpath': "./*[local-name()='tr']"},
+            'built': {'xpath': "./*[local-name()='tr']"},
             'data': 'tfoot row'
         }
         verify_build(**items)
@@ -71,7 +70,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='outer').locate(),
             'selector': {'index': 1},
-            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+            'built': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
                             "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
                             "./*[local-name()='tfoot']/*[local-name()='tr'])[2]"},
             'data': 'middle row'
@@ -82,7 +81,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='outer').locate(),
             'selector': {'index': -3},
-            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+            'built': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
                             "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
                             "./*[local-name()='tfoot']/*[local-name()='tr'])[last()-2]"},
             'data': 'first row'
@@ -93,7 +92,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='outer').locate(),
             'selector': {'index': -1},
-            'wd': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+            'built': {'xpath': "(./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
                             "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
                             "./*[local-name()='tfoot']/*[local-name()='tr'])[last()]"},
             'data': 'last row'
@@ -104,7 +103,7 @@ class TestBuild(object):
         items = {
             'scope': browser.element(id='outer').locate(),
             'selector': {'index': 0},
-            'wd': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
+            'built': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()="
                             "'tr'] | ./*[local-name()='thead']/*[local-name()='tr'] | "
                             "./*[local-name()='tfoot']/*[local-name()='tr']"},
             'data': 'first row'
@@ -123,7 +122,7 @@ class TestBuild(object):
         items = {
             'scope': browser.table().locate(),
             'selector': {'id': 'gregory', 'class_name': compile(r'brick')},
-            'wd': {'xpath': "./*[local-name()='tr'][contains(@class, 'brick')][@id='gregory'] | ./"
+            'built': {'xpath': "./*[local-name()='tr'][contains(@class, 'brick')][@id='gregory'] | ./"
                             "*[local-name()='tbody']/*[local-name()='tr'][contains(@class, 'brick')"
                             "][@id='gregory'] | ./*[local-name()='thead']/*[local-name()='tr']"
                             "[contains(@class, 'brick')][@id='gregory'] | ./*[local-name()='tfoot']"
@@ -138,10 +137,10 @@ class TestBuild(object):
         items = {
             'scope': browser.table(id='outer').locate(),
             'selector': {'text': 'Gregory'},
-            'wd': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()='tr"
+            'built': {'xpath': "./*[local-name()='tr'] | ./*[local-name()='tbody']/*[local-name()='tr"
                             "'] | ./*[local-name()='thead']/*[local-name()='tr'] | ./*[local-name()"
-                            "='tfoot']/*[local-name()='tr']"},
-            'remaining': {'text': 'Gregory'}
+                            "='tfoot']/*[local-name()='tr']",
+                      'text': 'Gregory'},
         }
         verify_build(**items)
 
@@ -150,7 +149,7 @@ class TestBuild(object):
             'scope': browser.element(id='gregory').locate(),
             'scope_tag': 'table',
             'selector': {'adjacent': 'ancestor', 'index': 1},
-            'wd': {'xpath': './ancestor::*[2]'},
+            'built': {'xpath': './ancestor::*[2]'},
             'data': 'top table'
         }
         verify_build(**items)

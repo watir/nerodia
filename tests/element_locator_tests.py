@@ -336,11 +336,12 @@ class TestElementLocatorFindsSingleElement(object):
         elements3 = [element1c, element2c]
 
         expect_all.side_effect = [elements1, elements2, elements3]
-        msg = "Unable to locate element from {'class': 'foo'} due to changing page"
+        msg = "Unable to locate element from {{'class_name': {}}} due to changing " \
+              "page".format(re.compile(r'foo$'))
         with pytest.raises(Exception) as e:
             locate_one(browser, {'class_name': re.compile(r'foo$')})
         assert e.value.args[0] == msg
-        expect_all.assert_called_with(By.XPATH, './/*[@class]')
+        expect_all.assert_called_with(By.XPATH, ".//*[contains(@class, 'foo')]")
 
     def test_returns_none_if_found_element_didnt_match_the_selector_tag_name(self, browser, mocker, expect_all):
         from nerodia.elements.input import Input

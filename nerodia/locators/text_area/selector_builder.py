@@ -28,5 +28,5 @@ class XPath(ElementXPath):
         if key != 'value':
             return super(XPath, self)._predicate_conversion(key, regexp)
         else:
-            self.requires_matches['value'] = regexp
+            self.built['value'] = regexp
             return None

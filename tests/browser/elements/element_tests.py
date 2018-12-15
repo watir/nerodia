@@ -287,24 +287,8 @@ class TestElementExist(object):
     def test_doesnt_raise_when_selector_with_xpath_has_index(self, browser):
         assert browser.div(xpath='//div', index=1).exists
 
-    def test_raises_correct_exception_if_selector_dict_with_xpath_has_multiple_entries(self, browser):
-        message_parts = ["xpath cannot be combined with all of these locators",
-                         "'class': 'foo'",
-                         "'tag_name': 'div'"]
-        with pytest.raises(LocatorException) as e:
-            browser.div(xpath='//div', class_name='foo').exists
-        assert all(part in e.value.args[0] for part in message_parts)
-
     def test_doesnt_raise_when_selector_with_css_has_index(self, browser):
         assert browser.div(css='div', index=1).exists
-
-    def test_raises_correct_exception_if_selector_dict_with_css_has_multiple_entries(self, browser):
-        message_parts = ["css cannot be combined with all of these locators",
-                         "'class': 'foo'",
-                         "'tag_name': 'div'"]
-        with pytest.raises(LocatorException) as e:
-            browser.div(css='div', class_name='foo').exists
-        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_finds_element_by_selenium_name_locator(self, browser):
         assert browser.element(name='new_user_first_name').exists

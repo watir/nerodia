@@ -17,7 +17,7 @@ class XPath(ElementXPath):
         if self.adjacent is not None:
             return super(XPath, self)._text_string
         if 'text' in self.selector:
-            self.requires_matches['text'] = self.selector.pop('text')
+            self.built['text'] = self.selector.pop('text')
         return ''
 
     @property

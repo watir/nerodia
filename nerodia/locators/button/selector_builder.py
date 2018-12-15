@@ -48,7 +48,7 @@ class XPath(ElementXPath):
         string += ' and ({})'.format(self._input_types(typ))
         if text is not None:
             string += ' and {}'.format(self._process_attribute('value', text))
-            self.requires_matches.pop('value', None)
+            self.built.pop('value', None)
         return string
 
     @property
@@ -62,7 +62,7 @@ class XPath(ElementXPath):
         elif isinstance(value, Pattern):
             res = '[{} or {}]'.format(self._predicate_conversion('text', value),
                                       self._predicate_conversion('value', value))
-            self.requires_matches.pop('text', None)
+            self.built.pop('text', None)
             return res
         else:
             return '[{} or {}]'.format(self._predicate_expression('text', value),
@@ -73,8 +73,8 @@ class XPath(ElementXPath):
             res = super(XPath, self)._predicate_conversion('contains_text', regexp)
         else:
             res = super(XPath, self)._predicate_conversion(key, regexp)
-        if 'contains_text' in self.requires_matches:
-            self.requires_matches[key] = self.requires_matches.pop('contains_text')
+        if 'contains_text' in self.built:
+            self.built[key] = self.built.pop('contains_text')
         return res
 
     def _input_types(self, typ):
