@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from distutils.command.install import INSTALL_SCHEMES
-from os.path import dirname, join, abspath
+from os.path import abspath, dirname, join
 
 from setuptools import setup
 from setuptools.command.install import install
@@ -12,7 +12,7 @@ for scheme in INSTALL_SCHEMES.values():
 setup_args = {
     'cmdclass': {'install': install},
     'name': 'nerodia',
-    'version': '0.13.0',
+    'version': '0.14.0',
     'license': 'MIT',
     'description': 'Python port of WATIR https://github.com/watir/watir',
     'long_description': open(join(abspath(dirname(__file__)), 'README.rst')).read(),
