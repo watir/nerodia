@@ -96,6 +96,7 @@ class FramedDriver(object):
         try:
             self.driver.switch_to.frame(self.el)
             self.browser.default_context = False
+            self.browser.after_hooks.run()
         except NoSuchFrameException as e:
             raise UnknownFrameException(e)
 

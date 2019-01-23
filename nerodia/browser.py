@@ -272,10 +272,12 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
     # private
 
     def _ensure_context(self):
-        if not self.default_context:
-            self.driver.switch_to.default_content()
+        if self.default_context:
+            return
+
+        self.driver.switch_to.default_content()
         self.default_context = True
-        return self.default_context
+        self.after_hooks.run()
 
     @property
     def _should_relocate(self):

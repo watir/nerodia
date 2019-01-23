@@ -125,6 +125,35 @@ class TestAfterHooksRun(object):
         assert result.get('value') is True
 
     # TODO: xfail safari
+    @pytest.mark.page('iframes.html')
+    def test_runs_after_hooks_after_framed_driver_switch(self, browser):
+        result = {}
+
+        def hook(b):
+            result['value'] = b.title == 'Iframes'
+
+        browser.after_hooks.add(method=hook)
+
+        browser.iframe().element(css='#senderElement').exists
+
+        assert result.get('value') is True
+
+    # TODO: xfail safari
+    @pytest.mark.page('iframes.html')
+    def test_runs_after_hooks_after_browser_ensure_context(self, browser):
+        browser.iframe().element(css='#senderElement').locate()
+        result = {}
+
+        def hook(b):
+            result['value'] = b.title == 'Iframes'
+
+        browser.after_hooks.add(method=hook)
+
+        browser.locate()
+
+        assert result.get('value') is True
+
+    # TODO: xfail safari
     @pytest.mark.page('alerts.html')
     def test_runs_after_hooks_after_alert_ok(self, browser):
         result = {}
