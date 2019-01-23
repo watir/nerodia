@@ -181,7 +181,7 @@ class TestAfterHooksRun(object):
         browser.alert.close()
         assert result.get('value') is True
 
-    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1223277',
                                raises=UnknownObjectException)
     @pytest.mark.page('alerts.html')
     @pytest.mark.quits_browser
@@ -209,7 +209,7 @@ class TestAfterHooksRun(object):
         with browser.after_hooks.without():
             browser.button(id='alert').click()
 
-    @pytest.mark.xfail_firefox(reason='w3c currently errors when an alert is present',
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1223277',
                                raises=UnexpectedAlertPresentException)
     @pytest.mark.usefixtures('clear_alert')
     def test_does_not_raise_error_if_no_error_checks_are_defined_with_alert_present(self, browser, page):
@@ -221,7 +221,9 @@ class TestAfterHooksRun(object):
         browser.after_hooks.delete(hook)
         browser.button(id='alert').click()
 
-    # TODO: xfail firefox
+    @pytest.mark.xfail_firefox(reason='https://bugzilla.mozilla.org/show_bug.cgi?id=1223277',
+                               raises=UnexpectedAlertPresentException)
+    @pytest.mark.usefixtures('clear_alert')
     def test_does_not_raise_error_when_running_error_checks_on_closed_window(self, browser, page):
         def hook(b):
             b.url

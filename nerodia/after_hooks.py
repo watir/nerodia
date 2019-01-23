@@ -1,5 +1,9 @@
 from contextlib import contextmanager
 
+from selenium.common.exceptions import NoSuchWindowException
+
+import nerodia
+
 
 class AfterHooks(object):
     """
@@ -54,9 +58,15 @@ class AfterHooks(object):
 
     def run(self):
         """ Runs after hooks """
-        if self.after_hooks and self.browser.window().present and not self.browser.alert.exists:
-            for hook in self.after_hooks:
-                hook(self.browser)
+        # We can't just rescue exception because Firefox automatically closes alert when
+        # exception raised
+        if self.after_hooks and not self.browser.alert.exists:
+            try:
+                for hook in self.after_hooks:
+                    hook(self.browser)
+            except NoSuchWindowException as e:
+                nerodia.logger.info('Could not execute After Hooks because browser window was '
+                                    'closed {}'.format(e))
 
     @contextmanager
     def without(self):
