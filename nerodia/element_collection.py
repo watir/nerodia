@@ -1,11 +1,16 @@
 from importlib import import_module
 from itertools import islice
+from time import sleep
+
+from selenium.common.exceptions import StaleElementReferenceException
 
 import nerodia
+from nerodia.exception import LocatorException
+from nerodia.js_snippet import JSSnippet
 from .locators.class_helpers import ClassHelpers
 
 
-class ElementCollection(ClassHelpers):
+class ElementCollection(ClassHelpers, JSSnippet):
 
     _selector_builder = None
     _element_matcher = None
@@ -34,14 +39,14 @@ class ElementCollection(ClassHelpers):
         from .elements.html_elements import HTMLElement
         from .elements.input import Input
         dic = {}
-        for idx, el in enumerate(self._elements):
+        for idx, (el, tag_name) in enumerate(self._elements_with_tags):
             selector = self.selector.copy()
             if idx != 0:
                 selector['index'] = idx
             selector = dict(self.selector, index=idx)
             element = self._element_class(self.query_scope, selector)
             if element.__class__ in [HTMLElement, Input]:
-                element = self._construct_subtype(element, dic)
+                element = self._construct_subtype(element, dic, tag_name)
             element.cache = el
             yield element
 
@@ -77,10 +82,12 @@ class ElementCollection(ClassHelpers):
                 return list(islice(self, idx + 1))[idx]
             except IndexError:
                 return self._element_class(self.query_scope, {'invalid_locator': True})
-        elif self._els and idx > 0 and len(self._els) > idx:
-            return self._els[idx]
-        else:
-            return self._element_class(self.query_scope, dict(self.selector, index=idx))
+        elif len(self._els) > 0:
+            try:
+                return self._els[idx]
+            except IndexError:
+                pass
+        return self._element_class(self.query_scope, dict(self.selector, index=idx))
 
     @property
     def is_empty(self):
@@ -160,6 +167,24 @@ class ElementCollection(ClassHelpers):
         else:
             return self._locate_all()
 
+    @property
+    def _elements_with_tags(self):
+        els = self._elements
+        if 'tag_name' in self.selector:
+            return [(e, self.selector['tag_name']) for e in els]
+        else:
+            retries = 0
+            while retries <= 2:
+                try:
+                    return zip(els, self._execute_js('getElementTags', els))
+                except StaleElementReferenceException:
+                    retries += 1
+                    sleep(0.5)
+                    pass
+
+        raise LocatorException('Unable to locate element collection from {} due to changing '
+                               'page'.format(self.selector))
+
     def _ensure_context(self):
         from nerodia.elements.i_frame import IFrame
         if self.query_scope._should_relocate:
@@ -189,9 +214,8 @@ class ElementCollection(ClassHelpers):
                     'element class for {} could not be determined'.format(name))
         return getattr(module, name)
 
-    def _construct_subtype(self, element, dic):
+    def _construct_subtype(self, element, dic, tag_name):
         selector = element.selector
-        tag_name = self.selector.get('tag_name', element.tag_name)
         dic[tag_name] = dic.get(tag_name, 0)
         dic[tag_name] += 1
         kls = nerodia.element_class_for(tag_name)
