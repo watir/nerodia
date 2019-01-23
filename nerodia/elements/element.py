@@ -609,7 +609,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     def wait_for_exists(self):
         if not nerodia.relaxed_locate:
             return self.assert_exists()
-        if self.exists:  # Performance shortcut
+        if self._located:  # Performance shortcut
             return None
 
         try:
