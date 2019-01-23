@@ -360,13 +360,13 @@ class TestCurrentWindowClosed(object):
 class TestWindowRect(object):
     def test_should_get_the_size_of_the_current_window(self, browser):
         size = browser.window().size
-        assert size.width > 0
-        assert size.height > 0
+        assert size.width == browser.execute_script('return window.outerWidth;')
+        assert size.height == browser.execute_script('return window.outerHeight;')
 
     def test_should_get_the_position_of_the_current_window(self, browser):
         pos = browser.window().position
-        assert pos.x >= 0
-        assert pos.y >= 0
+        assert pos.x == browser.execute_script('return window.screenX;')
+        assert pos.y == browser.execute_script('return window.screenY;')
 
     def test_should_resize_the_window(self, browser):
         initial_size = browser.window().size
