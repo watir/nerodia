@@ -82,7 +82,7 @@ class Matcher(object):
         matches = all(check_match(how, expected) for how, expected in values_to_match.items())
 
         if values_to_match.get('text'):
-            self._deprecate_text_regexp(element, values_to_match, matches)
+            self._deprecate_text_regexp(element, values_to_match)
 
         return matches
 
@@ -119,15 +119,11 @@ class Matcher(object):
     def _validate_tag(self, element, tag_name):
         return self._matches_values(element.tag_name.lower(), tag_name)
 
-    def _deprecate_text_regexp(self, element, selector, matches):
+    def _deprecate_text_regexp(self, element, selector):
         from nerodia.elements.element import Element
         new_element = Element(self.query_scope, {'element': element})
         text_content = new_element.text_content
-        if 'text' in selector:
-            text_content_matches = re.search(selector.get('text'), text_content) is not None
-        else:
-            text_content_matches = None
-        if not not text_content_matches == matches:
+        if re.search(selector.get('text'), text_content) is not None:
             return
 
         key = 'text' if 'text' in self.selector else 'label'

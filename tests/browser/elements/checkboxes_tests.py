@@ -7,8 +7,8 @@ def test_returns_the_matching_elements(browser):
     assert list(browser.checkboxes(value='books')) == [browser.checkbox(value='books')]
 
 
-def test_returns_the_number_of_buttons(browser):
-    assert len(browser.checkboxes()) == 8
+def test_returns_the_number_of_checkboxes(browser):
+    assert len(browser.checkboxes()) == 11
 
 
 def test_returns_the_button_at_the_given_index(browser):

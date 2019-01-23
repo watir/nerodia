@@ -3,8 +3,8 @@ import re
 import six
 
 import nerodia
-from nerodia.exception import Error, NoValueFoundException, UnknownObjectException, \
-    ObjectDisabledException
+from nerodia.exception import Error, NoValueFoundException, ObjectDisabledException, \
+    UnknownObjectException
 from nerodia.wait.wait import TimeoutError
 from .html_elements import HTMLElement
 from ..meta_elements import MetaHTMLElement
@@ -214,4 +214,4 @@ class Select(HTMLElement):
         for element in elements:
             if not element.is_selected:
                 element.click()
-        return elements[0].text if elements[0].exist else ''
+        return elements[0].text if elements[0].stale else ''

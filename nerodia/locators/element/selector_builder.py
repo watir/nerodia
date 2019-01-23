@@ -154,6 +154,9 @@ class SelectorBuilder(object):
             return ['link_text', what]
         elif how == 'caption':
             # This allows any element to be located with 'caption' instead of 'text'
+            # It is deprecated because caption is a valid attribute on a Table
+            # It is also a valid Element, so it also needs to be removed from the Table attributes
+            # list
             nerodia.logger.deprecate("Locating elements with 'caption'", "'text' locator",
                                      ids=['caption'])
             return ['text', what]
@@ -358,10 +361,6 @@ class XPath(object):
 
         # TODO: This conditional can be removed when we remove this deprecation
         if isinstance(label, Pattern):
-            if 'label_element' in self.built:
-                dep = "Using 'label' locator with RegExp {} to match an element that includes " \
-                      "hidden text".format(label)
-                nerodia.logger.deprecate(dep, 'visible_{}'.format(key), ids=['text_regexp'])
             self.built['label_element'] = label
             return ''
         else:

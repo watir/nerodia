@@ -75,7 +75,6 @@ class TestTableRow(object):
     def test_finds_rows_belonging_to_this_table(self, browser):
         table = browser.table(id='outer')
         assert table.row(id='outer_last').exists
-        table.row(text='Table 1, Row 1, Cell 1').locate()
         assert table.row(text=re.compile('Table 1, Row 1, Cell 1')).exists
 
     def test_does_not_find_rows_from_a_nested_table(self, browser):

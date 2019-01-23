@@ -9,7 +9,7 @@ class TestLabels(object):
             [browser.label('for', 'new_user_first_name')]
 
     def test_returns_the_correct_number_of_labels(self, browser):
-        assert len(browser.labels()) == 42
+        assert len(browser.labels()) == 45
 
     def test_get_item_returns_the_label_at_the_given_index(self, browser):
         assert browser.labels()[0].id == 'first_label'
