@@ -170,6 +170,21 @@ def temp_file():
     tmp.close()
 
 
+@pytest.fixture
+def browser_mock(mocker):
+    from nerodia import locators
+    mock = mocker.MagicMock(spec=Browser)
+    mock.locator_namespace = locators
+    mock.browser = mock
+    yield mock
+
+
+@pytest.fixture
+def element_mock(mocker):
+    from nerodia.elements.html_elements import HTMLElement
+    yield mocker.MagicMock(spec=HTMLElement)
+
+
 class BrowserManager(object):
     def __init__(self, kwargs):
         self.kwargs = kwargs

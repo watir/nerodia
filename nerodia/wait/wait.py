@@ -104,8 +104,7 @@ class Waitable(object):
         if object is None:
             object = self
 
-        if method and kwargs:
-            raise ValueError('Unknown keyword(s): {}'.format(kwargs.keys()))
+        # TODO: Consider throwing argument error for mixing block & options
         method = self._create_closure(kwargs, method)
 
         Wait.until(method=method, timeout=timeout, message=message, interval=interval,
@@ -136,6 +135,7 @@ class Waitable(object):
         if object is None:
             object = self
 
+        # TODO: Consider throwing argument error for mixing block & options
         method = self._create_closure(kwargs, method, until=False)
 
         Wait.until_not(method=method, timeout=timeout, message=message, interval=interval,
@@ -163,7 +163,7 @@ class Waitable(object):
                 return 'waiting for element {} to become present'.format(obj)
             message = msg
         return self.wait_until(method=lambda x: x.present, timeout=timeout, interval=interval,
-                               message=message)
+                               message=message, element_reset=True)
 
     def wait_until_not_present(self, timeout=None, interval=None, message=None):
         """
@@ -186,13 +186,13 @@ class Waitable(object):
                 return 'waiting for element {} not to be present'.format(obj)
             message = msg
         return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval,
-                                   message=message)
+                                   message=message, element_reset=True)
 
     def _create_closure(self, obj, method=None, until=True):
         from nerodia.elements.element import Element
 
         def func(*args):
-            if isinstance(self, Element):
+            if isinstance(self, Element) and obj.pop('element_reset', None):
                 self.reset()
             return (not obj or self._match_attributes(obj, until)()) and (not method or method(*args))
         return func

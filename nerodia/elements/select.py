@@ -159,7 +159,7 @@ class Select(HTMLElement):
             if self._is_matching_option(way, term):
                 return self.selected_options[0].text
 
-        raise NoValueFoundException('{} not found in select list'.format(term))
+        self._raise_no_value_found(term)
 
     def _is_matching_option(self, how, what):
         for opt in self.selected_options:
@@ -201,9 +201,12 @@ class Select(HTMLElement):
             Wait.until_not(func, object=self)
             if found:
                 return found[0]
-            raise NoValueFoundException('{} not found in select list'.format(term))
+            self._raise_no_value_found(term)
         except TimeoutError:
-            raise NoValueFoundException('{} not found in select list'.format(term))
+            self._raise_no_value_found(term)
+
+    def _raise_no_value_found(self, term):
+        raise NoValueFoundException('{} not found in {}'.format(term, self))
 
     def _select_matching(self, elements):
         if not self.multiple:

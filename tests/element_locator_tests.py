@@ -8,7 +8,7 @@ from selenium.webdriver.common.by import By
 
 from nerodia.elements.html_elements import HTMLElement
 from nerodia.exception import LocatorException
-from nerodia.locators.element import SelectorBuilder, Validator
+from nerodia.locators.element import Matcher, SelectorBuilder
 from nerodia.locators.element.locator import Locator
 
 try:
@@ -38,7 +38,7 @@ def element(mocker, values, attrs=None):
 
 def locator(browser, selector, attrs):
     selector_builder = SelectorBuilder(attrs or HTMLElement.ATTRIBUTES)
-    return Locator(browser, selector, selector_builder, Validator())
+    return Matcher(browser, selector, selector_builder, Matcher())
 
 
 def locate_one(browser, selector, attrs=None):
@@ -371,9 +371,9 @@ class TestElementLocatorFindsSingleElement(object):
                 return [None]
 
         selector = {'name': 'foo'}
-        element_validator = Validator()
+        element_validator = Matcher()
         selector_builder = FooSelectorBuilder(HTMLElement.ATTRIBUTES)
-        locator = Locator(browser, selector, selector_builder, element_validator)
+        locator = Matcher(browser, selector, selector_builder, element_validator)
 
         msg = "SelectorBuilder was unable to build selector from {'name': 'foo'}"
         with pytest.raises(LocatorException) as e:
@@ -386,9 +386,9 @@ class TestElementLocatorFindsSingleElement(object):
                 return [{}, None]
 
         selector = {'name': 'foo'}
-        element_validator = Validator()
+        element_validator = Matcher()
         selector_builder = FooSelectorBuilder(HTMLElement.ATTRIBUTES)
-        locator = Locator(browser, selector, selector_builder, element_validator)
+        locator = Matcher(browser, selector, selector_builder, element_validator)
 
         msg = "SelectorBuilder#build is not returning expected responses for the current version " \
               "of Nerodia"

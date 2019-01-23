@@ -16,8 +16,7 @@ def test_handles_cross_iframe_javascript(browser):
 
 
 def test_locates_an_element_defined_by_selenium_element(browser):
-    iframe = browser.iframe(id='iframe_1')
-    iframe.exists
+    iframe = browser.iframe(id='iframe_1').locate()
     se_element = iframe.el
     iframe2 = browser.element(element=se_element).to_subtype()
     assert iframe2 == iframe

@@ -1,3 +1,4 @@
+import os
 from platform import system
 from re import compile
 
@@ -6,7 +7,8 @@ import six
 from selenium.common.exceptions import ElementClickInterceptedException, WebDriverException
 from selenium.webdriver.common.keys import Keys
 
-from nerodia.exception import LocatorException, UnknownObjectException
+from nerodia.elements.element import Element
+from nerodia.exception import UnknownObjectException
 from nerodia.window import Dimension, Point
 
 pytestmark = pytest.mark.page('forms_with_input_elements.html')
@@ -30,6 +32,22 @@ class TestElementInit(object):
             Element('container', 1, 2, 3, 4)
         with pytest.raises(TypeError):
             Element('container', 'foo')
+
+
+class TestElementCall(object):
+    @pytest.mark.page('removed_element.html')
+    def test_handles_exceptions_when_taking_an_action_on_a_stale_element(self, browser):
+        element = browser.div(id='text').locate()
+        browser.refresh()
+
+        assert element.stale
+        element.text
+
+    def test_relocates_stale_element_when_taking_an_action_on_it(self, browser):
+        element = browser.text_field(id='new_user_first_name').locate()
+        browser.refresh()
+
+        element.click()
 
 
 @pytest.mark.page('definition_lists.html')
@@ -178,8 +196,7 @@ class TestElementVisibility(object):
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_if_the_element_is_stale(self, browser):
-        element = browser.text_field(id='new_user_email')
-        element.exists
+        element = browser.text_field(id='new_user_email').locate()
 
         browser.refresh()
 
@@ -205,6 +222,97 @@ class TestElementVisibility(object):
     def test_returns_false_if_one_of_the_parent_elements_is_hidden(self, browser, caplog):
         assert not browser.div(id='hidden_parent').visible
         assert 'WARNING  [visible_element]' in caplog.text
+
+
+class TestElementCache(object):
+    def test_bypasses_selector_location(self, browser):
+        wd = browser.div().wd
+        element = Element(browser, {'id': 'not_valid'})
+        element.cache = wd
+
+        assert element.exists is True
+
+    def test_can_be_cleared(self, browser):
+        wd = browser.div().wd
+        element = Element(browser, {'id': 'not_valid'})
+        element.cache = wd
+
+        browser.refresh()
+        assert element.exists is False
+
+
+@pytest.mark.page('removed_element.html')
+class TestElementExists(object):
+    def test_element_from_a_collection_returns_false_when_it_becomes_stale(self, browser, caplog):
+        element = browser.divs(id='text')[0].locate()
+
+        browser.refresh()
+
+        assert element.stale
+        assert not element.exists
+        assert '[DEPRECATION] [stale_exists]Checking `#exists is False` to determine a stale element' in caplog.text
+
+    def test_returns_false_when_tag_name_does_not_match_id(self, browser):
+        assert not browser.span(id='text').exists
+
+
+@pytest.mark.page('wait.html')
+class TestElementPresent(object):
+    def test_returns_true_if_the_element_exists_and_is_visible(self, browser):
+        assert browser.div(id='foo').present
+
+    def test_returns_false_if_the_element_exists_but_is_not_visible(self, browser):
+        assert not browser.div(id='bar').present
+
+    def test_returns_false_if_the_element_does_not_exist(self, browser):
+        assert not browser.div(id='should-not-exist').present
+
+    def test_returns_false_if_the_element_is_stale(self, browser):
+        element = browser.div(id='foo').locate()
+
+        browser.refresh()
+
+        assert element.stale
+        assert not element.present
+
+    def test_returns_true_the_second_time_if_the_element_is_stale(self, browser):
+        element = browser.div(id='foo').locate()
+
+        browser.refresh()
+
+        assert element.stale
+        assert not element.present
+        assert element.present
+
+
+@pytest.mark.page('forms_with_input_elements.html')
+class TestElementEnabled(object):
+    def test_returns_true_if_the_element_is_enabled(self, browser):
+        assert browser.button(name='new_user_submit').enabled
+
+    def test_returns_false_if_the_element_is_disabled(self, browser):
+        assert not browser.button(name='new_user_submit_disabled').enabled
+
+    @pytest.mark.usefixtures('quick_timeout')
+    def test_correct_exception_if_the_element_doesnt_exist(self, browser):
+        from nerodia.exception import UnknownObjectException
+        with pytest.raises(UnknownObjectException):
+            browser.button(name='no_such_name').enabled
+
+
+@pytest.mark.page('forms_with_input_elements.html')
+class TestElementStale(object):
+    def test_returns_true_if_the_element_is_stale(self, browser):
+        element = browser.button(name='new_user_submit_disabled').locate()
+
+        browser.refresh()
+
+        assert element.stale
+
+    def test_returns_false_if_the_element_is_not_stale(self, browser):
+        element = browser.button(name='new_user_submit_disabled').locate()
+
+        assert not element.stale
 
 
 @pytest.mark.page('class_locator.html')
@@ -275,14 +383,6 @@ class TestElementExistsIndex(object):
 class TestElementExist(object):
     def test_doesnt_raise_when_called_on_nested_elements(self, browser):
         assert not browser.div(id='no_such_div').link(id='no_such_id').exists
-
-    def test_raises_correct_exception_if_both_xpath_and_css_are_given(self, browser):
-        message_parts = ["'xpath' and 'css' cannot be combined",
-                         "'xpath': '//div'",
-                         "'css': 'div'"]
-        with pytest.raises(LocatorException) as e:
-            browser.div(xpath='//div', css='div').exists
-        assert all(part in e.value.args[0] for part in message_parts)
 
     def test_doesnt_raise_when_selector_with_xpath_has_index(self, browser):
         assert browser.div(xpath='//div', index=1).exists
@@ -374,6 +474,68 @@ class TestElementFlash(object):
         assert h2.flash('slow') == h2
         assert h1.flash('fast') == h1
         assert h2.flash('long') == h2
+
+
+@pytest.mark.page('hover.html')
+class TestElementHover(object):
+    # TODO: xfail IE, safari
+
+    @pytest.mark.skipif(os.environ.get('CI') == 'true', reason='Very flaky on Travis only')
+    def test_should_hover_over_the_element(self, browser):
+        link = browser.link()
+
+        assert link.style('font-size') == '10px'
+        link.hover()
+        link.wait_until(lambda e: e.style('font-size') == '20px', timeout=30)
+        assert link.style('font-size') == '20px'
+
+
+@pytest.mark.page('nested_iframes.html')
+class TestElementRepr(object):
+    def test_displays_specified_element_type(self, browser):
+        assert 'Div' in repr(browser.div())
+
+    def test_does_not_display_specified_element_type_if_not_specified(self, browser):
+        assert 'HTMLElement' in repr(browser.element(index=4))
+
+    def test_displays_keyword_if_specified(self, browser):
+        element = browser.h3()
+        element.keyword = 'foo'
+        assert 'keyword: foo' in repr(element)
+
+    def test_does_not_display_keyword_if_not_specified(self, browser):
+        assert 'keyword: foo' not in repr(browser.h3())
+
+    def test_locate_is_false_when_not_located(self, browser):
+        assert 'located: False' in repr(browser.div(id='not_present'))
+
+    def test_locate_is_true_when_located(self, browser):
+        element = browser.h3()
+        element.exists
+        assert 'located: True' in repr(element)
+
+    def test_displays_selector_string_for_element_from_collection(self, browser):
+        elements = browser.frames()
+        rep = repr(elements[-1])
+        assert "'tag_name': 'frame'" in rep
+        assert "'index': -1" in rep
+
+    @pytest.mark.page('wait.html')
+    def test_displays_selector_string_for_nested_element(self, browser):
+        element = browser.div(index=1).div(id='div2')
+        left, right = repr(element).split('-->')
+        assert "'index': 1" in left
+        assert "'tag_name': 'div'" in left
+        assert "'id': 'div2'" in right
+        assert "'tag_name': 'div'" in right
+
+    def test_displays_selector_string_for_nested_element_under_frame(self, browser):
+        element = browser.iframe(id='one').iframe(id='three')
+        left, right = repr(element).split('-->')
+        assert "'tag_name': 'iframe'" in left
+        assert "'id': 'one'" in left
+        assert "'tag_name': 'iframe'" in right
+        assert "'id': 'three'" in right
 
 
 @pytest.mark.page('non_control_elements.html')
@@ -490,8 +652,7 @@ class TestElementAttributeList(object):
 
 class TestElementLocated(object):
     def test_returns_returns_true_if_element_has_been_located(self, browser):
-        el = browser.form(id='new_user')
-        el.exists
+        el = browser.form(id='new_user').locate()
         assert el._located is True
 
     def test_returns_returns_false_if_element_has_not_been_located(self, browser):
@@ -587,10 +748,15 @@ class TestElementObscured(object):
         assert not btn.obscured
         btn.click()
 
-    def test_scrolls_element_into_view_before_checking_if_obscured(self, browser):
+    def test_scrolls_interactive_element_into_view_before_checking_if_obscured(self, browser):
         btn = browser.button(id='requires_scrolling')
         assert not btn.obscured
         btn.click()
+
+    def test_scrolls_non_interactive_element_into_view_before_checking_if_obscured(self, browser):
+        div = browser.div(id='requires_scrolling_container')
+        assert not div.obscured
+        div.click()
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_returns_true_if_element_cannot_be_scrolled_into_view(self, browser):

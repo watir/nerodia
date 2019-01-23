@@ -1,6 +1,7 @@
 if [[ "$TOXENV" =~ firefox$ ]]
 then
-    firefox --versionexport GITHUB_AUTH="anonymous"
+    firefox --version
+    export GITHUB_AUTH="anonymous"
     if [[ ! -z $GITHUB_TOKEN ]]; then
         export GITHUB_AUTH="token $GITHUB_TOKEN"
     fi
@@ -17,4 +18,3 @@ then
     unzip chromedriver_linux64.zip && chmod +x chromedriver && sudo mv chromedriver /usr/local/bin
     chromedriver --version
 fi
-sh -e /etc/init.d/xvfb start

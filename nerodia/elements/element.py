@@ -2,28 +2,35 @@ from inspect import getmembers, isroutine, stack
 from re import search, sub
 
 import six
-from selenium.common.exceptions import InvalidElementStateException, \
-    StaleElementReferenceException, \
-    ElementNotVisibleException, ElementNotInteractableException, NoSuchWindowException
+from selenium.common.exceptions import ElementNotInteractableException, \
+    ElementNotVisibleException, \
+    InvalidElementStateException, NoSuchWindowException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
+from nerodia.adjacent import Adjacent
 from nerodia.browser import Browser
-from ..adjacent import Adjacent
-from ..container import Container
-from ..exception import Error, ObjectDisabledException, ObjectReadOnlyException, \
-    UnknownFrameException, UnknownObjectException, NoMatchingWindowFoundException
-from ..js_execution import JSExecution
-from ..js_snippet import JSSnippet
-from ..locators.class_helpers import ClassHelpers
-from ..locators.element.selector_builder import SelectorBuilder
-from ..user_editable import UserEditable
-from ..wait.wait import TimeoutError, Wait, Waitable
-from ..window import Dimension, Point
+from nerodia.container import Container
+from nerodia.elements.scroll import Scrolling
+from nerodia.exception import Error, NoMatchingWindowFoundException, ObjectDisabledException, \
+    ObjectReadOnlyException, UnknownFrameException, UnknownObjectException
+from nerodia.js_execution import JSExecution
+from nerodia.js_snippet import JSSnippet
+from nerodia.locators.class_helpers import ClassHelpers
+from nerodia.locators.element.selector_builder import SelectorBuilder
+from nerodia.user_editable import UserEditable
+from nerodia.wait.wait import TimeoutError, Wait, Waitable
+from nerodia.window import Dimension, Point
 
 
-class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacent):
+class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacent, Scrolling):
     ATTRIBUTES = []
+    keyword = None
+
+    _content_editable = None
+    _selector_builder = None
+    _element_matcher = None
+    _locator = None
 
     def __init__(self, query_scope, selector):
         self.query_scope = query_scope
@@ -31,10 +38,13 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             raise TypeError('invalid argument: {!r}'.format(selector))
 
         self.el = selector.pop('element', None)
+        if self.el and len(set(selector) - {'tag_name'}) > 0:
+            nerodia.logger.deprecate("'element' locator to initialize a relocatable Element",
+                                     '#cache=', ids=['element_cache'])
         self.selector = selector
-        self.keyword = None
-        self.locator = None
-        self._content_editable = None
+
+        if self.el is None:
+            self.build()
 
     @property
     def exists(self):
@@ -483,7 +493,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             if not self.present:
                 return True
 
-            self.scroll_into_view()
+            self.scroll.to()
             return self._execute_js('elementObscured', self)
         return self._element_call(func)
 
@@ -535,7 +545,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         else:
             klass = nerodia.element_class_for(tag) or HTMLElement
 
-        return klass(self.query_scope, selector=dict(self.selector, element=self.wd))
+        el = klass(self.query_scope, selector=self.selector)
+        el.cache = self.wd
+        return el
 
     @property
     def browser(self):
@@ -559,7 +571,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     @property
     def stale_in_context(self):
         try:
-            self.el.is_enabled()  # any wire call will check for staleness
+            self.el.value_of_css_property('staleness_check')  # any wire call checks for staleness
             return False
         except StaleElementReferenceException:
             return True
@@ -571,6 +583,20 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self._ensure_context()
         self.locate_in_context()
         return self
+
+    def build(self):
+        self.selector_builder.build(self.selector.copy())
+
+    @property
+    def cache(self):
+        return self.el
+
+    @cache.setter
+    def cache(self, element):
+        """
+        Set the cached element. For use when element can be relocated with the provided selector.
+        """
+        self.el = element
 
     @property
     def selector_string(self):
@@ -589,7 +615,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         try:
             if not isinstance(self.query_scope, Browser):
                 self.query_scope.wait_for_exists()
-            self.wait_until(lambda e: e.exists)
+            self.wait_until(lambda e: e.exists, element_reset=True)
         except TimeoutError:
             raise self._unknown_exception('timed out after {} seconds, waiting for {} to be '
                                           'located'.format(nerodia.default_timeout, self))
@@ -650,8 +676,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
             raise self._unknown_exception('unable to locate element: {}'.format(self))
 
     def locate_in_context(self):
-        self.locator = self._build_locator()
-        self.el = self.locator.locate()
+        self.el = self.locator.locate(self.selector_builder.built)
         return self.el
 
     # private
@@ -709,7 +734,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     @classmethod
     def _assert_is_element(cls, obj):
         if not isinstance(obj, Element):
-            raise TypeError('execpted nerodia.Element, '
+            raise TypeError('expected nerodia.Element, '
                             'got {}:{}'.format(obj, obj.__class__.__name__))
 
     def _display_check(self):
@@ -731,30 +756,30 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         try:
             return self._element_call_check(precondition, method, caller)
         finally:
-            nerodia.logger.info('<- `Completed {}#{}`'.format(self, caller))
+            nerodia.logger.debug('<- `Completed {}#{}`'.format(self, caller))
             if not already_locked:
                 Wait.timer.reset()
 
     def _check_condition(self, condition, caller):
-        nerodia.logger.info('<- `Verifying precondition {}#{} for '
-                            '{}`'.format(self, condition, caller))
+        nerodia.logger.debug('<- `Verifying precondition {}#{} for '
+                             '{}`'.format(self, condition, caller))
         try:
             if not condition:
                 self.assert_exists()
             else:
                 condition()
-            nerodia.logger.info('<- `Verified precondition '
-                                '{}#{!r}`'.format(self, condition or 'assert_exists'))
+            nerodia.logger.debug('<- `Verified precondition '
+                                 '{}#{!r}`'.format(self, condition or 'assert_exists'))
         except self._unknown_exception:
             if condition is None:
-                nerodia.logger.info('<- `Unable to satisfy precondition '
-                                    '{}#{}`'.format(self, condition))
+                nerodia.logger.debug('<- `Unable to satisfy precondition '
+                                     '{}#{}`'.format(self, condition))
                 self._check_condition(self.wait_for_exists, caller)
             else:
                 raise
 
     def _element_call_check(self, precondition, method, caller):
-        nerodia.logger.info('-> `Executing {}#{}`'.format(self, caller))
+        nerodia.logger.debug('-> `Executing {}#{}`'.format(self, caller))
         while True:
             try:
                 self._check_condition(precondition, caller)
@@ -767,7 +792,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                     msg += '; Maybe look in an iframe?'
                 custom_attributes = []
                 if self.locator:
-                    custom_attributes = self.locator.selector_builder.custom_attributes
+                    custom_attributes = self.selector_builder.custom_attributes
                 if custom_attributes:
                     msg += '; Nerodia treated {!r} as a non-HTML compliant attribute, ' \
                            'ensure that was intended'.format(custom_attributes)

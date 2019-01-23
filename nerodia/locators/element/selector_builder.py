@@ -1,12 +1,12 @@
 import re
 from collections import defaultdict
-from copy import copy
 from importlib import import_module
 
 import six
 
 import nerodia
 from nerodia.exception import LocatorException
+from nerodia.locators import W3C_FINDERS
 from nerodia.locators.class_helpers import ClassHelpers
 from nerodia.locators.element.regexp_disassembler import RegexpDisassembler
 from nerodia.locators.element.xpath_support import XpathSupport
@@ -27,6 +27,7 @@ WHATS = {
     'visible': [bool],
     'tag_name': STRING_REGEX_TYPES,
     'visible_text': STRING_REGEX_TYPES,
+    'scope': [dict],
     'text': STRING_REGEX_TYPES
 }
 
@@ -35,52 +36,96 @@ class SelectorBuilder(object):
     WILDCARD_ATTRIBUTE = re.compile(r'^(aria|data)_(.+)$')
     VALID_WHATS = defaultdict(lambda: STRING_REGEX_TYPES + [bool], WHATS)
 
-    def __init__(self, valid_attributes):
+    xpath_builder = None
+    selector = None
+    built = None
+
+    def __init__(self, valid_attributes, query_scope):
         self.valid_attributes = valid_attributes
         self.custom_attributes = []
-        self.xpath_builder = None
-        self.selector = None
+        self.query_scope = query_scope
 
     def build(self, selector):
-        rep = repr(selector)
         self.selector = selector
-        self.normalize_selector()
+        self._deprecated_locators()
+        self._normalize_selector()
+        rep = repr(selector)
+        from nerodia.browser import Browser
+        scope = None
+        if 'scope' not in self.selector and not isinstance(self.query_scope, Browser):
+            scope = self.query_scope
 
-        xpath_css = {}
+        self.built = self.selector
+        if self.wd_locator(self.selector.keys()) is None:
+            self.built = self._build_wd_selector(self.selector)
+        if 'index' in self.built and self.built['index'] == 0:
+            self.built.pop('index')
+        if scope is not None:
+            self.built['scope'] = scope
 
-        for key in copy(self.selector):
-            if key in ['xpath', 'css']:
-                xpath_css[key] = self.selector.pop(key)
+        nerodia.logger.info('Converted {} to {}'.format(rep, self.built))
 
-        if len(xpath_css) > 1:
-            raise LocatorException("'xpath' and 'css' cannot be combined ({})".format(xpath_css))
+        return self.built
 
-        built = self._build_wd_selector(self.selector) if len(xpath_css) == 0 else self.selector
+    def wd_locator(self, keys):
+        intersect = list(set(W3C_FINDERS).intersection(set(keys)))
+        if intersect:
+            return intersect[0]
 
-        if built.get('index') == 0:
-            self.selector.pop('index')
+    # private
 
-        nerodia.logger.debug('Converted {} to {}, with {} '
-                             'to match'.format(rep, built, self.selector))
-        return built
+    def _normalize_selector(self):
+        wd_locators = set(self.selector.keys()).intersection(W3C_FINDERS)
+        if len(wd_locators) > 1:
+            raise LocatorException('Can not locate element with {}'.format(wd_locators))
 
-    def normalize_selector(self):
+        if self._use_scope:
+            self.selector['scope'] = self.query_scope.selector_builder.built
+
+        if 'class' in self.selector or 'class_name' in self.selector:
+            classes = [self.selector.get('class')]
+            classes.extend([self.selector.pop('class_name', None)])
+            classes = list(_ for _ in ClassHelpers._flatten(classes) if _ is not None)
+
+            for class_name in classes:
+                if isinstance(class_name, tuple(STRING_TYPES)) and ' ' in class_name.strip():
+                    self._deprecate_class_list(class_name)
+
+            self.selector['class'] = classes
+
         if self.selector.get('adjacent') == 'ancestor' and 'text' in self.selector:
             raise LocatorException('Can not find parent element with text locator')
 
         for key in self.selector.copy():
-            self.check_type(key, self.selector.get(key))
+            self._check_type(key, self.selector.get(key))
             how, what = self._normalize_locator(key, self.selector.pop(key, None))
             self.selector[how] = what
 
-    def check_type(self, how, what):
-        if how in ['class', 'class_name']:
-            classes = list(ClassHelpers._flatten([what]))
-            if len(classes) == 0:
-                raise LocatorException("Cannot locate elements with an empty list for "
-                                       "'{}'".format(how))
+    @property
+    def _use_scope(self):
+        from nerodia.elements.i_frame import IFrame
+        from nerodia.elements.radio import Radio
+        from nerodia.browser import Browser
+        if isinstance(self.query_scope, Browser):
+            return False
 
-            for c in classes:
+        not_adj = 'adjacent' not in self.selector
+        not_w3c = len(set(self.selector.keys()).intersection(W3C_FINDERS)) == 0
+        not_frame_radio = not isinstance(self.query_scope, (IFrame, Radio))
+        built = self.query_scope.selector_builder.built
+        built = built and len(built) == 1
+
+        return not_adj and not_w3c and not_frame_radio and built
+
+    def _deprecate_class_list(self, class_name):
+        dep = "Using the 'class' locator to locate multiple classes with a String value " \
+              "(i.e. '{}')".format(class_name)
+        nerodia.logger.deprecate(dep, 'list (e.g. {})'.format(class_name.split()),
+                                 ids=['class_list'])
+
+    def _check_type(self, how, what):
+        if how in ['class', 'class_name']:
+            for c in list(ClassHelpers._flatten([what])):
                 self._raise_unless(c, self.VALID_WHATS[how])
         else:
             self._raise_unless(what, self.VALID_WHATS[how])
@@ -89,20 +134,24 @@ class SelectorBuilder(object):
     def should_use_label_element(self):
         return not self._is_valid_attribute('label')
 
-    # private
-
     def _normalize_locator(self, how, what):
-        if how in ['tag_name', 'text', 'xpath', 'index', 'class', 'css', 'visible', 'visible_text',
-                   'adjacent']:
+        if how in ('tag_name', 'text', 'xpath', 'index', 'css', 'visible', 'visible_text',
+                   'adjacent'):
             # include 'class' since the valid attribute is 'class_name'
             return [how, what]
-        elif how in ['label', 'visible_label']:
+        elif how in ('label', 'visible_label'):
             if self.should_use_label_element:
                 return ['{}_element'.format(how), what]
             else:
                 return [how, what]
-        elif how == 'class_name':
+        elif how in ('class_name', 'class'):
+            if isinstance(what, list):
+                what = [_ for _ in what if _ != '']
+                if len(what) == 0:
+                    what = False
             return ['class', what]
+        elif how == 'link':
+            return ['link_text', what]
         elif how == 'caption':
             # This allows any element to be located with 'caption' instead of 'text'
             nerodia.logger.deprecate("Locating elements with 'caption'", "'text' locator",
@@ -148,10 +197,24 @@ class SelectorBuilder(object):
 
         raise TypeError('expected one of {!r}, got {!r}:{}'.format(types, what, what.__class__))
 
+    def _deprecated_locators(self):
+        for locator in ('partial_link_text', 'link_text', 'link'):
+            if locator not in self.selector:
+                continue
+
+            nerodia.logger.deprecate('{!r} locator'.format(locator), 'visible_text',
+                                     ids=['link_text'])
+            tag = self.selector.get('tag_name')
+            if tag is None or tag == 'a':
+                continue
+            raise LocatorException('Can not use {} locator to find a {} '
+                                   'element'.format(locator, tag))
+
 
 class XPath(object):
     CAN_NOT_BUILD = ['visible', 'visible_text', 'visible_label_element']
 
+    built = None
     selector = None
     requires_matches = None
     adjacent = None
@@ -167,6 +230,7 @@ class XPath(object):
 
         index = self.selector.pop('index', None)
         self.adjacent = self.selector.pop('adjacent', None)
+        self.scope = self.selector.pop('scope', None)
 
         xpath = self._start_string
         xpath += self._adjacent_string
@@ -215,7 +279,11 @@ class XPath(object):
 
     @property
     def _start_string(self):
-        return './' if self.adjacent is not None else './/*'
+        start = './' if self.adjacent is not None else './/*'
+        if self.scope is not None:
+            return '({})[1]{}'.format(self.scope['xpath'], start.replace('.', ''))
+        else:
+            return start
 
     @property
     def _adjacent_string(self):
@@ -247,9 +315,6 @@ class XPath(object):
         class_name = self.selector.pop('class', None)
         if class_name is None:
             return ''
-
-        if isinstance(class_name, str) and ' ' in class_name.strip():
-            self._deprecate_class_list(class_name)
 
         self.built['class'] = []
 
@@ -331,12 +396,6 @@ class XPath(object):
         else:
             self.built['index'] = index
             return xpath
-
-    def _deprecate_class_list(self, class_name):
-        dep = "Using the 'class' locator to locate multiple classes with a String value " \
-              "(i.e. '{}')".format(class_name)
-        nerodia.logger.deprecate(dep, 'list (e.g. {})'.format(class_name.split()),
-                                 ids=['class_list'])
 
     @property
     def _is_visible(self):

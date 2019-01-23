@@ -1,14 +1,13 @@
 dist: xenial
 sudo: required
+services:
+  - xvfb
 language: python
 addons:
   firefox: latest
   apt:
     packages:
       - google-chrome-stable
-env:
-  global:
-  - DISPLAY=:99.0
 
 _version:
   two: &two

@@ -1,7 +1,26 @@
+from copy import copy
 from importlib import import_module
 
 
 class ClassHelpers(object):
+
+    @property
+    def selector_builder(self):
+        if not self._selector_builder:
+            self._selector_builder = self._selector_builder_class(self._element_class.ATTRIBUTES,
+                                                                  self.query_scope)
+        return self._selector_builder
+
+    @property
+    def locator(self):
+        if not self._element_matcher:
+            self._element_matcher = self._element_matcher_class(self.query_scope,
+                                                                copy(self.selector))
+        if not self._locator:
+            self._locator = self._locator_class(self._element_matcher)
+
+        return self._locator
+
     # private
 
     @property
@@ -10,9 +29,9 @@ class ClassHelpers(object):
         return getattr(self._import_module, 'Locator', Locator)
 
     @property
-    def _element_validator_class(self):
-        from .element.validator import Validator
-        return getattr(self._import_module, 'Validator', Validator)
+    def _element_matcher_class(self):
+        from .element.matcher import Matcher
+        return getattr(self._import_module, 'Matcher', Matcher)
 
     @property
     def _selector_builder_class(self):
@@ -32,22 +51,10 @@ class ClassHelpers(object):
     def _element_class_name(self):
         return self._element_class.__name__
 
-    def _build_locator(self):
-        from nerodia.elements.row import Row
-        if self._element_class == Row:
-            scope_tag_name = self.query_scope.selector.get('tag_name')
-            selector_builder = self._selector_builder_class(self._element_class.ATTRIBUTES,
-                                                            scope_tag_name)
-        else:
-            selector_builder = self._selector_builder_class(self._element_class.ATTRIBUTES)
-        element_validator = self._element_validator_class()
-        return self._locator_class(self.query_scope, self.selector.copy(), selector_builder,
-                                   element_validator)
-
     @staticmethod
     def _flatten(term):
         for x in term:
-            if isinstance(x, list):
+            if isinstance(x, (list, tuple)):
                 for y in x:
                     yield y
             else:

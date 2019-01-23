@@ -361,12 +361,11 @@ class TestBrowserSendKeys(object):
         browser.send_keys('hello')
         assert browser.text_field(id='new_user_first_name').value == 'hello'
 
-    @pytest.mark.xfail_firefox(reason='undiagnosed bug in Nightly 2018/01/26')
-    @pytest.mark.xfail_chrome(reason='undiagnosed bug in Chrome')
     @pytest.mark.page('frames.html')
     def test_sends_keystrokes_to_a_frame(self, browser):
         tf = browser.frame().text_field(id='senderElement')
         tf.clear()
+        tf.click()
 
         browser.frame().send_keys('hello')
         assert tf.value == 'hello'
