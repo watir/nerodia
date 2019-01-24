@@ -682,21 +682,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     # private
 
     @property
-    def _located(self):
-        """
-        Returns if the element has previously been located
-        :rtype: bool
-        """
-        return self.el is not None
-
-    @property
-    def _should_relocate(self):
-        """
-        This is a performance shortcut for ensuring context
-        Returns True if ensuring context requires relocating the element.
-        :rtype: bool
-        """
-        return self._located and self.stale
 
     def _raise_writable(self):
         raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
@@ -722,7 +707,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def _ensure_context(self):
         from nerodia.elements.i_frame import IFrame
-        if self.query_scope._should_relocate:
+        if isinstance(self.query_scope, Browser) or \
+                (self.query_scope._located and self.query_scope.stale):
             self.query_scope.locate()
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()

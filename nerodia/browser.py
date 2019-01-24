@@ -277,15 +277,6 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
 
         self.driver.switch_to.default_content()
         self.default_context = True
-        self.after_hooks.run()
-
-    @property
-    def _should_relocate(self):
-        """
-        Always relocate a Browser to ensure proper context switching
-        :rtype: bool
-        """
-        return True
 
     @staticmethod
     def _wrap_elements_in(scope, obj):
