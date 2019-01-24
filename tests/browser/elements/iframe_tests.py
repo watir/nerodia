@@ -123,7 +123,7 @@ class TestIFrameOther(object):
 
     def test_switches_when_the_frame_is_created_by_subtype(self, browser):
         subtype = browser.iframe().to_subtype()
-        subtype.iframe().locate()
+        subtype.element().locate()
 
     def test_switches_back_to_top_level_browsing_context(self, browser):
         browser.iframes()[0].ps().locate()

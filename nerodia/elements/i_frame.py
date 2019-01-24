@@ -51,11 +51,17 @@ class IFrame(HTMLElement):
         """
         return FramedDriver(super(IFrame, self).wd, self.browser)
 
-    # private
-
     @property
-    def _should_relocate(self):
-        return True
+    def to_subtype(self):
+        """
+        Cast this Element instance to a more specific subtype.
+        Cached element needs to be the IFrame element, not the FramedDriver
+        """
+        el = super(IFrame, self).to_subtype()
+        el.cache = self.el
+        return el
+
+    # private
 
     @property
     def _unknown_exception(self):
