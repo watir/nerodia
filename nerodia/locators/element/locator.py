@@ -64,9 +64,10 @@ class Locator(object):
 
     @property
     def _locator_scope(self):
+        scope = self.built.pop('scope', None)
+
         if self.locator_scope is None:
-            self.locator_scope = self.built.pop('scope') if 'scope' in self.built else \
-                self.query_scope.browser
+            self.locator_scope = scope if scope is not None else self.query_scope.browser
         return self.locator_scope
 
     @property
