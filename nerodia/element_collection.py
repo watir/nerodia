@@ -14,6 +14,7 @@ class ElementCollection(ClassHelpers, JSSnippet):
 
     _selector_builder = None
     _element_matcher = None
+    _located = False
     _locator = None
 
     def __init__(self, query_scope, selector):

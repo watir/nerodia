@@ -30,6 +30,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     _content_editable = None
     _selector_builder = None
     _element_matcher = None
+    _located = False
     _locator = None
 
     def __init__(self, query_scope, selector):
