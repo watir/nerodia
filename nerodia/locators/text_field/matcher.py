@@ -22,5 +22,5 @@ class Matcher(ElementMatcher):
     def _text_regexp_deprecation(self, *args):
         return None  # does not apply to text_field
 
-    def _validate_tag(self, element, _tag_name):
-        return self._matches_values(element.tag_name.lower(), 'input')
+    def _validate_tag(self, element, _expected):
+        return self._matches_values(self._fetch_value(element, 'tag_name'), 'input')

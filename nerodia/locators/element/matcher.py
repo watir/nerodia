@@ -95,6 +95,8 @@ class Matcher(object):
     def _fetch_value(self, element, how):
         if how in ('text', 'visible_text'):
             return element.text
+        if how == 'tag_name':
+            return element.tag_name.lower()
         elif how == 'visible':
             return element.is_displayed()
         elif how == 'href':
@@ -116,8 +118,8 @@ class Matcher(object):
         elements.reverse()
         return abs(idx) - 1
 
-    def _validate_tag(self, element, tag_name):
-        return self._matches_values(element.tag_name.lower(), tag_name)
+    def _validate_tag(self, element, expected):
+        return self._matches_values(self._fetch_value(element, 'tag_name'), expected)
 
     def _deprecate_text_regexp(self, element, selector):
         from nerodia.elements.element import Element

@@ -69,7 +69,7 @@ class SelectorBuilder(object):
 
     @property
     def wd_locators(self):
-        return list(set(W3C_FINDERS).intersection(set(self.selector.keys)))
+        return list(set(W3C_FINDERS).intersection(set(self.selector.keys())))
 
     # private
 

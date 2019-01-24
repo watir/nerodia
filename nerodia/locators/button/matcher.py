@@ -29,9 +29,9 @@ class Matcher(ElementMatcher):
         nerodia.logger.deprecate("'value' locator key for finding button text",
                                  "use 'text' locator", ids=['value_button'])
 
-    def _validate_tag(self, element, _tag_name):
+    def _validate_tag(self, element, _expected):
         from nerodia.elements.button import Button
-        tag_name = element.tag_name.lower()
+        tag_name = self._fetch_value(element, 'tag_name')
         if tag_name not in ('input', 'button'):
             return
 
