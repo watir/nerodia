@@ -13,6 +13,8 @@ class Locator(object):
     driver_scope = None
     filter = None
     locator_scope = None
+    match_values = None
+    wd_locator = None
 
     def __init__(self, element_matcher):
         self.element_matcher = element_matcher
@@ -44,23 +46,13 @@ class Locator(object):
         if len(self.built) == 1 and self.filter == 'first':
             return self._locate_element(*list(ClassHelpers._flatten(self.built.items())))
 
-        # SelectorBuilder only allows one of these
-        wd_locator_int = list(set(W3C_FINDERS).intersection(self.built.keys()))
-        wd_locator_key = wd_locator_int[0] if wd_locator_int else None
-        wd_locator = {}
-        match_values = {}
-        for key, value in self.built.items():
-            if wd_locator_key == key:
-                wd_locator[key] = value
-            else:
-                match_values[key] = value
-
         retries = 0
         while retries <= 2:
             try:
-                elements = self._locate_elements(*list(ClassHelpers._flatten(wd_locator.items())))
+                locator = list(ClassHelpers._flatten(self._wd_locator.items()))
+                elements = self._locate_elements(*locator)
 
-                return self.element_matcher.match(elements, match_values, self.filter)
+                return self.element_matcher.match(elements, self._match_values, self.filter)
             except StaleElementReferenceException:
                 retries += 1
                 sleep(0.5)
@@ -76,6 +68,28 @@ class Locator(object):
             self.locator_scope = self.built.pop('scope') if 'scope' in self.built else \
                 self.query_scope.browser
         return self.locator_scope
+
+    @property
+    def _wd_locator(self):
+
+        self.wd_locator = {}
+        for key, value in self.built.items():
+            if self._wd_locator_key == key:
+                self.wd_locator[key] = value
+        return self.wd_locator
+
+    @property
+    def _match_values(self):
+        self.match_values = {}
+        for key, value in self.built.items():
+            if self._wd_locator_key != key:
+                self.match_values[key] = value
+        return self.match_values
+
+    @property
+    def _wd_locator_key(self):
+        intersect = list(set(W3C_FINDERS).intersection(self.built.keys()))
+        return intersect[0] if intersect else None
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.driver_scope
