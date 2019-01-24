@@ -682,7 +682,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     # private
 
     @property
-
     def _raise_writable(self):
         raise ObjectReadOnlyException('element present and enabled, but timed out after {} '
                                       'seconds, waiting for {} to not be '

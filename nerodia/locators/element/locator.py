@@ -11,6 +11,8 @@ from nerodia.locators.class_helpers import ClassHelpers
 class Locator(object):
     built = None
     driver_scope = None
+    filter = None
+    locator_scope = None
 
     def __init__(self, element_matcher):
         self.element_matcher = element_matcher
@@ -21,29 +23,33 @@ class Locator(object):
         try:
             self.built = copy(built)
             self.driver_scope = self._locator_scope.wd
-            return self._matching_elements(self.built, 'first')
+            self.filter = 'first'
+            return self._matching_elements
         except (NoSuchElementException):
             return None
 
     def locate_all(self, built):
         self.built = copy(built)
         self.driver_scope = self._locator_scope.wd
+        self.filter = 'all'
         if 'index' in self.built:
             raise ValueError("can't locate all elements by 'index'")
 
-        return list(ClassHelpers._flatten(self._matching_elements(self.built, 'all')))
+        return list(ClassHelpers._flatten(self._matching_elements))
 
     # private
 
-    def _matching_elements(self, built, filter='first'):
-        if len(built) == 1 and filter == 'first':
-            return self._locate_element(*list(ClassHelpers._flatten(built.items())))
+    @property
+    def _matching_elements(self):
+        if len(self.built) == 1 and self.filter == 'first':
+            return self._locate_element(*list(ClassHelpers._flatten(self.built.items())))
 
+        # SelectorBuilder only allows one of these
         wd_locator_int = list(set(W3C_FINDERS).intersection(self.built.keys()))
         wd_locator_key = wd_locator_int[0] if wd_locator_int else None
         wd_locator = {}
         match_values = {}
-        for key, value in built.items():
+        for key, value in self.built.items():
             if wd_locator_key == key:
                 wd_locator[key] = value
             else:
@@ -54,19 +60,22 @@ class Locator(object):
             try:
                 elements = self._locate_elements(*list(ClassHelpers._flatten(wd_locator.items())))
 
-                return self.element_matcher.match(elements, match_values, filter)
+                return self.element_matcher.match(elements, match_values, self.filter)
             except StaleElementReferenceException:
                 retries += 1
                 sleep(0.5)
                 pass
 
-        target = 'element collection' if filter == 'all' else 'element'
+        target = 'element collection' if self.filter == 'all' else 'element'
         raise LocatorException('Unable to locate {} from {} due to changing '
                                'page'.format(target, self.selector))
 
     @property
     def _locator_scope(self):
-        return self.built.pop('scope') if 'scope' in self.built else self.query_scope.browser
+        if self.locator_scope is None:
+            self.locator_scope = self.built.pop('scope') if 'scope' in self.built else \
+                self.query_scope.browser
+        return self.locator_scope
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.driver_scope

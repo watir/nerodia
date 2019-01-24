@@ -5,7 +5,7 @@ class Matcher(ElementMatcher):
     # private
 
     def _elements_match(self, element, values_to_match):
-        tag_name = element.tag_name.lower()
+        tag_name = self._fetch_value(element, 'tag_name')
         if tag_name == 'input':
             for key in ('text', 'label', 'visible_text'):
                 if key in values_to_match:
