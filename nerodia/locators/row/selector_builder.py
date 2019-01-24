@@ -16,7 +16,7 @@ class SelectorBuilder(ElementSelectorBuilder):
         return xpath().build(selector, scope_tag_name)
 
     @property
-    def _use_scope(self):
+    def _merge_scope(self):
         return False
 
 

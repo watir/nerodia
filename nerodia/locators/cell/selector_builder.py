@@ -4,7 +4,7 @@ from ..element.selector_builder import SelectorBuilder as ElementSelectorBuilder
 
 class SelectorBuilder(ElementSelectorBuilder):
     @property
-    def _use_scope(self):
+    def _merge_scope(self):
         return False
 
 

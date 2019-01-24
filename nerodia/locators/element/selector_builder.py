@@ -56,7 +56,7 @@ class SelectorBuilder(object):
             scope = self.query_scope
 
         self.built = self.selector
-        if self.wd_locator(self.selector.keys()) is None:
+        if len(self.wd_locators) == 0:
             self.built = self._build_wd_selector(self.selector)
         if 'index' in self.built and self.built['index'] == 0:
             self.built.pop('index')
@@ -67,19 +67,17 @@ class SelectorBuilder(object):
 
         return self.built
 
-    def wd_locator(self, keys):
-        intersect = list(set(W3C_FINDERS).intersection(set(keys)))
-        if intersect:
-            return intersect[0]
+    @property
+    def wd_locators(self):
+        return list(set(W3C_FINDERS).intersection(set(self.selector.keys)))
 
     # private
 
     def _normalize_selector(self):
-        wd_locators = set(self.selector.keys()).intersection(W3C_FINDERS)
-        if len(wd_locators) > 1:
-            raise LocatorException('Can not locate element with {}'.format(wd_locators))
+        if len(self.wd_locators) > 1:
+            raise LocatorException('Can not locate element with {}'.format(self.wd_locators))
 
-        if self._use_scope:
+        if self._merge_scope:
             self.selector['scope'] = self.query_scope.selector_builder.built
 
         if 'class' in self.selector or 'class_name' in self.selector:
@@ -102,7 +100,7 @@ class SelectorBuilder(object):
             self.selector[how] = what
 
     @property
-    def _use_scope(self):
+    def _merge_scope(self):
         from nerodia.elements.i_frame import IFrame
         from nerodia.browser import Browser
         w3c_cpy = set(W3C_FINDERS)
@@ -114,7 +112,7 @@ class SelectorBuilder(object):
             return False
 
         scope_invalid_locators = [x for x in self.query_scope.selector_builder.built.keys() if
-              x != self._implementation_locator]
+                                  x != self._wd_locator]
 
         return len(scope_invalid_locators) == 0
 
@@ -184,7 +182,7 @@ class SelectorBuilder(object):
         return self._implementation_class().build(selector)
 
     @property
-    def _implementation_locator(self):
+    def _wd_locator(self):
         return self._implementation_class.LOCATOR
 
     def _is_valid_attribute(self, attribute):
