@@ -20,15 +20,14 @@ class Locator(object):
     def locate(self, built):
         try:
             self.built = copy(built)
-            self.driver_scope = (self.built.pop('scope', None) or self.query_scope.browser).wd
+            self.driver_scope = self._locator_scope.wd
             return self._matching_elements(self.built, 'first')
         except (NoSuchElementException):
             return None
 
     def locate_all(self, built):
         self.built = copy(built)
-        scope = self.built.pop('scope') if 'scope' in self.built else self.query_scope.browser
-        self.driver_scope = scope.wd
+        self.driver_scope = self._locator_scope.wd
         if 'index' in self.built:
             raise ValueError("can't locate all elements by 'index'")
 
@@ -64,6 +63,10 @@ class Locator(object):
         target = 'element collection' if filter == 'all' else 'element'
         raise LocatorException('Unable to locate {} from {} due to changing '
                                'page'.format(target, self.selector))
+
+    @property
+    def _locator_scope(self):
+        return self.built.pop('scope') if 'scope' in self.built else self.query_scope.browser
 
     def _locate_element(self, how, what, scope=None):
         scope = scope or self.driver_scope
