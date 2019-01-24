@@ -20,6 +20,7 @@ def builder(browser_mock):
 def element_builder(element_mock, scope_built=None):
     scope_built = scope_built or {'xpath': ".//*[local-name()='div'][@id='table-rows-test']"}
     builder = SelectorBuilder(ATTRIBUTES, element_mock)
+    element_mock.selector_builder = builder
     element_mock.selector_builder.built = scope_built
     return builder
 
@@ -658,8 +659,10 @@ class TestBuild(object):
         assert build_selector.pop('scope', None) is not None
         assert build_selector == built
 
+    # with invalid query scopes
+
     def test_does_not_use_scope_if_query_scope_built_has_multiple_keys(self, element_mock):
-        scope_built = {'xpath': ".//*[local-name()='div'][@id='table-rows-test']", 'visible': True}
+        scope_built = {'xpath': ".//*[local-name()='div']", 'visible': True}
         selector = {'tag_name': 'div'}
         built = {'xpath': ".//*[local-name()='div']"}
         builder = element_builder(element_mock, scope_built)
@@ -668,7 +671,17 @@ class TestBuild(object):
         assert build_selector.pop('scope', None) is not None
         assert build_selector == built
 
-    # with specific scope
+    def test_does_not_use_scope_if_query_scope_uses_different_selenium_locator(self, element_mock):
+        scope_built = {'css': '#foo'}
+        selector = {'tag_name': 'div'}
+        built = {'xpath': ".//*[local-name()='div']"}
+        builder = element_builder(element_mock, scope_built)
+
+        build_selector = builder.build(selector)
+        assert build_selector.pop('scope', None) is not None
+        assert build_selector == built
+
+    # with specific element scope
 
     def test_does_not_use_scope_if_query_scope_is_an_iframe(self, mocker, element_mock):
         scope_built = {'xpath': ".//*[local-name()='iframe'][@id='one']"}

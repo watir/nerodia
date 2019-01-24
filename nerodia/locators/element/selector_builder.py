@@ -104,18 +104,19 @@ class SelectorBuilder(object):
     @property
     def _use_scope(self):
         from nerodia.elements.i_frame import IFrame
-        from nerodia.elements.radio import Radio
         from nerodia.browser import Browser
-        if isinstance(self.query_scope, Browser):
+        w3c_cpy = set(W3C_FINDERS)
+        w3c_cpy.add('adjacent')
+        if len(set(self.selector.keys()).intersection(w3c_cpy)) > 0:
             return False
 
-        not_adj = 'adjacent' not in self.selector
-        not_w3c = len(set(self.selector.keys()).intersection(W3C_FINDERS)) == 0
-        not_frame_radio = not isinstance(self.query_scope, (IFrame, Radio))
-        built = self.query_scope.selector_builder.built
-        built = built and len(built) == 1
+        if isinstance(self.query_scope, (Browser, IFrame)):
+            return False
 
-        return not_adj and not_w3c and not_frame_radio and built
+        scope_invalid_locators = [x for x in self.query_scope.selector_builder.built.keys() if
+              x != self._implementation_locator]
+
+        return len(scope_invalid_locators) == 0
 
     def _deprecate_class_list(self, class_name):
         dep = "Using the 'class' locator to locate multiple classes with a String value " \
@@ -169,14 +170,22 @@ class SelectorBuilder(object):
             return None
         self.custom_attributes.append(attribute)
 
-    # Implement this method when creating a different selector builder
-    def _build_wd_selector(self, selector):
+    # Extensions implement this method when creating a different selector builder
+    @property
+    def _implementation_class(self):
         try:
             mod = import_module(self.__module__)
             xpath = getattr(mod, 'XPath', XPath)
         except ImportError:
             xpath = XPath
-        return xpath().build(selector)
+        return xpath
+
+    def _build_wd_selector(self, selector):
+        return self._implementation_class().build(selector)
+
+    @property
+    def _implementation_locator(self):
+        return self._implementation_class.LOCATOR
 
     def _is_valid_attribute(self, attribute):
         return self.valid_attributes and attribute in self.valid_attributes
@@ -216,6 +225,8 @@ class SelectorBuilder(object):
 
 class XPath(object):
     CAN_NOT_BUILD = ['visible', 'visible_text', 'visible_label_element']
+
+    LOCATOR = 'xpath'
 
     built = None
     selector = None
