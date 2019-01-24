@@ -277,6 +277,7 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
 
         self.driver.switch_to.default_content()
         self.default_context = True
+        self.after_hooks.run()
 
     @staticmethod
     def _wrap_elements_in(scope, obj):

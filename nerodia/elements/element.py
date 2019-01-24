@@ -30,7 +30,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
     _content_editable = None
     _selector_builder = None
     _element_matcher = None
-    _located = False
     _locator = None
 
     def __init__(self, query_scope, selector):
@@ -681,6 +680,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         return self.el
 
     # private
+
+    @property
+    def _located(self):
+        """
+        Returns if the element has previously been located
+        :rtype: bool
+        """
+        return self.el is not None
 
     @property
     def _raise_writable(self):
