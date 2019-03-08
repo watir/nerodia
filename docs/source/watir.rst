@@ -95,7 +95,7 @@ In Nerodia, the equivalent would be:
 .. code-block:: python
 
     btn = browser.button(id='btn')
-    btn.wait_until(timeout=2, interval=0.5 method=lambda e: e.enabled)
+    btn.wait_until(timeout=2, interval=0.5, method=lambda e: e.enabled)
     btn.click()
 
 Also, ``while`` is reserved in Python. Therefore, the Nerodia equivalent of Watir's ``Wait.while`` is ``Wait.until_not``
