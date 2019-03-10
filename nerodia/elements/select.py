@@ -214,4 +214,4 @@ class Select(HTMLElement):
         for element in elements:
             if not element.is_selected:
                 element.click()
-        return elements[0].text if elements[0].stale else ''
+        return '' if elements[0].stale else elements[0].text
