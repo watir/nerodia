@@ -60,13 +60,13 @@ class AfterHooks(object):
         """ Runs after hooks """
         # We can't just rescue exception because Firefox automatically closes alert when
         # exception raised
-        if self.after_hooks and not self.browser.alert.exists:
-            try:
+        try:
+            if self.after_hooks and not self.browser.alert.exists:
                 for hook in self.after_hooks:
                     hook(self.browser)
-            except NoSuchWindowException as e:
-                nerodia.logger.info('Could not execute After Hooks because browser window was '
-                                    'closed {}'.format(e))
+        except NoSuchWindowException as e:
+            nerodia.logger.info('Could not execute After Hooks because browser window was '
+                                'closed {}'.format(e))
 
     @contextmanager
     def without(self):
