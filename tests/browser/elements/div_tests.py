@@ -121,24 +121,25 @@ def test_finds_all_attribute_methods(browser):
 
 class TestDivDeprecationWarnings(object):
     def test_does_not_throw_deprecation_when_still_matched_by_text_content(self, browser, caplog):
-        browser.div(text=compile(r'some visible')).exists
+        browser.div(text=compile(r'some visible')).locate()
+        assert 'DEPRECATION' not in caplog.text
+
+    def test_does_not_throw_deprecation_with_complex_regexp_matched_by_text_content(self, browser, caplog):
+        browser.div(text=compile(r'some (in|)visible')).locate()
         assert 'DEPRECATION' not in caplog.text
 
     def test_throws_deprecation_when_no_longer_matched_by_text_content(self, browser, caplog):
-        browser.div(text=compile(r'some visible$')).exists
+        browser.div(text=compile(r'some visible$')).locate()
         assert "Using 'text' locator with RegExp {!r} to match an element that includes hidden " \
                "text is deprecated. Use 'visible_text' " \
                "instead.".format(compile(r'some visible$')) in caplog.text
 
-    def test_trows_deprecation_when_begins_to_be_matched_by_text_content(self, browser, caplog):
-        browser.div(text=compile(r'some hidden')).exists
-        assert "Using 'text' locator with RegExp {!r} to match an element that includes hidden " \
-               "text is deprecated. Use 'visible_text' " \
-               "instead.".format(compile(r'some hidden')) in caplog.text
-
-    def test_does_not_throw_deprecation_when_still_not_matched_by_text_content(self, browser, caplog):
-        browser.div(text=compile(r'does_not_exist')).exists
+    def test_does_not_throw_deprecation_when_element_does_not_exist(self, browser, caplog):
+        browser.div(text=compile(r'definitely not there')).locate()
         assert 'DEPRECATION' not in caplog.text
+
+    def test_does_not_locate_entire_content_with_regular_expressions(self, browser, caplog):
+        assert not browser.div(text=compile(r'some visible some hidden')).exists
 
 
 class TestDivManipulation(object):

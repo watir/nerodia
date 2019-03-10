@@ -51,7 +51,6 @@ class IFrame(HTMLElement):
         """
         return FramedDriver(super(IFrame, self).wd, self.browser)
 
-    @property
     def to_subtype(self):
         """
         Cast this Element instance to a more specific subtype.

@@ -81,7 +81,7 @@ class Matcher(object):
 
         matches = all(check_match(how, expected) for how, expected in values_to_match.items())
 
-        if values_to_match.get('text'):
+        if values_to_match.get('text') and matches:
             self._deprecate_text_regexp(element, values_to_match)
 
         return matches
