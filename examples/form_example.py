@@ -1,7 +1,6 @@
 # Based on http://watir.com/guides/form-example/
 
 from nerodia.browser import Browser
-#from selenium.webdriver.common.keys import Keys #needed to send keys
 from time import sleep  # needed to perform sleep
 from faker import Faker  # needed for fake form data
 import os # needed for file path
