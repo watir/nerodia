@@ -3,7 +3,7 @@
 from nerodia.browser import Browser
 from time import sleep  # needed to perform sleep
 from faker import Faker  # needed for fake form data
-import os # needed for file path
+import os  # needed for file path
 
 # Setup
 browser = Browser(browser='chrome')
