@@ -29,7 +29,7 @@ browser.text_field(id='address_last_name').set(fake.last_name())
 browser.text_field(id='address_street_address').set(fake.street_address())
 browser.text_field(id='address_secondary_address').set(fake.secondary_address())
 browser.text_field(id='address_city').set(fake.city())
- 
+
 # Select list elements can select by either `text` or `value`
 browser.select_list(id='address_state').select(fake.state())
 
