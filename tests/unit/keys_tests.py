@@ -1,11 +1,14 @@
-import pytest
+import six
 
 
 from nerodia.keys import Keys
 
 
 def test_can_access_keys():
-    assert Keys.TAB == '\ue004'
+    if six.PY3:
+        assert Keys.TAB == '\ue004'
+    else:
+        assert Keys.TAB == '\\\ue004'
 
 
 def test_keys_exists():
