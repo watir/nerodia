@@ -33,6 +33,11 @@ logger = Logger()
 
 _str_types = (six.binary_type, six.text_type)
 
+#
+# Wrap up selenium keys object for simplicity
+#
+
+from selenium.webdriver.common.keys import Keys  # noqa
 
 from . import tag_map  # noqa
 
