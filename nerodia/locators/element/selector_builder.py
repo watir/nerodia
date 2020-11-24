@@ -431,10 +431,8 @@ class XPath(object):
             return 'local-name()'
         elif key == 'href':
             return 'normalize-space(@href)'
-        elif key == 'text':
+        elif key in ['text', 'contains_text']:
             return 'normalize-space()'
-        elif key == 'contains_text':
-            return 'text()'
         elif isinstance(key, str):
             if '__' in key:
                 lhs = '@{}'.format(key.replace('__', '_'))

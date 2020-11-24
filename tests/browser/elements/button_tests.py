@@ -36,6 +36,8 @@ class TestButtonExist(object):
         assert browser.button(text=compile(r'Button 2')).exists
         assert browser.button(value='Button 2').exists
         assert browser.button(value=compile(r'Button 2')).exists
+        assert browser.button(value='Button 4 With Child Text').exists
+        assert browser.button(value=compile(r'Button 4 With Child Text')).exists
 
     def test_returns_true_if_the_button_exists_caption(self, browser):
         assert browser.button(caption='Button 2').exists

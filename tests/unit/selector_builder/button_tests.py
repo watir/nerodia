@@ -97,7 +97,7 @@ class TestBuild(object):
     def test_locates_value_of_input_element_with_simple_regexp(self, builder):
         items = {
             'selector': {'text': compile(r'Button')},
-            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(normalize-space(), 'Button')) or "
                                "(local-name()='input' and ({}) and contains(@value, "
                                "'Button'))]".format(DEFAULT_TYPES)}
         }
@@ -106,7 +106,7 @@ class TestBuild(object):
     def test_locates_text_of_button_element_with_simple_regexp(self, builder):
         items = {
             'selector': {'text': compile(r'Button 2')},
-            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Button 2')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(normalize-space(), 'Button 2')) or "
                                "(local-name()='input' and ({}) and contains(@value, "
                                "'Button 2'))]".format(DEFAULT_TYPES)}
         }
@@ -115,7 +115,7 @@ class TestBuild(object):
     def test_locates_with_simple_regexp_for_text(self, builder):
         items = {
             'selector': {'text': compile(r'n 2')},
-            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'n 2')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(normalize-space(), 'n 2')) or "
                                "(local-name()='input' and ({}) and contains(@value, "
                                "'n 2'))]".format(DEFAULT_TYPES)}
         }
@@ -124,7 +124,7 @@ class TestBuild(object):
     def test_locates_with_simple_regexp_for_value(self, builder):
         items = {
             'selector': {'text': compile(r'Prev')},
-            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'Prev')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(normalize-space(), 'Prev')) or "
                                "(local-name()='input' and ({}) and contains(@value, "
                                "'Prev'))]".format(DEFAULT_TYPES)}
         }
@@ -133,7 +133,7 @@ class TestBuild(object):
     def test_returns_complex_text_regexp_to_the_locator(self, builder):
         items = {
             'selector': {'text': compile(r'^foo$')},
-            'built': {'xpath': ".//*[(local-name()='button' and contains(text(), 'foo')) or "
+            'built': {'xpath': ".//*[(local-name()='button' and contains(normalize-space(), 'foo')) or "
                                "(local-name()='input' and ({}) and contains(@value, "
                                "'foo'))]".format(DEFAULT_TYPES), 'text': compile(r'^foo$')},
         }
@@ -163,7 +163,7 @@ class TestBuild(object):
         items = {
             'selector': {'value': compile(r'Prev')},
             'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
-                               "[contains(text(), 'Prev') or contains(@value, "
+                               "[contains(normalize-space(), 'Prev') or contains(@value, "
                                "'Prev')]".format(DEFAULT_TYPES)}
         }
         assert builder.build(items['selector']) == items['built']
@@ -172,7 +172,7 @@ class TestBuild(object):
         items = {
             'selector': {'value': compile(r'on_2')},
             'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
-                               "[contains(text(), 'on_2') or contains(@value, "
+                               "[contains(normalize-space(), 'on_2') or contains(@value, "
                                "'on_2')]".format(DEFAULT_TYPES)}
         }
         assert builder.build(items['selector']) == items['built']
@@ -190,7 +190,7 @@ class TestBuild(object):
         items = {
             'selector': {'value': compile(r'ton 2')},
             'built': {'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
-                               "[contains(text(), 'ton 2') or contains(@value, "
+                               "[contains(normalize-space(), 'ton 2') or contains(@value, "
                                "'ton 2')]".format(DEFAULT_TYPES)}
         }
         assert builder.build(items['selector']) == items['built']
@@ -200,7 +200,7 @@ class TestBuild(object):
             'selector': {'value': compile(r'^foo$')},
             'built': {'value': compile(r'^foo$'),
                       'xpath': ".//*[(local-name()='button') or (local-name()='input' and ({}))]"
-                               "[contains(text(), 'foo') or contains(@value, "
+                               "[contains(normalize-space(), 'foo') or contains(@value, "
                                "'foo')]".format(DEFAULT_TYPES)}
         }
         assert builder.build(items['selector']) == items['built']
