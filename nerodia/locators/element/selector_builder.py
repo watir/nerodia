@@ -233,6 +233,7 @@ class XPath(object):
 
     def build(self, selector):
         self.selector = selector
+        self.valid_attributes = self._build_valid_attributes()
 
         self.built = {}
 
@@ -274,7 +275,8 @@ class XPath(object):
             return self._equal_pair(key, val)
 
     def _predicate_conversion(self, key, regexp):
-        lower = key == 'type' or regexp.flags & re.IGNORECASE == re.IGNORECASE
+        lower = self._case_insensitive_attribute(key) or \
+                regexp.flags & re.IGNORECASE == re.IGNORECASE
 
         lhs = self._lhs_for(key, lower)
         results = RegexpDisassembler(regexp).substrings
@@ -287,7 +289,13 @@ class XPath(object):
 
         self._add_to_matching(key, regexp, results)
 
-        return ' and '.join(("contains({}, '{}')".format(lhs, substring) for substring in results))
+        parts = []
+        for substring in results:
+            rhs = "'{}'".format(substring)
+            if lower:
+                rhs = XpathSupport.lower(rhs)
+            parts.append(rhs)
+        return ' and '.join(("contains({}, {})".format(lhs, rhs) for rhs in parts))
 
     @property
     def _start_string(self):
@@ -459,4 +467,27 @@ class XPath(object):
                          "{})".format(XpathSupport.escape(' {} '.format(value)))
             return "not({})".format(expression) if negate_xpath else expression
         else:
-            return "{}={}".format(self._lhs_for(key, key == 'type'), XpathSupport.escape(value))
+            lower = self._case_insensitive_attribute(key)
+
+            lhs = self._lhs_for(key, lower=lower)
+            rhs = XpathSupport.escape(value)
+            if lower:
+                rhs = XpathSupport.lower(rhs)
+
+            return "{}={}".format(lhs, rhs)
+
+    def _build_valid_attributes(self):
+        tag_name = self.selector.get('tag_name')
+        if tag_name in nerodia.tag_to_class:
+            return nerodia.tag_to_class[tag_name].ATTRIBUTES
+        else:
+            from nerodia.elements.html_elements import HTMLElement
+            return HTMLElement.ATTRIBUTES
+
+    def _case_insensitive_attribute(self, attribute):
+        from nerodia.elements.element import Element
+        if attribute == 'type':
+            return True
+        if attribute in Element.CASE_INSENSITIVE_ATTRIBUTES and attribute in self.valid_attributes:
+            return True
+        return False

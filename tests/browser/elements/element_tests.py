@@ -641,7 +641,7 @@ class TestElementAttributeList(object):
     def test_returns_a_list(self, browser):
         assert isinstance(browser.div().attribute_list, list)
 
-    def test_returns_list_of_attributes_from_an_alement(self, browser):
+    def test_returns_list_of_attributes_from_an_element(self, browser):
         assert browser.p().attribute_list == ['data_type']
 
     def test_returns_attribute_name_with_special_characters_as_a_string(self, browser):

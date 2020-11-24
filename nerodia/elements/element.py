@@ -24,6 +24,14 @@ from nerodia.window import Dimension, Point
 
 class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacent, Scrolling):
     ATTRIBUTES = []
+    CASE_INSENSITIVE_ATTRIBUTES = ['accept', 'accept_charset', 'align', 'alink', 'axis', 'bgcolor',
+                                   'charset', 'checked', 'clear', 'codetype', 'color', 'compact',
+                                   'declare', 'defer', 'dir', 'direction', 'disabled', 'enctype',
+                                   'face', 'frame', 'hreflang', 'http_equiv', 'lang', 'language',
+                                   'link', 'media', 'method', 'multiple', 'nohref', 'noresize',
+                                   'noshade', 'nowrap', 'readonly', 'rel', 'rev', 'rules', 'scope',
+                                   'scrolling', 'selected', 'shape', 'target', 'text', 'type',
+                                   'valign', 'valuetype', 'vlink']
     keyword = None
 
     _content_editable = None
@@ -189,6 +197,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :Example: Click an element with several modifier keys pressed
         browser.element(name='new_user_button').right_click(nerodia.Keys.SHIFT, nerodia.Keys.ALT)
         """
+
         def _right_click():
             action = ActionChains(self.driver)
             if len(modifiers) > 0:
@@ -500,12 +509,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
         browser.button(value='Delete').obscured           #=> False
         """
+
         def func():
             if not self.present:
                 return True
 
             self.scroll.to()
             return self._execute_js('elementObscured', self)
+
         return self._element_call(func)
 
     def style(self, prop=None):

@@ -540,10 +540,12 @@ class TestBuild(object):
     def test_complex_regexp_handles_case_insensitive(self, builder):
         items = {
             'selector': {'action': compile(r'me', flags=IGNORECASE)},
-            'built': {'xpath': ".//*[contains(translate(@action,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇ"
-                               "ÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ',"
-                               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëì"
-                               "íîïðñòóôõöøùúûüýþÿžšœ'), 'me')]"}
+            'built': {'xpath': ".//*[contains(translate(@action,"
+                               "'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ',"
+                               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ'), "
+                               "translate('me',"
+                               "'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ',"
+                               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ'))]"}
         }
         assert builder.build(items['selector']) == items['built']
 
@@ -696,3 +698,35 @@ class TestBuild(object):
         build_selector = builder.build(selector)
         assert build_selector.pop('scope', None) is not None
         assert build_selector == built
+
+    def test_respects_case_when_locating_unknown_element_with_known_attribute(self, builder):
+        assert builder.build({'hreflang': 'en'}) == {'xpath': ".//*[@hreflang='en']"}
+        assert builder.build({'hreflang': compile(r'en')}) == {'xpath': ".//*[contains(@hreflang, 'en')]"}
+
+    def test_ignores_case_when_locating_unknown_element_with_defined_attribute(self, builder):
+        lhs = "translate(@lang,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
+              "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
+        rhs = "translate('en','ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
+              "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
+
+
+        assert builder.build({'lang': 'en'}) == {'xpath': ".//*[{}={}]".format(lhs, rhs)}
+        assert builder.build({'lang': compile(r'en')}) == {'xpath': ".//*[contains({}, {})]".format(lhs, rhs)}
+        assert builder.build({'tag_name': compile(r'a'), 'lang': 'en'}) == {'xpath': ".//*[contains(local-name(), 'a')][{}={}]".format(lhs, rhs)}
+        assert builder.build({'tag_name': compile(r'a'), 'lang': compile(r'en')}) == {'xpath': ".//*[contains(local-name(), 'a')][contains({}, {})]".format(lhs, rhs)}
+
+    def test_ignores_case_when_attribute_is_defined_for_element(self, builder):
+        lhs = "translate(@hreflang,'ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
+              "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
+        rhs = "translate('en','ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
+              "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
+
+
+        assert builder.build({'tag_name': 'a', 'hreflang': 'en'}) == {'xpath': ".//*[local-name()='a'][{}={}]".format(lhs, rhs)}
+        assert builder.build({'tag_name': 'a', 'hreflang': compile(r'en')}) == {'xpath': ".//*[local-name()='a'][contains({}, {})]".format(lhs, rhs)}
+
+    def test_respects_case_when_attribute_is_not_defined_for_element(self, builder):
+        assert builder.build({'tag_name': 'table', 'hreflang': 'en'}) == {'xpath': ".//*[local-name()='table'][@hreflang='en']"}
+        assert builder.build({'tag_name': 'table', 'hreflang': compile(r'en')}) == {'xpath': ".//*[local-name()='table'][contains(@hreflang, 'en')]"}
+        assert builder.build({'tag_name': compile(r'a'), 'hreflang': 'en'}) == {'xpath': ".//*[contains(local-name(), 'a')][@hreflang='en']"}
+        assert builder.build({'tag_name': compile(r'a'), 'hreflang': compile(r'en')}) == {'xpath': ".//*[contains(local-name(), 'a')][contains(@hreflang, 'en')]"}

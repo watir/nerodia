@@ -44,6 +44,9 @@ class XPath(ElementXPath):
 
     @property
     def _negative_type_text(self):
-        types = ['{}!={}'.format(self._lhs_for('type', lower=True), XpathSupport.escape(typ)) for
-                 typ in TextField.NON_TEXT_TYPES]
+        types = []
+        for typ in TextField.NON_TEXT_TYPES:
+            lhs = self._lhs_for('type', lower=True)
+            rhs = XpathSupport.lower(XpathSupport.escape(typ))
+            types.append('{}!={}'.format(lhs, rhs))
         return ' and '.join(types)

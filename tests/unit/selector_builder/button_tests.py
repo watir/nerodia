@@ -10,10 +10,10 @@ from nerodia.locators.element.xpath_support import XpathSupport
 
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 DEFAULT_TYPES = ' or '.join([
-    "translate(@type,'{}','{}')='button'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')='reset'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')='submit'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')='image'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
+    "translate(@type,'{0}','{1}')=translate('button','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')=translate('reset','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')=translate('submit','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')=translate('image','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
 ])
 
 
@@ -49,12 +49,13 @@ class TestBuild(object):
         assert builder.build(items['selector']) == items['built']
 
     def test_locates_input_or_button_element_with_specified_type(self, builder):
+        typ = "translate('reset','{}','{}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
         items = {
             'selector': {'type': 'reset'},
             'built': {
-                'xpath': ".//*[(local-name()='button' and translate(@type,'{0}','{1}')='reset')"
-                         " or (local-name()='input' and (translate(@type,'{0}','{1}')='reset')"
-                         ")]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)}
+                'xpath': ".//*[(local-name()='button' and translate(@type,'{0}','{1}')={2})"
+                         " or (local-name()='input' and (translate(@type,'{0}','{1}')={2})"
+                         ")]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE, typ)}
         }
         assert builder.build(items['selector']) == items['built']
 

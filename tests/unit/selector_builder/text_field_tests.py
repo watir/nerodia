@@ -9,18 +9,18 @@ from nerodia.locators.text_field.selector_builder import SelectorBuilder
 
 ATTRIBUTES = HTMLElement.ATTRIBUTES
 NEGATIVE_TYPES = ' and '.join([
-    "translate(@type,'{}','{}')!='file'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='radio'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='checkbox'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='submit'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='reset'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='image'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='button'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='hidden'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='range'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='color'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='date'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
-    "translate(@type,'{}','{}')!='datetime-local'".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
+    "translate(@type,'{0}','{1}')!=translate('file','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('radio','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('checkbox','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('submit','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('reset','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('image','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('button','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('hidden','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('range','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('color','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('date','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE),
+    "translate(@type,'{0}','{1}')!=translate('datetime-local','{0}','{1}')".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)
 ])
 
 
@@ -43,7 +43,8 @@ class TestBuild(object):
     def test_specified_text_field_type_that_is_text(self, builder):
         items = {
             'selector': {'type': 'text'},
-            'built': {'xpath': ".//*[local-name()='input'][translate(@type,'{}','{}')='text'"
+            'built': {'xpath': ".//*[local-name()='input'][translate(@type,'{0}','{1}')=translate("
+                               "'text','{0}','{1}')"
                                "]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)}
         }
         assert builder.build(items['selector']) == items['built']
@@ -51,7 +52,8 @@ class TestBuild(object):
     def test_specified_text_field_type_that_is_not_text(self, builder):
         items = {
             'selector': {'type': 'number'},
-            'built': {'xpath': ".//*[local-name()='input'][translate(@type,'{}','{}')='number'"
+            'built': {'xpath': ".//*[local-name()='input'][translate(@type,'{0}','{1}')=translate("
+                               "'number','{0}','{1}')"
                                "]".format(XpathSupport.UPPERCASE, XpathSupport.LOWERCASE)}
         }
         assert builder.build(items['selector']) == items['built']
