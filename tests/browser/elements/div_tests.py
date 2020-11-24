@@ -206,8 +206,8 @@ class TestDivManipulation(object):
 
     @pytest.mark.page('right_click.html')
     def test_accepts_modifiers(self, browser, page, event_log):
-        browser.div(id='click-logger').right_click(Keys.SHIFT, Keys.ALT)
-        assert event_log.list[0] == 'shift=true alt=true'
+        browser.div(id='click-logger').right_click(Keys.CONTROL, Keys.ALT)
+        assert event_log.list[0] == 'control=true alt=true'
 
     # html
 
