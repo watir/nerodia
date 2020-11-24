@@ -41,6 +41,10 @@ class Capabilities(object):
         url = self.options.pop('url', url)
         if url:
             self.selenium_opts['command_executor'] = url
+        else:
+            service = self.options.pop('service', None)
+            if service:
+                self.selenium_opts['service'] = service
 
         executable_path = self.options.pop('executable_path', None)
         if executable_path:
