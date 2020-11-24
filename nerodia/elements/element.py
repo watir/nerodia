@@ -18,7 +18,7 @@ from nerodia.js_snippet import JSSnippet
 from nerodia.locators.class_helpers import ClassHelpers
 from nerodia.locators.element.selector_builder import SelectorBuilder
 from nerodia.user_editable import UserEditable
-from nerodia.wait.wait import TimeoutError, Wait, Waitable
+from nerodia.wait.wait import TimeoutError, Waitable
 from nerodia.window import Dimension, Point
 
 
@@ -772,16 +772,16 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def _element_call(self, method, precondition=None):
         caller = stack()[1][3]
-        already_locked = Wait.timer.locked
+        already_locked = self.browser.timer.locked
         if not already_locked:
             from ..wait.timer import Timer
-            Wait.timer = Timer(timeout=nerodia.default_timeout)
+            self.browser.timer = Timer(timeout=nerodia.default_timeout)
         try:
             return self._element_call_check(precondition, method, caller)
         finally:
             nerodia.logger.debug('<- `Completed {}#{}`'.format(self, caller))
             if not already_locked:
-                Wait.timer.reset()
+                self.browser.timer.reset()
 
     def _check_condition(self, condition, caller):
         nerodia.logger.debug('<- `Verifying precondition {}#{} for '
@@ -825,7 +825,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                 self._check_condition(precondition, caller)
                 return method()
             except ElementNotInteractableException:
-                if (Wait.timer.remaining_time <= 0) or \
+                if (self.browser.timer.remaining_time <= 0) or \
                         (precondition not in [self.wait_for_present, self.wait_for_enabled,
                                               self.wait_for_writable]):
                     self._raise_present()

@@ -15,6 +15,7 @@ from .container import Container
 from .cookies import Cookies
 from .exception import Error
 from .has_window import HasWindow
+from .wait.timer import Timer
 from .wait.wait import Waitable
 
 try:
@@ -52,6 +53,7 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
         self.default_context = True
         self._original_window = None
         self._locator_namespace = locators
+        self._timer = Timer()
 
     @property
     def locator_namespace(self):
@@ -64,6 +66,14 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
     @locator_namespace.setter
     def locator_namespace(self, namespace):
         self._locator_namespace = namespace
+
+    @property
+    def timer(self):
+        return self._timer
+
+    @timer.setter
+    def timer(self, timer):
+        self._timer = timer
 
     @property
     def wd(self):
