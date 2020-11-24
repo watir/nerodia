@@ -69,6 +69,10 @@ class TestIFrameExist(object):
         assert browser.iframe().element(css='#senderElement').exists is True
         assert browser.iframe().element(id='senderElement').exists is True
 
+    def test_returns_true_for_multiple_elements_that_exist_in_an_iframe_with_a_parent_selector(self, browser):
+        assert browser.div(class_name='wrapper').iframe().element(id='first_grandson').exists
+        assert browser.div(class_name='wrapper').iframe().element(id='second_grandson').exists
+
     def test_returns_false_if_an_element_in_an_iframe_does_not_exist(self, browser):
         assert browser.iframe().element(css='#no_such_id').exists is False
         assert browser.iframe().element(id='no_such_id').exists is False

@@ -8,10 +8,10 @@ class TestIFrames(object):
         assert list(browser.iframes(id='iframe_2')) == [browser.iframe(id='iframe_2')]
 
     def test_matches_equality_of_iframe_with_that_from_a_collection(self, browser):
-        assert browser.iframes()[-1] == browser.iframe(id='iframe_2')
+        assert browser.iframes()[-1] == browser.iframe(id='iframe_3')
 
     def test_returns_the_correct_number_of_iframes(self, browser):
-        assert len(browser.iframes()) == 2
+        assert len(browser.iframes()) == 3
 
     def test_get_item_returns_the_frame_at_the_given_index(self, browser):
         assert browser.iframes()[0].id == 'iframe_1'

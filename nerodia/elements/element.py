@@ -736,8 +736,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
     def _ensure_context(self):
         from nerodia.elements.i_frame import IFrame
-        if isinstance(self.query_scope, Browser) or \
-                (self.query_scope._located and self.query_scope.stale):
+        if isinstance(self.query_scope, Browser) or self.query_scope._located is False or \
+                (self.query_scope._located is False and self.query_scope.stale):
             self.query_scope.locate()
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
