@@ -75,7 +75,7 @@ htmlelement = [
     (str, 'oncut', 'oncut'),
     (str, 'onpaste', 'onpaste'),
     (str, 'content_editable', 'contentEditable'),
-    (bool, 'is_content_editable', 'isContentEditable')
+    (bool, 'content_editable', 'isContentEditable')
 ]
 
 HTMLElementCollection = []
@@ -253,6 +253,7 @@ textarea = [
     (str, 'wrap', 'wrap'),
     (str, 'type', 'type'),
     (str, 'defaultvalue', 'defaultValue'),
+    (str, 'value', 'value'),
     (int, 'textlength', 'textLength'),
     (bool, 'willvalidate', 'willValidate'),
     (str, 'validity', 'validity'),
@@ -284,7 +285,7 @@ optgroup = [
 
 OptGroupCollection = []
 
-datalist = []
+DataList = []
 
 DataListCollection = []
 
@@ -423,7 +424,7 @@ tableheadercell = [
 
 TableHeaderCellCollection = []
 
-tabledatacell = []
+TableDataCell = []
 
 TableDataCellCollection = []
 

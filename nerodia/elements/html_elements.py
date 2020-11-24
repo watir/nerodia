@@ -277,6 +277,11 @@ class TableCaptionCollection(HTMLElementCollection):
 
 
 @six.add_metaclass(MetaHTMLElement)
+class Area(HTMLElement):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
 class AreaCollection(HTMLElementCollection):
     pass
 
@@ -438,6 +443,11 @@ class Data(HTMLElement):
 
 @six.add_metaclass(MetaHTMLElement)
 class DataCollection(HTMLElementCollection):
+    pass
+
+
+@six.add_metaclass(MetaHTMLElement)
+class Anchor(HTMLElement):
     pass
 
 

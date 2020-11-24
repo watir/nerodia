@@ -1,11 +1,10 @@
 from nerodia import tag_to_class
-from .elements.area import Area
 from .elements.button import Button
 from .elements.d_list import DList
 from .elements.form import Form
-from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, Canvas, \
-    TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, FrameSet, \
-    Heading, Head, HR, Html, Label, Legend, LI, Map, Meta, Meter, Object, \
+from .elements.html_elements import HTMLElement, Anchor, Area, Audio, Base, Quote, Body, BR, \
+    Canvas, TableCaption, TableCol, Data, DataList, Mod, Details, Dialog, Div, Embed, FieldSet, \
+    FrameSet, Heading, Head, HR, Html, Label, Legend, LI, Map, Meta, Meter, Object, \
     OptGroup, Output, Paragraph, Param, Pre, Progress, Script, Source, Span, Style, \
     Template, TableHeaderCell, Time, Title, Track, Video, AnchorCollection, \
     HTMLElementCollection, AreaCollection, AudioCollection, BaseCollection, QuoteCollection, \
@@ -24,7 +23,6 @@ from .elements.html_elements import HTMLElement, Audio, Base, Quote, Body, BR, C
 from .elements.i_frame import IFrame
 from .elements.image import Image
 from .elements.input import Input
-from .elements.link import Anchor
 from .elements.list import OList, UList
 from .elements.option import Option
 from .elements.radio import Radio, RadioCollection
