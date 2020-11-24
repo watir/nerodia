@@ -55,11 +55,9 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         try:
             if self._located and self.stale:
-                nerodia.logger.deprecate('Checking `#exists is False` to determine a stale element',
-                                         '`#stale is True`',
-                                         reference='http://watir.com/staleness-changes',
-                                         ids=['stale_exists'])
-                return False
+                self.reset()
+            elif self._located:
+                return True
             self.assert_exists()
             return True
         except (UnknownObjectException, UnknownFrameException):
@@ -470,11 +468,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
-            displayed = self._display_check()
-            if displayed is None and self._display_check():
-                nerodia.logger.deprecate('Checking `#present is False` to determine a stale '
-                                         'element', '`#stale is True`', ids=['stale_present'])
-            return displayed
+            self._display_check()
         except (UnknownObjectException, UnknownFrameException):
             return False
 
@@ -734,6 +728,12 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         Removes duplication in #present? & #visible? and makes setting deprecation notice easier
         """
+        check = self._display_check_retry()
+        if check is None:
+            return self._display_check_retry()
+        return check
+
+    def _display_check_retry(self):
         try:
             self.assert_exists()
             return self.el.is_displayed()

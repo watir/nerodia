@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.page('wait.html')
-class TestElementVisible(object):
+class fTestElementVisible(object):
     def test_finds_single_element(self, browser):
         assert browser.body().element(visible=True).id == 'foo'
 

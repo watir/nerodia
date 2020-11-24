@@ -195,14 +195,13 @@ class TestElementVisibility(object):
         assert 'WARNING  [visible_element]' in caplog.text
 
     @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_correct_exception_if_the_element_is_stale(self, browser):
+    def test_handles_staleness(self, browser):
         element = browser.text_field(id='new_user_email').locate()
 
         browser.refresh()
 
         assert element.stale
-        with pytest.raises(UnknownObjectException):
-            element.visible
+        assert element.visible
 
     def test_returns_true_if_the_element_has_visibility_style_visible_even_if_parent_has_hidden(self, browser, caplog):
         assert browser.div(id='visible_child').visible
@@ -243,14 +242,13 @@ class TestElementCache(object):
 
 @pytest.mark.page('removed_element.html')
 class TestElementExists(object):
-    def test_element_from_a_collection_returns_false_when_it_becomes_stale(self, browser, caplog):
+    def test_handles_staleness_in_a_collection(self, browser):
         element = browser.divs(id='text')[0].locate()
 
         browser.refresh()
 
         assert element.stale
-        assert not element.exists
-        assert '[DEPRECATION] [stale_exists]Checking `#exists is False` to determine a stale element' in caplog.text
+        assert element.exists
 
     def test_returns_false_when_tag_name_does_not_match_id(self, browser):
         assert not browser.span(id='text').exists
@@ -273,7 +271,7 @@ class TestElementPresent(object):
         browser.refresh()
 
         assert element.stale
-        assert not element.present
+        assert element.present
 
     def test_returns_true_the_second_time_if_the_element_is_stale(self, browser):
         element = browser.div(id='foo').locate()
