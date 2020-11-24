@@ -174,17 +174,35 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         self.fire_event('dblclick')
         self.browser.after_hooks.run()
 
-    def right_click(self):
+    def right_click(self, *modifiers):
         """
-        Right clicks the element
-        Note that browser support may vary
+        Right clicks the element, optionally while pressing the given modifier keys.
+        Note that support for holding a modifier key is currently experimental,
+        and may not work at all. Also, the browser support may vary.
 
         :Example: Right click an element
 
         browser.element(name='new_user_button').right_click()
+
+        :Example: Right click an element with shift key pressed
+        browser.element(name='new_user_button').right_click(nerodia.Keys.SHIFT)
+
+        :Example: Click an element with several modifier keys pressed
+        browser.element(name='new_user_button').right_click(nerodia.Keys.SHIFT, nerodia.Keys.ALT)
         """
-        self._element_call(lambda: ActionChains(self.driver).context_click(self.el)
-                           .perform(), self.wait_for_present)
+        def _right_click():
+            action = ActionChains(self.driver)
+            if len(modifiers) > 0:
+                for mod in modifiers:
+                    action.key_down(mod)
+                action.context_click(self.el)
+                for mod in modifiers:
+                    action.key_up(mod)
+                action.perform()
+            else:
+                action.context_click(self.el).perform()
+
+        self._element_call(_right_click, self.wait_for_present)
         self.browser.after_hooks.run()
 
     def hover(self):
@@ -468,7 +486,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         :rtype: bool
         """
         try:
-            self._display_check()
+            return self._display_check()
         except (UnknownObjectException, UnknownFrameException):
             return False
 

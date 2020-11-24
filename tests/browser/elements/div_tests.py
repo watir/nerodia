@@ -2,6 +2,7 @@ from re import compile
 
 import pytest
 
+from nerodia import Keys
 from nerodia.exception import UnknownObjectException
 
 pytestmark = pytest.mark.page('non_control_elements.html')
@@ -201,6 +202,12 @@ class TestDivManipulation(object):
     def test_fires_the_oncontextmenu_event(self, browser, messages):
         browser.div(id='click').right_click()
         assert messages.list[0] == 'right-clicked'
+
+
+    @pytest.mark.page('right_click.html')
+    def test_accepts_modifiers(self, browser, page, event_log):
+        browser.div(id='click-logger').right_click(Keys.SHIFT, Keys.ALT)
+        assert event_log.list[0] == 'shift=true alt=true'
 
     # html
 

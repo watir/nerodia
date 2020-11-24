@@ -154,6 +154,23 @@ def messages(browser_manager):
     return Messages()
 
 
+@pytest.fixture(scope='session')
+def event_log(browser_manager):
+    class EventLog(object):
+        @property
+        def list(self):
+            items = browser_manager.browser.div(id='log').wait_until_present().ps()
+            return [el.text for el in items]
+
+        def __len__(self):
+            return len(self.list)
+
+        def __getitem__(self, item):
+            return self.list[item]
+
+    return EventLog()
+
+
 @pytest.fixture(autouse=True, scope='session')
 def webserver():
     webserver = WebServer()
