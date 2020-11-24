@@ -3,7 +3,7 @@ from re import search, sub
 
 import six
 from selenium.common.exceptions import ElementNotInteractableException, \
-    NoSuchWindowException, StaleElementReferenceException, InvalidElementStateException
+    NoSuchWindowException, StaleElementReferenceException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
@@ -816,12 +816,6 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                         (precondition not in [self.wait_for_present, self.wait_for_enabled,
                                               self.wait_for_writable]):
                     self._raise_present()
-                continue
-            except InvalidElementStateException:
-                if (Wait.timer.remaining_time <= 0) or \
-                        (precondition in [self.wait_for_writable, self.wait_for_enabled,
-                                          self.wait_for_writable]):
-                    self._raise_disabled()
                 continue
             except NoSuchWindowException:
                 raise NoMatchingWindowFoundException('browser window was closed')
