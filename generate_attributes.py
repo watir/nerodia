@@ -14,7 +14,7 @@ URL = 'https://raw.githubusercontent.com/watir/watir/master/lib/watir/elements/{
 
 def generate_attributes(element_type, pkg):
     response = urlopen(URL.format(element_type))
-    lines = response.read()
+    lines = response.read().decode('utf-8')
     classes = re.split(r'class (\w+) .*', lines)
     i = 1
     elements = []
