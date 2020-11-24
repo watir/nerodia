@@ -3,8 +3,7 @@ from re import search, sub
 
 import six
 from selenium.common.exceptions import ElementNotInteractableException, \
-    ElementNotVisibleException, \
-    InvalidElementStateException, NoSuchWindowException, StaleElementReferenceException
+    NoSuchWindowException, StaleElementReferenceException, InvalidElementStateException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
@@ -812,7 +811,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                 self.reset()
                 self._check_condition(precondition, caller)
                 return method()
-            except (ElementNotVisibleException, ElementNotInteractableException):
+            except ElementNotInteractableException:
                 if (Wait.timer.remaining_time <= 0) or \
                         (precondition not in [self.wait_for_present, self.wait_for_enabled,
                                               self.wait_for_writable]):

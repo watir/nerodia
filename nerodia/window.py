@@ -276,7 +276,7 @@ class Window(Waitable):
                 matches_url = True
 
             return matches_title and matches_url
-        except (NoSuchWindowException, WebDriverException):
+        except NoSuchWindowException:
             return False
         finally:
             current = self.driver.window_handles
