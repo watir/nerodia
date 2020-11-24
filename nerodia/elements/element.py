@@ -377,6 +377,8 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
 
         browser.button(name='new_user_button').scroll_into_view()
         """
+        nerodia.logger.deprecate('Element#scroll_into_view', 'Element#scroll methods',
+                                 ids=['scroll_into_view'])
         return Point(**self._element_call(lambda: self.el.location_once_scrolled_into_view))
 
     @property
