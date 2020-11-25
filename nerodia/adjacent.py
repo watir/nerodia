@@ -113,7 +113,8 @@ class Adjacent(object):
     # private
 
     def _xpath_adjacent(self, **kwargs):
-        from .elements.html_elements import HTMLElement, HTMLElementCollection
+        from nerodia.elements.html_elements import HTMLElement, HTMLElementCollection
+        from nerodia.elements.input import Input
         import nerodia
 
         plural = kwargs.pop('plural', None)
@@ -123,14 +124,11 @@ class Adjacent(object):
         if not (plural or any(isinstance(val, Pattern) for val in kwargs.values())):
             kwargs['index'] = index or 0
 
-        if not plural and tag_name:
-            klass = nerodia.element_class_for(tag_name)
-        elif not plural:
-            klass = HTMLElement
+        if not plural:
+            el = nerodia.element_class_for(tag_name, HTMLElement)(self, kwargs)
+            return el.to_subtype() if isinstance(el, Input) else el
         elif tag_name:
-            klass = nerodia.element_class_for('{}_collection'.format(tag_name),
-                                              HTMLElementCollection)
+            return nerodia.element_class_for('{}_collection'.format(tag_name),
+                                             HTMLElementCollection)(self, kwargs)
         else:
-            klass = HTMLElementCollection
-
-        return klass(self, kwargs)
+            return HTMLElementCollection(self, kwargs)
