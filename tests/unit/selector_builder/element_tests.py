@@ -709,7 +709,6 @@ class TestBuild(object):
         rhs = "translate('en','ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
 
-
         assert builder.build({'lang': 'en'}) == {'xpath': ".//*[{}={}]".format(lhs, rhs)}
         assert builder.build({'lang': compile(r'en')}) == {'xpath': ".//*[contains({}, {})]".format(lhs, rhs)}
         assert builder.build({'tag_name': compile(r'a'), 'lang': 'en'}) == {'xpath': ".//*[contains(local-name(), 'a')][{}={}]".format(lhs, rhs)}
@@ -720,7 +719,6 @@ class TestBuild(object):
               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
         rhs = "translate('en','ABCDEFGHIJKLMNOPQRSTUVWXYZÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖØÙÚÛÜÝÞŸŽŠŒ'," \
               "'abcdefghijklmnopqrstuvwxyzàáâãäåæçèéêëìíîïðñòóôõöøùúûüýþÿžšœ')"
-
 
         assert builder.build({'tag_name': 'a', 'hreflang': 'en'}) == {'xpath': ".//*[local-name()='a'][{}={}]".format(lhs, rhs)}
         assert builder.build({'tag_name': 'a', 'hreflang': compile(r'en')}) == {'xpath': ".//*[local-name()='a'][contains({}, {})]".format(lhs, rhs)}

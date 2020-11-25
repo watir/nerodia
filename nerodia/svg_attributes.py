@@ -243,4 +243,3 @@ RectCollection = []
 Path = []
 
 PathCollection = []
-

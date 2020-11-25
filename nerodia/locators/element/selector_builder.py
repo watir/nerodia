@@ -276,7 +276,7 @@ class XPath(object):
 
     def _predicate_conversion(self, key, regexp):
         lower = self._case_insensitive_attribute(key) or \
-                regexp.flags & re.IGNORECASE == re.IGNORECASE
+            regexp.flags & re.IGNORECASE == re.IGNORECASE
 
         lhs = self._lhs_for(key, lower)
         results = RegexpDisassembler(regexp).substrings
