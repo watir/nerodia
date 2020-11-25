@@ -203,7 +203,6 @@ class TestDivManipulation(object):
         browser.div(id='click').right_click()
         assert messages.list[0] == 'right-clicked'
 
-
     @pytest.mark.page('right_click.html')
     def test_accepts_modifiers(self, browser, page, event_log):
         browser.div(id='click-logger').right_click(Keys.CONTROL, Keys.ALT)
