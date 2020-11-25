@@ -32,9 +32,7 @@ _browsers:
       firefox: latest-nightly
   chrome: &chrome
     addons:
-      apt:
-        packages:
-          - google-chrome-stable
+      chrome: stable
 
 matrix:
   include:
