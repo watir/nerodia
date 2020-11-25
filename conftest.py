@@ -1,7 +1,6 @@
 import os
 
 import pytest
-from _pytest.skipping import MarkEvaluator
 
 import nerodia
 from nerodia.browser import Browser
@@ -76,23 +75,24 @@ def browser(request, browser_manager):
     :rtype: nerodia.browser.Browser
     """
     # conditionally mark tests as expected to fail based on driver
-    request.node._evalxfail = request.node._evalxfail or MarkEvaluator(
-        request.node, 'xfail_{}'.format(browser_manager.name))
-    if request.node._evalxfail.istrue():
+    marker = request.node.get_closest_marker('xfail_{0}'.format(browser_manager.name.lower()))
+    if marker is not None:
+        if 'run' in marker.kwargs:
+            if marker.kwargs['run'] is False:
+                pytest.skip()
+                yield
+                return
+        if 'raises' in marker.kwargs:
+            marker.kwargs.pip('raises')
+        pytest.xfail(**marker.kwargs)
+
         def fin():
             browser_manager.quit()
         request.addfinalizer(fin)
 
-    # skip driver instantiation if xfail(run=False)
-    if not request.config.getoption('runxfail'):
-        if request.node._evalxfail.istrue():
-            if request.node._evalxfail.get('run') is False:
-                yield
-                return
-
     yield browser_manager.browser
 
-    if MarkEvaluator(request.node, 'quits_browser').istrue():
+    if request.node.get_closest_marker('quits_browser'):
         browser_manager.quit()
 
 
