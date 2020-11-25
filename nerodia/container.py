@@ -34,7 +34,7 @@ class Container(object):
 
     # Plural of 'a' cannot be a method name, use link/links instead
     def link(self, *args, **kwargs):
-        from .elements.link import Anchor
+        from .elements.html_elements import Anchor
         return Anchor(self, dict(self._extract_selector(*args, **kwargs), tag_name='a'))
 
     def links(self, *args, **kwargs):
@@ -60,7 +60,7 @@ class Container(object):
                                      tag_name='address'))
 
     def area(self, *args, **kwargs):
-        from .elements.area import Area
+        from .elements.html_elements import Area
         return Area(self, dict(self._extract_selector(*args, **kwargs), tag_name='area'))
 
     def areas(self, *args, **kwargs):
