@@ -23,3 +23,4 @@ Nerodia is a Python port of the Watir ruby gem. https://github.com/watir/watir
    installing
    examples
    watir
+   nerodia
