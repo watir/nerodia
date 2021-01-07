@@ -41,4 +41,4 @@ jobs:
         pytest tests/unit/
     - name: Browser tests      
       run: |
-        pytest tests/browser/
+        pytest --instafail tests/browser/
