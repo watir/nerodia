@@ -17,6 +17,7 @@ setup_args = {
     'description': 'Python port of WATIR https://github.com/watir/watir',
     'long_description': open(join(abspath(dirname(__file__)), 'README.rst')).read(),
     'url': 'https://github.com/watir/nerodia',
+    'python_requires': '~=3.7',
     'classifiers': ['Intended Audience :: Developers',
                     'Operating System :: POSIX',
                     'Operating System :: Microsoft :: Windows',
