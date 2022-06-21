@@ -188,8 +188,10 @@ class ElementCollection(ClassHelpers, JSSnippet):
     def _ensure_context(self):
         from nerodia.elements.i_frame import IFrame
         from nerodia.browser import Browser
-        if isinstance(self.query_scope, Browser) or \
-                (self.query_scope._located and self.query_scope.stale):
+        if isinstance(self.query_scope, Browser) or (self.query_scope._located is False and
+                                                     isinstance(self.query_scope, IFrame)):
+            self.query_scope.browser.locate()
+        elif self.query_scope._located and self.query_scope.stale:
             self.query_scope.locate()
         if isinstance(self.query_scope, IFrame):
             self.query_scope.switch_to()
