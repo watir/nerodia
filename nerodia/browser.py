@@ -230,16 +230,20 @@ class Browser(Container, HasWindow, Waitable, Scrolling):
         """
         return self.execute_script('return window.status;')
 
-    def execute_script(self, script, *args):
+    def execute_script(self, script, *args, function_name=None):
         """
         Executes JavaScript snippet
         :param script: Javascript Snippet to execute
         :type script: str
         :param args: Arguments will be available in the given script in the 'arguments' pseudo-array
+        :param function_name: name of function being executed
+        :type function_name: str or None
         :return: result of script
         """
         from .elements.element import Element
         args = [e.wait_until(lambda x: x.exists).wd if isinstance(e, Element) else e for e in args]
+        if function_name:
+            nerodia.logger.info(f'Executing Script on Browser: {function_name}')
         returned = self.driver.execute_script(script, *args)
 
         return self._wrap_elements_in(self, returned)

@@ -1,6 +1,7 @@
 import six
 from selenium.common.exceptions import NoSuchFrameException
 
+import nerodia
 from .html_elements import HTMLElement, HTMLElementCollection
 from ..exception import UnknownFrameException
 from ..meta_elements import MetaHTMLElement
@@ -35,10 +36,12 @@ class IFrame(HTMLElement):
         """
         self.wd.send_keys(*args)
 
-    def execute_script(self, script, *args):
+    def execute_script(self, script, *args, function_name=None):
         """ Executes JavaScript in context of frame """
         from nerodia.elements.element import Element
         args = [e.wait_until(lambda e: e.exists).wd if isinstance(e, Element) else e for e in args]
+        if function_name:
+            nerodia.logger.info(f'Executing Script on Frame: {function_name}')
         returned = self.driver.execute_script(script, *args)
 
         return self.browser._wrap_elements_in(self, returned)

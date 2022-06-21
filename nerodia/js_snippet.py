@@ -14,4 +14,4 @@ class JSSnippet(object):
 
         with open(filepath, 'r') as myfile:
             script = 'return ({}).apply(null, arguments)'.format(myfile.read())
-            return self.query_scope.execute_script(script, *args)
+            return self.query_scope.execute_script(script, *args, function_name=function_name)

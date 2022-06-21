@@ -5,13 +5,13 @@ import nerodia
 
 
 class JSExecution(object):
-    def execute_script(self, script, *args):
+    def execute_script(self, script, *args, function_name=None):
         """
         Delegates script execution to Browser or IFrame
 
         :param script: script to execute
         """
-        return self.query_scope.execute_script(script, *args)
+        return self.query_scope.execute_script(script, *args, function_name=function_name)
 
     def fire_event(self, event_name):
         """
