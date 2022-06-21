@@ -389,11 +389,14 @@ class TestWindowRect(object):
     @pytest.mark.quits_browser
     def test_should_maximize_the_window(self, browser):
         initial_size = browser.window().size
-        browser.window().resize_to(initial_size.width, initial_size.height - 20)
+        browser.window().resize_to(initial_size.width - 40, initial_size.height - 40)
+        browser.wait_until(lambda b: b.window().size != initial_size)
+        new_size = browser.window().size
+
         browser.window().maximize()
         browser.wait_until(lambda b: b.window().size != initial_size)
 
-        new_size = browser.window().size
+        final_size = browser.window().size
 
-        assert new_size.width >= initial_size.width
-        assert new_size.height > initial_size.height - 20
+        assert final_size.width >= new_size.width
+        assert final_size.height > new_size.height
