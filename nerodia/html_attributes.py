@@ -271,7 +271,6 @@ option = [
     (str, 'form', 'form'),
     (str, 'label', 'label'),
     (bool, 'defaultselected', 'defaultSelected'),
-    (bool, 'selected', 'selected'),
     (str, 'value', 'value'),
     (int, 'index', 'index')
 ]
