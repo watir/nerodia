@@ -50,6 +50,7 @@ class ElementCollection(ClassHelpers, JSSnippet, Waitable):
             if element.__class__ in [HTMLElement, Input]:
                 element = self._construct_subtype(element, dic, tag_name)
             element.cache = el
+            self._els.append(element)
             yield element
 
     def __len__(self):
