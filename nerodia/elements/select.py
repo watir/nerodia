@@ -43,7 +43,10 @@ class Select(HTMLElement):
         :return: The text of the option selected. If multiple options match, returns the first match
         :rtype: str
         """
-        return [self._select_by(t) for t in self._flatten(terms)][0]
+        if len(terms) > 1 or isinstance(terms[0], list):
+            return [self._select_all_by(t) for t in self._flatten(terms)][0]
+        else:
+            return [self._select_by(t) for t in self._flatten(terms)][0]
 
     def select_all(self, *terms):
         """
@@ -53,6 +56,8 @@ class Select(HTMLElement):
         :return: The text of the first option selected.
         :rtype: str
         """
+        nerodia.logger.deprecate('Select.select_all', 'Select.select with list instance',
+                                 ids=['select_all'])
         return [self._select_all_by(t) for t in self._flatten(terms)][0]
 
     def js_select(self, *terms):
@@ -60,13 +65,18 @@ class Select(HTMLElement):
         Uses JavaScript to select the option whose text matches the given string.
         :param term: string or regex or list to match against the option
         """
-        return [self._js_select_by(t, 'single') for t in self._flatten(terms)][0]
+        if len(terms) > 1 or isinstance(terms[0], list):
+            return [self._js_select_by(t, 'multiple') for t in self._flatten(terms)][0]
+        else:
+            return [self._js_select_by(t, 'single') for t in self._flatten(terms)][0]
 
     def js_select_all(self, *terms):
         """
         Uses JavaScript to select all options whose text matches the given string.
         :param term: string or regex or list to match against the option
         """
+        nerodia.logger.deprecate('Select.js_select_all', 'Select.js_select with list instance',
+                                 ids=['select_all'])
         return [self._js_select_by(t, 'multiple') for t in self._flatten(terms)][0]
 
     def select_value(self, value):
@@ -136,7 +146,9 @@ class Select(HTMLElement):
     def _select_by(self, term):
         found = self._find_options('value', term)
         if len(found) > 1:
-            nerodia.logger.deprecate('Selecting Multiple Options with #select', '#select_all',
+            nerodia.logger.deprecate('Selecting Multiple Options with Select.select using a str or '
+                                     'regex value',
+                                     'Select.select with the desired values in a list instance',
                                      ids=['select_by'])
         return self._select_matching(found)
 
