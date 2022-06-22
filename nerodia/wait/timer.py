@@ -22,7 +22,7 @@ class Timer(object):
             if self._current_time() > end_time and run_once:
                 break
             run_once = True
-            result = method(object) if object else method()
+            result = method(object) if object is not None else method()
             if result == expected:
                 return True
             sleep(interval)
