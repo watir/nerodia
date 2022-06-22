@@ -188,13 +188,13 @@ class Waitable(object):
         return self.wait_until_not(method=lambda x: x.present, timeout=timeout, interval=interval,
                                    message=message, element_reset=True)
 
-    def _create_closure(self, obj, method=None, until=True):
+    def _create_closure(self, kwargs, method=None, until=True):
         from nerodia.elements.element import Element
 
         def func(*args):
-            if isinstance(self, Element) and obj.pop('element_reset', None):
+            if isinstance(self, Element) and kwargs.pop('element_reset', None):
                 self.reset()
-            return (not obj or self._match_attributes(obj, until)()) and (not method or method(*args))
+            return (not kwargs or self._match_attributes(kwargs, until)()) and (not method or method(*args))
         return func
 
     def _match_attributes(self, obj, until=True):
