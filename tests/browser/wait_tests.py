@@ -4,7 +4,8 @@ from time import time
 import pytest
 
 import nerodia
-from nerodia.exception import ObjectDisabledException, UnknownObjectException
+from nerodia.exception import ObjectDisabledException, UnknownObjectException, \
+    ObjectReadOnlyException
 from nerodia.wait.wait import TimeoutError, Wait
 
 
@@ -22,132 +23,35 @@ def refresh_before(browser):
     yield
 
 
-@pytest.mark.skipif('not nerodia.relaxed_locate', reason='only applicable when relaxed locating')
-@pytest.mark.page('wait.html')
-class TestAutomaticWait(object):
-    def test_clicking_automatically_waits_until_the_element_appears(self, browser):
-        browser.link(id='show_bar').click()
-        browser.div(id='bar').click()
-        assert browser.div(id='bar').text == 'changed'
-
-    def test_raises_exception_if_the_element_doesnt_appear(self, browser):
-        with pytest.raises(UnknownObjectException):
-            browser.div(id='bar').click()
-
-    @pytest.mark.usefixtures('quick_timeout')
-    def test_raises_exception_if_the_element_doesnt_become_enabled(self, browser):
-        with pytest.raises(ObjectDisabledException):
-            browser.button(id='btn').click()
-
-
-@pytest.mark.skipif('nerodia.relaxed_locate',
-                    reason='only applicable when not relaxed locating')
-@pytest.mark.page('wait.html')
-class TestElementWaitUntilEnabled(object):
-    def test_invokes_subsequent_method_calls_when_the_element_becomes_enabled(self, browser):
-        browser.link(id='enable_btn').click()
-
-        btn = browser.button(id='btn')
-        btn.wait_until(timeout=2, method=lambda b: b.enabled).click()
-        Wait.until_not(lambda: btn.enabled)
-        assert btn.disabled
-
-    def test_invokes_subsequent_method_calls_when_the_element_becomes_enabled_with_alias(self, browser):
-        browser.link(id='enable_btn').click()
-
-        btn = browser.button(id='btn')
-        btn.wait_until(timeout=2, method=lambda b: b.enabled).click()
-        Wait.whilst(lambda: btn.enabled)
-        assert btn.disabled
-
-    def test_times_out(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for true condition on',
-                         '#<Button: located: True;', "'tag_name': 'button'", "'id': 'btn'"]
-        element = browser.button(id='btn')
-        with pytest.raises(TimeoutError) as e:
-            element.wait_until(timeout=1, method=lambda e: e.enabled).click()
-        assert all(part in e.value.args[0] for part in message_parts)
-
-    def test_responds_to_element_methods(self, browser):
-        element = browser.button().wait_until(method=lambda _: True)
-
-        assert hasattr(element, 'exist')
-        assert hasattr(element, 'present')
-        assert hasattr(element, 'click')
-
-    def test_can_be_chained_with_wait_until_present(self, browser):
-        browser.link(id='show_and_enable_btn').click()
-        browser.button(id='btn2').wait_until(lambda b: b.present).wait_until(
-            lambda b: b.enabled).click()
-
-        assert browser.button(id='btn2').exists
-        assert browser.button(id='btn2').enabled
+def executed_within(method, min=0, max=None):
+    max = max or min + 1
+    nerodia.default_timeout = max
+    start = time()
+    method()
+    diff = time() - start
+    result = max > diff > min
+    return result, diff
 
 
 @pytest.mark.page('wait.html')
-class TestElementWaitUntilPresent(object):
-    def test_waits_until_the_element_appears(self, browser):
-        browser.link(id='show_bar').click()
-        browser.div(id='bar').wait_until_present(timeout=5)
+@pytest.mark.usefixtures('default_timeout_handling')
+class TestDefaultTimeout(object):
+    def test_when_no_timeout_is_specified(self, browser):
+        start_time = time()
+        with pytest.raises(TimeoutError):
+            Wait.until(lambda: False)
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
 
-    def test_waits_until_the_element_reappears(self, browser):
-        browser.link(id='readd_bar').click()
-        browser.div(id='bar').wait_until_present()
-
-    def test_times_out_if_the_element_doesnt_appear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for ',
-                         '#<Div: located: True;', "'id': 'bar'", "'tag_name': 'div'",
-                         'to become present']
-        with pytest.raises(TimeoutError) as e:
-            browser.div(id='bar').wait_until_present(timeout=1)
-        assert all(part in e.value.args[0] for part in message_parts)
-
-    def test_users_provided_interval(self, browser, mocker):
-        mock = mocker.patch('nerodia.elements.html_elements.Div.present',
-                            new_callable=mocker.PropertyMock)
-        element = browser.div(id='bar')
-        try:
-            element.wait_until_present(timeout=0.4, interval=0.2)
-        except TimeoutError:
-            pass
-        assert mock.call_count == 2
-
-
-@pytest.mark.page('wait.html')
-class TestElementWaitUntilNotPresent(object):
-    def test_waits_until_the_element_disappears(self, browser):
-        browser.link(id='hide_foo').click()
-        browser.div(id='foo').wait_until_not_present(timeout=2)
-
-    def test_times_out_if_the_element_doesnt_disappear(self, browser):
-        message_parts = ['timed out after 1 seconds, waiting for ',
-                         '#<Div: located: True;', "'tag_name': 'div'", "'id': 'foo'",
-                         'not to be present']
-        with pytest.raises(TimeoutError) as e:
-            browser.div(id='foo').wait_until_not_present(timeout=1)
-        assert all(part in e.value.args[0] for part in message_parts)
-
-    def test_users_provided_interval(self, browser, mocker):
-        mock = mocker.patch('nerodia.elements.html_elements.Div.present',
-                            new_callable=mocker.PropertyMock)
-        element = browser.div(id='foo')
-        try:
-            element.wait_until_not_present(timeout=0.4, interval=0.2)
-        except TimeoutError:
-            pass
-        assert mock.call_count == 2
-
-    def test_does_not_error_when_element_goes_stale(self, browser):
-        element = browser.div(id='foo').locate()
-
-        browser.link(id='hide_foo').click()
-        element.wait_until_not_present(timeout=1)
+    def test_is_used_by_wait_until_not(self, browser):
+        start_time = time()
+        with pytest.raises(TimeoutError):
+            Wait.until_not(lambda: True)
+        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
 
     @pytest.mark.usefixtures('default_timeout_handling')
-    def test_waits_until_the_selector_no_longer_matches(self, browser):
-        element = browser.link(name='add_select').wait_until(lambda x: x.exists)
-        browser.link(id='change_select').click()
-        element.wait_until_not_present()
+    def test_ensures_all_checks_happen_once_even_if_time_has_expired(self, browser):
+        nerodia.default_timeout = -1
+        browser.link.click()  # Fails if exception is raised
 
 
 @pytest.mark.page('wait.html')
@@ -325,28 +229,90 @@ class TestElementWaitUntilNot(object):
 
 
 @pytest.mark.page('wait.html')
-@pytest.mark.usefixtures('default_timeout_handling')
-class TestDefaultTimeout(object):
-    def test_when_no_timeout_is_specified(self, browser):
-        start_time = time()
-        with pytest.raises(TimeoutError):
-            Wait.until(lambda: False)
-        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
+class TestElementPresenceReadOnlyEnabled(object):
 
-    def test_is_used_by_wait_until_not(self, browser):
-        start_time = time()
-        with pytest.raises(TimeoutError):
-            Wait.until_not(lambda: True)
-        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_raises_exception_on_element_never_present_after_timing_out(self, browser):
+        element = browser.link(id='not_there')
+        with pytest.raises(UnknownObjectException):
+            element.click()
 
-    def test_is_used_by_element_wait_until_present(self, browser):
-        start_time = time()
-        with pytest.raises(TimeoutError):
-            browser.div(id='bar').wait_until_present()
-        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_does_not_wait_when_acting_on_an_element_already_present(self, browser):
+        result, duration = executed_within(browser.link().click, max=1)
+        assert result, 'Waited longer than 1 second to act on element!'
 
-    def test_is_used_by_element_wait_until_not_present(self, browser):
-        start_time = time()
-        with pytest.raises(TimeoutError):
-            browser.div(id='foo').wait_until_not_present()
-        assert nerodia.default_timeout < time() - start_time < nerodia.default_timeout + 1
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_waits_until_element_present_when_acting_on_element_becomes_present(self, browser):
+        def func():
+            browser.link(id='show_bar').click()
+            browser.div(id='bar').click()
+
+        result, duration = executed_within(func, min=1)
+        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert browser.div(id='bar').text == 'changed'
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_waits_until_text_field_present_when_acting_on_element_becomes_present(self, browser):
+        def func():
+            browser.link(id='show_textfield').click()
+            browser.textfield(id='textfield').set('Foo')
+
+        result, duration = executed_within(func, min=1)
+        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+
+    # ReadOnly
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_raises_exception_on_read_only_text_field_never_becomes_writable(self, browser):
+        with pytest.raises(ObjectReadOnlyException):
+            browser.text_field(id='writable').set('foo')
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_waits_until_writable(self, browser):
+        def func():
+            browser.link(id='make-writable').click()
+            browser.text_field(id='writable').set('foo')
+
+        result, duration = executed_within(func, min=1)
+        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+
+    # Enabled
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_raises_exception_on_read_only_text_field_never_becomes_enabled(self, browser):
+        with pytest.raises(ObjectDisabledException):
+            browser.button(id='btn').click()
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_waits_until_enabled(self, browser):
+        def func():
+            browser.link(id='enable_btn').click()
+            browser.button(id='btn').click()
+
+        result, duration = executed_within(func, min=1)
+        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+
+    # Parent
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_raises_exception_on_parent_never_present(self, browser):
+        element = browser.link(id='not_there')
+        with pytest.raises(UnknownObjectException):
+            element.element.click()
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_raises_exception_on_element_from_collection_parent_never_present(self, browser):
+        element = browser.link(id='not_there')
+        with pytest.raises(UnknownObjectException):
+            element.elements[2].click()
+
+    @pytest.mark.usefixtures('default_timeout_handling')
+    def test_does_not_wait_for_element_to_be_present_when_querying_child_element(self, browser):
+        def func():
+            el = browser.element(id='not_there').element(id='doesnt_matter')
+            el.present
+
+        result, duration = executed_within(func, max=1)
+        assert result, 'Element was not acted upon between 1 and 2 seconds!'
