@@ -72,6 +72,10 @@ class TestBrowserWindow(object):
         win = browser.window(index=1).use()
         assert isinstance(win, Window)
 
+    def test_finds_window_multiple_values(self, browser):
+        win = browser.window(url=re.compile(r'closeable\.html'), title='closeable window').use()
+        assert isinstance(win, Window)
+
     def test_should_not_find_incorrect_handle(self, browser):
         assert not browser.window(handle='bar').present
 

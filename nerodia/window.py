@@ -2,6 +2,7 @@ import re
 
 from selenium.common.exceptions import NoSuchWindowException, WebDriverException
 
+import nerodia
 from .exception import NoMatchingWindowFoundException
 from .wait.wait import Waitable, TimeoutError
 
@@ -235,6 +236,11 @@ class Window(Waitable):
         if not self.selector:
             self.window_handle = None
         elif 'index' in self.selector:
+            nerodia.logger.deprecate("Using 'index' as a selector for Window",
+                                     "'title' or 'url'",
+                                     reference='http://watir.com/guides/windows/#locating-by-index'
+                                               '-is-no-longer-supported',
+                                     ids=['window_index'])
             try:
                 self.window_handle = self.driver.window_handles[int(self.selector.get('index'))]
             except IndexError:
