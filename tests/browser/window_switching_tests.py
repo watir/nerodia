@@ -4,8 +4,9 @@ import re
 import pytest
 
 from nerodia.exception import NoMatchingWindowFoundException
-from nerodia.wait.wait import Wait
+from nerodia.wait.wait import Wait, TimeoutError
 from nerodia.window import Window
+from tests.browser.wait_tests import executed_within
 
 
 @pytest.fixture
@@ -108,6 +109,43 @@ class TestBrowserWindow(object):
     def test_raises_correct_exception_attempting_to_use_window_with_wrong_handle(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
             browser.window(handle='bar').use()
+
+
+# TODO: xfail safari, or skip
+@pytest.mark.usefixtures('multiple_windows')
+class TestSwitchWindow():
+    def test_switches_to_second_window(self, browser):
+        original_window = browser.window()
+        browser.switch_window()
+        new_window = browser.window()
+        assert original_window != new_window
+        assert all(win in browser.windows() for win in [original_window, new_window])
+
+    def test_returns_an_instance_of_window(self, browser):
+        assert isinstance(browser.switch_window(), Window)
+
+    def test_times_out_if_there_is_no_second_window(self, browser):
+        for window in browser.windows():
+            if browser.window() != window:
+                window.close()
+        with pytest.raises(TimeoutError, match=r"waiting for true condition on.*title='window "
+                                               r"switching'.*"):
+            browser.switch_window()
+
+    def test_provides_previous_window_value_to_original_window(self, browser):
+        browser.switch_window()
+        assert browser.original_window is not None
+
+    def test_waits_for_second_window(self, browser):
+        for window in browser.windows():
+            if browser.window() != window:
+                window.close()
+        def func():
+            browser.link(id='delayed').click()
+            browser.switch_window()
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'New window was not found between 1 and 2 seconds! ({duration})'
 
 
 # TODO: xfail safari, or skip

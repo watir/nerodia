@@ -46,6 +46,15 @@ class HasWindow(object):
             self._original_window = self.window()
         return self._original_window
 
+    def switch_window(self):
+        current_window = self.window()
+        wins = self.windows()
+        if len(wins) == 1:
+            self.wait_until(lambda b: len(b.windows()) > 1)
+        new_window = [x for x in self.windows() if x != current_window][0]
+        new_window.use()
+        return new_window
+
     # private
 
     def _filter_windows(self, selector, windows):
