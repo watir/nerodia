@@ -350,6 +350,14 @@ class TestElementCollectionUntil():
         with pytest.raises(UnknownObjectException):
             list(els)
 
+    def test_accepts_attributes_to_evaluate(self, browser):
+        def func():
+            browser.link(id='add_foobar').click()
+            browser.divs().wait_until(size=7)
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'Collection was not found between 1 and 2 seconds! ({duration})'
+
 
 @pytest.mark.page('wait.html')
 @pytest.mark.usefixtures('refresh_before')

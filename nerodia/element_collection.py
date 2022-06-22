@@ -126,6 +126,10 @@ class ElementCollection(ClassHelpers, JSSnippet, Waitable):
 
     exist = exists
 
+    @property
+    def size(self):
+        return len(self)
+
     def build(self):
         self.selector_builder.build(self.selector.copy())
 

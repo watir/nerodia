@@ -209,8 +209,10 @@ class Waitable(object):
                 actual = attr() if callable(attr) else attr
             if isinstance(expected, Pattern):
                 return re.search(expected, actual) is not None
-            else:
+            if isinstance(expected, (int, float)):
                 return expected == actual
+            else:
+                return str(expected) == actual
 
         def func(*args):
             truthy = all if until else any
