@@ -3,7 +3,7 @@ from re import search, sub
 
 import six
 from selenium.common.exceptions import ElementNotInteractableException, \
-    NoSuchWindowException, StaleElementReferenceException
+    NoSuchWindowException, StaleElementReferenceException, NoSuchElementException
 from selenium.webdriver.common.action_chains import ActionChains
 
 import nerodia
@@ -822,7 +822,7 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
                     msg += '; Nerodia treated {!r} as a non-HTML compliant attribute, ' \
                            'ensure that was intended'.format(custom_attributes)
                 raise self._unknown_exception(msg)
-            except StaleElementReferenceException:
+            except (StaleElementReferenceException, NoSuchElementException):
                 self.reset()
                 self._check_condition(precondition, caller)
                 return method()
