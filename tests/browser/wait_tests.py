@@ -27,9 +27,13 @@ def executed_within(method, min=0, max=None):
     max = max or min + 1
     nerodia.default_timeout = max
     start = time()
-    method()
+    fail = False
+    try:
+        method()
+    except TimeoutError:
+        fail = True
     diff = time() - start
-    result = max > diff > min
+    result = False if fail else max > diff > min
     return result, diff
 
 
@@ -229,74 +233,67 @@ class TestElementWaitUntilNot(object):
 
 
 @pytest.mark.page('wait.html')
+@pytest.mark.usefixtures('refresh_before')
+@pytest.mark.usefixtures('default_timeout_handling')
 class TestElementPresenceReadOnlyEnabled(object):
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_raises_exception_on_element_never_present_after_timing_out(self, browser):
         element = browser.link(id='not_there')
         with pytest.raises(UnknownObjectException):
             element.click()
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_does_not_wait_when_acting_on_an_element_already_present(self, browser):
         result, duration = executed_within(browser.link().click, max=1)
-        assert result, 'Waited longer than 1 second to act on element!'
+        assert result, f'Waited longer than 1 second to act on element! ({duration})'
 
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_waits_until_element_present_when_acting_on_element_becomes_present(self, browser):
         def func():
             browser.link(id='show_bar').click()
             browser.div(id='bar').click()
 
         result, duration = executed_within(func, min=1)
-        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
         assert browser.div(id='bar').text == 'changed'
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_waits_until_text_field_present_when_acting_on_element_becomes_present(self, browser):
         def func():
             browser.link(id='show_textfield').click()
             browser.textfield(id='textfield').set('Foo')
 
         result, duration = executed_within(func, min=1)
-        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
 
     # ReadOnly
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_raises_exception_on_read_only_text_field_never_becomes_writable(self, browser):
         with pytest.raises(ObjectReadOnlyException):
             browser.text_field(id='writable').set('foo')
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_waits_until_writable(self, browser):
         def func():
             browser.link(id='make-writable').click()
             browser.text_field(id='writable').set('foo')
 
         result, duration = executed_within(func, min=1)
-        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
 
     # Enabled
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_raises_exception_on_read_only_text_field_never_becomes_enabled(self, browser):
         with pytest.raises(ObjectDisabledException):
             browser.button(id='btn').click()
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_waits_until_enabled(self, browser):
         def func():
             browser.link(id='enable_btn').click()
             browser.button(id='btn').click()
 
         result, duration = executed_within(func, min=1)
-        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
 
     # Parent
 
-    @pytest.mark.usefixtures('default_timeout_handling')
     def test_raises_exception_on_parent_never_present(self, browser):
         element = browser.link(id='not_there')
         with pytest.raises(UnknownObjectException):
@@ -315,4 +312,72 @@ class TestElementPresenceReadOnlyEnabled(object):
             el.present
 
         result, duration = executed_within(func, max=1)
-        assert result, 'Element was not acted upon between 1 and 2 seconds!'
+        assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
+
+
+@pytest.mark.page('wait.html')
+@pytest.mark.usefixtures('refresh_before')
+@pytest.mark.usefixtures('default_timeout_handling')
+class TestElementCollectionUntil():
+
+    def test_returns_collection(self, browser):
+        elements = browser.divs()
+        assert elements.wait_until(lambda _: elements.exist) == elements
+
+    def test_times_out_when_waiting_for_non_empty_collection(self, browser):
+        divs = browser.divs()
+        with pytest.raises(TimeoutError):
+            divs.wait_until(lambda d: d.is_empty)
+
+    def test_provides_matching_collection_when_exists(self, browser):
+        def func():
+            browser.link(id='add_foobar').click()
+            browser.divs(id='foobar').wait_until(lambda d: d.exists)
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'Collection was not found between 1 and 2 seconds! ({duration})'
+
+    def test_accepts_self_in_lambda(self, browser):
+        def func():
+            browser.link(id='add_foobar').click()
+            browser.divs().wait_until(lambda d: len(d) == 7)
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'Collection was not found between 1 and 2 seconds! ({duration})'
+
+    def test_waits_for_parent_element_to_be_present_before_locating(self, browser):
+        els = browser.element(id=re.compile(r'not|there')).elements(id='doesnt_matter')
+        with pytest.raises(UnknownObjectException):
+            list(els)
+
+
+@pytest.mark.page('wait.html')
+@pytest.mark.usefixtures('refresh_before')
+@pytest.mark.usefixtures('default_timeout_handling')
+class TestElementCollectionUntilNot():
+
+    def test_returns_collection(self, browser):
+        elements = browser.divs()
+        assert elements.wait_until_not(lambda _: elements.is_empty) == elements
+
+    def test_times_out_when_waiting_for_non_empty_collection(self, browser):
+        divs = browser.divs()
+        with pytest.raises(TimeoutError):
+            divs.wait_until_not(lambda d: d.exists)
+
+    def test_provides_matching_collection_when_not_exists(self, browser):
+        def func():
+            browser.link(id='remove_foo').click()
+            browser.divs(id='foo').wait_until_not(lambda d: d.exists)
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'Collection was not found between 1 and 2 seconds! ({duration})'
+
+    def test_accepts_self_in_lambda(self, browser):
+
+        def func():
+            browser.link(id='add_foobar').click()
+            browser.divs().wait_until_not(lambda d: len(d) == 6)
+
+        result, duration = executed_within(func, min=1)
+        assert result, f'Collection was not found between 1 and 2 seconds! ({duration})'

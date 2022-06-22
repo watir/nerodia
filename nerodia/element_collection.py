@@ -7,10 +7,11 @@ from selenium.common.exceptions import StaleElementReferenceException
 import nerodia
 from nerodia.exception import LocatorException
 from nerodia.js_snippet import JSSnippet
-from .locators.class_helpers import ClassHelpers
+from nerodia.locators.class_helpers import ClassHelpers
+from nerodia.wait.wait import Waitable
 
 
-class ElementCollection(ClassHelpers, JSSnippet):
+class ElementCollection(ClassHelpers, JSSnippet, Waitable):
 
     _selector_builder = None
     _element_matcher = None
@@ -26,7 +27,7 @@ class ElementCollection(ClassHelpers, JSSnippet):
 
     def __iter__(self):
         """
-        Yields each element in collection
+        Relocates elements then yields each element in collection
 
         :rtype: iter
 
@@ -38,6 +39,7 @@ class ElementCollection(ClassHelpers, JSSnippet):
         """
         from .elements.html_elements import HTMLElement
         from .elements.input import Input
+        self.reset()
         dic = {}
         for idx, (el, tag_name) in enumerate(self._elements_with_tags):
             selector = self.selector.copy()
@@ -55,8 +57,7 @@ class ElementCollection(ClassHelpers, JSSnippet):
         Returns the number of elements in the collection
         :rtype: int
         """
-        self._els = self._els or [_ for _ in self]
-        return len(self._els)
+        return len([_ for _ in self])
 
     def __getitem__(self, idx):
         """
@@ -107,6 +108,24 @@ class ElementCollection(ClassHelpers, JSSnippet):
         """
         return len(self) == 0
 
+    empty = is_empty
+
+    @property
+    def exists(self):
+        """
+        Returns True if at least one element is found
+
+        :Example:
+
+        browser.select_list(name='new_user_languages').options(class_name='here').exists
+
+        :return: True if at least one element is found
+        :rtype: bool
+        """
+        return len(self) > 0
+
+    exist = exists
+
     def build(self):
         self.selector_builder.build(self.selector.copy())
 
@@ -156,6 +175,19 @@ class ElementCollection(ClassHelpers, JSSnippet):
         return list(self) == list(other)
 
     eql = __eq__
+
+    def reset(self):
+        """
+        Removes cache of previously located elements in the collection.
+
+        :Example:
+
+        options = browser.select_list(name='new_user_languages').options
+        options.reset()
+        options[0]
+        None
+        """
+        self._els = []
 
     # private
 
