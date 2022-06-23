@@ -7,4 +7,4 @@ from ..user_editable import UserEditable
 
 @six.add_metaclass(MetaHTMLElement)
 class TextArea(UserEditable, HTMLElement):
-    ATTRIBUTES = ['value']
+    pass
