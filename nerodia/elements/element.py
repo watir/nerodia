@@ -310,11 +310,14 @@ class Element(ClassHelpers, JSExecution, Container, JSSnippet, Waitable, Adjacen
         """
         result = self._element_call(lambda: self._execute_js('attributeValues', self.el))
         regex = r'[a-zA-Z\-]*'
+        final = {}
         for key in result:
             match = search(regex, key)
             if match and match.group(0) == key:
-                result[key.replace('-', '_')] = result.pop(key)
-        return result
+                final[key.replace('-', '_')] = result[key]
+            else:
+                final[key] = result[key]
+        return final
 
     get_attributes = attribute_values
 

@@ -617,7 +617,7 @@ class TestElementAttributeValue(object):
 
 @pytest.mark.page('data_attributes.html')
 class TestElementAttributeValues(object):
-    def test_returns_a_dict_(self, browser):
+    def test_returns_a_dict(self, browser):
         assert isinstance(browser.p().attribute_values, dict)
 
     def test_returns_attribute_values_from_an_element(self, browser):
