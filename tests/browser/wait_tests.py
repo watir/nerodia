@@ -302,7 +302,7 @@ class TestElementPresenceReadOnlyEnabled(object):
     def test_raises_exception_on_element_from_collection_parent_never_present(self, browser):
         element = browser.link(id='not_there')
         with pytest.raises(UnknownObjectException):
-            element.elements[2].click()
+            element.elements()[2].click()
 
     @pytest.mark.usefixtures('default_timeout_handling')
     def test_does_not_wait_for_element_to_be_present_when_querying_child_element(self, browser):
