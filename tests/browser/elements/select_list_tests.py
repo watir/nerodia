@@ -434,7 +434,7 @@ class TestSelectListJsSelectMultipleOptions():
     def test_selects_each_item_from_multiple_arguments(self, browser):
         browser.select_list(name='new_user_languages').clear()
         browser.select_list(name='new_user_languages').js_select(re.compile(r'ish'),
-                                                                re.compile(r'Latin'))
+                                                                 re.compile(r'Latin'))
         selected = browser.select_list(name='new_user_languages').selected_options
         assert [opt.text for opt in selected] == ['Danish', 'EN', 'Swedish', 'Azeri - Latin',
                                                   'Latin']

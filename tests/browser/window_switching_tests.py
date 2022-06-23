@@ -145,6 +145,7 @@ class TestSwitchWindow():
         for window in browser.windows():
             if browser.window() != window:
                 window.close()
+
         def func():
             browser.link(id='delayed').click()
             browser.switch_window()

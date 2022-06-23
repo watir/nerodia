@@ -246,7 +246,6 @@ class TestElementPresenceReadOnlyEnabled(object):
         result, duration = executed_within(browser.link().click, max=1)
         assert result, f'Waited longer than 1 second to act on element! ({duration})'
 
-
     def test_waits_until_element_present_when_acting_on_element_becomes_present(self, browser):
         def func():
             browser.link(id='show_bar').click()

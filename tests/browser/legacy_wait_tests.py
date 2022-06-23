@@ -15,6 +15,7 @@ def reset_windows(browser):
         if window != current:
             window.close()
 
+
 @pytest.mark.skipif('not nerodia.relaxed_locate',
                     reason='only applicable when relaxed locating')
 @pytest.mark.page('wait.html')
