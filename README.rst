@@ -4,7 +4,9 @@
 .. image:: https://img.shields.io/pypi/pyversions/nerodia.svg
     :target: https://pypi.python.org/pypi/nerodia
 
-![Tests](https://github.com/watir/nerodia/actions/workflows/build.yml/badge.svg)
+.. image:: https://github.com/watir/nerodia/actions/workflows/build.yml/badge.svg
+    :target: https://github.com/watir/nerodia/actions/workflows/build.yml
+
 -----
 
 Introduction
