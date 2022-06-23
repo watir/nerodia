@@ -7,6 +7,14 @@ from nerodia.exception import UnknownObjectException
 from nerodia.wait.wait import TimeoutError, Wait
 
 
+@pytest.fixture
+def reset_windows(browser):
+    yield
+    current = browser.original_window.use()
+    for window in browser.windows():
+        if window != current:
+            window.close()
+
 @pytest.mark.skipif('not nerodia.relaxed_locate',
                     reason='only applicable when relaxed locating')
 @pytest.mark.page('wait.html')
@@ -144,3 +152,13 @@ class TestNotRelaxedLocate(object):
         browser.link(id='show_bar').click()
         with pytest.raises(err):
             browser.div(id='bar').click()
+
+
+@pytest.mark.page('window_switching.html')
+@pytest.mark.usefixtures('timeout_reset', 'reset_windows')
+@pytest.mark.skipif('nerodia.relaxed_locate',
+                    reason='only applicable when not relaxed locating')
+class TestWindowWaitUntilPresent(object):
+    def test_times_out_waiting_for_non_present_window(self, browser):
+        with pytest.raises(TimeoutError):
+            browser.window(title='noop').wait_until(lambda w: w.present, timeout=0.5)

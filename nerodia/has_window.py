@@ -1,6 +1,7 @@
 import re
 
 from .window import Window
+from .window_collection import WindowCollection
 
 
 class HasWindow(object):
@@ -16,9 +17,10 @@ class HasWindow(object):
         all = [Window(self, {'handle': handle}) for handle in self.driver.window_handles]
 
         if not args and not kwargs:
-            return all
+            return WindowCollection(all)
         else:
-            return self._filter_windows(self._extract_selector(*args, **kwargs), all)
+            return WindowCollection(self._filter_windows(self._extract_selector(*args, **kwargs),
+                                                         all))
 
     def window(self, *args, **kwargs):
         """

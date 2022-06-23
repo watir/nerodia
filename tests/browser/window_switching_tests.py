@@ -6,6 +6,7 @@ import pytest
 from nerodia.exception import NoMatchingWindowFoundException
 from nerodia.wait.wait import Wait, TimeoutError
 from nerodia.window import Window
+from nerodia.window_collection import WindowCollection
 from tests.browser.wait_tests import executed_within
 
 
@@ -16,7 +17,7 @@ def multiple_windows(browser, page):
     browser.link(id='open').click()
     Wait.until(lambda: len(browser.windows()) == 2)
     yield
-    browser.window(index=0).use()
+    browser.original_window.use()
     for window in browser.windows()[1:]:
         window.close()
 
@@ -39,14 +40,10 @@ def current_window(browser, page):
 # TODO: xfail safari, or skip
 @pytest.mark.usefixtures('multiple_windows')
 class TestBrowserWindows(object):
-    def test_returns_an_array_of_window_handles(self, browser):
-        wins = browser.windows()
-        assert wins
-        for win in wins:
-            assert isinstance(win, Window)
+    def test_returns_a_window_collection(self, browser):
+        assert isinstance(browser.windows(), WindowCollection)
 
-    def test_only_returns_windows_matching_the_given_selector(self, browser):
-        browser.wait_until(lambda b: b.window(title='closeable window').exists)
+    def test_filters_windows_to_match_the_given_selector(self, browser):
         assert len(browser.windows(title='closeable window')) == 1
 
     def test_raises_correct_exception_if_the_windows_selector_is_invalid(self, browser):
@@ -54,7 +51,7 @@ class TestBrowserWindows(object):
             browser.windows(name='foo')
 
     def test_returns_an_empty_array_if_no_window_matches_the_selector(self, browser):
-        assert browser.windows(title='noop') == []
+        assert browser.windows(title='noop').is_empty
 
 
 # TODO: xfail safari, or skip
@@ -71,6 +68,10 @@ class TestBrowserWindow(object):
     def test_finds_window_by_index(self, browser):
         win = browser.window(index=1).use()
         assert isinstance(win, Window)
+
+    # def test_finds_window_by_element(self, browser):
+    #     win = browser.window(element=browser.link(id='close')).use()
+    #     assert isinstance(win, Window)
 
     def test_finds_window_multiple_values(self, browser):
         win = browser.window(url=re.compile(r'closeable\.html'), title='closeable window').use()
@@ -190,17 +191,14 @@ class TestWindows(object):
     def test_returns_the_title_of_the_window(self, browser):
         titles = [window.title for window in browser.windows()]
         assert len(titles) == 2
-        assert titles.sort() == ['window switching', 'closeable window'].sort()
-
-    def test_does_not_change_the_current_window_when_checking_title(self, browser):
-        assert browser.title == 'window switching'
-        assert next((w for w in browser.windows() if w.title == 'closeable window'),
-                    None) is not None
-        assert browser.title == 'window switching'
+        assert 'window switching' in titles
+        assert 'closeable window' in titles
 
     # url
 
     def test_returns_the_url_of_the_window(self, browser):
+        urls = [window.url for window in browser.windows()]
+        assert len(urls) == 2
         assert len(list(filter(lambda w: re.search(r'window_switching\.html', w.url),
                                browser.windows()))) == 1
         assert len(list(filter(lambda w: re.search(r'closeable\.html', w.url),
@@ -215,16 +213,27 @@ class TestWindows(object):
     # eql
 
     def test_knows_when_two_windows_are_equal(self, browser):
-        assert browser.window() == browser.window(index=0)
+        assert browser.window() == browser.window(title='window switching')
 
     def test_knows_when_two_windows_are_not_equal(self, browser):
-        assert browser.window(index=0) != browser.window(index=1)
+        assert browser.window(title='closeable window') != browser.window(title='window_switching')
 
-    # wait_until_present
-    def test_times_out_waiting_for_a_non_present_window(self, browser):
-        from nerodia.wait.wait import TimeoutError
-        with pytest.raises(TimeoutError):
-            browser.window(title='noop').wait_until(timeout=0.5, method=lambda w: w.present)
+    # handle
+
+    def test_does_not_find_if_not_matching(self, browser):
+        assert browser.window(title='noop').handle is None
+
+    def test_finds_window_by_url(self, browser):
+        assert browser.window(url=re.compile(r'closeable.html')).handle is not None
+
+    def test_finds_window_by_title(self, browser):
+        assert browser.window(title='closeable window').handle is not None
+
+    def test_finds_window_by_index(self, browser):
+        assert browser.window(index=1).handle is not None
+
+    # def finds_window_by_element(self, browser):
+    #     assert browser.window(element=browser.link(id='close')).handle is not None
 
 
 # TODO: xfail safari, or skip
@@ -370,6 +379,9 @@ class TestCurrentWindowClosed(object):
     def test_should_find_window_by_title(self, browser):
         assert browser.window(title='window switching').present
 
+    # def test_should_find_window_by_element(self, browser):
+    #     assert browser.window(element=browser.link(id='open')).present
+
     # use
 
     def test_should_switch_window_by_index(self, browser):
@@ -382,6 +394,10 @@ class TestCurrentWindowClosed(object):
     def test_should_switch_window_by_title(self, browser):
         assert re.search(r'window_switching\.html',
                          browser.window(title='window switching').use().url)
+
+    # def test_should_switch_window_by_element(self, browser):
+    #     browser.window(element=browser.link(id='open')).use()
+    #     assert 'window_switching.html' in browser.url
 
     def test_should_use_window_context_by_index(self, browser):
         with browser.window(index=0):
@@ -442,3 +458,42 @@ class TestWindowRect(object):
 
         assert final_size.width >= new_size.width
         assert final_size.height > new_size.height
+
+
+# TODO: xfail safari, or skip
+@pytest.mark.usefixtures('multiple_windows')
+class TestWindowCollection():
+
+    # new
+
+    def test_filters_available_by_url(self, browser):
+        windows = browser.windows(url=re.compile(r'closeable.html'))
+        assert len(windows) == 1
+
+    def test_filters_available_by_title(self, browser):
+        windows = browser.windows(title=re.compile(r'closeable'))
+        assert len(windows) == 1
+
+    def test_raises_error_if_unrecognzied_locator(self, browser):
+        with pytest.raises(ValueError):
+            browser.windows(foo=re.compile(r'closeable'))
+
+    # size
+
+    def test_counts_the_number_of_matching_windows(self, browser):
+        assert len(browser.windows()) == 2
+
+    # get item
+
+    def test_returns_window_instance_at_provided_index(self, browser):
+        windows = browser.windows()
+        assert all((isinstance(window, Window) for window in windows))
+        assert windows[0] != windows[-1]
+
+    # equal
+
+    def test_compares_the_equivalence_of_window_handles(self, browser):
+        windows1 = browser.windows(title=re.compile(r'.*'))
+        windows2 = browser.windows(url=re.compile(r'.*'))
+
+        assert windows1 == windows2

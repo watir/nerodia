@@ -247,7 +247,7 @@ class Window(Waitable):
                 self.window_handle = None
         else:
             self.window_handle = next((x for x in self.driver.window_handles if
-                                       self._matches(x) is True), False)
+                                       self._matches(x) is True), None)
         return self.window_handle
 
     # private
