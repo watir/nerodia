@@ -55,7 +55,7 @@ class TestDefaultTimeout(object):
     @pytest.mark.usefixtures('default_timeout_handling')
     def test_ensures_all_checks_happen_once_even_if_time_has_expired(self, browser):
         nerodia.default_timeout = -1
-        browser.link.click()  # Fails if exception is raised
+        browser.link().click()  # Fails if exception is raised
 
 
 @pytest.mark.page('wait.html')
