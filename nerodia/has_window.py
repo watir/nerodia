@@ -5,6 +5,7 @@ from .window_collection import WindowCollection
 
 
 class HasWindow(object):
+
     def windows(self, *args, **kwargs):
         """
         Returns browser windows list
@@ -14,13 +15,7 @@ class HasWindow(object):
 
         browser.windows(title='closeable window')
         """
-        all = [Window(self, {'handle': handle}) for handle in self.driver.window_handles]
-
-        if not args and not kwargs:
-            return WindowCollection(all)
-        else:
-            return WindowCollection(self._filter_windows(self._extract_selector(*args, **kwargs),
-                                                         all))
+        return WindowCollection(self, self._extract_selector(*args, **kwargs))
 
     def window(self, *args, **kwargs):
         """

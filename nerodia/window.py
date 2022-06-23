@@ -8,7 +8,7 @@ from .wait.wait import Waitable, TimeoutError
 
 
 class Window(Waitable):
-    def __init__(self, browser, selector):
+    def __init__(self, browser, selector=None):
         self.browser = browser
         self.driver = browser.driver
         self.selector = selector

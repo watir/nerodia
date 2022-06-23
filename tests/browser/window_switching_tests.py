@@ -15,11 +15,12 @@ def multiple_windows(browser, page):
     url = page.url('window_switching.html')
     browser.goto(url)
     browser.link(id='open').click()
-    Wait.until(lambda: len(browser.windows()) == 2)
+    browser.windows().wait_until(lambda w: len(w) == 2)
     yield
-    browser.original_window.use()
-    for window in browser.windows()[1:]:
-        window.close()
+    original = browser.original_window.use()
+    for window in browser.windows():
+        if window != original:
+            window.close()
 
 
 @pytest.fixture

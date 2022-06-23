@@ -1,12 +1,22 @@
+import re
+
 import nerodia
+from nerodia.wait.wait import Waitable
+from nerodia.window import Window
 
 
-class WindowCollection():
-    def __init__(self, windows):
-        self._windows = windows
+class WindowCollection(Waitable):
+
+    def __init__(self, browser, selector=None):
+        if selector and not all(key in ['title', 'url'] for key in selector.keys()):
+            raise ValueError('invalid window selector: {}'.format(selector))
+        self.browser = browser
+        self.selector = selector
+        self._windows = []
 
     def __iter__(self):
-        for window in self._windows:
+        self.reset()
+        for window in self.windows:
             yield window
 
     def __len__(self):
@@ -14,7 +24,7 @@ class WindowCollection():
         Returns the number of windows in the collection
         :rtype: int
         """
-        return len(self._windows)
+        return len([_ for _ in self])
 
     def __getitem__(self, idx):
         """
@@ -48,3 +58,18 @@ class WindowCollection():
         return len(self) == 0
 
     empty = is_empty
+
+    @property
+    def windows(self):
+        if len(self._windows) == 0:
+            wins = [Window(self.browser, {'handle': handle}) for handle in
+                    self.browser.driver.window_handles]
+            if self.selector is None:
+                self._windows = wins
+            else:
+                self._windows = [w for w in wins if all(re.search(v, getattr(w, k)) is not None
+                                                        for k, v in self.selector.items())]
+        return self._windows
+
+    def reset(self):
+        self._windows = []
