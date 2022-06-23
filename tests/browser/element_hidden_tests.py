@@ -4,7 +4,7 @@ import pytest
 
 
 @pytest.mark.page('wait.html')
-class fTestElementVisible(object):
+class TestElementVisible(object):
     def test_finds_single_element(self, browser):
         assert browser.body().element(visible=True).id == 'foo'
 
@@ -24,6 +24,7 @@ class fTestElementVisible(object):
         assert len(browser.divs(visible=True)) == 3
 
 
+@pytest.mark.page('wait.html')
 class TestElementHidden(object):
     def test_finds_single_element(self, browser):
         assert browser.body().element(visible=False).id == 'bar'

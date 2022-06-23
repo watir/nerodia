@@ -8,6 +8,14 @@ from nerodia.wait.wait import TimeoutError, Wait
 
 
 @pytest.fixture
+def default_timeout_handling():
+    orig_timeout = nerodia.default_timeout
+    nerodia.default_timeout = 1
+    yield
+    nerodia.default_timeout = orig_timeout
+
+
+@pytest.fixture
 def reset_windows(browser):
     yield
     current = browser.original_window.use()
@@ -77,13 +85,13 @@ class TestElementWaitUntilNotPresent(object):
         element = browser.div(id='foo').locate()
 
         browser.link(id='hide_foo').click()
-        element.wait_until_not_present(timeout=1)
+        element.wait_until_not_present(timeout=2)
 
     @pytest.mark.usefixtures('default_timeout_handling')
     def test_waits_until_the_selector_no_longer_matches(self, browser):
         element = browser.link(name='add_select').wait_until(lambda x: x.exists)
         browser.link(id='change_select').click()
-        element.wait_until_not_present()
+        element.wait_until_not_present(timeout=2)
 
 
 @pytest.mark.skipif('nerodia.relaxed_locate',
