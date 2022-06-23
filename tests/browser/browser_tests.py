@@ -36,7 +36,6 @@ class TestBrowserExists(object):
         browser.wait_until(lambda b: len(b.windows()) == 2)
         browser.window(title='closeable window').use()
         browser.link(id='close').click()
-        browser.wait_until(lambda b: len(b.windows()) == 1)
         assert not browser.exists
 
     def test_returns_false_after_browser_close(self, browser, bkwargs):
