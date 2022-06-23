@@ -4,12 +4,6 @@
 .. image:: https://img.shields.io/pypi/pyversions/nerodia.svg
     :target: https://pypi.python.org/pypi/nerodia
 
-.. image:: https://travis-ci.org/watir/nerodia.svg?branch=master
-    :target: https://travis-ci.org/watir/nerodia
-
-.. image:: https://ci.appveyor.com/api/projects/status/7go9s2tmp2av08sa?svg=true
-    :target: https://ci.appveyor.com/project/joshmgrant/nerodia/branch/master
-
 
 -----
 
