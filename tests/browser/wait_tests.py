@@ -258,7 +258,7 @@ class TestElementPresenceReadOnlyEnabled(object):
     def test_waits_until_text_field_present_when_acting_on_element_becomes_present(self, browser):
         def func():
             browser.link(id='show_textfield').click()
-            browser.textfield(id='textfield').set('Foo')
+            browser.text_field(id='textfield').set('Foo')
 
         result, duration = executed_within(func, min=1)
         assert result, f'Element was not acted upon between 1 and 2 seconds! ({duration})'
@@ -296,7 +296,7 @@ class TestElementPresenceReadOnlyEnabled(object):
     def test_raises_exception_on_parent_never_present(self, browser):
         element = browser.link(id='not_there')
         with pytest.raises(UnknownObjectException):
-            element.element.click()
+            element.element().click()
 
     @pytest.mark.usefixtures('default_timeout_handling')
     def test_raises_exception_on_element_from_collection_parent_never_present(self, browser):
