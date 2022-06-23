@@ -44,6 +44,9 @@ class TestBrowserWindows(object):
     def test_returns_a_window_collection(self, browser):
         assert isinstance(browser.windows(), WindowCollection)
 
+    def test_stores_window_instances(self, browser):
+        assert all((isinstance(win, Window) for win in browser.windows(title='closeable window')))
+
     def test_filters_windows_to_match_the_given_selector(self, browser):
         assert len(browser.windows(title='closeable window')) == 1
 
@@ -59,20 +62,16 @@ class TestBrowserWindows(object):
 @pytest.mark.usefixtures('multiple_windows')
 class TestBrowserWindow(object):
     def test_finds_window_by_url(self, browser):
-        win = browser.window(url=re.compile(r'closeable\.html')).use()
-        assert isinstance(win, Window)
+        assert isinstance(browser.window(url=re.compile(r'closeable\.html')).use(), Window)
 
     def test_finds_window_by_title(self, browser):
-        win = browser.window(title='closeable window').use()
-        assert isinstance(win, Window)
+        assert isinstance(browser.window(title='closeable window').use(), Window)
 
     def test_finds_window_by_index(self, browser):
-        win = browser.window(index=1).use()
-        assert isinstance(win, Window)
+        assert isinstance(browser.window(index=1).use(), Window)
 
-    # def test_finds_window_by_element(self, browser):
-    #     win = browser.window(element=browser.link(id='close')).use()
-    #     assert isinstance(win, Window)
+    def test_finds_window_by_element(self, browser):
+        assert isinstance(browser.window(element=browser.link(id='close')).use(), Window)
 
     def test_finds_window_multiple_values(self, browser):
         win = browser.window(url=re.compile(r'closeable\.html'), title='closeable window').use()
@@ -233,8 +232,8 @@ class TestWindows(object):
     def test_finds_window_by_index(self, browser):
         assert browser.window(index=1).handle is not None
 
-    # def finds_window_by_element(self, browser):
-    #     assert browser.window(element=browser.link(id='close')).handle is not None
+    def test_finds_window_by_element(self, browser):
+        assert browser.window(element=browser.link(id='close')).handle is not None
 
 
 # TODO: xfail safari, or skip
@@ -251,10 +250,10 @@ class TestWindow(object):
 
     # TODO: xfail firefox https://bugzilla.mozilla.org/show_bug.cgi?id=1280517
     def test_returns_false_if_closed_window_is_referenced(self, browser):
-        browser.window(title='closeable window').use()
+        closed = browser.window(title='closeable window').use()
         browser.link(id='close').click()
         Wait.until(lambda: len(browser.windows()) == 1)
-        assert not browser.window().present
+        assert not closed.present
 
     def test_returns_false_if_window_closes_during_iteration(self, browser, mocker):
         from nerodia.wait.wait import Wait
@@ -301,16 +300,15 @@ class TestWindow(object):
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_attempting_to_use_current_window_if_it_is_closed(self, browser):
         with pytest.raises(NoMatchingWindowFoundException):
-            browser.window(title='closeable window').use()
+            closed = browser.window(title='closeable window').use()
             browser.link(id='close').click()
             Wait.until(lambda: len(browser.windows()) == 1)
-            browser.window().use()
+            closed.use()
 
     @pytest.mark.usefixtures('quick_timeout')
     def test_raises_correct_exception_when_using_an_element_on_a_closed_window(self, browser):
         browser.window(title='closeable window').use()
         browser.link(id='close').click()
-        Wait.until(lambda: len(browser.windows()) == 1)
         with pytest.raises(NoMatchingWindowFoundException) as e:
             browser.link().text
         assert e.value.args[0] == 'browser window was closed'
@@ -380,8 +378,8 @@ class TestCurrentWindowClosed(object):
     def test_should_find_window_by_title(self, browser):
         assert browser.window(title='window switching').present
 
-    # def test_should_find_window_by_element(self, browser):
-    #     assert browser.window(element=browser.link(id='open')).present
+    def test_should_find_window_by_element(self, browser):
+        assert browser.window(element=browser.link(id='open')).present
 
     # use
 
@@ -396,9 +394,9 @@ class TestCurrentWindowClosed(object):
         assert re.search(r'window_switching\.html',
                          browser.window(title='window switching').use().url)
 
-    # def test_should_switch_window_by_element(self, browser):
-    #     browser.window(element=browser.link(id='open')).use()
-    #     assert 'window_switching.html' in browser.url
+    def test_should_switch_window_by_element(self, browser):
+        browser.window(element=browser.link(id='open')).use()
+        assert 'window_switching.html' in browser.url
 
     def test_should_use_window_context_by_index(self, browser):
         with browser.window(index=0):
@@ -467,22 +465,30 @@ class TestWindowCollection():
 
     # new
 
+    def test_returns_all_windows_by_default(self, browser):
+        windows = WindowCollection(browser)
+        assert len(windows) == 2
+
     def test_filters_available_by_url(self, browser):
-        windows = browser.windows(url=re.compile(r'closeable.html'))
+        windows = WindowCollection(browser, {'url': re.compile(r'closeable.html')})
         assert len(windows) == 1
 
     def test_filters_available_by_title(self, browser):
-        windows = browser.windows(title=re.compile(r'closeable'))
+        windows = WindowCollection(browser, {'title': re.compile(r'closeable')})
+        assert len(windows) == 1
+
+    def test_filters_available_by_element(self, browser):
+        windows = WindowCollection(browser, {'element': browser.element(id='close')})
         assert len(windows) == 1
 
     def test_raises_error_if_unrecognzied_locator(self, browser):
         with pytest.raises(ValueError):
-            browser.windows(foo=re.compile(r'closeable'))
+            WindowCollection(browser, {'foo': re.compile(r'closeable')})
 
     # size
 
     def test_counts_the_number_of_matching_windows(self, browser):
-        assert len(browser.windows()) == 2
+        assert len(WindowCollection(browser)) == 2
 
     # get item
 
@@ -498,3 +504,4 @@ class TestWindowCollection():
         windows2 = browser.windows(url=re.compile(r'.*'))
 
         assert windows1 == windows2
+        assert set([w.handle for w in windows1]) == set([w.handle for w in windows2])

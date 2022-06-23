@@ -20,7 +20,7 @@ class Window(Waitable):
         elif 'handle' in selector:
             self.window_handle = selector.pop('handle')
         else:
-            if not all(key in ['title', 'url', 'index'] for key in selector.keys()):
+            if not all(key in ['title', 'url', 'index', 'element'] for key in selector.keys()):
                 raise ValueError('invalid window selector: {}'.format(self.selector_string))
 
     def __repr__(self):
@@ -237,7 +237,7 @@ class Window(Waitable):
             self.window_handle = None
         elif 'index' in self.selector:
             nerodia.logger.deprecate("Using 'index' as a selector for Window",
-                                     "'title' or 'url'",
+                                     "'title', 'url', or 'element'",
                                      reference='http://watir.com/guides/windows/#locating-by-index'
                                                '-is-no-longer-supported',
                                      ids=['window_index'])
@@ -265,6 +265,9 @@ class Window(Waitable):
         except NoSuchWindowException:
             orig = None
         try:
+            if self.selector is None or len(self.selector) == 0:
+                return True
+
             self.driver.switch_to.window(handle)
 
             if 'title' in self.selector:
@@ -281,7 +284,12 @@ class Window(Waitable):
             else:
                 matches_url = True
 
-            return matches_title and matches_url
+            if 'element' in self.selector:
+                matches_element = True if self.selector['element'].exists else False
+            else:
+                matches_element = True
+
+            return matches_title and matches_url and matches_element
         except NoSuchWindowException:
             return False
         finally:

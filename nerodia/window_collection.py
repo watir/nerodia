@@ -1,5 +1,7 @@
 import re
 
+from selenium.common.exceptions import NoSuchWindowException
+
 import nerodia
 from nerodia.wait.wait import Waitable
 from nerodia.window import Window
@@ -8,7 +10,7 @@ from nerodia.window import Window
 class WindowCollection(Waitable):
 
     def __init__(self, browser, selector=None):
-        if selector and not all(key in ['title', 'url'] for key in selector.keys()):
+        if selector and not all(key in ['title', 'url', 'element'] for key in selector.keys()):
             raise ValueError('invalid window selector: {}'.format(selector))
         self.browser = browser
         self.selector = selector
@@ -62,14 +64,49 @@ class WindowCollection(Waitable):
     @property
     def windows(self):
         if len(self._windows) == 0:
-            wins = [Window(self.browser, {'handle': handle}) for handle in
-                    self.browser.driver.window_handles]
-            if self.selector is None:
-                self._windows = wins
-            else:
-                self._windows = [w for w in wins if all(re.search(v, getattr(w, k)) is not None
-                                                        for k, v in self.selector.items())]
+            handles = [wh for wh in self.browser.driver.window_handles if self._matches(wh)]
+            self._windows = [Window(self.browser, {'handle': handle}) for handle in handles]
         return self._windows
 
     def reset(self):
         self._windows = []
+
+    # Same code as Window
+
+    def _matches(self, handle):
+        try:
+            orig = self.browser.driver.current_window_handle
+        except NoSuchWindowException:
+            orig = None
+        try:
+            if self.selector is None or len(self.selector) == 0:
+                return True
+
+            self.browser.driver.switch_to.window(handle)
+
+            if 'title' in self.selector:
+                title_value = self.selector.get('title')
+                driver_title = self.browser.title
+                matches_title = re.search(title_value, driver_title) is not None
+            else:
+                matches_title = True
+
+            if 'url' in self.selector:
+                url_value = self.selector.get('url')
+                driver_url = self.browser.url
+                matches_url = re.search(url_value, driver_url) is not None
+            else:
+                matches_url = True
+
+            if 'element' in self.selector:
+                matches_element = True if self.selector['element'].exists else False
+            else:
+                matches_element = True
+
+            return matches_title and matches_url and matches_element
+        except NoSuchWindowException:
+            return False
+        finally:
+            current = self.browser.driver.window_handles
+            orig = orig if orig in current else current[0]
+            self.browser.driver.switch_to.window(orig)
