@@ -4,8 +4,9 @@
 .. image:: https://img.shields.io/pypi/pyversions/nerodia.svg
     :target: https://pypi.python.org/pypi/nerodia
 
-.. image:: https://github.com/watir/nerodia/actions/workflows/build.yml/badge.svg
-    :target: https://github.com/watir/nerodia/actions/workflows/build.yml
+.. image:: https://ci.appveyor.com/api/projects/status/7go9s2tmp2av08sa?svg=true
+    :target: https://ci.appveyor.com/project/joshmgrant/nerodia/branch/master
+
 
 -----
 
@@ -43,4 +44,5 @@ Send a question to the `Nerodia-General <https://groups.google.com/forum/#!forum
 Join our Slack channel
 ======================
 
-Selenium has created a special slack server for the Selenium and Watir (including Nerodia) communities. You can join our Slack channel `here <https://join.slack.com/t/seleniumhq/shared_invite/zt-vv33sc0w-VKKQop3WDV_lfrLXGGHvDw>`_.
+Selenium has created a special slack server for the Selenium and Watir (including Nerodia) communities. 
+Join the Selenium Slack from `this link <https://www.selenium.dev/support/index.html#ChatRoom>`_, then join the #watir or #nerodia channels.
